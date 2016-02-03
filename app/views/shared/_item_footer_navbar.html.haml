@@ -1,0 +1,26 @@
+.navbar.navbar-default.navbar-fixed-bottom{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %a{href: root_path}
+            %i.fa.fa-home.fa-lg
+            = "Home" unless mobile_device?
+        .col-xs-4.col-sm-4
+          -# if params[:controller] == "images" or params[:controller] == "shipments"
+          -#
+            %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
+              %i.fa.fa-camera.fa-lg
+              = "Pictures" unless mobile_device?
+        .col-xs-4.col-sm-4
+          -#
+            %a{href: "#signature_form", "data-toggle" => "modal", :alt => "new_signature_form"}
+              %i.fa.fa-pencil.fa-lg
+              = "Sign" unless mobile_device?
+          -#
+            %a{href: "#{current_user.images_table? ? images_path(today: true) : shipments_path(today: true)}"}
+              %i.fa.fa-calendar-o.fa-lg
+              = "Today" unless mobile_device?
+
+=# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
+=# render partial: "#{current_user.user_setting.table_name.singularize}_files/signature_modal"

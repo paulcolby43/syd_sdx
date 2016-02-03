@@ -1,0 +1,15 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          = link_to 'javascript:history.back()' do
+            %i.fa.fa-arrow-left.fa-lg
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4
+          -#
+            - if (params[:controller]=='images' or params[:controller]=='shipments') and params[:action]=='index'
+              %a{href: "#search_form", "data-toggle" => "modal", :alt => "search_form"}
+                %i.fa.fa-search.fa-lg
+                = "Search" unless mobile_device?

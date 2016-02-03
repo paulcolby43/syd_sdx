@@ -1,0 +1,9 @@
+.navbar.navbar-default{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          = link_to 'javascript:history.back()' do
+            %i.fa.fa-arrow-left.fa-lg
+        .col-xs-4.col-sm-4
+          = title

@@ -1,0 +1,21 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %a{href: vendors_path}
+            %i.fa.fa-close
+          =# link_to "Cancel", vendors_path
+          -#
+            = link_to 'javascript:history.back()' do
+              Cancel
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4
+          -#
+            %a{href: '#', id: "new_ticket_navbar_link", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"}}
+              %i.fa.fa-plus.fa-lg
+              = "Ticket" unless mobile_device?
+
+- if (params[:controller]=='vendors') and (params[:action]=='new' or params[:action]=='edit')
+  = render partial: "purchase_orders/quick_new_purchase_order"

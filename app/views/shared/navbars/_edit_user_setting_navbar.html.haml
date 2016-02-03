@@ -1,0 +1,11 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %a{href: user_setting_path(@user_setting)}
+            %i.fa.fa-close
+          =# link_to "Cancel", @user_setting
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4

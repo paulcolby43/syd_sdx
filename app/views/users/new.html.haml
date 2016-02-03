@@ -1,0 +1,27 @@
+.container
+  %br/
+  .well.col-sm-6.col-md-6.col-md-offset-3
+    = form_for @user do |f|
+      - @user.errors.each do |attr, msg|
+        .alert.alert-danger
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          = "#{attr} #{msg}" if @user.errors[attr].first == msg
+
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.label :username, :class => "control-label"
+          %br/
+          = f.text_field :username, :autofocus => true, :class => "form-control input-lg", placeholder: "Username"
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.label :password, :class => "control-label"
+          %br/
+          = f.password_field :password, :class => "form-control input-lg", placeholder: "Password"
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.label :password_confirmation, :class => "control-label"
+          %br/
+          = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation"
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.submit "Sign Up", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }

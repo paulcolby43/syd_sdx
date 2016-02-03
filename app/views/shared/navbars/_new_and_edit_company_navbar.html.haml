@@ -1,0 +1,10 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %a{href: company_path(@company.id)}
+            %i.fa.fa-close
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4

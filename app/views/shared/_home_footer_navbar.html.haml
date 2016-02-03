@@ -1,0 +1,22 @@
+.navbar.navbar-default.navbar-fixed-bottom{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          -#
+            %a{href: "#search_form", "data-toggle" => "modal", :alt => "search_form"}
+              %i.fa.fa-search.fa-lg
+              = "Search" unless mobile_device?
+        .col-xs-4.col-sm-4
+          -#
+            %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
+              %i.fa.fa-camera.fa-lg
+              = "Picture" unless mobile_device?
+        .col-xs-4.col-sm-4
+          %a{href: user_setting_path(current_user.user_setting), "data-toggle" => "modal", :alt => "search_form"}
+            %i.fa.fa-gear.fa-lg
+            = "Settings" unless mobile_device?
+
+- unless current_user.blank?
+  = render partial: "#{current_user.user_setting.table_name}/search_modal"
+  =# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"

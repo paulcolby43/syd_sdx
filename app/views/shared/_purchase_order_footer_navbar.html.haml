@@ -1,0 +1,33 @@
+.navbar.navbar-default.navbar-fixed-bottom{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          - current_user.finger_print_reader_devices.each do |finger_print_reader_device|
+            %a{href: '#', class: 'finger_print_trigger', 'data-device-id' => finger_print_reader_device.id, 'data-ticket-number' => @doc_number, 'data-company-id' => current_company.id, 'data-customer-name' => @customer.full_name, 'data-vendor-id' => @customer.id }
+              %i.fa.fa-hand-pointer-o.fa-lg
+              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+              = "Reader" unless mobile_device?
+        .col-xs-4.col-sm-4
+          -# if params[:controller] == "images" or params[:controller] == "shipments"
+          %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
+            %i.fa.fa-camera.fa-lg
+            = "Pictures" unless mobile_device?
+        .col-xs-4.col-sm-4
+          - unless current_user.signature_pad_devices.blank?
+            - current_user.signature_pad_devices.each do |signature_pad_device|
+              %a{href: '#', class: 'tud_signature_pad', 'data-device-id' => signature_pad_device.id, 'data-ticket-number' => @doc_number, 'data-company-id' => current_company.id, 'data-customer-name' => @customer.full_name, 'data-vendor-id' => @customer.id }
+                %i.fa.fa-pencil.fa-lg
+                %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                = "Sign" unless mobile_device?
+          - else
+            %a{href: "#signature_form", "data-toggle" => "modal", :alt => "new_signature_form"}
+              %i.fa.fa-pencil.fa-lg
+              = "Sign" unless mobile_device?
+          -#
+            %a{href: "#{current_user.images_table? ? images_path(today: true) : shipments_path(today: true)}"}
+              %i.fa.fa-calendar-o.fa-lg
+              = "Today" unless mobile_device?
+
+= render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
+= render partial: "#{current_user.user_setting.table_name.singularize}_files/signature_modal"

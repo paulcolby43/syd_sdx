@@ -1,0 +1,9 @@
+-# unless current_user.blank?
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p.text-center SYD SDX
+    %div.text-center
+      %p
+        %a{href: '#', class: 'btn btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}}
+          %i.fa.fa-lock
+          Log In

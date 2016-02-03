@@ -1,0 +1,20 @@
+.navbar.navbar-default.navbar-fixed-bottom{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %a{href: root_path}
+            %i.fa.fa-home.fa-lg
+            = "Home" unless mobile_device?
+        .col-xs-4.col-sm-4
+          -#
+            - if params[:controller] == "images" or params[:controller] == "shipments"
+              %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                %i.fa.fa-camera.fa-lg
+                = "Picture" unless mobile_device?
+        .col-xs-4.col-sm-4
+          %a{href: "#new_vendor_from_ticket_form", "data-toggle" => "modal", :alt => "new_vendor_form"}
+            %i.fa.fa-user-plus.fa-lg
+            = "Vendor" unless mobile_device?
+
+= render partial: "vendors/new_from_ticket_modal"
