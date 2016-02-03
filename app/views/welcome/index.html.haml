@@ -10,21 +10,11 @@
 - else
   .jumbotron{style: 'background-color: #FFFFFF;'}
     .container
-      %p.text-center 
-        %strong Username
-        %br
+      %p
+        Username:
         = current_user.username
-      %p.text-center 
-        %strong Yards
+      %p 
+        Yards
         %br
         - Yard.all(current_token).each do |yard|
-          .well
-            %h3= yard["Name"]
-            %p
-              %strong Commodities
-            - Commodity.find_all(yard["Id"], current_token).each do |commodity|
-              %p= commodity["MenuText"]
-            %p
-              %strong Customers
-            - Customer.find_all(yard["Id"], current_token).each do |customer|
-              %p= "#{customer['FirstName']} #{customer['LastName']}"
+          %p= link_to yard["Name"], yard_path(yard['Id'])

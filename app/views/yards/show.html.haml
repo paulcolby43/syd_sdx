@@ -1,0 +1,22 @@
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %h3 
+      = @yard['Name']
+      %br
+      ID:
+      = @yard['Id']
+      %br
+      = @yard['Address1'] unless @yard['Address1'].blank?
+      = @yard['Address2'] unless @yard['Address2'].blank?
+      %br
+      = @yard['City'] unless @yard['City'].blank?
+      = @yard['State'] unless @yard['State'].blank?
+    %p= @yard
+    %p
+      %strong Commodities
+    - Commodity.all(current_token, @yard["Id"]).each do |commodity|
+      %p= link_to commodity["MenuText"], commodity_path(commodity['Id'], yard_id: @yard['Id'])
+    %p
+      %strong Customers
+    - Customer.all(current_token, @yard["Id"]).each do |customer|
+      %p= link_to "#{customer['FirstName']} #{customer['LastName']}", customer_path(customer['Id'], yard_id: @yard['Id'])
