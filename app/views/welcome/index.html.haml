@@ -1,9 +1,30 @@
--# unless current_user.blank?
-.jumbotron{style: 'background-color: #FFFFFF;'}
-  .container
-    %p.text-center SYD SDX
-    %div.text-center
-      %p
-        %a{href: '#', class: 'btn btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}}
-          %i.fa.fa-lock
-          Log In
+- if current_user.blank?
+  .jumbotron{style: 'background-color: #FFFFFF;'}
+    .container
+      %p.text-center SYD SDX
+      %div.text-center
+        %p
+          %a{href: '#', class: 'btn btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}}
+            %i.fa.fa-lock
+            Log In
+- else
+  .jumbotron{style: 'background-color: #FFFFFF;'}
+    .container
+      %p.text-center 
+        %strong Username
+        %br
+        = current_user.username
+      %p.text-center 
+        %strong Yards
+        %br
+        - Yard.all(current_token).each do |yard|
+          .well
+            %h3= yard["Name"]
+            %p
+              %strong Commodities
+            - Commodity.find_all(yard["Id"], current_token).each do |commodity|
+              %p= commodity["MenuText"]
+            %p
+              %strong Customers
+            - Customer.find_all(yard["Id"], current_token).each do |customer|
+              %p= "#{customer['FirstName']} #{customer['LastName']}"

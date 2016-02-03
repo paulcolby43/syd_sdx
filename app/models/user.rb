@@ -28,6 +28,10 @@ class User < ActiveRecord::Base
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 24.hours)
   end
   
+  def yards
+    Yard.find_all(self)
+  end
+  
   #############################
   #     Class Methods         #
   #############################
