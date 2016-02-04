@@ -1,20 +1,28 @@
-- if current_user.blank?
-  .jumbotron{style: 'background-color: #FFFFFF;'}
+- if not logged_in?
+  = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"}
+  .jumbotron
     .container
-      %p.text-center SYD SDX
+      %h3.text-center SYD SDX
+      %p.text-center Scrap Yard Dog with Scrap Dragon Xtreme
       %div.text-center
         %p
-          %a{href: '#', class: 'btn btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}}
+          %a{href: login_path, class: 'btn btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}}
             %i.fa.fa-lock
             Log In
 - else
+  = render partial: "shared/navbars/base_navbar", locals: {title: "Home"}
   .jumbotron{style: 'background-color: #FFFFFF;'}
     .container
-      %p
-        Username:
-        = current_user.username
       %p 
-        Yards
-        %br
-        - Yard.all(current_token).each do |yard|
-          %p= link_to yard["Name"], yard_path(yard['Id'])
+        Current yard:
+        = current_yard['Name']
+      
+      - Yard.all(current_token).each do |yard|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: yard_path(yard['Id']), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{yard['Name']}"}}
+                  = yard["Name"]
+                  .pull-right
+                    %i.fa.fa-chevron-right.fa-lg

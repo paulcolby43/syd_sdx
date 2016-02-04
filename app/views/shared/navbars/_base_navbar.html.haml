@@ -10,61 +10,14 @@
         = image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
-        -#
-          %li.dropdown{:class => (params[:controller] == "purchase_orders" or params[:controller] == "bills") ? "active" : ""}
-            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-              Tickets
+        %li.dropdown
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            %strong
+              YARDS
               %b.caret
-            %ul.dropdown-menu
-              %li
-                %a{href: new_purchase_order_path} New Ticket
-              %li
-                %a{href: purchase_orders_path} Open Tickets
-              %li
-                %a{href: bills_path} Closed Tickets
-          %li{:class => params[:controller] == "bill_payments" ? "active" : ""}
-            %a{href: bill_payments_path}
-              Payments
-          %li.dropdown{:class => (params[:controller] == "vendors") ? "active" : ""}
-            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-              Vendors
-              %b.caret
-            %ul.dropdown-menu
-              %li
-                %a{href: new_vendor_path} New Vendor
-              %li
-                %a{href: vendors_path} All Vendors
-          %li.dropdown{:class => (params[:controller] == "items") ? "active" : ""}
-            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-              Items
-              %b.caret
-            %ul.dropdown-menu
-              %li
-                %a{href: new_item_path} New Item
-              %li
-                %a{href: items_path} All Items
-        %li{:class => (params[:controller] == "images" or params[:controller] == "shipments") ? "active" : ""}
-          %a{href: "#{current_user.images_table? ? images_path : shipments_path}"}
-            %strong PICTURES
-        - unless current_company.device_groups.blank?
-          %li.dropdown
-            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-              %strong
-                DEVICE GROUP
-                %b.caret
-            %ul.dropdown-menu
-              %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
-              - current_company.device_groups.each do |device_group|
-                %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
-                -#
-                  %li{:class => (current_user.device_group == device_group) ? "active" : ""}
-                    %a{href: '#'}= device_group.DeviceGroupName
-        %li{:class => params[:controller] == "companies" ? "active" : ""}
-          %a{href: company_path(current_company_id)}
-            %strong COMPANY
-        %li
-          %a{href: "https://sandbox.qbo.intuit.com/app/homepage", target: '_blank'}
-            %strong QUICKBOOKS
+          %ul.dropdown-menu
+            - Yard.all(current_token).each do |yard|
+              %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
       %ul.nav.navbar-nav.navbar-right
-        %li= link_to "<strong>#{current_user.email}</strong>".html_safe, edit_user_registration_path(current_user)
-        %li= link_to 'Log out', destroy_user_session_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }
+        %li= link_to "User: <strong>#{current_user.username}</strong>".html_safe, '#'
+        %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }

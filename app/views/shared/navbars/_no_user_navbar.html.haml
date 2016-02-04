@@ -6,9 +6,6 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      -#
-        %a{class: 'navbar-brand', :href => root_path}
-          = image_tag('syd_logo_20x37.png')
       %a.navbar-brand{:href => root_path, :rel => "home", :title => "Scrap Yard Dog"}
         %i.fa.fa-recycle
         Scrap Yard Dog
@@ -20,13 +17,10 @@
         %li
           %a{href: 'https://tranact.com/scrapyarddog/', target: '_blank'} 
             %strong HOW IT WORKS
-        %li
-          %a{href: "https://sandbox.qbo.intuit.com/app/homepage", target: '_blank'}
-            %strong QUICKBOOKS
       %ul.nav.navbar-nav.navbar-right
         &nbsp;
-        %li
-          %a{href: new_user_session_path}
+        %li{:class => (params[:controller] == "sessions") ? "active" : ""}
+          %a{href: login_path}
             %strong
               %i.fa.fa-lock
               LOG IN

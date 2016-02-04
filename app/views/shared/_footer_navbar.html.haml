@@ -5,20 +5,8 @@
         .col-xs-4.col-sm-4
           %a{href: root_path}
             %i.fa.fa-home.fa-lg
-            = "Home" unless mobile_device?
+            = "Home"
         .col-xs-4.col-sm-4
-          - if (params[:controller] == "images") and (params[:action]=='index')
-            %a{href: advanced_search_images_path}
-              Advanced Search
-          -#
-            - if params[:controller] == "images" or params[:controller] == "shipments"
-              %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
-                %i.fa.fa-camera.fa-lg
-                = "Picture" unless mobile_device?
+          
         .col-xs-4.col-sm-4
-          -#
-            %a{href: "#", "data-toggle" => "modal", :alt => "new_vendor_form"}
-              %i.fa.fa-plus.fa-lg
-              = "Vendor" unless mobile_device?
-
-=# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
+          

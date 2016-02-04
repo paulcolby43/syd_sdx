@@ -24,28 +24,22 @@ class SessionsController < ApplicationController
 #        user.generate_token(:auth_token)
 #        user.save
 #      end
-      session[:user_id] = user.id # Store user.id as a session variable.
-      user.update_token
-      cookies[:auth_token] = user.access_token.token_string # Store auth_token in a temporary cookie.
-      redirect_to root_path, :notice => "You have been logged in."
-#      if params[:remember_me]
-#        cookies.permanent[:auth_token] = user.auth_token # Store auth_token in a permanent cookie so can remember next time.
-#      else
-#        cookies[:auth_token] = user.auth_token # Store auth_token in a temporary cookie.
-#      end
-#        redirect_to_target_or_default home_url if mobile_device?
-#        redirect_to_target_or_default '/home#index', :notice => "You have been logged in." if not mobile_device?
-
+      log_in user
+#      session[:user_id] = user.id # Store user.id as a session variable.
+#      user.update_token
+#      cookies[:auth_token] = user.access_token.token_string # Store auth_token in a temporary cookie.
+      flash[:success] = "You have been logged in."
+      redirect_to root_path
     else
-      flash.now[:error] = "Invalid username or password."
-      render :action => 'new' #if not mobile_device?
+      flash.now[:danger] = "Invalid username or password."
+      render 'new' 
     end
   end
 
   def destroy
-    session[:user_id] = nil
-    cookies.delete(:auth_token)
-    redirect_to root_url, :notice => "Logged out!"
+    log_out
+    flash[:success] = "Logged out!"
+    redirect_to root_url
   end
 
 end

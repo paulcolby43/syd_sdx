@@ -1,3 +1,5 @@
+= render partial: "shared/navbars/show_yard_navbar", locals: {title: @yard['Name']}
+
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h3 
@@ -20,3 +22,5 @@
       %strong Customers
     - Customer.all(current_token, @yard["Id"]).each do |customer|
       %p= link_to "#{customer['FirstName']} #{customer['LastName']}", customer_path(customer['Id'], yard_id: @yard['Id'])
+
+= render partial: "shared/footer_navbar", locals: {title: "Yard"}
