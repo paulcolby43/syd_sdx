@@ -19,5 +19,7 @@
             - Yard.all(current_token).each do |yard|
               %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
       %ul.nav.navbar-nav.navbar-right
+        - unless current_yard.blank?
+          %li= link_to current_yard['Name'], yard_path(current_yard_id)
         %li= link_to "User: <strong>#{current_user.username}</strong>".html_safe, '#'
         %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }

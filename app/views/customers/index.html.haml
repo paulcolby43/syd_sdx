@@ -1,0 +1,20 @@
+= render partial: "shared/navbars/customers_navbar", locals: {title: "Customers"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - @customers.each do |customer|
+      %div.row
+        .col-xs-12.col-sm-12.col-md-12
+          %div.panel.panel-primary
+            %div.list_group
+              %a{href: customer_path(customer['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{customer['FirstName']}"}}
+                - unless customer["FirstName"].blank? and customer["LastName"].blank?
+                  = "#{customer["FirstName"]} #{customer["LastName"]}"
+                - else
+                  No Name
+                .pull-right
+                  %i.fa.fa-chevron-right.fa-lg
+                %br
+                %small= customer["Id"]
+                
+= render partial: "shared/footer_navbar", locals: {title: "Customers"}

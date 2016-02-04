@@ -9,7 +9,6 @@
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          %a{href: edit_item_path(item_id)}
-            -#
-              %i.fa.fa-edit.fa-lg
-            = "Edit" unless mobile_device?
+          %a{href: '#', class: 'item_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+            %i.fa.fa-plus.fa-lg
+            = "Commodity"

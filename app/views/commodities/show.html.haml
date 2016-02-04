@@ -1,5 +1,9 @@
+= render partial: "shared/navbars/show_commodity_navbar", locals: {title: "#{@commodity['MenuText']}"}
+
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h3 
       = @commodity['MenuText']
     %p= @commodity
+
+= render partial: "shared/footer_navbar", locals: {title: "Commodity"}

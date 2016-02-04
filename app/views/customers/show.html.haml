@@ -1,6 +1,10 @@
+= render partial: "shared/navbars/show_customer_navbar", locals: {title: "#{@customer['FirstName']} #{@customer['LastName']}"}
+
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h3 
       = @customer['FirstName']
       = @customer['LastName']
     %p= @customer
+
+= render partial: "shared/footer_navbar", locals: {title: "Customer"}

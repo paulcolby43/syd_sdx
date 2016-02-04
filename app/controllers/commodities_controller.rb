@@ -4,7 +4,7 @@ class CommoditiesController < ApplicationController
   # GET /commodities
   # GET /commodities.json
   def index
-    @commodities = Commodity.all
+    @commodities = Commodity.all(current_token, current_yard_id)
   end
 
   # GET /commodities/1
