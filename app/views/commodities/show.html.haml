@@ -2,8 +2,9 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %h3 
-      = @commodity['MenuText']
-    %p= @commodity
+    .well
+      %h3 
+        = @commodity['MenuText']
+      %p= @commodity
 
 = render partial: "shared/footer_navbar", locals: {title: "Commodity"}

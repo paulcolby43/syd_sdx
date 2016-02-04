@@ -2,14 +2,24 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    - @commodities.each do |commodity|
-      %div.row
-        .col-xs-12.col-sm-12.col-md-12
-          %div.panel.panel-primary
-            %div.list_group
-              %a{href: commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['MenuText']}"}}
-                = commodity['MenuText']
-                .pull-right
-                  %i.fa.fa-chevron-right.fa-lg
+    %p
+      = form_tag commodities_path, id: 'commodity_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        .input-group
+          = search_field_tag :search, params[:search], :placeholder => "Search commodities", class: "form-control input-lg"
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+    - unless @commodities.blank?
+      - @commodities.each do |commodity|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['MenuText']}"}}
+                  = commodity['MenuText']
+                  .pull-right
+                    %i.fa.fa-chevron-right.fa-lg
+    - else
+      %p No commodities found
                 
 = render partial: "shared/footer_navbar", locals: {title: "Commodities"}

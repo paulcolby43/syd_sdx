@@ -2,25 +2,47 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %h3 
-      = @yard['Name']
-      %br
-      ID:
-      = @yard['Id']
-      %br
-      = @yard['Address1'] unless @yard['Address1'].blank?
-      = @yard['Address2'] unless @yard['Address2'].blank?
-      %br
-      = @yard['City'] unless @yard['City'].blank?
-      = @yard['State'] unless @yard['State'].blank?
-    %p= @yard
-    %p
-      %strong Commodities
-    - Commodity.all(current_token, @yard["Id"]).each do |commodity|
-      %p= link_to commodity["MenuText"], commodity_path(commodity['Id'], yard_id: @yard['Id'])
-    %p
-      %strong Customers
-    - Customer.all(current_token, @yard["Id"]).each do |customer|
-      %p= link_to "#{customer['FirstName']} #{customer['LastName']}", customer_path(customer['Id'], yard_id: @yard['Id'])
+    .well
+      %h3 
+        = @yard['Name']
+        %br
+        ID:
+        = @yard['Id']
+        %br
+        = @yard['Address1'] unless @yard['Address1'].blank?
+        = @yard['Address2'] unless @yard['Address2'].blank?
+        %br
+        = @yard['City'] unless @yard['City'].blank?
+        = @yard['State'] unless @yard['State'].blank?
+      %p= @yard
+    .col-xs-12.col-sm-6.col-md-6
+      %p
+        %strong Commodities
+      - @commodities.each do |commodity|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['MenuText']}"}}
+                  = commodity['MenuText']
+                  .pull-right
+                    %i.fa.fa-chevron-right.fa-lg
+    .col-xs-12.col-sm-6.col-md-6
+      %p
+        %strong Customers
+      - @customers.each do |customer|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: customer_path(customer['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{customer['FirstName']}"}}
+                  - unless customer["FirstName"].blank? and customer["LastName"].blank?
+                    = "#{customer["FirstName"]} #{customer["LastName"]}"
+                  - else
+                    No Name
+                  .pull-right
+                    %i.fa.fa-chevron-right.fa-lg
+                  %br
+                  %small= customer["Id"]
 
 = render partial: "shared/footer_navbar", locals: {title: "Yard"}

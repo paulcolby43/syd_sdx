@@ -2,9 +2,10 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %h3 
-      = @customer['FirstName']
-      = @customer['LastName']
-    %p= @customer
+    .well
+      %h3 
+        = @customer['FirstName']
+        = @customer['LastName']
+      %p= @customer
 
 = render partial: "shared/footer_navbar", locals: {title: "Customer"}

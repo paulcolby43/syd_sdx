@@ -4,7 +4,16 @@ class CommoditiesController < ApplicationController
   # GET /commodities
   # GET /commodities.json
   def index
-    @commodities = Commodity.all(current_token, current_yard_id)
+    unless params[:search].blank?
+      @commodities = Commodity.search(current_token, current_yard_id, params[:search])
+      if @commodities.class == 'Hash'
+        @single_commodity_hash = @commodities
+        @commodities = []
+        @commodities << @single_commodity_hash
+      end
+    else
+      @commodities = Commodity.all(current_token, current_yard_id)
+    end
   end
 
   # GET /commodities/1

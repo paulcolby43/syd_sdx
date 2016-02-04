@@ -13,9 +13,13 @@
   = render partial: "shared/navbars/base_navbar", locals: {title: "Home"}
   .jumbotron{style: 'background-color: #FFFFFF;'}
     .container
-      %p 
-        Current yard:
-        = current_yard.blank? ? 'None' : current_yard['Name']
+      .well
+        %p 
+          Current Yard:
+          = current_yard.blank? ? 'None' : current_yard['Name']
+        %p
+          Current Yard ID:
+          = current_yard_id.blank? ? 'None' : current_yard_id
       - unless current_yard.blank?
         %div.row
           %p
