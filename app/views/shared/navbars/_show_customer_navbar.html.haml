@@ -11,4 +11,4 @@
         .col-xs-4.col-sm-4
           %a{href: '#', id: "new_ticket_navbar_link", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"}}
             %i.fa.fa-plus.fa-lg
-            = "Ticket"
+            = "Ticket" unless mobile_device?
