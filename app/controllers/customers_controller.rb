@@ -4,10 +4,15 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   def index
-    unless params[:search].blank?
-      @customers = Customer.search(current_token, current_yard_id, params[:search])
+    unless params[:q].blank?
+      results = Customer.search(current_token, current_yard_id, params[:q])
     else
-      @customers = Customer.all(current_token, current_yard_id)
+      results = Customer.all(current_token, current_yard_id)
+    end
+    unless results.blank?
+      @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
+    else
+      @customers = []
     end
   end
 

@@ -37,30 +37,28 @@
         %div.row
           %p
             .col-xs-12
-              %a.btn.btn-primary.btn-lg.btn-block{:href => customers_path,  id: 'welcome_to_customers', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}} 
+              %a.btn.btn-primary.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}} 
                 %i.fa.fa-users.fa-lg
                 Customers
         %div.row
           %p
-            .col-xs-6
-              %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  id: 'welcome_to_open', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Open"}} 
+            .col-xs-12
+              %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Open"}} 
                 %i.fa.fa-folder-open-o.fa-lg
                 Open
-            .col-xs-6 
-              %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  id: 'welcome_to_closed', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+        %div.row
+          %p
+            .col-xs-12
+              %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
                 %i.fa.fa-folder.fa-lg
                 Closed
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  id: 'welcome_to_paid', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
                 %i.fa.fa-dollar.fa-lg
                 Paid
             .col-xs-6
-              %a.btn.btn-primary.btn-lg.btn-block{:href => commodities_path,  id: 'welcome_to_commodities', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}} 
                 %i.fa.fa-th-list.fa-lg
                 Commodities
-  
-
-      -#
-        

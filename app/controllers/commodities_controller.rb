@@ -4,15 +4,20 @@ class CommoditiesController < ApplicationController
   # GET /commodities
   # GET /commodities.json
   def index
-    unless params[:search].blank?
-      @commodities = Commodity.search(current_token, current_yard_id, params[:search])
-      if @commodities.class == 'Hash'
-        @single_commodity_hash = @commodities
-        @commodities = []
-        @commodities << @single_commodity_hash
+    unless params[:q].blank?
+      results = Commodity.search(current_token, current_yard_id, params[:q])
+      if results.class == 'Hash'
+        single_commodity_hash = results
+        results = []
+        results << single_commodity_hash
       end
     else
-      @commodities = Commodity.all(current_token, current_yard_id)
+      results = Commodity.all(current_token, current_yard_id)
+    end
+    unless results.blank?
+      @commodities = Kaminari.paginate_array(results).page(params[:page]).per(10)
+    else
+      @commodities = []
     end
   end
 

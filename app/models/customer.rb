@@ -9,7 +9,7 @@ class Customer
   #############################
   
   def self.all(auth_token, yard_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/customer"
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/customer?t=1000"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -25,7 +25,7 @@ class Customer
   end
   
   def self.search(auth_token, yard_id, query_string)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/customer?q=#{query_string}"
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/customer?q=#{query_string}&t=1000"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     

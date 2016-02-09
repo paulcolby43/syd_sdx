@@ -5,23 +5,32 @@
     %p
       = form_tag customers_path, id: 'customer_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
         .input-group
-          = search_field_tag :search, params[:search], :placeholder => "Search customers", class: "form-control input-lg"
+          = search_field_tag :q, params[:q], :placeholder => "Search customers", class: "form-control input-lg"
           %span.input-group-btn
             %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
               %i.fa.fa-search
-    - @customers.each do |customer|
-      %div.row
-        .col-xs-12.col-sm-12.col-md-12
-          %div.panel.panel-primary
-            %div.list_group
-              %a{href: customer_path(customer['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{customer['FirstName']}"}}
-                - unless customer["FirstName"].blank? and customer["LastName"].blank?
-                  = "#{customer["FirstName"]} #{customer["LastName"]}"
-                - else
-                  No Name
-                .pull-right
-                  %i.fa.fa-chevron-right.fa-lg
-                %br
-                %small= customer["Id"]
-                
+    - unless @customers.blank?
+      %div{id: "customers"}
+        - @customers.each do |customer|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: customer_path(customer['Id'], yard_id: current_yard_id), class: "list-group-item customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{customer['FirstName']}"}}
+                    - unless customer["FirstName"].blank? and customer["LastName"].blank?
+                      = "#{customer["FirstName"]} #{customer["LastName"]}"
+                    - else
+                      No Name
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+                    %br
+                    %small= customer["Id"]
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_customers_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', customers_path(:page => @customers.next_page, :q => params[:q]), :class => 'load-more-customers btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_customers_spinner').show();" if @customers.next_page
+    - else
+      %p No customers found            
+    
 = render partial: "shared/footer_navbar", locals: {title: "Customers"}
