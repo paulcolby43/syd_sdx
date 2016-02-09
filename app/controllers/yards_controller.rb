@@ -12,8 +12,6 @@ class YardsController < ApplicationController
   def show
     @yard = Yard.find_by_id(current_token, params[:id])
     cookies[:yard_id] = params[:id]
-    @customers = Customer.all(current_token, @yard["Id"])
-    @commodities = Commodity.all(current_token, @yard["Id"])
   end
 
   # GET /yards/new
