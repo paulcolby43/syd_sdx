@@ -15,7 +15,14 @@
         = @yard['City'] unless @yard['City'].blank?
         = @yard['State'] unless @yard['State'].blank?
       %p= @yard
-    .col-xs-12.col-sm-6.col-md-6
+    .col-xs-12.col-sm-4.col-md-4
+      %div.panel.panel-primary
+        %div.list_group
+          %a{href: tickets_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Tickets"}}
+            Tickets
+            .pull-right
+              %i.fa.fa-chevron-right.fa-lg
+    .col-xs-12.col-sm-4.col-md-4
       %div.panel.panel-primary
         %div.list_group
           %a{href: commodities_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}}
@@ -34,7 +41,7 @@
                     = commodity['MenuText']
                     .pull-right
                       %i.fa.fa-chevron-right.fa-lg
-    .col-xs-12.col-sm-6.col-md-6
+    .col-xs-12.col-sm-4.col-md-4
       %div.panel.panel-primary
         %div.list_group
           %a{href: customers_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}}

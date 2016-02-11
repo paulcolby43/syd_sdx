@@ -12,7 +12,7 @@ class TicketsController < ApplicationController
       results = Ticket.all(@status, current_token, current_yard_id)
     end
     unless results.blank?
-      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(5)
+      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
     end
