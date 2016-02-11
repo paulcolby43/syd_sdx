@@ -2,6 +2,21 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    .panel.panel-default
+      %div.panel-heading{:role => "tab", id: "vendor_heading"}
+        %h4.panel-title
+          %div.text-success= @ticket['Company']
+    - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+        .panel.panel-default.line-item
+          %div.panel-heading
+            %h4.panel-title
+              = line_item 
+    - else
+      .panel.panel-default.line-item
+        %div.panel-heading
+          %h4.panel-title
+            = @ticket["TicketItemCollection"]["ApiTicketItem"]
     .well
       %h3 
         = @ticket['TicketNumber']
