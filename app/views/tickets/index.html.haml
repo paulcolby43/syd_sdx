@@ -1,0 +1,38 @@
+= render partial: "shared/navbars/tickets_navbar", locals: {title: @status.capitalize}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p
+      = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        .input-group
+          = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
+          = hidden_field_tag :status, @status
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+    - unless @tickets.blank?
+      %div{id: "tickets"}
+        - @tickets.each do |ticket|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: ticket_path(ticket['Id'], yard_id: current_yard_id, status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
+                    = ticket["TicketNumber"]
+                    = ticket["Company"]
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+                  %a{href: '#', class: "list-group-item"}
+                    = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                    .pull-right
+                      %i.fa.fa-file-pdf-o.fa-lg
+                      Print
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_tickets_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', tickets_path(:page => @tickets.next_page, :q => params[:q], :status => params[:status]), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
+    - else
+      %p No tickets found            
+    
+= render partial: "shared/footer_navbar", locals: {title: "Tickets"}

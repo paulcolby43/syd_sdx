@@ -1,0 +1,12 @@
+= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber']}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .well
+      %h3 
+        = @ticket['TicketNumber']
+      %p= "Status: #{@ticket['Status']}"
+      %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+      %p= @ticket
+
+= render partial: "shared/footer_navbar", locals: {title: "Ticket"}

@@ -1,0 +1,11 @@
+$('#tickets').append('<%= j render "ticket" %>');
+$('#more_tickets_spinner').hide();
+
+<% if @tickets.next_page %>
+  $('a.load-more-tickets').show();
+  $('a.load-more-tickets').attr('href', '<%= tickets_path page: @tickets.next_page, q: params[:q], status: params[:status] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-tickets').attr('href', '#');
+  $('a.reload-tickets').show();
+<% end %>

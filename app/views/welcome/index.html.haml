@@ -29,7 +29,7 @@
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
                 %div.list_group
-                  %a{href: yard_path(yard['Id']), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{yard['Name']}"}}
+                  %a{href: yard_path(yard['Id']), class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{yard['Name']}"}}
                     = yard["Name"]
                     .pull-right
                       %i.fa.fa-chevron-right.fa-lg
