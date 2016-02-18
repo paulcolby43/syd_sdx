@@ -7,16 +7,39 @@
         %h4.panel-title
           %div.text-success= @ticket['Company']
     - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
-      - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
-        .panel.panel-default.line-item
-          %div.panel-heading
-            %h4.panel-title
-              = line_item 
+      #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+          .panel.panel-default.line-item
+            %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
+              %h4.panel-title
+                %a.line_item_name{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
+                  %div.text-success= line_item["PrintDescription"]
+            .panel-footer
+              = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['Quantity']}#{line_item['UnitOfMeasure']}"
+              x
+              = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+              = "= $#{line_item['ExtendedAmount']}"
+              =# line_item 
     - else
-      .panel.panel-default.line-item
-        %div.panel-heading
-          %h4.panel-title
-            = @ticket["TicketItemCollection"]["ApiTicketItem"]
+      #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        .panel.panel-default.line-item
+          %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
+            %h4.panel-title
+              %a.line_item_name{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "button", class: "collapsed"}
+                %div.text-success= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
+          .panel-footer
+            = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+            x
+            = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
+            = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
+            =# line_item 
+    .well
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          %p
+            = "Balance Due:"
+            = "#{number_to_currency(@ticket['BalanceDue'])}"
+    -#
     .well
       %h3 
         = @ticket['TicketNumber']

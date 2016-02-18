@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   
   def generate_token
     api_url = "https://71.41.52.58:50002/token"
-    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
 #    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
     JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   
   def update_token
     api_url = "https://71.41.52.58:50002/token"
-    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
 #    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
     JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
