@@ -3,7 +3,7 @@
     .col-xs-12.col-sm-12.col-md-12
       %div.panel.panel-primary
         %div.list_group
-          %a{href: ticket_path(ticket['Id'], yard_id: current_yard_id, status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
+          %a{href: edit_ticket_path(ticket['Id'], yard_id: current_yard_id, status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
             = ticket["TicketNumber"]
             = ticket["Company"]
             .pull-right

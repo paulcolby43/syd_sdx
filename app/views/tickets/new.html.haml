@@ -1,0 +1,25 @@
+= render partial: "shared/navbars/new_ticket_navbar", locals: {title: "New Ticket"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .well.col-sm-6.col-md-4.col-md-offset-4
+      = form_tag tickets_path, :class => "form-horizontal" do
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "ID", nil, :class => 'control-label'
+            = text_field_tag "ticket[id]", @guid, :placeholder => "Unique ID", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Ticket Number", nil, :class => 'control-label'
+            = text_field_tag "ticket[ticket_number]", @ticket_number, :placeholder => "Ticket Number", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Customer ID", nil, :class => 'control-label'
+            = text_field_tag "ticket[customer_id]", params[:customer_id], :placeholder => "Customer ID", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
+              Create
+    
+
+= render partial: "shared/footer_navbar", locals: {title: "New Ticket"}

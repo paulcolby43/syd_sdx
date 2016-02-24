@@ -15,6 +15,7 @@ class TicketsController < ApplicationController
       results = Ticket.all(@status, current_token, current_yard_id)
     end
     unless results.blank?
+      results = results.reverse if @status == 'held'
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
@@ -29,24 +30,38 @@ class TicketsController < ApplicationController
 
   # GET /tickets/new
   def new
-    @ticket = Ticket.new
+#    @ticket = Ticket.new
+    if @ticket_number.blank?
+      @ticket_number = Ticket.next_available_number(current_token, current_yard_id)
+    end
+    @guid = SecureRandom.uuid
   end
 
   # GET /tickets/1/edit
   def edit
+    @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
   end
 
   # POST /tickets
   # POST /tickets.json
   def create
-    @ticket = Ticket.new(ticket_params)
+#    @ticket = Ticket.new(ticket_params)
+    @ticket = Ticket.create(current_token, current_yard_id, ticket_params[:customer_id], ticket_params[:ticket_number], ticket_params[:id])
 
     respond_to do |format|
-      if @ticket.save
-        format.html { redirect_to @ticket, notice: 'Ticket was successfully created.' }
+      logger.debug "**************ticket success response: #{@ticket}"
+      if @ticket == 'true'
+#        format.html { redirect_to @ticket, notice: 'Ticket was successfully created.' }
+        format.html {
+          flash[:success] = 'Ticket was successfully created.'
+          redirect_to tickets_path
+        }
         format.json { render :show, status: :created, location: @ticket }
       else
-        format.html { render :new }
+        format.html { 
+          flash.now[:danger] = 'Error creating ticket.'
+          render :new, locals: {customer_id: ticket_params[:customer_id], ticket_number: ticket_params[:ticket_number]}
+          }
         format.json { render json: @ticket.errors, status: :unprocessable_entity }
       end
     end
@@ -56,13 +71,26 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1.json
   def update
     respond_to do |format|
-      if @ticket.update(ticket_params)
-        format.html { redirect_to @ticket, notice: 'Ticket was successfully updated.' }
-        format.json { render :show, status: :ok, location: @ticket }
+      @ticket = Ticket.add_item(current_token, current_yard_id, params[:id])
+      if @ticket == 'true'
+        format.html { 
+          flash[:success] = 'Ticket was successfully updated.'
+          redirect_to tickets_path 
+          }
       else
-        format.html { render :edit }
-        format.json { render json: @ticket.errors, status: :unprocessable_entity }
+        format.html { 
+          flash[:danger] = 'Error updating ticket.'
+          redirect_to tickets_path
+#          render :edit, locals: {ticket_number: @ticket['TicketNumber']}
+          }
       end
+#      if @ticket.update(ticket_params)
+#        format.html { redirect_to @ticket, notice: 'Ticket was successfully updated.' }
+#        format.json { render :show, status: :ok, location: @ticket }
+#      else
+#        format.html { render :edit }
+#        format.json { render json: @ticket.errors, status: :unprocessable_entity }
+#      end
     end
   end
 
@@ -84,6 +112,6 @@ class TicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:ticketname, :password)
+      params.require(:ticket).permit(:ticket_number, :customer_id, :id)
     end
 end

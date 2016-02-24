@@ -13,15 +13,16 @@ class Ticket
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
-    
+    Rails.logger.info data
     data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
   end
   
   def self.find_by_id(status, auth_token, yard_id, ticket_id)
+    status = 'held' if status == 'Hold'
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/tickets/#{status}?d=60&t=1000"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
-    
+    Rails.logger.info data
     data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].find {|ticket| ticket['Id'] == ticket_id}
   end
   
@@ -54,27 +55,67 @@ class Ticket
     data["ApiItemsResponseOfApiUnitOfMeasureia6G0PzH"]["Items"]["ApiUnitOfMeasure"]
   end
   
-  def self.create(auth_token, yard_id)
+  def self.create(auth_token, yard_id, customer_id, guid)
+    customer = Customer.find_by_id(auth_token, yard_id, customer_id)
+    ticket_number = Ticket.next_available_number(auth_token, yard_id)
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
-        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
-        "TicketHead" => {"Id" =>"43218929-4c3b-49da-bfcb-4f4996bf14c8",
-        "YardId" => "1612c2ea-4891-4f5a-84f6-b8c5f73ceb7c",
-        "CustomerId" => "00000000-0000-0000-0000-000000000000",
-        "FirstName" => "",
-        "LastName" => "",
-        "Company" => "A Valued Customer",
-        "PayToId" => "00000000-0000-0000-0000-000000000000",
-        "TicketNumber" => 11539,
-        "Status" => 0,
-        "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a",
-        "DateClosed" => "2016-02-09T22:01:30.217",
-        "DateCreated" => "2016-02-09T22:00:55"}
+#        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
+        "TicketHead" => {
+          "Id" => guid,
+          "YardId" => yard_id,
+          "CustomerId" => customer_id,
+          "FirstName" => customer['FirstName'],
+          "LastName" => customer['LastName'],
+          "Company" => customer['Company'],
+          "PayToId" => "00000000-0000-0000-0000-000000000000",
+          "TicketNumber" => ticket_number,
+          "Status" => 2,
+          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a",
+  #        "DateClosed" => "2016-02-18T22:01:30.217",
+          "DateCreated" => Time.now.utc
+          }
         })
       
       Rails.logger.info response
-#    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {})
+      data= Hash.from_xml(response)
+      return data["SaveTicketResponse"]["Success"]
+  end
+  
+  def self.add_item(auth_token, yard_id, ticket_id)
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+      payload: {
+        #"CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
+        "TicketItem"=>{
+          "CommodityId" => "9c7eed08-550b-4473-8773-30f0873427f9", 
+          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
+          "DateCreated" => Time.now.utc, 
+          "ExtendedAmount" => "2750.00", 
+          "ExtendedAmountInAssignedCurrency" => "2750.00", 
+          "GrossWeight" => "55.0000", 
+          "Id" => SecureRandom.uuid, 
+          "NetWeight" => "55.0000", 
+          "Notes" => "", 
+          "Price" => "50.0000", 
+          "PriceInAssignedCurrency" => "50.0000", 
+          "PrintDescription" => "#1 Busheling", 
+          "Quantity" => "0.00", 
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => "", 
+          "Status" => 'Closed', 
+          "TareWeight" => "0.0000", 
+#          "TaxCollection" => nil, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => "LB"
+          }
+        })
+      
+      Rails.logger.info response
+      data= Hash.from_xml(response)
+      return data["SaveTicketItemResponse"]["Success"]
   end
   
 end

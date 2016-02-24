@@ -9,5 +9,5 @@
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          %a{href: '#'}
+          %a{href: edit_ticket_path(@ticket['Id'], status: @ticket['Status'], yard_id: @ticket['YardId'])}
             = "Edit"

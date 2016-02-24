@@ -5,7 +5,11 @@ Rails.application.routes.draw do
   
   resources :commodities
   
-  resources :customers
+  resources :customers do
+    member do
+      get 'create_ticket'
+    end
+  end
   
   resources :tickets
   
