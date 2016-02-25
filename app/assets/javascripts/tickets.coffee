@@ -3,6 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 jQuery ->
+  wrapper = $('.ticket_input_fields_wrap')
 
   ### Start endless page stuff ###
   loading_tickets = false
@@ -23,3 +24,68 @@ jQuery ->
       $.rails.enableElement $(this)
       return
     return
+
+  ### Sum all ticket items right away ###
+  $(document).on 'ready page:load', ->
+    sum = 0
+    $('.amount').each ->
+      sum += Number($(this).val())
+      return
+    $('#total').text '$' + sum.toFixed(2)
+    $('#ticket_total').val sum.toFixed(2)
+    return
+
+  # Automatically highlight field value when focused
+  $('.ticket_input_fields_wrap').on 'click', '.amount-calculation-field', ->
+    $(this).select()
+    return
+
+  ### Line item changed ###
+  $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
+    item_id = $(this).val()
+    input_select = $(this)
+    $.ajax(url: "/commodities/" + item_id, dataType: 'json').done (data) ->
+      name = data.name
+      price = parseFloat(data.price).toFixed(3)
+      #console.log 'success', price
+      net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
+      input_select.closest('.panel').find('.calculation_details').text ''
+      input_select.closest('.panel').find('.line_item_name').text name
+
+      input_select.closest('.panel').find('#ticket_line_items__price:first').val price
+      amount = (parseFloat(price) * parseFloat(net))
+      input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
+      input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
+      input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
+      input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
+      input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
+      input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
+      input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
+      $('.amount-calculation-field').keyup()
+
+      return
+  ### End line item changed ###
+
+  ### Line item calculation field value changed ###
+  $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
+    gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
+    tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
+    net = (parseFloat(gross) - parseFloat(tare)).toFixed(2)
+    $(this).closest('.panel').find('#ticket_line_items__net').val net
+    $(this).closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
+    $(this).closest('.panel').find('#tare_picture_button:first').attr 'data-weight', tare
+
+    #description = $(this).closest('.panel').find('#item_description').val()
+    price = $(this).closest('.panel').find('#ticket_line_items__price').val()
+    amount = (parseFloat(price) * parseFloat(net)).toFixed(2)
+    $(this).closest('.panel').find('#ticket_line_items__amount').val amount
+
+    $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + ' = ' +  '$' + amount
+    sum = 0;
+    $('.amount').each ->
+      sum += Number($(this).val())
+      return
+    $('#total').text '$' + sum.toFixed(2)
+    $('#ticket_total').val sum.toFixed(2)
+    return
+  ### End line item calculation field value changed ###

@@ -78,42 +78,101 @@ class Ticket
           }
         })
       
-      Rails.logger.info response
+#      Rails.logger.info response
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
   
-  def self.add_item(auth_token, yard_id, ticket_id)
+  def self.update(auth_token, yard_id, guid, total)
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+      payload: {
+        "TicketHead" => {
+          "Id" => guid,
+          "BalanceDue" => total
+          }
+        })
+      
+#      Rails.logger.info response
+      data= Hash.from_xml(response)
+      return data["SaveTicketResponse"]["Success"]
+  end
+  
+  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount)
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item"
+    commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
         #"CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
         "TicketItem"=>{
-          "CommodityId" => "9c7eed08-550b-4473-8773-30f0873427f9", 
+#          "CommodityId" => "9c7eed08-550b-4473-8773-30f0873427f9",
+          "CommodityId" => commodity_id,
           "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
           "DateCreated" => Time.now.utc, 
-          "ExtendedAmount" => "2750.00", 
-          "ExtendedAmountInAssignedCurrency" => "2750.00", 
-          "GrossWeight" => "55.0000", 
+#          "ExtendedAmount" => "2750.00",
+          "ExtendedAmount" => amount, 
+#          "ExtendedAmountInAssignedCurrency" => "2750.00",
+          "ExtendedAmountInAssignedCurrency" => amount,
+#          "GrossWeight" => "55.0000",
+          "GrossWeight" => gross,
           "Id" => SecureRandom.uuid, 
-          "NetWeight" => "55.0000", 
+#          "NetWeight" => "55.0000",
+          "NetWeight" => net,
           "Notes" => "", 
-          "Price" => "50.0000", 
-          "PriceInAssignedCurrency" => "50.0000", 
-          "PrintDescription" => "#1 Busheling", 
-          "Quantity" => "0.00", 
+#          "Price" => "50.0000",
+          "Price" => price,
+#          "PriceInAssignedCurrency" => "50.0000",
+          "PriceInAssignedCurrency" => price,
+#          "PrintDescription" => "#1 Busheling", 
+          "PrintDescription" => commodity_name, 
+#          "Quantity" => "0.00",
+          "Quantity" => amount,
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => "", 
-          "Status" => 'Closed', 
-          "TareWeight" => "0.0000", 
+          "Status" => 'Hold', 
+#          "TareWeight" => "0.0000",
+         "TareWeight" => tare, 
 #          "TaxCollection" => nil, 
           "TicketHeadId" => ticket_id,
           "UnitOfMeasure" => "LB"
           }
         })
       
-      Rails.logger.info response
+#      Rails.logger.info response
+      data= Hash.from_xml(response)
+      return data["SaveTicketItemResponse"]["Success"]
+  end
+  
+  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item"
+    commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+      payload: {
+        "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
+          "DateCreated" => Time.now.utc, 
+          "ExtendedAmount" => amount, 
+          "ExtendedAmountInAssignedCurrency" => amount,
+          "GrossWeight" => gross,
+          "Id" => item_id, 
+          "NetWeight" => net,
+          "Notes" => "", 
+          "Price" => price,
+          "PriceInAssignedCurrency" => price,
+          "PrintDescription" => commodity_name, 
+          "Quantity" => amount,
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => "", 
+          "Status" => 'Hold', 
+         "TareWeight" => tare, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => "LB"
+          }
+        })
+      
       data= Hash.from_xml(response)
       return data["SaveTicketItemResponse"]["Success"]
   end

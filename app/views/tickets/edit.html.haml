@@ -1,56 +1,235 @@
-= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber']}
+= render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: number_to_currency(@ticket['BalanceDue'])}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     = form_tag ticket_path, method: 'put', :class => "form-horizontal" do
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Ticket Number", nil, :class => 'control-label'
-          = text_field_tag "ticket[ticket_number]", @ticket['TicketNumber'], :placeholder => "Ticket Number", class: "form-control input-lg"
-
+          =# hidden_field_tag "ticket[ticket_number]", @ticket['TicketNumber']
+          =# hidden_field_tag "ticket[id]", @ticket['Id']
+          .pull-right= text_field_tag "ticket[total]", @ticket['BalanceDue']
 
       .panel.panel-default
         %div.panel-heading{:role => "tab", id: "vendor_heading"}
           %h4.panel-title
             %div.text-success= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
-      - if @ticket["TicketItemCollection"].blank?
-        .panel.panel-default.line-item
-          %div.panel-heading
-            %h4.panel-title No ticket items
-      - else
-        - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      -# if @ticket["TicketItemCollection"].blank?
+      
+      - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        / Multiple ticket line items
+        %div.ticket_input_fields_wrap
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
               .panel.panel-default.line-item
                 %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                   %h4.panel-title
-                    %a.line_item_name{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
-                      %div.text-success= line_item["PrintDescription"]
+                    %ul{class: 'list-inline'}
+                      %li
+                        %a.line_item_name.text-success{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
+                          = line_item["PrintDescription"]
+                      %li.pull-right
+                        %a{href: '#', class: 'remove_field'}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                %div{id: "collapse_#{line_item['Id']}", "aria-labelledby" => "heading#{line_item['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
+                  .panel-body
+                    = hidden_field_tag "ticket[line_items][][id]", line_item['Id']
+                    = hidden_field_tag "ticket[line_items][][status]", line_item['Status']
+                    = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }, line_item['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                    %br
+                    %div.input-group.gross_input_group
+                      %span.input-group-addon
+                        %i.fa.fa-plus{style: "font-size:0.7em;"}
+                      = phone_field_tag "ticket[line_items][][gross]", line_item['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                      %span.input-group-addon
+                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => line_item['GrossWeight']}
+                          %i.fa.fa-upload.fa-2x
+                    %br
+                    %div.input-group.tare_input_group
+                      %span.input-group-addon
+                        %i.fa.fa-minus{style: "font-size:0.7em;"}
+                      = phone_field_tag "ticket[line_items][][tare]", line_item['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                      %span.input-group-addon
+                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => line_item['TareWeight']}
+                          %i.fa.fa-upload.fa-2x
+                    %br
+                    %div
+                      = text_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
+                    %br
+                    %div.input-group
+                      %span.input-group-addon
+                        %i.fa.fa-dollar.fa-lg
+                      = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                    %br
+                    %div.input-group
+                      %span.input-group-addon
+                        %i.fa.fa-dollar.fa-lg
+                      = text_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                 .panel-footer
-                  = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['Quantity']}#{line_item['UnitOfMeasure']}"
-                  x
-                  = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
-                  = "= $#{line_item['ExtendedAmount']}"
-                  =# line_item 
-        - else
+                  %ul{class: 'list-inline'}
+                    %li.calculation_details
+                      = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['NetWeight']}#{line_item['UnitOfMeasure']}"
+                      x
+                      = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+                      = "= $#{line_item['ExtendedAmount']}"
+                    %li.pull-right
+                      %a.text-success{"aria-controls" => "collapse#{line_item['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", class: 'pull-right ticket_collapse_link' }
+                        %i.fa.fa-check-square.fa-3x.collapse_icon
+      - else
+        / Only one ticket line item
+        %div.ticket_input_fields_wrap
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default.line-item
               %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
                 %h4.panel-title
-                  %a.line_item_name{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "button", class: "collapsed"}
-                    %div.text-success= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
+                  %ul{class: 'list-inline'}
+                    %li
+                      %a.line_item_name.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "button", class: "collapsed"}
+                        = @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
+                    %li.pull-right
+                      %a{href: '#', class: 'remove_field'}
+                        %i.fa.fa-trash.fa-lg.text-danger
+              %div{id: "collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-labelledby" => "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
+                .panel-body
+                  = hidden_field_tag "ticket[line_items][][id]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Id']
+                  = hidden_field_tag "ticket[line_items][][status]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Status']
+                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }, @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                  %br
+                  %div.input-group.gross_input_group
+                    %span.input-group-addon
+                      %i.fa.fa-plus{style: "font-size:0.7em;"}
+                    = phone_field_tag "ticket[line_items][][gross]", @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                    %span.input-group-addon
+                      %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']}
+                        %i.fa.fa-upload.fa-2x
+                  %br
+                  %div.input-group.tare_input_group
+                    %span.input-group-addon
+                      %i.fa.fa-minus{style: "font-size:0.7em;"}
+                    = phone_field_tag "ticket[line_items][][tare]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                    %span.input-group-addon
+                      %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}
+                        %i.fa.fa-upload.fa-2x
+                  %br
+                  %div
+                    = text_field_tag "ticket[line_items][][net]", @ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
+                  %br
+                  %div.input-group
+                    %span.input-group-addon
+                      %i.fa.fa-dollar.fa-lg
+                    = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                  %br
+                  %div.input-group
+                    %span.input-group-addon
+                      %i.fa.fa-dollar.fa-lg
+                    = text_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
               .panel-footer
-                = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
-                x
-                = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
-                = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
-                =# line_item 
-      .well
-        .row.form-group
-          %div{:class => "col-sm-12 col-md-12"}
-            %p
-              = "Balance Due:"
-              = "#{number_to_currency(@ticket['BalanceDue'])}"
+                %ul{class: 'list-inline'}
+                  %li.calculation_details
+                    = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+                    x
+                    = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
+                    = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
+                  %li.pull-right
+                    %a.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", class: 'pull-right ticket_collapse_link' }
+                      %i.fa.fa-check-square.fa-3x.collapse_icon
+      / New item
+      %div.ticket_input_fields_wrap
+        #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default.line-item
+            %div.panel-heading{:role => "tab", id: "heading#{1}"}
+              %h4.panel-title
+                %ul{class: 'list-inline'}
+                  %li
+                    %a.line_item_name.text-success{"aria-controls" => "collapse#{1}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{1}", :role => "button", class: "ticket_collapse_link" }
+                      Choose an item*
+                  %li.pull-right
+                    %a{href: '#', class: 'remove_field'}
+                      %i.fa.fa-trash.fa-lg.text-danger
+            %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
+              .panel-body
+                = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                %br
+                %div.input-group.gross_input_group
+                  %span.input-group-addon
+                    %i.fa.fa-plus{style: "font-size:0.7em;"}
+                  = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
+                  %span.input-group-addon
+                    %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => 0}
+                      %i.fa.fa-upload.fa-2x
+                %br
+                %div.input-group.tare_input_group
+                  %span.input-group-addon
+                    %i.fa.fa-minus{style: "font-size:0.7em;"}
+                  = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
+                  %span.input-group-addon
+                    %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => 0}
+                      %i.fa.fa-upload.fa-2x
+                %br
+                %div
+                  = text_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
+                %br
+                %div.input-group
+                  %span.input-group-addon
+                    %i.fa.fa-dollar.fa-lg
+                  = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                %br
+                %div.input-group
+                  %span.input-group-addon
+                    %i.fa.fa-dollar.fa-lg
+                  = text_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+            %div.panel-footer
+              %ul{class: 'list-inline'}
+                %li.calculation_details
+                %li.pull-right
+                  %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
+                    %i.fa.fa-check-square.fa-3x.collapse_icon
+      -#
+        %div.purchase_order_input_fields_wrap
+          #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default.line-item
+              %div.panel-heading{:role => "tab", id: "heading#{1}"}
+                %h4.panel-title
+                  %ul{class: 'list-inline'}
+                    %li
+                      %a.line_item_name.text-success{"aria-controls" => "collapse#{1}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{1}", :role => "button", class: "ticket_collapse_link" }
+                        Choose an item*
+                    %li.pull-right
+                      %a{href: '#', class: 'remove_field'}
+                        %i.fa.fa-trash.fa-lg.text-danger
+              %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
+                .panel-body
+                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                  =# text_field_tag "ticket[ticket_number]", @ticket['TicketNumber'], :placeholder => "Ticket Number", class: "form-control input-lg"
+                  %br
+                  %div.input-group.gross_input_group
+                    %span.input-group-addon
+                      %i.fa.fa-plus{style: "font-size:0.7em;"}
+                    = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
+                    %span.input-group-addon
+                      %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => 0}
+                        %i.fa.fa-upload.fa-2x
+                  %br
+                  %div.input-group.tare_input_group
+                    %span.input-group-addon
+                      %i.fa.fa-minus{style: "font-size:0.7em;"}
+                    = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
+                    %span.input-group-addon
+                      %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => 0}
+                        %i.fa.fa-upload.fa-2x
+                  %br
+                  = text_field_tag "ticket[line_items][][net]", nil, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true #, readonly: true
+                  %div.input-group
+                    %span.input-group-addon
+                      %i.fa.fa-dollar.fa-lg
+                    = text_field_tag "ticket[line_items][][price]", nil, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                  = text_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount", required: true #, readonly: true
+      -#
+        .well
+          .row.form-group
+            %div{:class => "col-sm-12 col-md-12"}
+              %p
+                = "Balance Due:"
+                = "#{number_to_currency(@ticket['BalanceDue'])}"
       .row.form-group
         %div.col-xs-3.col-sm-3
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do

@@ -24,7 +24,11 @@ class CommoditiesController < ApplicationController
   # GET /commodities/1
   # GET /commodities/1.json
   def show
-    @commodity = Commodity.find_by_id(current_token, params[:yard_id], params[:id])
+    @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
+    respond_to do |format|
+      format.html {}
+      format.json {render json: {"name" => @commodity['MenuText'], "price" => @commodity['ScalePrice']} } 
+    end
   end
 
   # GET /commodities/new
