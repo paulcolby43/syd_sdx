@@ -105,6 +105,13 @@ class TicketsController < ApplicationController
 #      end
     end
   end
+  
+  def line_item_fields
+    @ticke_number = params[:ticket_number]
+    respond_to do |format|
+      format.js
+    end
+  end
 
   # DELETE /tickets/1
   # DELETE /tickets/1.json
@@ -115,6 +122,7 @@ class TicketsController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.

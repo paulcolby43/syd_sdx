@@ -11,7 +11,11 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :tickets
+  resources :tickets do
+    collection do
+      get :line_item_fields
+    end
+  end
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

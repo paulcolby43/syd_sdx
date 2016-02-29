@@ -89,3 +89,8 @@ jQuery ->
     $('#ticket_total').val sum.toFixed(2)
     return
   ### End line item calculation field value changed ###
+
+  ### Panel Collapse Links ###
+  $(document).on 'click', '.ticket_collapse_link', (e) ->
+    $(this).closest('.panel').find('.collapse_icon').toggleClass('fa-check-square ')
+    return

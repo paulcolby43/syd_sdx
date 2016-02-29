@@ -58,11 +58,13 @@
                         %span.input-group-addon
                           %i.fa.fa-dollar.fa-lg
                         = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                      %br
-                      %div.input-group
-                        %span.input-group-addon
-                          %i.fa.fa-dollar.fa-lg
-                        = text_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                      -#
+                        %br
+                        %div.input-group
+                          %span.input-group-addon
+                            %i.fa.fa-dollar.fa-lg
+                          = text_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                      = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                   .panel-footer
                     %ul{class: 'list-inline'}
                       %li.calculation_details
@@ -116,11 +118,13 @@
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                    %br
-                    %div.input-group
-                      %span.input-group-addon
-                        %i.fa.fa-dollar.fa-lg
-                      = text_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                    -#
+                      %br
+                      %div.input-group
+                        %span.input-group-addon
+                          %i.fa.fa-dollar.fa-lg
+                        = text_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                    = hidden_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                 .panel-footer
                   %ul{class: 'list-inline'}
                     %li.calculation_details
@@ -131,59 +135,9 @@
                     %li.pull-right
                       %a.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-check-square.fa-3x.collapse_icon
-      / New item
-      %div.ticket_input_fields_wrap
-        #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-          .panel.panel-default.line-item
-            %div.panel-heading{:role => "tab", id: "heading#{1}"}
-              %h4.panel-title
-                %ul{class: 'list-inline'}
-                  %li
-                    %a.line_item_name.text-success{"aria-controls" => "collapse#{1}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{1}", :role => "button", class: "ticket_collapse_link" }
-                      Choose an item*
-                  %li.pull-right
-                    %a{href: '#', class: 'remove_field'}
-                      %i.fa.fa-trash.fa-lg.text-danger
-            %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
-              .panel-body
-                = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
-                %br
-                %div.input-group.gross_input_group
-                  %span.input-group-addon
-                    %i.fa.fa-plus{style: "font-size:0.7em;"}
-                  = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
-                  %span.input-group-addon
-                    %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => 0}
-                      %i.fa.fa-upload.fa-2x
-                %br
-                %div.input-group.tare_input_group
-                  %span.input-group-addon
-                    %i.fa.fa-minus{style: "font-size:0.7em;"}
-                  = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
-                  %span.input-group-addon
-                    %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => 0}
-                      %i.fa.fa-upload.fa-2x
-                %br
-                %div
-                  = text_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
-                %br
-                %div.input-group
-                  %span.input-group-addon
-                    %i.fa.fa-dollar.fa-lg
-                  = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                %br
-                %div.input-group
-                  %span.input-group-addon
-                    %i.fa.fa-dollar.fa-lg
-                  = text_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
-            %div.panel-footer
-              %ul{class: 'list-inline'}
-                %li.calculation_details
-                %li.pull-right
-                  %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
-                    %i.fa.fa-check-square.fa-3x.collapse_icon
       -#
-        %div.purchase_order_input_fields_wrap
+        / New item
+        %div.ticket_input_fields_wrap
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default.line-item
               %div.panel-heading{:role => "tab", id: "heading#{1}"}
@@ -198,7 +152,6 @@
               %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
                   = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
-                  =# text_field_tag "ticket[ticket_number]", @ticket['TicketNumber'], :placeholder => "Ticket Number", class: "form-control input-lg"
                   %br
                   %div.input-group.gross_input_group
                     %span.input-group-addon
@@ -216,12 +169,25 @@
                       %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => 0}
                         %i.fa.fa-upload.fa-2x
                   %br
-                  = text_field_tag "ticket[line_items][][net]", nil, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true #, readonly: true
+                  %div
+                    = text_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
+                  %br
                   %div.input-group
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg
-                    = text_field_tag "ticket[line_items][][price]", nil, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                  = text_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount", required: true #, readonly: true
+                    = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                  %br
+                  %div.input-group
+                    %span.input-group-addon
+                      %i.fa.fa-dollar.fa-lg
+                    = text_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                  = hidden_field_tag "ticket[line_items][][amount]", 0
+              %div.panel-footer
+                %ul{class: 'list-inline'}
+                  %li.calculation_details
+                  %li.pull-right
+                    %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
+                      %i.fa.fa-check-square.fa-3x.collapse_icon
       -#
         .well
           .row.form-group
@@ -231,15 +197,20 @@
                 = "#{number_to_currency(@ticket['BalanceDue'])}"
       .row.form-group
         %div.col-xs-3.col-sm-3
+          = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
+          %a{ href: line_item_fields_tickets_path(ticket_number: @ticket['TicketNumber']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+            %i.fa.fa-plus
+            Item
+        %div.col-xs-3.col-sm-3
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
             %i.fa.fa-check.fa-lg
             Save
     -#
-    .well
-      %h3 
-        = @ticket['TicketNumber']
-      %p= "Status: #{@ticket['Status']}"
-      %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-      %p= @ticket
+      .well
+        %h3 
+          = @ticket['TicketNumber']
+        %p= "Status: #{@ticket['Status']}"
+        %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+        %p= @ticket
 
 = render partial: "shared/footer_navbar", locals: {title: "Ticket"}

@@ -1,0 +1,25 @@
+$('.calculation_fields').hide();
+$('#items_accordion').find('.collapse.in').collapse('hide');
+$('#items_accordion').find('.fa-check-square').toggleClass('fa-check-square ')
+
+category_options = $(".category_select:last > option").clone();
+options = $(".item_select:last > option").clone();
+selected_category = $('.category_select:last').val()
+
+$('#items_accordion').append("<%= j render(:partial => 'line_item_fields', locals: {index: rand(1..1000000)}) %>");
+$('.category_select:last').append(category_options).find("option:first").attr('selected','selected');
+if (category_options.size() == 0) {$('.category_select:last').hide();}
+$('.category_select:last').val(selected_category);
+$('.item_select:last').append(options).find("option:first").attr('selected','selected');
+
+first_gross_input_group_clone = $(".gross_input_group:first").clone();
+first_tare_input_group_clone = $(".tare_input_group:first").clone();
+
+first_gross_input_group_clone.find('input').val('0');
+first_tare_input_group_clone.find('input').val('0');
+
+$('.gross_input_group:last').replaceWith(first_gross_input_group_clone);
+$('.tare_input_group:last').replaceWith(first_tare_input_group_clone);
+
+$('#spinner').hide();
+$('#add_item_button').show(); 
