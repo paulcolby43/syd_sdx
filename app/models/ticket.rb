@@ -89,6 +89,7 @@ class Ticket
       payload: {
         "TicketHead" => {
           "Id" => guid,
+          "YardId" => yard_id,
           "Status" => status
           }
         })
@@ -165,12 +166,31 @@ class Ticket
       return data["SaveTicketItemResponse"]["Success"]
   end
   
-  def self.void_item(auth_token, yard_id, item_id)
+  def self.void_item(auth_token, yard_id, item_id, commodity_id)
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item/void"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
         "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          #"CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
+          #"DateCreated" => Time.now.utc, 
+          #"ExtendedAmount" => amount, 
+          #"ExtendedAmountInAssignedCurrency" => amount,
+          #"GrossWeight" => gross,
           "Id" => item_id, 
+          #"NetWeight" => net,
+          #"Notes" => "", 
+          #"Price" => price,
+          #"PriceInAssignedCurrency" => price,
+          #"PrintDescription" => commodity_name, 
+          #"Quantity" => amount,
+          #"ScaleUnitOfMeasure" => "LB", 
+          #"Sequence" => "1", 
+          #"SerialNumber" => "", 
+          #"Status" => 'Hold', 
+          #"TareWeight" => tare, 
+          #"TicketHeadId" => ticket_id,
+          #"UnitOfMeasure" => "LB"
           }
         })
       Rails.logger.info response

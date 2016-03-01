@@ -14,12 +14,13 @@ jQuery ->
         e.preventDefault()
         if $(this).hasClass('void_item')
           item_id = $(this).data( "item-id" )
+          commodity_id = $(this).data( "commodity-id" )
           trash_icon = $(this).find( ".fa-trash" )
           trash_icon.hide()
           spinner_icon = $(this).find('.fa-spinner')
           spinner_icon.show()
           $.ajax
-            url: "/tickets/void_item?item_id=" + item_id
+            url: "/tickets/void_item?item_id=" + item_id + "&commodity_id=" + commodity_id
             dataType: 'json'
             success: ->
               $(this).closest('.panel').remove()

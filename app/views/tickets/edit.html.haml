@@ -28,7 +28,7 @@
                           %a.line_item_name.text-success{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
                             = line_item["PrintDescription"]
                         %li.pull-right
-                          %a{href: '#', class: 'void_item remove_field', "data-item-id" => line_item['Id']}
+                          %a{href: '#', class: 'void_item remove_field', "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId']}
                             %i.fa.fa-trash.fa-lg.text-danger
                             %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                   %div{id: "collapse_#{line_item['Id']}", "aria-labelledby" => "heading#{line_item['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
@@ -211,7 +211,7 @@
             %i.fa.fa-check.fa-lg
             Save
         %div.col-xs-3.col-sm-3
-          - unless params[:status] = 'Closed'
+          - unless params[:status] == 'Closed'
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
               %i.fa.fa-folder.fa-lg
               Close

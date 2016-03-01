@@ -85,7 +85,7 @@ class TicketsController < ApplicationController
         end
       end
       if params[:close_ticket]
-        Ticket.update(current_token, current_yard_id, ticket_params[:id], 'Closed')
+        Ticket.update(current_token, current_yard_id, ticket_params[:id], 3)
       end
       if @ticket == 'true'
         format.html { 
@@ -120,7 +120,7 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket = Ticket.void_item(current_token, current_yard_id, params[:item_id])
+        @ticket = Ticket.void_item(current_token, current_yard_id, params[:item_id], params[:commodity_id])
         if @ticket == 'true'
           render json: {}, :status => :ok
         else
