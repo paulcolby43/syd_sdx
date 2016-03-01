@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :tickets do
     collection do
       get :line_item_fields
+      get :void_item
     end
   end
   

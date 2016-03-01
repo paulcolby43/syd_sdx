@@ -5,6 +5,48 @@
 jQuery ->
   wrapper = $('.ticket_input_fields_wrap')
 
+  ### Delete of Commodity Items ###
+  $(wrapper).on 'click', '.remove_field', (e) ->
+    #user click on item trash button
+    if $('.line-item').length > 1
+      confirm1 = confirm('Are you sure you want to delete this?')
+      if confirm1
+        e.preventDefault()
+        if $(this).hasClass('void_item')
+          item_id = $(this).data( "item-id" )
+          trash_icon = $(this).find( ".fa-trash" )
+          trash_icon.hide()
+          spinner_icon = $(this).find('.fa-spinner')
+          spinner_icon.show()
+          $.ajax
+            url: "/tickets/void_item?item_id=" + item_id
+            dataType: 'json'
+            success: ->
+              $(this).closest('.panel').remove()
+              return
+            error: ->
+              spinner_icon.hide()
+              trash_icon.show()
+              alert 'Error voiding item.'
+              return
+        else
+          $(this).closest('.panel').remove()
+        sum = 0;
+        $('.amount').each ->
+          sum += Number($(this).val())
+          return
+        $('#total').text '$' + sum.toFixed(2)
+        return
+      else
+        e.preventDefault()
+        return
+    else
+      alert 'You cannot delete this because you must have at least one item.'
+      e.preventDefault()
+      return
+
+  ### End Delete of Commodity Items ###
+
   ### Start endless page stuff ###
   loading_tickets = false
   $('a.load-more-tickets').on 'inview', (e, visible) ->

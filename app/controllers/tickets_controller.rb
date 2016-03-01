@@ -73,7 +73,6 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1.json
   def update
     respond_to do |format|
-#      Ticket.update(current_token, current_yard_id, ticket_params[:id], ticket_params[:total])
       ticket_params[:line_items].each do |line_item|
         if line_item[:status].blank?
           # Create new item
@@ -84,6 +83,9 @@ class TicketsController < ApplicationController
           @ticket = Ticket.update_item(current_token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
             line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
         end
+      end
+      if params[:close_ticket]
+        Ticket.update(current_token, current_yard_id, ticket_params[:id], 'Closed')
       end
       if @ticket == 'true'
         format.html { 
@@ -111,6 +113,20 @@ class TicketsController < ApplicationController
     @ticke_number = params[:ticket_number]
     respond_to do |format|
       format.js
+    end
+  end
+  
+  def void_item
+    respond_to do |format|
+      format.html {}
+      format.json {
+        @ticket = Ticket.void_item(current_token, current_yard_id, params[:item_id])
+        if @ticket == 'true'
+          render json: {}, :status => :ok
+        else
+          render json: {}, status: :unprocessable_entity
+        end
+      }
     end
   end
 
