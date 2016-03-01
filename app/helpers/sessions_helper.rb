@@ -25,4 +25,20 @@ module SessionsHelper
     @current_user = nil
   end
   
+  def login_required
+    unless logged_in?
+      store_target_location
+      flash[:danger] = "You must first log in or sign up before accessing this page."
+      redirect_to root_path
+    else
+      session[:user_id] = current_user.id
+    end
+  end
+  
+  private
+
+  def store_target_location
+    session[:return_to] = request.url
+  end
+  
 end

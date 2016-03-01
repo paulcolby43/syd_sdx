@@ -1,4 +1,5 @@
 class CommoditiesController < ApplicationController
+  before_filter :login_required
 #  before_action :set_commodity, only: [:show, :edit, :update, :destroy]
 
   # GET /commodities

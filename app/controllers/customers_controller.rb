@@ -1,4 +1,5 @@
 class CustomersController < ApplicationController
+  before_filter :login_required
 #  before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   # GET /customers

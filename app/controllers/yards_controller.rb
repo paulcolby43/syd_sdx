@@ -1,4 +1,5 @@
 class YardsController < ApplicationController
+  before_filter :login_required
 #  before_action :set_yard, only: [:show, :edit, :update, :destroy]
 
   # GET /yards
