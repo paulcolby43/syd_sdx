@@ -66,6 +66,7 @@ class TicketsController < ApplicationController
   # GET /tickets/1/edit
   def edit
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
+    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i['Status'] == 'Closed'}
     @commodities = Commodity.all(current_token, current_yard_id)
   end
 
@@ -76,16 +77,17 @@ class TicketsController < ApplicationController
       ticket_params[:line_items].each do |line_item|
         if line_item[:status].blank?
           # Create new item
-          @ticket = Ticket.add_item(current_token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+          Ticket.add_item(current_token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
             line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
         else
           # Update existing item
-          @ticket = Ticket.update_item(current_token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+          Ticket.update_item(current_token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
             line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
         end
       end
+      @ticket = "true"
       if params[:close_ticket]
-        Ticket.update(current_token, current_yard_id, ticket_params[:id], 1)
+        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:id], 1)
       end
       if @ticket == 'true'
         format.html { 
@@ -120,7 +122,8 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket = Ticket.void_item(current_token, current_yard_id, params[:item_id], params[:commodity_id])
+        @ticket = Ticket.void_item(current_token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
+          params[:tare], params[:net], params[:price], params[:amount])
         if @ticket == 'true'
           render json: {}, :status => :ok
         else

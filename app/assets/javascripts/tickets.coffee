@@ -13,17 +13,23 @@ jQuery ->
       if confirm1
         e.preventDefault()
         if $(this).hasClass('void_item')
+          ticket_id = $(this).data( "ticket-id" )
           item_id = $(this).data( "item-id" )
           commodity_id = $(this).data( "commodity-id" )
+          gross = $(this).data( "gross" )
+          tare = $(this).data( "tare" )
+          net = $(this).data( "net" )
+          price = $(this).data( "price" )
+          amount = $(this).data( "amount" )
           trash_icon = $(this).find( ".fa-trash" )
           trash_icon.hide()
           spinner_icon = $(this).find('.fa-spinner')
           spinner_icon.show()
           $.ajax
-            url: "/tickets/void_item?item_id=" + item_id + "&commodity_id=" + commodity_id
+            url: "/tickets/void_item?ticket_id=" + ticket_id + "&item_id=" + item_id + "&commodity_id=" + commodity_id + "&gross=" + gross + "&tare=" + tare + "&net=" + net + "&price=" + price + "&amount=" + amount
             dataType: 'json'
             success: ->
-              $(this).closest('.panel').remove()
+              trash_icon.closest('.panel').remove()
               return
             error: ->
               spinner_icon.hide()

@@ -22,7 +22,7 @@
           / Multiple ticket line items
           %div.ticket_input_fields_wrap
             #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-              - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+              - @line_items.each do |line_item|
                 .panel.panel-default.line-item
                   %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                     %h4.panel-title
@@ -31,7 +31,7 @@
                           %a.line_item_name.text-success{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
                             = line_item["PrintDescription"]
                         %li.pull-right
-                          %a{href: '#', class: 'void_item remove_field', "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId']}
+                          %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
                             %i.fa.fa-trash.fa-lg.text-danger
                             %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                   %div{id: "collapse_#{line_item['Id']}", "aria-labelledby" => "heading#{line_item['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
