@@ -13,7 +13,10 @@
       .panel.panel-default
         %div.panel-heading{:role => "tab", id: "vendor_heading"}
           %h4.panel-title
-            %div.text-success= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
+            - if not (@ticket["FirstName"].blank? and @ticket["LastName"].blank?)
+              %div.text-success= "#{@ticket['FirstName']} #{@ticket['LastName']}"
+            - else
+              %div.text-success= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
       - unless @ticket["TicketItemCollection"].blank?
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
           / Multiple ticket line items
