@@ -87,7 +87,7 @@ class TicketsController < ApplicationController
       end
       @ticket = "true"
       if params[:close_ticket]
-        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:id], 1)
+        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       end
       if @ticket == 'true'
         format.html { 

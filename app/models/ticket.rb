@@ -83,16 +83,35 @@ class Ticket
       return data["SaveTicketResponse"]["Success"]
   end
   
-  def self.update(auth_token, yard_id, guid, status)
+  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status)
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket"
+    customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
         "TicketHead" => {
           "Id" => guid,
           "YardId" => yard_id,
-          "Status" => status
+          "CustomerId" => customer_id,
+          "FirstName" => customer['FirstName'],
+          "LastName" => customer['LastName'],
+          "Company" => customer['Company'],
+          "PayToId" => "00000000-0000-0000-0000-000000000000",
+          "TicketNumber" => ticket_number,
+          "Status" => status,
+          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a",
+          "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
+          "DateClosed" =>  "",
+          "DateCreated" => Time.now.utc
           }
         })
+      Rails.logger.info guid
+      Rails.logger.info yard_id
+      Rails.logger.info customer_id
+      Rails.logger.info customer['FirstName']
+      Rails.logger.info customer['LastName']
+      Rails.logger.info customer['Company']
+      Rails.logger.info ticket_number
+      Rails.logger.info status
       
       Rails.logger.info response
       data= Hash.from_xml(response)
