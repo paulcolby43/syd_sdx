@@ -104,14 +104,6 @@ class Ticket
           "DateCreated" => Time.now.utc
           }
         })
-      Rails.logger.info guid
-      Rails.logger.info yard_id
-      Rails.logger.info customer_id
-      Rails.logger.info customer['FirstName']
-      Rails.logger.info customer['LastName']
-      Rails.logger.info customer['Company']
-      Rails.logger.info ticket_number
-      Rails.logger.info status
       
       Rails.logger.info response
       data= Hash.from_xml(response)

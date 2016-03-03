@@ -66,7 +66,7 @@ class TicketsController < ApplicationController
   # GET /tickets/1/edit
   def edit
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i['Status'] == 'Closed'}
+    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i['Status'] == 'Closed'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
   end
 
