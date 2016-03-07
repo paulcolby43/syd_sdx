@@ -1,0 +1,11 @@
+$('#images').append('<div class="row"><%= j render @images %></div>');
+$('#more_images_spinner').hide();
+
+<% if @images.next_page %>
+  $('a.load-more-images').show();
+  $('a.load-more-images').attr('href', '<%= advanced_search_images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-images').attr('href', '#');
+  $('a.reload-images').show();
+<% end %>

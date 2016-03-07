@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: number_to_currency(@ticket['BalanceDue'])}
+= render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -6,7 +6,7 @@
       = @ticket['CustomerID']
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
-          = hidden_field_tag "ticket[ticket_number]", @ticket["TicketNumber"]
+          = hidden_field_tag "ticket[ticket_number]", @ticket_number
           = hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
           =# hidden_field_tag "ticket[id]", @ticket['Id']
           -#
@@ -208,7 +208,7 @@
       .row.form-group
         %div.col-xs-3.col-sm-3
           = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
-          %a{ href: line_item_fields_tickets_path(ticket_number: @ticket['TicketNumber']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+          %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
             %i.fa.fa-plus
             Item
         %div.col-xs-3.col-sm-3
@@ -220,15 +220,22 @@
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
               %i.fa.fa-folder.fa-lg
               Close
-      %hr
-      %div#images
-        - @images.each do |image|
-          .col-xs-12.col-sm-2.col-md-2
-            = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+    %hr
+    %div#images
+      -#
+        %p
+          - @images.each do |image|
+            .col-xs-12.col-sm-2.col-md-2
+              = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+
+    %div{id: 'endless_page'}
+      %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+      %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, location_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
+      %p= link_to 'Re-load pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, location_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'reload-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#images').empty(); $('a.load-more-images').attr('href', '<%= images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');", style: "display:none;" 
     -#
       .well
         %h3 
-          = @ticket['TicketNumber']
+          = @ticket_number
         %p= "Status: #{@ticket['Status']}"
         %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
         %p= @ticket

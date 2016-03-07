@@ -1,5 +1,16 @@
 Rails.application.routes.draw do
   
+  resources :images do
+    member do
+      get 'show_jpeg_image'
+      get 'show_preview_image'
+      get 'send_pdf_data'
+    end
+    collection do
+      get 'advanced_search'
+    end
+  end
+  
   ### Start sidekiq stuff ###
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|

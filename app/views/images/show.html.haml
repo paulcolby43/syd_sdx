@@ -1,0 +1,48 @@
+= render partial: "shared/search_navbar", locals: {title: "#{@image.ticket_nbr}"}
+.container
+  - if @image.signature?
+    %h3
+      - unless current_company.jpegger_contract.blank?
+        = current_company.jpegger_contract.verbiage.html_safe
+      -#
+        - unless current_user.default_contract_wording.blank?
+          = current_user.default_contract_wording
+        - else
+          = default_contract
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      =# link_to image_tag(show_jpeg_image_image_path(@image), alt: @image.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+      - unless @image.pdf?
+        = link_to image_tag(@image.jpeg_image_data_uri, alt: @image.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+      - else
+        %p.lead.text-center
+          %a{href: send_pdf_data_image_path(@image)}
+            %i.fa.fa-file-pdf-o.fa-lg
+            Download PDF
+  - unless mobile_device?
+    %div{:id => "image_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+      .modal-dialog.modal-lg
+        .modal-content
+          .modal-body
+            =# image_tag(show_jpeg_image_image_path(@image), alt: @image.id, class: 'img-responsive')
+            = image_tag(@image.jpeg_image_data_uri, alt: @image.id, class: 'img-responsive')
+  %div.row
+    .col-xs-12.col-sm-6.col-md-offset-3
+      %div.panel.panel-primary
+        %div.list_group
+          - unless @image.event_code.blank?
+            %div.list-group-item
+              %strong= "Event:"
+              .pull-right
+                = "#{@image.event_code}"
+          - unless @image.camera_name.blank?
+            %div.list-group-item
+              %strong= "Camera:"
+              .pull-right
+                = "#{@image.camera_name}"
+          %div.list-group-item
+            %strong= "Date/Time:"
+            .pull-right
+              = "#{@image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")}"
+
+= render partial: "shared/footer_navbar", locals: {title: "Images"}

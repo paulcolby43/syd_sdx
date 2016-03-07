@@ -1,0 +1,25 @@
+.col-xs-12.col-sm-2.col-md-2
+  %div.panel.panel-primary
+    %div.list_group
+      - unless @today == true or params[:q].blank? or (@ticket_number.blank? and params[:one_image_per_ticket] != '0' and params[:action]=='index')
+        %a{href: image_path(image), class: "list-group-item"}
+          - unless image.hidden? #or not current_user.show_thumbnails?
+            = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+          = image.ticket_nbr
+          .pull-right
+            %i.fa.fa-chevron-right
+          - unless image.event_code.blank?
+            %br/
+            %small= image.event_code
+          - unless image.camera_name.blank?
+            %br/
+            %small= image.camera_name
+          %br/
+          %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
+      - else
+        %a{href: images_path("q[ticket_nbr_eq]" => image.ticket_nbr, "q[location_eq]" => current_user.location), class: "list-group-item"}
+          - unless image.hidden? #or not current_user.show_thumbnails?
+            = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+          = image.ticket_nbr
+          .pull-right
+            %i.fa.fa-chevron-right

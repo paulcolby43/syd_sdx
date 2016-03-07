@@ -1,0 +1,16 @@
+.field.row
+  %div{:class => "col-xs-12 col-sm-3 col-md-3"}
+    .input-group
+      = f.attribute_fields do |a|
+        =# a.attribute_select({associations: [:category]}, class: "form-control input-lg")
+        = a.attribute_select({:include_blank => false}, {class: "form-control input-lg"})
+  %div{:class => "col-xs-12 col-sm-3 col-md-3"}
+    .input-group
+      = f.predicate_select({only: %i(cont eq not_eq gt lt gteq lteq), default: 'eq'}, {class: "form-control input-lg"})
+  = f.value_fields do |v|
+    %div{:class => "col-xs-12 col-sm-3 col-md-3"}
+      .input-group
+        = v.search_field :value, class: "form-control input-lg"
+  %div{:class => "col-xs-12 col-sm-1 col-md-1"}
+    = link_to "Remove", '#', class: "remove_fields"
+%br
