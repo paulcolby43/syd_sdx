@@ -15,6 +15,7 @@
 //= require twbs/bootstrap
 //= require turbolinks
 //= require jquery.turbolinks
+//= require checkbox-x.min.js
 //= require jquery-fileupload/jquery.tmpl.min.js
 //= require jquery-fileupload/jquery.load-image.min.js
 //= require jquery-fileupload/jquery.canvas-to-blob.min.js

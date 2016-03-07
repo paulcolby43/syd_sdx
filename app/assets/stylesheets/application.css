@@ -12,6 +12,9 @@
  *
  *= stub twbs-variables
  *= require twbs
+ *= require checkbox-x.min.css
+ *= jquery.fileupload.css
+ *= jquery.fileupload-ui.css
  *= require_tree .
  *= require_self
  */

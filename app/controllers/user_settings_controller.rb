@@ -1,7 +1,7 @@
 class UserSettingsController < ApplicationController
   before_filter :login_required
 #  load_and_authorize_resource
-  before_action :set_user_setting, only: [:show, :update, :set_device_group]
+  before_action :set_user_setting, only: [:show, :edit, :update, :set_device_group]
 
   # GET /user_settings
   # GET /user_settings.json
@@ -45,12 +45,18 @@ class UserSettingsController < ApplicationController
   def update
     respond_to do |format|
       if @user_setting.update(user_setting_params)
-        format.html { redirect_to root_path, notice: 'User setting was successfully updated.' }
+        format.html { 
+          flash[:success] = 'User setting was successfully updated.'
+          redirect_to root_path
+          }
 #        format.html { redirect_to @user_setting, notice: 'User setting was successfully updated.' }
         format.json { render :show, status: :ok, location: @user_setting }
 #        format.js { render js: "alert('User setting was successfully updated.')" }
       else
-        format.html { render :edit }
+        format.html { 
+          flash.now[:danger] = 'Error updating ticket.'
+          render :edit 
+          }
         format.json { render json: @user_setting.errors, status: :unprocessable_entity }
 #        format.js { render js: "alert('User setting update failed.')" }
       end
