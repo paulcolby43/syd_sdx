@@ -1,0 +1,78 @@
+= render partial: "shared/search_navbar", locals: {title: "#{@image_file.ticket_number}"}
+.container
+  %div.row
+    .col-xs-12.col-sm-6.col-md-offset-3
+      = link_to image_tag(@image_file.file_url, alt: @image_file.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+  %div{:id => "image_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-body
+          = image_tag(@image_file.file_url, alt: @image_file.id, class: 'img-responsive')
+  %div.row
+    .col-xs-12.col-sm-6.col-md-offset-3
+      %div.panel.panel-primary
+        %div.list_group
+          - unless @image_file.event_code.blank?
+            %div.list-group-item
+              %strong= "Event:"
+              .pull-right
+                = "#{@image_file.event_code}"
+          %div.list-group-item
+            %strong= "Date/Time:"
+            .pull-right
+              = "#{@image_file.created_at.strftime("%-m/%-d/%y %l:%M %p")}"
+
+= render partial: "shared/footer_navbar", locals: {title: "Images"}
+
+
+-#
+  %p#notice= notice
+
+  %p
+    %b Ticket number:
+    = @image_file.ticket_number
+  %p
+    %b File:
+    = image_tag(@image_file.file)
+
+  -#
+    %p
+      %b User:
+      = @image_file.user_id
+    %p
+      %b Name:
+      = @image_file.name
+    %p
+      %b Customer number:
+      = @image_file.customer_number
+    %p
+      %b Branch code:
+      = @image_file.branch_code
+    %p
+      %b Location:
+      = @image_file.location
+    %p
+      %b Event code:
+      = @image_file.event_code
+    %p
+      %b Image:
+      = @image_file.image_id
+    %p
+      %b Container number:
+      = @image_file.container_number
+    %p
+      %b Booking number:
+      = @image_file.booking_number
+    %p
+      %b Contract number:
+      = @image_file.contract_number
+    %p
+      %b Hidden:
+      = @image_file.hidden
+    %p
+      %b Blob:
+      = @image_file.blob_id
+
+    = link_to 'Edit', edit_image_file_path(@image_file)
+    \|
+    = link_to 'Back', image_files_path

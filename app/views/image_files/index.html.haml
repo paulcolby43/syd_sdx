@@ -1,0 +1,47 @@
+%h1 Listing image_files
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th File
+      %th User
+      %th Ticket number
+      %th Customer number
+      %th Branch code
+      %th Location
+      %th Event code
+      %th Image
+      %th Container number
+      %th Booking number
+      %th Contract number
+      %th Hidden
+      %th Blob
+      %th
+      %th
+      %th
+
+  %tbody
+    - @image_files.each do |image_file|
+      %tr
+        %td= image_file.name
+        %td= image_file.file
+        %td= image_file.user_id
+        %td= image_file.ticket_number
+        %td= image_file.customer_number
+        %td= image_file.branch_code
+        %td= image_file.location
+        %td= image_file.event_code
+        %td= image_file.image_id
+        %td= image_file.container_number
+        %td= image_file.booking_number
+        %td= image_file.contract_number
+        %td= image_file.hidden
+        %td= image_file.blob_id
+        %td= link_to 'Show', image_file
+        %td= link_to 'Edit', edit_image_file_path(image_file)
+        %td= link_to 'Destroy', image_file, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Image file', new_image_file_path

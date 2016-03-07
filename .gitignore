@@ -15,3 +15,21 @@
 /log/*
 !/log/.keep
 /tmp
+
+# Ignore application configuration
+/config/application.yml
+
+# Ignore uploaded images.
+public/uploads/*
+/nbproject/private/
+
+# Ignore Leads Online XML files.
+public/leads_online/*
+
+# Ignore BWI XML files.
+public/bwi/*
+
+# Ignore public assets
+public/assets/
+
+dump.rdb

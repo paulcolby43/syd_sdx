@@ -1,0 +1,13 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+
+<% if @image_file.new_record? %>
+  alert("Failed to upload picture <%= j @image_file.errors.full_messages.join(', ').html_safe %>");
+<% else %>
+  $("#pictures").prepend("<%= j render(@image_file) %>");
+  $(".picture_loading_spinner").hide();
+  $('#signature_form').modal('hide');
+<% end %>

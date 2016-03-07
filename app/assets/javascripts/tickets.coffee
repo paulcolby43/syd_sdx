@@ -143,3 +143,65 @@ jQuery ->
   $(document).on 'click', '.ticket_collapse_link', (e) ->
     $(this).closest('.panel').find('.collapse_icon').toggleClass('fa-check-square ')
     return
+
+  ### Prettier file upload buttons ###
+  $('input[type=file]').bootstrapFileInput()
+
+  ### File upload ###
+  $("#new_image_file").fileupload
+    dataType: "script"
+    disableImageResize: false
+    imageMaxWidth: 1024
+    imageMaxHeight: 768
+    imageMinWidth: 800
+    imageMinHeight: 600
+    imageCrop: false
+
+    add: (e, data) ->
+      file = undefined
+      types = undefined
+      types = /(\.|\/)(gif|jpe?g|png|pdf)$/i
+      file = data.files[0]
+      if types.test(file.type) or types.test(file.name)
+        data.context = $(tmpl("template-upload", file))
+        current_data = $(this)
+        data.process(->
+          current_data.fileupload 'process', data
+        ).done ->
+          data.submit()
+        $('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        $('#images').prepend('<div class="row"><div class="col-xs-12 col-sm-2 col-md-2 col-lg-2"><div class="thumbnail"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        $(".picture_loading_spinner").show()
+      else
+        alert "" + file.name + " is not a gif, jpeg, or png picture file"
+
+    progress: (e, data) ->
+      if data.context
+        progress = parseInt(data.loaded / data.total * 100, 10)
+        data.context.find('.progress-bar').css('width', progress + '%')
+  ### End file upload ###
+
+  ### Gross/Tare Picture Uploads ###
+  $('.ticket_input_fields_wrap').on 'click', '.gross_or_tare_picture_button', ->
+    event_code = $(this).data( "event-code" )
+    item_id = $(this).data( "item-id" )
+    item_name = $(this).data( "item-name" )
+    weight = $(this).data( "weight" )
+
+    $('#image_file_event_code').val event_code
+    $('#image_file_tare_seq_nbr').val item_id
+    $('#image_file_commodity_name').val item_name
+    $('#image_file_weight').val weight
+
+    $('input[type=file]').trigger 'click'
+    false
+  ### End Gross/Tare Picture Uploads ###
+
+  ### Clear the commodity picture upload fields for generic picture uploads ###
+  $(document).on 'click', '#picture_upload_modal_link', ->
+    $('#image_file_event_code').val ''
+    $('#image_file_tare_seq_nbr').val ''
+    $('#image_file_commodity_name').val ''
+    $('#image_file_weight').val ''
+    return
+  ### End clear the commodity picture upload fields for generic picture uploads ###

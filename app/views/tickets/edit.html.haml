@@ -47,7 +47,7 @@
                           %i.fa.fa-plus{style: "font-size:0.7em;"}
                         = phone_field_tag "ticket[line_items][][gross]", line_item['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                         %span.input-group-addon
-                          %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => line_item['GrossWeight']}
+                          %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
                       %br
                       %div.input-group.tare_input_group
@@ -55,7 +55,7 @@
                           %i.fa.fa-minus{style: "font-size:0.7em;"}
                         = phone_field_tag "ticket[line_items][][tare]", line_item['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                         %span.input-group-addon
-                          %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => line_item['TareWeight']}
+                          %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
                       %br
                       %div
@@ -107,7 +107,7 @@
                         %i.fa.fa-plus{style: "font-size:0.7em;"}
                       = phone_field_tag "ticket[line_items][][gross]", @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                       %span.input-group-addon
-                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']}
+                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
                     %br
                     %div.input-group.tare_input_group
@@ -115,7 +115,7 @@
                         %i.fa.fa-minus{style: "font-size:0.7em;"}
                       = phone_field_tag "ticket[line_items][][tare]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                       %span.input-group-addon
-                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}
+                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
                     %br
                     %div
@@ -141,7 +141,7 @@
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
                     %li.pull-right
                       %a.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", class: 'pull-right ticket_collapse_link' }
-                        %i.fa.fa-check-square.fa-3x.collapse_icon
+                        %i.fa.fa-3x.collapse_icon
       - else
         / New item
         %div.ticket_input_fields_wrap
@@ -220,12 +220,17 @@
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
               %i.fa.fa-folder.fa-lg
               Close
+      %hr
+      %div#images
+        - @images.each do |image|
+          .col-xs-12.col-sm-2.col-md-2
+            = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
     -#
-    .well
-      %h3 
-        = @ticket['TicketNumber']
-      %p= "Status: #{@ticket['Status']}"
-      %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-      %p= @ticket
+      .well
+        %h3 
+          = @ticket['TicketNumber']
+        %p= "Status: #{@ticket['Status']}"
+        %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+        %p= @ticket
 
-= render partial: "shared/footer_navbar", locals: {title: "Ticket"}
+= render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}

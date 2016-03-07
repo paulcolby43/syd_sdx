@@ -17,4 +17,20 @@ test:
 production:
   <<: *default
   database: db/development.sqlite3_production
+  
+jpegger:
+  adapter: sqlserver
+  host: <%= ENV["JPEGGER_HOST"] %>
+  username: <%= ENV["JPEGGER_USERNAME"] %>
+  password: <%= ENV["JPEGGER_PASSWORD"] %>
+  database: <%= ENV["JPEGGER_DATABASE"] %>
+  port: <%= ENV["JPEGGER_PORT"] %>
+  
+tud_config:
+  adapter: sqlserver
+  host: <%= ENV["TUD_CONFIG_HOST"] %>
+  username: <%= ENV["TUD_CONFIG_USERNAME"] %>
+  password: <%= ENV["TUD_CONFIG_PASSWORD"] %>
+  database: <%= ENV["TUD_CONFIG_DATABASE"] %>
+  port: <%= ENV["TUD_CONFIG_PORT"] %>
 

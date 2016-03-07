@@ -1,9 +1,14 @@
 source 'https://rubygems.org'
 
-ruby '2.2.3'
+#ruby '2.2.3'
+## Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+#gem 'rails', '4.2.5.1'
+##ruby-gemset=rails425
+
+ruby '2.1.2'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.5.1'
-#ruby-gemset=rails425
+gem 'rails', '4.1.8'
+#ruby-gemset=rails418
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
@@ -54,6 +59,29 @@ gem "bcrypt", :require => "bcrypt"
 
 # Pagination
 gem 'kaminari-bootstrap'
+
+# Background jobs
+gem 'sidekiq'
+
+# Image processing
+gem 'rmagick', :require => false
+
+# File uploads for Rails, Sinatra and other Ruby web frameworks - https://github.com/carrierwaveuploader/carrierwave
+gem 'carrierwave'
+
+# Set environment variables within application.yml
+gem "figaro"
+
+# Connect to MS SQL Database
+gem 'tiny_tds' 
+gem 'activerecord-sqlserver-adapter'
+
+# Needed for sidekiq  web interface 
+gem 'sinatra', :require => nil
+
+# Multi-parameter searching
+gem "polyamorous"#, :github => "activerecord-hackery/polyamorous"
+gem "ransack"#, github: "activerecord-hackery/ransack", branch: "rails-4.1"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

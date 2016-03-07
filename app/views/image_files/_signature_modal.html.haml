@@ -1,0 +1,63 @@
+%div{:id => "signature_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_for ImageFile.new, remote: true do |f|
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-header
+          %p= link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+        .modal-body
+          = f.hidden_field :user_id, value: current_user.id
+          = f.hidden_field :location, value: current_company_id
+          = f.hidden_field :ticket_number, value: @doc_number
+          = f.hidden_field :event_code, value: 'SIGNATURE CAPTURE'
+          = f.hidden_field :customer_number, value: @vendor.id unless @vendor.blank?
+          = f.hidden_field :customer_name, value: @vendor.display_name unless @vendor.blank?
+          =# f.hidden_field :customer_number, value: @customer.id
+          =# f.hidden_field :customer_name, value: @customer.full_name
+          %h3
+            - unless current_company.jpegger_contract.blank?
+              = current_company.jpegger_contract.verbiage.html_safe
+            -#
+              - unless current_user.default_contract_wording.blank?
+                = current_user.default_contract_wording
+              - else
+                = default_contract
+          .form-group
+            .sigPad
+              %div.sigNav
+                .clearButton
+                  %a{href: "#clear", class: 'pull-right'} Clear signature
+              .sig.sigWrapper
+                .typed
+                %canvas.pad{height: "105", width: "698"}
+                %input.output{name: "output", type: "hidden"}/
+          %hr
+          %p
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', id: "new_image_file_submit", data: { disable_with: "Please wait..." }) do
+              I accept the terms of this agreement
+-#
+  %div{:id => "signature_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+    .modal-dialog
+      .modal-content
+        .modal-body
+          %form.sigPad{action: signature_purchase_order_path, method: "post"}
+            %div.sigNav
+              .clearButton
+                %a{href: "#clear", class: 'pull-right'} Clear
+            .sig.sigWrapper
+              %canvas.pad{height: "75", width: "498"}
+              %input.output{name: "output", type: "hidden"}/
+            .modal-footer
+              %button.btn.btn-primary.btn-lg.pull-right{type: "submit"} I accept the terms of this agreement
+          -#
+            .modal-footer
+              %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} x
+              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', id: "new_signature_submit") do
+                Upload
+                %i.fa.fa-arrow-up
+
+:javascript
+  //$('input[type=file]').bootstrapFileInput();
+
+  $(document).ready(function() {
+    $('.sigPad').signaturePad({drawOnly:true, lineWidth: 0});
+  });
