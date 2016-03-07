@@ -16,38 +16,6 @@ jQuery ->
       loading_images = false
   ### End endless page stuff ###
 
-  ### Start typeahead.js stuff ###
-  substringMatcher = (strs) ->
-    (q, cb) ->
-      matches = undefined
-      substrRegex = undefined
-      # an array that will be populated with substring matches
-      matches = []
-      # regex used to determine if a string contains the substring `q`
-      substrRegex = new RegExp(q, 'i')
-      # iterate through the pool of strings and for any string that
-      # contains the substring `q`, add it to the `matches` array
-      $.each strs, (i, str) ->
-        if substrRegex.test(str)
-          # the typeahead jQuery plugin expects suggestions to a
-          # JavaScript object, refer to typeahead docs for more info
-          matches.push value: str
-        return
-      cb matches
-      return
-
-  # All current event codes
-  event_codes = $("#image_file_event_code").data('events')
-  $('#event_code .typeahead').typeahead {
-    hint: true
-    highlight: true
-    minLength: 1
-  },
-    name: 'event_codes'
-    displayKey: 'value'
-    source: substringMatcher(event_codes)
-  ### End typeahead.js stuff ###
-
   $('form').on 'click', '.remove_fields', (event) ->
     $(this).closest('.field').remove()
     event.preventDefault()

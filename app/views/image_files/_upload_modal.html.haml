@@ -15,10 +15,10 @@
           = f.hidden_field :commodity_name
           = f.hidden_field :weight
           .form-group
-            = f.text_field :ticket_number, :placeholder => "Ticket Number", value: @ticket["TicketNumber"], class: "form-control input-lg", required: true, readonly: true
+            = f.hidden_field :ticket_number, :placeholder => "Ticket Number", value: @ticket["TicketNumber"], class: "form-control input-lg", required: true, readonly: true
           .form-group{:id => "event_code"}
-            =# f.label "Event Code", :class => 'control-label'
-            =# f.select :event_code, options_for_select(ticket_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
+            = f.label "Event Code", :class => 'control-label'
+            = f.select :event_code, options_for_select(ticket_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
           .form-group{id: 'vin_form_group', style: 'display:none;'}
             =# f.label "VIN", :class => 'control-label'
             =# f.text_field :vin_number, :placeholder => "Vehicle ID Number", class: "form-control input-lg", required: true
@@ -27,7 +27,7 @@
             =# f.text_field :tag_number, :placeholder => "License Plate Number", class: "form-control input-lg", required: true
           
           %div{:id => 'uploads', :style => 'display:block;'}
-            %p{id: "upload_button", style: "display:block;"}
+            %p{id: "upload_button", style: "display:none;"}
               = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
               -#
                 / Devices

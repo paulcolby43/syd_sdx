@@ -222,11 +222,6 @@
               Close
     %hr
     %div#images
-      -#
-        %p
-          - @images.each do |image|
-            .col-xs-12.col-sm-2.col-md-2
-              = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
 
     %div{id: 'endless_page'}
       %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")

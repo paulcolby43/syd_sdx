@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  resources :user_settings
+  
   resources :images do
     member do
       get 'show_jpeg_image'

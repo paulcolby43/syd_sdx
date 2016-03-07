@@ -5,6 +5,9 @@ class User < ActiveRecord::Base
   after_create :generate_token
   
   has_one :access_token
+  has_one :user_setting
+  
+  after_commit :create_user_settings, :on => :create
   
   ############################
   #     Instance Methods     #
@@ -30,6 +33,26 @@ class User < ActiveRecord::Base
   
   def yards
     Yard.find_all(self)
+  end
+  
+  def create_user_settings
+    UserSetting.create(user_id: id)
+  end
+  
+  def show_thumbnails?
+    user_setting.show_thumbnails?
+  end
+  
+  def show_customer_thumbnails?
+    user_setting.show_customer_thumbnails?
+  end
+  
+  def images_table?
+    user_setting.table_name == "images"
+  end
+  
+  def shipments_table?
+    user_setting.table_name == "shipments"
   end
   
   #############################

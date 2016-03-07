@@ -4,7 +4,7 @@
       .modal-content
         .modal-body
           = hidden_field_tag "q[hidden_blank]", 1
-          = hidden_field_tag "q[location_eq]", current_user.location unless current_user.location.blank?
+          = hidden_field_tag "q[location_eq]", current_yard_id
           %div.form-group.has-feedback{:id => "ticket_search", :class => "col-xs-12"}
             = label_tag "Ticket Number", nil, :class => 'control-label'
             .input-group
