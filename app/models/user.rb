@@ -43,6 +43,10 @@ class User < ActiveRecord::Base
     user_setting.show_thumbnails?
   end
   
+  def show_ticket_thumbnails?
+    user_setting.show_ticket_thumbnails?
+  end
+  
   def show_customer_thumbnails?
     user_setting.show_customer_thumbnails?
   end
