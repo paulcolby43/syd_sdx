@@ -4,6 +4,39 @@
 
 jQuery ->
 
+  ### Picture Uploads ###
+  $("#new_cust_pic_file").fileupload
+    dataType: "script"
+    disableImageResize: false
+    imageMaxWidth: 1024
+    imageMaxHeight: 768
+    imageMinWidth: 800
+    imageMinHeight: 600
+    imageCrop: false
+
+    add: (e, data) ->
+      file = undefined
+      types = undefined
+      types = /(\.|\/)(gif|jpe?g|png|pdf)$/i
+      file = data.files[0]
+      if types.test(file.type) or types.test(file.name)
+        data.context = $(tmpl("template-upload", file))
+        current_data = $(this)
+        data.process(->
+          current_data.fileupload 'process', data
+        ).done ->
+          data.submit()
+        $('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        $('#cust_pics').prepend('<div class="row"><div class="col-xs-12 col-sm-2 col-md-2 col-lg-2"><div class="thumbnail"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        $(".picture_loading_spinner").show()
+      else
+        alert "" + file.name + " is not a gif, jpeg, or png picture file"
+
+    progress: (e, data) ->
+      if data.context
+        progress = parseInt(data.loaded / data.total * 100, 10)
+        data.context.find('.progress-bar').css('width', progress + '%')
+
   ### Start endless page stuff ###
   loading_customers = false
   $('a.load-more-customers').on 'inview', (e, visible) ->
@@ -23,3 +56,17 @@ jQuery ->
       $.rails.enableElement $(this)
       return
     return
+
+  ### Event code changed - check if Vehicle ###
+  $('#cust_pic_file_event_code').on 'change', ->
+    input_select = $(this)
+    if input_select.val() == 'Vehicle'
+      $('#tag_form_group').show()
+      $('#vin_form_group').show()
+    else
+      $('#tag_form_group').hide()
+      $('#cust_pic_file_tag_number').val ''
+      $('#vin_form_group').hide()
+      $('#cust_pic_file_vin_number').val ''
+    return
+  ### End event code changed - check if Vehicle ###

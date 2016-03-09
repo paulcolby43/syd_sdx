@@ -1,0 +1,32 @@
+- if @today == true
+  = render partial: "shared/search_navbar", locals: {title: Date.today.strftime("%-m/%-d/%y")}
+- else
+  =# render partial: "shared/search_navbar", locals: {title: "#{@ticket_number.blank? ? 'Search' : @ticket_number}"}
+
+.container
+  - if @cust_pics.blank?
+    .jumbotron
+      %p.text-center No results found
+  %div{id: "cust_pics"}
+    - @cust_pics.each_slice(6) do |cust_pics|
+      %div.row
+        - cust_pics.each do |cust_pic|
+          .col-xs-12.col-sm-2.col-md-2
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: cust_pic_path(cust_pic), class: "list-group-item"}
+                  - unless cust_pic.hidden? or not current_user.show_vendor_thumbnails?
+                    =# image_tag(show_preview_image_cust_pic_path(cust_pic), alt: cust_pic.id, class: 'thumbnail img-responsive')
+                    = image_tag(cust_pic.preview_data_uri, alt: cust_pic.id, class: 'thumbnail img-responsive')
+                  = "#{cust_pic.first_name}  #{cust_pic.last_name}"
+                  - unless cust_pic.event_code.blank?
+                    %br/
+                    %small= cust_pic.event_code
+                  
+  .row
+    .text-center
+      %div{id: 'endless_page'}
+        %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+        %p= link_to 'Load more ...', cust_pics_path(:page => @cust_pics.next_page, :q => params[:q]), :class => 'load-more-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" if @cust_pics.next_page
+  
+= render partial: "shared/footer_navbar", locals: {title: "Images"}

@@ -1,0 +1,47 @@
+%div{:id => "search_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_tag images_path, :method => 'get', :class => "form-inline" do
+    .modal-dialog.modal-sm
+      .modal-content
+        .modal-body
+          = hidden_field_tag "q[hidden_blank]", 1
+          = hidden_field_tag "q[location_eq]", current_user.location unless current_user.location.blank?
+          %div.form-group.has-feedback{:id => "ticket_search"}
+            = label_tag "Ticket Number", nil, :class => 'control-label'
+            .input-group
+              = search_field_tag "q[ticket_nbr_eq]", nil, :placeholder => "Ticket Number", value: @ticket_number, class: "form-control input-lg"
+              %span.input-group-addon 
+                %a{href: '#', onclick: "$('#q_ticket_nbr_eq').val('');"}
+                  %i.fa.fa-remove.fa-lg
+          .form-group
+            = label_tag "Start Date", nil, :class => 'control-label'
+            .input-group
+              = date_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg"
+              %span.input-group-addon 
+                %a{href: '#', onclick: "$('#q_sys_date_time_gteq').val('');"}
+                  %i.fa.fa-remove.fa-lg
+          .form-group
+            = label_tag "End Date", nil, :class => 'control-label'
+            .input-group
+              = date_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg"
+              %span.input-group-addon 
+                %a{href: '#', onclick: "$('#q_sys_date_time_lteq').val('');"}
+                  %i.fa.fa-remove.fa-lg
+          - if @ticket_number.blank?
+            .form-group
+              %br/
+              = label_tag :one_image_per_ticket, "One result per ticket", :class => 'control-label'
+              =# hidden_field_tag :one_image_per_ticket, '0'
+              =# check_box_tag :one_image_per_ticket, 1, params[:one_image_per_ticket] != '0', id: "one_image_check_box"
+              = check_box_tag :one_image_per_ticket, 1,  params[:one_image_per_ticket] != '0', id: "one_image_check_box", class: 'input-lg', "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "#{(params[:one_image_per_ticket] != '0') ? '1' : '0'}"
+          - else
+            .form-group
+              %br/
+              = label_tag :one_image_per_ticket, "One result per ticket", :class => 'control-label'
+              =# check_box_tag :one_image_per_ticket, 1, false, id: "one_image_check_box"
+              = check_box_tag :one_image_per_ticket, 1, false, class: 'input-lg', "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "0"
+          
+        .modal-footer
+          %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} x
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg') do
+            Search
+            %i.fa.fa-search

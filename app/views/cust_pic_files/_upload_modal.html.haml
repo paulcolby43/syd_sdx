@@ -1,0 +1,111 @@
+%div{:id => "upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_for CustPicFile.new do |f|
+    .modal-dialog.modal-sm
+      .modal-content
+        .modal-header
+          = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+          %br
+        .modal-body
+          = f.hidden_field :user_id, value: current_user.id
+          = f.hidden_field :customer_number, value: @customer['Id']
+          = f.hidden_field :location, value: current_yard_id
+          .form-group{:id => "event_code"}
+            = f.label "Event Code", :class => 'control-label'
+            = f.select :event_code, options_for_select(cust_pic_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
+          .form-group{id: 'vin_form_group', style: 'display:none;'}
+            = f.label "VIN", :class => 'control-label'
+            = f.text_field :vin_number, :placeholder => "Vehicle ID Number", class: "form-control input-lg", required: true
+          .form-group{id: 'tag_form_group', style: 'display:none;'}
+            = f.label "License Plate", :class => 'control-label'
+            = f.text_field :tag_number, :placeholder => "License Plate Number", class: "form-control input-lg", required: true
+
+          %div{:id => 'uploads', :style => 'display:block;'}
+            %p{id: "upload_button", style: "display:none;"}
+              = f.file_field :file, name: "cust_pic_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+              -#
+                / Devices
+                - unless current_user.customer_camera.blank?
+                  %a{href: '#', style: "color: hotpink;", class: "customer_camera_trigger btn btn-lg btn-block btn-default", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => current_user.customer_camera, title: current_user.customer_camera}
+                    %i.fa.fa-camera
+                    %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                    Customer Camera
+                - current_user.scanner_devices.each do |scanner_device|
+                  %a{href: '#', class: "customer_scanner_trigger btn btn-lg btn-block btn-info", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => scanner_device.DeviceName, title: scanner_device.DeviceName}
+                    %i.fa.fa-newspaper-o
+                    %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                    Scanner
+                - current_user.scale_devices.each do |scale_device|
+                  - if scale_device.scale_camera_only?
+                    %a{href: '#', style: "color: hotpink;", class: "customer_scale_camera_trigger btn btn-default btn-lg btn-block", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => scale_device.DeviceName, title: scale_device.DeviceName }
+                      %i.fa.fa-camera
+                      %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                      = scale_device.DeviceName
+                  - else
+                    %a{href: '#', class: "customer_scale_camera_trigger btn btn-default btn-lg btn-block", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => scale_device.DeviceName, title: scale_device.DeviceName }
+                      %i.fa.fa-camera
+                      %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                      = scale_device.DeviceName
+          .picture_loading_spinner{:style => "display:none;", :id => "spinner"}
+            = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+            Uploading ...
+          
+          #pictures
+
+          .clear
+          %script{:id => "template-upload", :type => "text/x-tmpl"}
+            .upload
+              {%=o.name%}
+              .progress.progress-striped
+                .progress-bar{:style => "width: 0%"}
+          %script{:id => "template-download", :type => "text/x-tmpl"}
+            .download
+              {%=o.name%}
+        
+        .modal-footer
+          %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
+
+:javascript
+
+  //Required attribute fallback
+  function attributeSupported(attribute) {
+    return (attribute in document.createElement("input"));
+  }
+  function isSafariOnly() {
+    return navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
+  }
+  $(function () {
+    $('#new_cust_pic_file').submit(function () {
+      if (!attributeSupported("required") || isSafariOnly()) {
+        $("#new_cust_pic_file [required]").each(function (index) {
+          if (!$(this).val()) {
+            alert("Please Fill In All Required Fields.");
+            return false;
+          }
+        });
+      }
+      return true;
+    });
+  });
+
+  // Don't allow for form submit until form fields completed
+  $("#new_cust_pic_file_submit").hide();
+
+  // Make check if file changes
+  $("#cust_pic_file_file").on("change", function() {
+    if($("#cust_pic_file_file").val() && $("#cust_pic_file_event_code").val()) {
+      $("#new_cust_pic_file_submit").show();
+    }
+    else {
+      $("#new_cust_pic_file_submit").hide();
+    }
+  });
+
+  // Make check if event code changes
+  $("#cust_pic_file_event_code").on("change", function() {
+    if($("#cust_pic_file_file").val() && $("#cust_pic_file_event_code").val()) {
+      $("#new_cust_pic_file_submit").show();
+    }
+    else {
+      $("#new_cust_pic_file_submit").hide();
+    }
+  });

@@ -1,0 +1,11 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<% if @cust_pic_file.new_record? %>
+  alert("Failed to upload picture <%= j @cust_pic_file.errors.full_messages.join(', ').html_safe %>");
+<% else %>
+  $("#pictures").prepend("<%= j render(@cust_pic_file) %>");
+  $(".picture_loading_spinner").hide();
+<% end %>

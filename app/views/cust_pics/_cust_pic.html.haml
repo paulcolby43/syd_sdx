@@ -1,0 +1,10 @@
+.col-xs-12.col-sm-2.col-md-2
+  %div.panel.panel-primary
+    %div.list_group
+      %a{href: cust_pic_path(cust_pic), class: "list-group-item"}
+        - unless cust_pic.hidden? or not current_user.show_customer_thumbnails?
+          = image_tag(cust_pic.preview_data_uri, alt: cust_pic.id, class: 'thumbnail img-responsive')
+        = "#{cust_pic.first_name}  #{cust_pic.last_name}"
+        - unless cust_pic.event_code.blank?
+          %br/
+          %small= cust_pic.event_code

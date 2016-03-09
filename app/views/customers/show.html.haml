@@ -1,4 +1,46 @@
 = render partial: "shared/navbars/show_customer_navbar", locals: {title: "#{@customer['FirstName']} #{@customer['LastName']}"}
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    -#
+      - if @customer.photo_id_warning?
+        .alert.alert-warning
+          %i.fa.fa-warning.fa-lg
+          Customer Photo ID is missing or expired.
+
+    %div.panel.panel-primary
+      %div.list_group
+        %div.list-group-item
+          %strong= "First Name:"
+          .pull-right
+            = "#{@customer['FirstName']}"
+        %div.list-group-item
+          %strong= "Last Name:"
+          .pull-right
+            = "#{@customer['LastName']}"
+        %div.list-group-item
+          %strong= "Company:"
+          .pull-right
+            = "#{@customer['Company']}"
+        %div.list-group-item
+          %strong= "Phone:"
+          .pull-right
+            = "#{@customer['Phone']}"
+    %div.panel.panel-primary
+      %div.panel-body
+        %strong= "Address:"
+        %p
+          = "#{@customer['Address1']}"
+          = "#{@customer['Address2']}"
+          = "#{@customer['City']}, #{@customer['State']} #{@customer['Zip']}" unless @customer['City'].blank? and @customer['State'].blank? and @customer['Zip'].blank?
+    
+    %hr
+    %div#cust_pics
+
+    %div{id: 'endless_page'}
+      %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+      %p= link_to 'More pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], location_eq: current_yard_id}), :class => 'load-more-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();"
+      %p= link_to 'Re-load pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], location_eq: current_yard_id}), :class => 'reload-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#cust_pics').empty(); $('a.load-more-cust-pics').attr('href', '<%= cust_pics_path page: @cust_pics.next_page, q: params[:q] %>');", style: "display:none;"
+
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -8,4 +50,4 @@
         = @customer['LastName']
       %p= @customer
 
-= render partial: "shared/footer_navbar", locals: {title: "Customer"}
+= render partial: "shared/customer_footer_navbar", locals: {title: "Vendor"}

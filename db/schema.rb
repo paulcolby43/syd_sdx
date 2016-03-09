@@ -11,12 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160307202518) do
+ActiveRecord::Schema.define(version: 20160308211427) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
     t.integer  "user_id"
     t.datetime "expiration"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "cust_pic_files", force: true do |t|
+    t.string   "name"
+    t.string   "file"
+    t.integer  "user_id"
+    t.string   "customer_number"
+    t.string   "location"
+    t.string   "event_code"
+    t.integer  "cust_pic_id"
+    t.boolean  "hidden",          default: false
+    t.integer  "blob_id"
+    t.string   "vin_number"
+    t.string   "tag_number"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,0 +1,11 @@
+$('#cust_pics').append('<div class="row"><%= j render @cust_pics %></div>');
+$('#more_images_spinner').hide();
+
+<% if @cust_pics.next_page %>
+  $('a.load-more-cust-pics').show();
+  $('a.load-more-cust-pics').attr('href', '<%= cust_pics_path page: @cust_pics.next_page, q: params[:q] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-cust-pics').attr('href', '#');
+  $('a.reload-cust-pics').show();
+<% end %>

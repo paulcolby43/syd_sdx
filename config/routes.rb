@@ -1,5 +1,15 @@
 Rails.application.routes.draw do
   
+  resources :cust_pics do
+    member do
+      get 'show_jpeg_image'
+      get 'show_preview_image'
+      get 'send_pdf_data'
+    end
+  end
+  
+  resources :cust_pic_files
+  
   resources :user_settings
   
   resources :images do
