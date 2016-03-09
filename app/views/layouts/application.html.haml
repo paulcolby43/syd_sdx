@@ -13,5 +13,9 @@
     = csrf_meta_tags
   %body
     - flash.each do |message_type, message|
-      = content_tag(:div, message, class: "alert alert-#{message_type}")
+      %br
+      = content_tag(:div, message, class: "alert alert-#{message_type}") do 
+        = message
+        = content_tag(:button, 'x', class: "close", data: { dismiss: 'alert' })
+      =# content_tag(:div, message, class: "alert alert-#{message_type}")
     = yield

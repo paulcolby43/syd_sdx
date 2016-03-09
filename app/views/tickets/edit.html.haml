@@ -3,14 +3,11 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     = form_tag ticket_path, method: 'put', :class => "form-horizontal" do
-      = @ticket['CustomerID']
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = hidden_field_tag "ticket[ticket_number]", @ticket_number
-          = hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
-          =# hidden_field_tag "ticket[id]", @ticket['Id']
-          -#
-            .pull-right= text_field_tag "ticket[total]", @ticket['BalanceDue']
+      = hidden_field_tag "ticket[ticket_number]", @ticket_number
+      = hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
+      =# hidden_field_tag "ticket[id]", @ticket['Id']
+      -#
+        .pull-right= text_field_tag "ticket[total]", @ticket['BalanceDue']
 
       .panel.panel-default
         %div.panel-heading{:role => "tab", id: "vendor_heading"}
