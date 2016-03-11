@@ -210,4 +210,31 @@ class Ticket
       return data["SaveTicketItemResponse"]["Success"]
   end
   
+  def self.acccounts_payable_items(auth_token, yard_id, ticket_id)
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+#    Rails.logger.info data
+    if data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"]]
+    else # Array of results returned
+      # This will only be more than one if this is a preexisting ticket that had a payment split or payment was split by the device.
+      return data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"]
+    end
+  end
+  
+  def self.pay(auth_token, yard_id, ticket_id, accounts_payable_id)
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+      payload: {
+        "PaymentMethod" => 'Cash',
+        "Guid" => accounts_payable_id
+        })
+        
+      
+      Rails.logger.info "***********************#{response}****************"
+      data= Hash.from_xml(response)
+      return data["PayTicketResponse"]["Success"]
+  end
+  
 end

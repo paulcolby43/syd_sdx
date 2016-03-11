@@ -13,7 +13,7 @@
         - elsif @status == 'closed'
           = link_to "<i class='fa fa-folder fa-lg'></i> Held".html_safe, tickets_path(status: 'held'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
           %button{class: 'btn btn-default btn-lg active'}
-            %i.fa.fa-folder-.fa-lg
+            %i.fa.fa-folder.fa-lg
             Closed
     %p
       = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|

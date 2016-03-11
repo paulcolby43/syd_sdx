@@ -65,7 +65,12 @@ class TicketsController < ApplicationController
   
   # GET /tickets/1/edit
   def edit
+    if params[:status] == 'Closed'
+      @drawers = Drawer.all(current_token, params[:yard_id])
+      @checking_accounts = CheckingAccount.all(current_token, params[:yard_id])
+    end
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
+    @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
     @ticket_number = @ticket['TicketNumber']
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i['Status'] == 'Closed'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
@@ -76,6 +81,7 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1.json
   def update
     respond_to do |format|
+      @drawers = Drawer.all(current_token, current_yard_id)
       ticket_params[:line_items].each do |line_item|
         if line_item[:status].blank?
           # Create new item
@@ -90,6 +96,9 @@ class TicketsController < ApplicationController
       @ticket = "true"
       if params[:close_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
+      end
+      if params[:pay_ticket]
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @drawers.first['CashDrawerId'])
       end
       if @ticket == 'true'
         format.html { 
