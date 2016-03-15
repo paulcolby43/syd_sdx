@@ -223,18 +223,20 @@ class Ticket
     end
   end
   
-  def self.pay(auth_token, yard_id, ticket_id, accounts_payable_id)
+  def self.pay(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id)
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+    accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", "Content-Type" => "application/json"},
       payload: {
-        "PaymentMethod" => 'Cash',
-        "Guid" => accounts_payable_id
+        "AccountsPayableLineItem" => accounts_payable_line_item,
+        "PaymentMethod" => 0,
+        "DrawerId" => drawer_id,
+        "Check" => nil
         })
-        
       
       Rails.logger.info "***********************#{response}****************"
       data= Hash.from_xml(response)
-      return data["PayTicketResponse"]["Success"]
+      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
   end
   
 end

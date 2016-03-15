@@ -1,3 +1,5 @@
+-#
+  .navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation'}
 .navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
   .container-fluid
     .navbar-header
@@ -13,12 +15,23 @@
       %ul.nav.navbar-nav
         %li
           %a{href: 'https://tranact.com/', target: '_blank'} 
-            %strong ABOUT
+            ABOUT
         %li
           %a{href: 'https://tranact.com/scrapyarddog/', target: '_blank'} 
-            %strong HOW IT WORKS
+            HOW IT WORKS
+        %li
+          %a{href: '#'} 
+            PRICING
+        %li
+          %a{href: '#'} 
+            CONTACT
       %ul.nav.navbar-nav.navbar-right
         &nbsp;
+        %li
+          %p.navbar-btn
+            %a.btn.btn-primary{:href => signup_path}
+              %i.fa.fa-lock
+              SIGN UP
         %li{:class => (params[:controller] == "sessions") ? "active" : ""}
           %a{href: login_path}
             %strong

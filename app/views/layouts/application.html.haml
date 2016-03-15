@@ -12,6 +12,8 @@
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
   %body
+    - if not logged_in?
+      = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"}
     - flash.each do |message_type, message|
       %br
       = content_tag(:div, message, class: "alert alert-#{message_type}") do 

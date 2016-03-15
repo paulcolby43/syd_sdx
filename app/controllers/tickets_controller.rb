@@ -81,7 +81,7 @@ class TicketsController < ApplicationController
   # PATCH/PUT /tickets/1.json
   def update
     respond_to do |format|
-      @drawers = Drawer.all(current_token, current_yard_id)
+#      @drawers = Drawer.all(current_token, current_yard_id)
       ticket_params[:line_items].each do |line_item|
         if line_item[:status].blank?
           # Create new item
@@ -98,7 +98,7 @@ class TicketsController < ApplicationController
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       end
       if params[:pay_ticket]
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @drawers.first['CashDrawerId'])
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id])
       end
       if @ticket == 'true'
         format.html { 

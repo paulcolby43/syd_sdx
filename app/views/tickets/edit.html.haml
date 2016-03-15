@@ -6,6 +6,8 @@
       = hidden_field_tag "ticket[ticket_number]", @ticket_number
       = hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
       =# hidden_field_tag "ticket[id]", @ticket['Id']
+      = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
+      = hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
       -#
         .pull-right= text_field_tag "ticket[total]", @ticket['BalanceDue']
 
@@ -217,6 +219,7 @@
             .well
               %p Accounts Payable ID
               %p= @accounts_payable_items.first['Id']
+              %p= @accounts_payable_items.first
           %div.col-xs-4.col-sm-4
             .well
               %p Checking Accounts
