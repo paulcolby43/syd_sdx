@@ -27,5 +27,9 @@ module ApplicationHelper
   def cust_pic_event_codes
     ["Photo ID", "Customer Photo", "Certificate", "Finger Print", "Vehicle"]
   end
+  
+  def units_of_measure
+    [['Each', 'EA'], ['Pound', 'LB'], ['Net Ton', 'NT'], ['Short Ton', 'ST'], ['Gross Ton', 'GT'], ['Kilogram', 'KG'], ['Hundred Weight', 'CW'], ['Metric Ton', 'MT'], ['Load', 'LD']]
+  end
 
 end

@@ -1,0 +1,65 @@
+= render partial: "shared/navbars/new_and_edit_customer_navbar", locals: {title: "New customer"}
+- @title="New customer"
+
+.container
+  %br
+  .well.col-sm-12.col-md-12{id: 'customer_info'}
+    = form_tag customers_path, :class => "form-horizontal" do
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "First Name", nil, :class => 'control-label'
+          = text_field_tag "customer[first_name]", nil, :placeholder => "First Name", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Last Name", nil, :class => 'control-label'
+          = text_field_tag "customer[last_name]", nil, :placeholder => "Last Name", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Company", nil, :class => 'control-label'
+          = text_field_tag "customer[company]", nil, :placeholder => "Company", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Phone", nil, :class => 'control-label'
+          = text_field_tag "customer[phone]", nil, :placeholder => "Phone", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Address 1", nil, :class => 'control-label'
+          = text_field_tag "customer[address_1]", nil, :placeholder => "Address 1", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Address 2", nil, :class => 'control-label'
+          = text_field_tag "customer[address_2]", nil, :placeholder => "Address 2", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "City", nil, :class => 'control-label'
+          = text_field_tag "customer[city]", nil, :placeholder => "City", class: "form-control input-lg"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "State", nil, :class => 'control-label'
+          = text_field_tag "customer[state]", nil, :placeholder => "State", class: "form-control input-lg"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "Zip", nil, :class => 'control-label'
+          = text_field_tag "customer[zip]", nil, :placeholder => "Zip", class: "form-control input-lg"
+      -#
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Menu text", nil, :class => 'control-label'
+            = text_field_tag "commodity[menu_text]", nil, :placeholder => "Menu Text", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Description", nil, :class => 'control-label'
+            = text_area_tag "commodity[description]", nil, :placeholder => "Description", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Unit of Measure", nil, :class => 'control-label'
+            = select_tag "commodity[unit_of_measure", options_for_select(units_of_measure), prompt: 'Select unit of measure', class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Scale Price", nil, :class => 'control-label'
+            %div.input-group
+              %span.input-group-addon
+                $
+              = text_field_tag "commodity[scale_price]", nil, :placeholder => "Scale Price", class: "form-control input-lg"
+      
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
+            Create
+
+= render partial: "shared/new_customer_footer_navbar", locals: {title: "Customer"}

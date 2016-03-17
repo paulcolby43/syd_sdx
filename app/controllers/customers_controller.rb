@@ -32,6 +32,7 @@ class CustomersController < ApplicationController
 
   # GET /customers/1/edit
   def edit
+    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
   end
 
   # POST /customers

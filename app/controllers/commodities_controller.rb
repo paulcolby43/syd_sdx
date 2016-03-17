@@ -39,6 +39,7 @@ class CommoditiesController < ApplicationController
 
   # GET /commodities/1/edit
   def edit
+    @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
   end
 
   # POST /commodities

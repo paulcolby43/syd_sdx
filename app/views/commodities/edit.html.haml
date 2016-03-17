@@ -1,0 +1,37 @@
+= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: @commodity["MenuText"]}
+- @title="New commodity"
+
+.container
+  %br
+  .well.col-sm-6.col-md-4.col-md-offset-4
+    = form_tag commodity_path(id: @commodity["Id"]), method: 'put', :class => "form-horizontal" do
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Code", nil, :class => 'control-label'
+          = text_field_tag "commodity[code]", @commodity["Code"], :placeholder => "Code", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Menu text", nil, :class => 'control-label'
+          = text_field_tag "commodity[menu_text]", @commodity["MenuText"], :placeholder => "Menu Text", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Description", nil, :class => 'control-label'
+          = text_area_tag "commodity[description]", @commodity["PrintDescription"], :placeholder => "Description", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Unit of Measure", nil, :class => 'control-label'
+          = select_tag "commodity[unit_of_measure]", options_for_select(units_of_measure, @commodity["UnitOfMeasure"]), prompt: 'Select unit of measure', class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Scale Price", nil, :class => 'control-label'
+          %div.input-group
+            %span.input-group-addon
+              $
+            = text_field_tag "commodity[scale_price]", @commodity["ScalePrice"], :placeholder => "Scale Price", class: "form-control input-lg"
+      
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
+            Save
+
+= render partial: "shared/new_commodity_footer_navbar", locals: {title: "Commodity"}

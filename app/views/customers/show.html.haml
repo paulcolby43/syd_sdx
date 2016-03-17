@@ -42,12 +42,12 @@
       %p= link_to 'Re-load pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'reload-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#cust_pics').empty(); $('a.load-more-cust-pics').attr('href', '<%= cust_pics_path page: @cust_pics.next_page, q: params[:q] %>');", style: "display:none;"
 
 -#
-  .jumbotron{style: 'background-color: #FFFFFF;'}
-    .container
-      .well
-        %h3 
-          = @customer['FirstName']
-          = @customer['LastName']
-        %p= @customer
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .well
+      %h3 
+        = @customer['FirstName']
+        = @customer['LastName']
+      %p= @customer
 
 = render partial: "shared/customer_footer_navbar", locals: {title: "Vendor"}
