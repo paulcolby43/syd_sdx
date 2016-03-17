@@ -214,7 +214,7 @@ class Ticket
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
-#    Rails.logger.info data
+#    Rails.logger.info "********************#{data}****************"
     if data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"]]
     else # Array of results returned
@@ -223,16 +223,36 @@ class Ticket
     end
   end
   
-  def self.pay(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id)
+  def self.pay(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, check_id)
+    require 'json'
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
     accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", "Content-Type" => "application/json"},
-      payload: {
-        "AccountsPayableLineItem" => accounts_payable_line_item,
-        "PaymentMethod" => 0,
-        "DrawerId" => drawer_id,
-        "Check" => nil
-        })
+    accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
+    accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
+    payload = {
+      "AccountsPayableLineItem" => accounts_payable_line_item,
+      "PaymentMethod" => 0,
+      "DrawerId" => drawer_id,
+      "Check" => check_id
+      }
+    #payload.gsub('{"i:nil":"true"}', 'null')
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info json_encoded_payload
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+#      payload: {
+#        "AccountsPayableLineItem" => accounts_payable_line_item.to_json,
+#        "PaymentMethod" => 0,
+#        "DrawerId" => drawer_id,
+##        "Check" => nil
+#        "Check" => {"i:nil"=>"true"}
+#        })
+      #payload: "{
+      #  \"AccountsPayableLineItem\": #{accounts_payable_line_item.to_json},
+      #  \"PaymentMethod\": 0,
+      #  \"DrawerId\": #{drawer_id},
+      #  \"Check\": {'i:nil'=>'true'}
+      #  }")
       
       Rails.logger.info "***********************#{response}****************"
       data= Hash.from_xml(response)

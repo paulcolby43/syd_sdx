@@ -1,16 +1,16 @@
 = render partial: "shared/navbars/no_user_navbar", locals: {title: "Log In"}
 
-.jumbotron
-  .container
-    .col-sm-6.col-md-4.col-md-offset-4
-      = form_tag sessions_path, class: 'form-horizontal' do
-        .row.form-group
-          %div{:class => "col-sm-12 col-md-12"}
-            = text_field_tag :username, nil, :placeholder => "Username", :class => "form-control input-lg"
-        .row.form-group
-          %div{:class => "col-sm-12 col-md-12"}
-            = password_field_tag :password, nil, :placeholder => "Password", :class => "form-control input-lg"
-        .row
-          %div{:class => "col-sm-12 col-md-12"}
-            = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign In"}) do
-              Sign In
+.container
+  %br
+  .well.col-sm-6.col-md-4.col-md-offset-4
+    = form_tag sessions_path, class: 'form-horizontal' do
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = text_field_tag :username, nil, :placeholder => "Username", :class => "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = password_field_tag :password, nil, :placeholder => "Password", :class => "form-control input-lg"
+      .row
+        %div{:class => "col-sm-12 col-md-12"}
+          = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign In"}) do
+            Sign In

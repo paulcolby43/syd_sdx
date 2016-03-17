@@ -205,3 +205,7 @@ jQuery ->
     $('#image_file_weight').val ''
     return
   ### End clear the commodity picture upload fields for generic picture uploads ###
+
+  $ ->
+    $('[data-toggle="popover"]').popover()
+    return

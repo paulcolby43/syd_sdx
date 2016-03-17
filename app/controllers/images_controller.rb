@@ -38,7 +38,7 @@ class ImagesController < ApplicationController
     else # Show today's tickets
       # Default search to today's images
       @today = true
-      search = Image.ransack(:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :location_eq => current_user.location)
+      search = Image.ransack(:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :yardid_eq => current_yard_id)
       params[:q] = {}
       @start_date = Date.today.to_s
       @end_date = Date.today.to_s

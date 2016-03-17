@@ -19,7 +19,7 @@ class CustPicBlobWorker
 
     # Create cust_pic
     time_stamp = cust_pic_file.created_at.in_time_zone("Eastern Time (US & Canada)")
-    cust_pic = CustPic.create(:location => cust_pic_file.location, :blob_id => blob.id, :camera_name => "user_#{cust_pic_file.user.username}", :camera_group => "Scrap Yard Dog",
+    cust_pic = CustPic.create(:yardid => cust_pic_file.yard_id, :blob_id => blob.id, :camera_name => "user_#{cust_pic_file.user.username}", :camera_group => "Scrap Yard Dog",
       :sys_date_time => time_stamp, :event_code => cust_pic_file.event_code, :cust_nbr => cust_pic_file.customer_number, :hidden => cust_pic_file.hidden,
       "VIN" => cust_pic_file.vin_number, "TagNbr" => cust_pic_file.tag_number)
     

@@ -6,7 +6,7 @@
           %p= link_to "×", '#', :class => "close", "data-dismiss" => "modal"
         .modal-body
           = f.hidden_field :user_id, value: current_user.id
-          = f.hidden_field :location, value: current_company_id
+          = f.hidden_field :yardid, value: current_yard_id
           = f.hidden_field :ticket_number, value: @doc_number
           = f.hidden_field :event_code, value: 'SIGNATURE CAPTURE'
           = f.hidden_field :customer_number, value: @vendor.id unless @vendor.blank?

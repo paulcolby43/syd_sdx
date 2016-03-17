@@ -71,10 +71,10 @@ class TicketsController < ApplicationController
     end
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
     @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
-    @ticket_number = @ticket['TicketNumber']
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i['Status'] == 'Closed'} unless @ticket["TicketItemCollection"].blank?
+    @ticket_number = @ticket["TicketNumber"]
+    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == 'Closed'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
-    @images = Image.where(ticket_nbr: @ticket['TicketNumber'], location: current_yard_id)
+    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
   end
 
   # PATCH/PUT /tickets/1
@@ -97,9 +97,13 @@ class TicketsController < ApplicationController
       if params[:close_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       end
-      if params[:pay_ticket]
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id])
+      ### Pay Ticket ###
+      if params[:pay_by_cash]
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], nil)
+      elsif params[:pay_by_check]
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:pay_by_check])
       end
+      ### End Pay Ticket ###
       if @ticket == 'true'
         format.html { 
           flash[:success] = 'Ticket was successfully updated.'
