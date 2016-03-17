@@ -1,5 +1,5 @@
 %p
-  = button_tag(pay_by_cash: true, :type => 'submit', :class => 'btn btn-default btn-lg', id: 'pay_by_cash_button', name: 'pay_by_cash', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Cash"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_by_check_button').removeAttr('data-disable-with');") do
+  = button_tag(name: 'pay_by_cash', :type => 'submit', :class => 'btn btn-default btn-lg', id: 'pay_by_cash_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Cash"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_by_check_button').removeAttr('data-disable-with');") do
     %i.fa.fa-dollar
     Cash
 - unless @checking_accounts.blank?

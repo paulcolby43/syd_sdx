@@ -204,31 +204,30 @@
               %p
                 = "Balance Due:"
                 = "#{number_to_currency(@ticket['BalanceDue'])}"
-      - if params[:status] == 'Closed'
-        -#
-          .row
-            %div.col-xs-4.col-sm-4
-              .well
-                %p Drawers
-                - @drawers.each do |drawer|
-                  .well
-                    %p= drawer['DrawerName']
-                    %p= drawer['CashDrawerId']
-                    %p= number_to_currency(drawer["BeginingBalance"])
-                    %p= "Current status: #{Drawer.status(current_token, current_yard_id, drawer['CashDrawerId'])}"
-            %div.col-xs-4.col-sm-4
-              .well
-                %p Accounts Payable ID
-                %p= @accounts_payable_items.first['Id']
-                %p= @accounts_payable_items.first
-            %div.col-xs-4.col-sm-4
-              .well
-                %p Checking Accounts
-                - @checking_accounts.each do |checking_account|
-                  .well
-                    %p= checking_account['Name']
-                    %p= "Next number: #{checking_account['NextNo']}"
-                    = checking_account
+      -#
+        .row
+          %div.col-xs-4.col-sm-4
+            .well
+              %p Drawers
+              - @drawers.each do |drawer|
+                .well
+                  %p= drawer['DrawerName']
+                  %p= drawer['CashDrawerId']
+                  %p= number_to_currency(drawer["BeginingBalance"])
+                  %p= "Current status: #{Drawer.status(current_token, current_yard_id, drawer['CashDrawerId'])}"
+          %div.col-xs-4.col-sm-4
+            .well
+              %p Accounts Payable ID
+              %p= @accounts_payable_items.first['Id']
+              %p= @accounts_payable_items.first
+          %div.col-xs-4.col-sm-4
+            .well
+              %p Checking Accounts
+              - @checking_accounts.each do |checking_account|
+                .well
+                  %p= checking_account['Name']
+                  %p= "Next number: #{checking_account['NextNo']}"
+                  = checking_account
       .row.form-group
         %div.col-xs-3.col-sm-3
           = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
@@ -240,18 +239,19 @@
             %i.fa.fa-check.fa-lg
             Save
         %div.col-xs-3.col-sm-3
-          - unless params[:status] == 'Closed'
+          - if params[:status] == 'Hold'
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
               %i.fa.fa-folder.fa-lg
               Close
-          - else
+          - if params[:status] == 'Closed'
             %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
               Pay
-            -#
-              = button_tag(pay_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'pay_button', name: 'pay_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
-                %i.fa.fa-dollar.fa-lg
-                Pay
+        - if params[:status] == 'Hold'
+          %div.col-xs-3.col-sm-3
+            %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'close_and_pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
+              %i.fa.fa-dollar.fa-lg
+              Pay
             
     %hr
     %div#images

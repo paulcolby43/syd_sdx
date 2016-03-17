@@ -65,10 +65,8 @@ class TicketsController < ApplicationController
   
   # GET /tickets/1/edit
   def edit
-    if params[:status] == 'Closed'
-      @drawers = Drawer.all(current_token, params[:yard_id])
-      @checking_accounts = CheckingAccount.all(current_token, params[:yard_id])
-    end
+    @drawers = Drawer.all(current_token, params[:yard_id])
+    @checking_accounts = CheckingAccount.all(current_token, params[:yard_id])
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
     @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
@@ -94,16 +92,26 @@ class TicketsController < ApplicationController
         end
       end
       @ticket = "true"
+      # Close Ticket
       if params[:close_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       end
-      ### Pay Ticket ###
+      # Pay Ticket
       if params[:pay_by_cash]
         @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], nil)
       elsif params[:pay_by_check]
         @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:pay_by_check])
       end
-      ### End Pay Ticket ###
+      # Close & Pay Ticket
+      if params[:close_and_pay_by_cash]
+        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
+        @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], nil)
+      elsif params[:close_and_pay_by_check]
+        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
+        @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:pay_by_check])
+      end
       if @ticket == 'true'
         format.html { 
           flash[:success] = 'Ticket was successfully updated.'
