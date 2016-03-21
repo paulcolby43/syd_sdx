@@ -1,0 +1,19 @@
+= render partial: "shared/navbars/checking_accounts_navbar", locals: {title: "Checking Accounts"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @checking_accounts.blank?
+      - @checking_accounts.each do |checking_account|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: checking_account_path(checking_account['Id']), class: "list-group-item checking_account_button"}
+                  .pull-right
+                    &nbsp;
+                    %i.fa.fa-chevron-right.fa-lg
+                  = checking_account['Name']
+    - else
+      %p No checking accounts found            
+    
+=# render partial: "shared/footer_navbar", locals: {title: "Customers"}

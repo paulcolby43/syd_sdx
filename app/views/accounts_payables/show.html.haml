@@ -1,0 +1,9 @@
+=# render partial: "shared/navbars/show_accounts_payable_navbar", locals: {title: "#{@ticket['TicketNumber']}"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p Accounts Payable
+    .well
+      %p= @accounts_payable
+
+=# render partial: "shared/customer_footer_navbar", locals: {title: "Vendor"}

@@ -1,0 +1,8 @@
+= render partial: "shared/navbars/show_checking_account_navbar", locals: {title: "#{@checking_account['Name']}"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .well
+      %p= @checking_account
+
+=# render partial: "shared/customer_footer_navbar", locals: {title: "Vendor"}

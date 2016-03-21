@@ -82,6 +82,7 @@ jQuery ->
       return
     $('#total').text '$' + sum.toFixed(2)
     $('#ticket_total').val sum.toFixed(2)
+    $('#payment_amount').val sum.toFixed(2)
     return
 
   # Automatically highlight field value when focused
@@ -209,3 +210,35 @@ jQuery ->
   $ ->
     $('[data-toggle="popover"]').popover()
     return
+
+  ### Payments ###
+  # Choose a checking account to pay ticket with
+  $('#payment_form').on 'click', '.checking_account', ->
+    $('#finding_check_number_spinner').show()
+    $('.fa-hashtag').hide()
+    $('#check_number_field').show()
+    checking_account_id = $(this).data( "checking-account-id" )
+    $.ajax
+      url: "/checking_accounts/" + checking_account_id
+      dataType: 'json'
+      success: (data) ->
+        #console.log 'success', data
+        $('#finding_check_number_spinner').hide()
+        $('.fa-hashtag').show()
+        $('#checking_account_payment_check_number').val data.NextNo
+        return
+      error: ->
+        $('#finding_check_number_spinner').hide()
+        $('.fa-hashtag').show()
+        alert 'Error getting next check number.'
+        return
+    
+    return
+
+  # Choose cash to pay ticket with
+  $('#payment_form').on 'click', '.cash_account', ->
+    $('#checking_account_payment_check_number').val ''
+    $('#check_number_field').hide()
+    #alert checking_account_id
+    return
+  ### End Payments ###

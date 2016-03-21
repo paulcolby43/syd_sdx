@@ -14,16 +14,18 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     Rails.logger.info data
-    data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
   end
   
   def self.find_by_id(status, auth_token, yard_id, ticket_id)
     status = 'held' if status == 'Hold'
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
-    data= Hash.from_xml(xml_content)
-    Rails.logger.info data
-    data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].find {|ticket| ticket['Id'] == ticket_id}
+    tickets = Ticket.all(status, auth_token, yard_id)
+#    Rails.logger.info tickets
+    tickets.find {|ticket| ticket['Id'] == ticket_id}
   end
   
   def self.search(status, auth_token, yard_id, query_string)
@@ -223,7 +225,7 @@ class Ticket
     end
   end
   
-  def self.pay(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, check_id)
+  def self.pay_by_cash(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, amount)
     require 'json'
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
     accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
@@ -233,28 +235,53 @@ class Ticket
       "AccountsPayableLineItem" => accounts_payable_line_item,
       "PaymentMethod" => 0,
       "DrawerId" => drawer_id,
-      "Check" => check_id
+      "Check" => nil
       }
-    #payload.gsub('{"i:nil":"true"}', 'null')
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info json_encoded_payload
+#    Rails.logger.info json_encoded_payload
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
-#      payload: {
-#        "AccountsPayableLineItem" => accounts_payable_line_item.to_json,
-#        "PaymentMethod" => 0,
-#        "DrawerId" => drawer_id,
-##        "Check" => nil
-#        "Check" => {"i:nil"=>"true"}
-#        })
-      #payload: "{
-      #  \"AccountsPayableLineItem\": #{accounts_payable_line_item.to_json},
-      #  \"PaymentMethod\": 0,
-      #  \"DrawerId\": #{drawer_id},
-      #  \"Check\": {'i:nil'=>'true'}
-      #  }")
       
-      Rails.logger.info "***********************#{response}****************"
+      data= Hash.from_xml(response)
+      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
+  end
+  
+  def self.pay_by_check(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, check_id, check_account_name, check_number, amount)
+    require 'json'
+    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
+    accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
+    accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
+    accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
+    payload = {
+      "AccountsPayableLineItem" => accounts_payable_line_item,
+      "PaymentMethod" => 1,
+      "DrawerId" => drawer_id,
+      "Check" => { 
+        "Id" => SecureRandom.uuid,
+        "AccountsPayableCashierId" => nil, 
+        "CheckAccountId" => check_id,
+        "CheckNumber" => check_number,
+        "Amount" => amount,
+        "PayToTheOrderOf" => "", 
+        "Memo" => "ticket ID: #{ticket_id}",
+        "Company" => "",
+        "Address1" => "",
+        "Address2" => "",
+        "City" => "",
+        "State" => "",
+        "Zip" => "",
+        "CheckStatus" => "",
+        "CheckAccountName" => check_account_name,
+        "CurrencyId" => "",
+        "CurrencyConversionFactor" => ""
+        }
+      }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info json_encoded_payload
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+      
+#      Rails.logger.info "***********************#{response}****************"
       data= Hash.from_xml(response)
       return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
   end

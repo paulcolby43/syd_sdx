@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   
+  resources :accounts_payables
+  
+  resources :checking_accounts
+  
   resources :cust_pics do
     member do
       get 'show_jpeg_image'

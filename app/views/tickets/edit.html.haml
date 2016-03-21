@@ -8,8 +8,14 @@
       =# hidden_field_tag "ticket[id]", @ticket['Id']
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
       = hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
-      -#
-        .pull-right= text_field_tag "ticket[total]", @ticket['BalanceDue']
+      = render partial: "payment_modal"
+      - if params[:status] == 'Paid'
+        .well
+          %p
+            = "#{@accounts_payable_items.first['PaymentMethod']}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+            - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
+              %br
+              = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
 
       .panel.panel-default
         %div.panel-heading{:role => "tab", id: "vendor_heading"}
@@ -197,13 +203,8 @@
                   %li.pull-right
                     %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
                       %i.fa.fa-check-square.fa-3x.collapse_icon
-      -#
-        .well
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-12"}
-              %p
-                = "Balance Due:"
-                = "#{number_to_currency(@ticket['BalanceDue'])}"
+      
+      -# unless params[:status] == 'Hold'
       -#
         .row
           %div.col-xs-4.col-sm-4
@@ -215,19 +216,21 @@
                   %p= drawer['CashDrawerId']
                   %p= number_to_currency(drawer["BeginingBalance"])
                   %p= "Current status: #{Drawer.status(current_token, current_yard_id, drawer['CashDrawerId'])}"
-          %div.col-xs-4.col-sm-4
-            .well
-              %p Accounts Payable ID
-              %p= @accounts_payable_items.first['Id']
-              %p= @accounts_payable_items.first
-          %div.col-xs-4.col-sm-4
-            .well
-              %p Checking Accounts
-              - @checking_accounts.each do |checking_account|
-                .well
-                  %p= checking_account['Name']
-                  %p= "Next number: #{checking_account['NextNo']}"
-                  = checking_account
+      -#
+        %div.col-xs-4.col-sm-4
+          .well
+            %p Accounts Payable ID
+            %p= @accounts_payable_items.first['Id']
+            %p= @accounts_payable_items.first
+      -#
+        %div.col-xs-4.col-sm-4
+          .well
+            %p Checking Accounts
+            - @checking_accounts.each do |checking_account|
+              .well
+                %p= checking_account['Name']
+                %p= "Next number: #{checking_account['NextNo']}"
+                = checking_account
       .row.form-group
         %div.col-xs-3.col-sm-3
           = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
@@ -244,14 +247,23 @@
               %i.fa.fa-folder.fa-lg
               Close
           - if params[:status] == 'Closed'
-            %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
+            %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
               Pay
+            -#
+              %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                Pay
         - if params[:status] == 'Hold'
-          %div.col-xs-3.col-sm-3
-            %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'close_and_pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
-              %i.fa.fa-dollar.fa-lg
-              Pay
+          -#
+            %div.col-xs-3.col-sm-3
+              %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                Pay
+            -#
+              %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'close_and_pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                Pay
             
     %hr
     %div#images
@@ -262,10 +274,6 @@
       %p= link_to 'Re-load pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'reload-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#images').empty(); $('a.load-more-images').attr('href', '<%= images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');", style: "display:none;" 
     -#
       .well
-        %h3 
-          = @ticket_number
-        %p= "Status: #{@ticket['Status']}"
-        %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
         %p= @ticket
 
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}

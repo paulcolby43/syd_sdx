@@ -26,7 +26,8 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
-    @ticket = Ticket.find_by_id(params[:status], current_token, params[:yard_id], params[:id])
+#    @ticket = Ticket.find_by_id_and_ticket_number(params[:status], current_token, current_yard_id, params[:id], params[:ticket_number])
+    @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
   end
 
   # GET /tickets/new
@@ -65,10 +66,11 @@ class TicketsController < ApplicationController
   
   # GET /tickets/1/edit
   def edit
-    @drawers = Drawer.all(current_token, params[:yard_id])
-    @checking_accounts = CheckingAccount.all(current_token, params[:yard_id])
+    @drawers = Drawer.all(current_token, current_yard_id)
+    @checking_accounts = CheckingAccount.all(current_token, current_yard_id)
+#    @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
-    @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
+    @accounts_payable_items = AccountsPayable.all(current_token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == 'Closed'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
@@ -97,20 +99,28 @@ class TicketsController < ApplicationController
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       end
       # Pay Ticket
-      if params[:pay_by_cash]
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], nil)
-      elsif params[:pay_by_check]
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:pay_by_check])
+      if params[:pay_ticket]
+        if params[:checking_account_payment][:id]
+          @ticket = Ticket.pay_by_check(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], 
+            params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])
+        else
+          @ticket = Ticket.pay_by_cash(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:payment_amount])
+        end
       end
+#      if params[:pay_by_cash]
+#        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], nil, params[:payment_amount])
+#      elsif params[:pay_by_check]
+#        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:pay_by_check], params[:payment_amount])
+#      end
       # Close & Pay Ticket
       if params[:close_and_pay_by_cash]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
         @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], nil)
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], nil, params[:payment_amount])
       elsif params[:close_and_pay_by_check]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
         @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:pay_by_check])
+        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:pay_by_check], params[:payment_amount])
       end
       if @ticket == 'true'
         format.html { 

@@ -12,7 +12,6 @@ class CheckingAccount
     api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/checkingaccount"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
     if data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"].is_a? Hash
       # Put the hash in an array
       return [data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"]]
@@ -21,5 +20,10 @@ class CheckingAccount
     end
   end
   
+  def self.find_by_id(auth_token, yard_id, checking_account_id)
+    checking_accounts = CheckingAccount.all(auth_token, yard_id)
+#    Rails.logger.info checking_accounts
+    checking_accounts.find {|checking_account| checking_account['Id'] == checking_account_id}
+  end
   
 end
