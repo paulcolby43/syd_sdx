@@ -21,11 +21,11 @@
             = f.label "Event Code", :class => 'control-label'
             = f.select :event_code, options_for_select(ticket_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
           .form-group{id: 'vin_form_group', style: 'display:none;'}
-            =# f.label "VIN", :class => 'control-label'
-            =# f.text_field :vin_number, :placeholder => "Vehicle ID Number", class: "form-control input-lg", required: true
+            = f.label "VIN", :class => 'control-label'
+            = f.text_field :vin_number, :placeholder => "Vehicle ID Number", class: "form-control input-lg", required: true
           .form-group{id: 'tag_form_group', style: 'display:none;'}
-            =# f.label "License Plate", :class => 'control-label'
-            =# f.text_field :tag_number, :placeholder => "License Plate Number", class: "form-control input-lg", required: true
+            = f.label "License Plate", :class => 'control-label'
+            = f.text_field :tag_number, :placeholder => "License Plate Number", class: "form-control input-lg", required: true
           
           %div{:id => 'uploads', :style => 'display:block;'}
             %p{id: "upload_button", style: "display:none;"}
