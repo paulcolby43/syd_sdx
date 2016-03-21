@@ -137,6 +137,7 @@ jQuery ->
       return
     $('#total').text '$' + sum.toFixed(2)
     $('#ticket_total').val sum.toFixed(2)
+    $('#payment_amount').val sum.toFixed(2)
     return
   ### End line item calculation field value changed ###
 

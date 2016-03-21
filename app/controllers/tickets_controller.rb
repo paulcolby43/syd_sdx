@@ -39,31 +39,6 @@ class TicketsController < ApplicationController
     @guid = SecureRandom.uuid
   end
 
-  # POST /tickets
-  # POST /tickets.json
-#  def create
-##    @ticket = Ticket.new(ticket_params)
-#    @ticket = Ticket.create(current_token, current_yard_id, ticket_params[:customer_id], ticket_params[:ticket_number], ticket_params[:id])
-#
-#    respond_to do |format|
-#      logger.debug "**************ticket success response: #{@ticket}"
-#      if @ticket == 'true'
-##        format.html { redirect_to @ticket, notice: 'Ticket was successfully created.' }
-#        format.html {
-#          flash[:success] = 'Ticket was successfully created.'
-#          redirect_to tickets_path
-#        }
-#        format.json { render :show, status: :created, location: @ticket }
-#      else
-#        format.html { 
-#          flash.now[:danger] = 'Error creating ticket.'
-#          render :new, locals: {customer_id: ticket_params[:customer_id], ticket_number: ticket_params[:ticket_number]}
-#          }
-#        format.json { render json: @ticket.errors, status: :unprocessable_entity }
-#      end
-#    end
-#  end
-  
   # GET /tickets/1/edit
   def edit
     @drawers = Drawer.all(current_token, current_yard_id)
@@ -94,11 +69,12 @@ class TicketsController < ApplicationController
         end
       end
       @ticket = "true"
-      # Close Ticket
+      ### Close Ticket ###
       if params[:close_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       end
-      # Pay Ticket
+      ### End Close Ticket ###
+      ### Pay Ticket ###
       if params[:pay_ticket]
         if params[:checking_account_payment][:id]
           @ticket = Ticket.pay_by_check(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], 
@@ -107,21 +83,19 @@ class TicketsController < ApplicationController
           @ticket = Ticket.pay_by_cash(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:payment_amount])
         end
       end
-#      if params[:pay_by_cash]
-#        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], nil, params[:payment_amount])
-#      elsif params[:pay_by_check]
-#        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:pay_by_check], params[:payment_amount])
-#      end
-      # Close & Pay Ticket
-      if params[:close_and_pay_by_cash]
+      ### End Pay Ticket ###
+      ### Close & Pay Ticket ###
+      if params[:close_and_pay_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
         @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], nil, params[:payment_amount])
-      elsif params[:close_and_pay_by_check]
-        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
-        @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
-        @ticket = Ticket.pay(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:pay_by_check], params[:payment_amount])
+        if params[:checking_account_payment][:id]
+          @ticket = Ticket.pay_by_check(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
+          params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])
+        else
+          @ticket = Ticket.pay_by_cash(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:payment_amount])
+        end
       end
+      ### End Close & Pay Ticket ###
       if @ticket == 'true'
         format.html { 
           flash[:success] = 'Ticket was successfully updated.'

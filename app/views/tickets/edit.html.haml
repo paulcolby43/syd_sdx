@@ -256,10 +256,10 @@
                 Pay
         - if params[:status] == 'Hold'
           -#
-            %div.col-xs-3.col-sm-3
-              %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
-                %i.fa.fa-dollar.fa-lg
-                Pay
+          %div.col-xs-3.col-sm-3
+            %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+              %i.fa.fa-dollar.fa-lg
+              Pay
             -#
               %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'close_and_pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
                 %i.fa.fa-dollar.fa-lg
