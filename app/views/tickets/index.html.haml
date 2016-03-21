@@ -36,7 +36,7 @@
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
                 %div.list_group
-                  %a{href: edit_ticket_path(ticket['Id'], status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
+                  %a{href: edit_ticket_path(ticket['Id'], status: params[:status]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
                     .pull-right
                       = number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
                       %i.fa.fa-chevron-right.fa-lg

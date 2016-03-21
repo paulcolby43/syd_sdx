@@ -9,7 +9,8 @@ class Ticket
   #############################
   
   def self.all(status, auth_token, yard_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
+    status = 'held' if status == 'Hold'
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
@@ -22,14 +23,13 @@ class Ticket
   end
   
   def self.find_by_id(status, auth_token, yard_id, ticket_id)
-    status = 'held' if status == 'Hold'
     tickets = Ticket.all(status, auth_token, yard_id)
 #    Rails.logger.info tickets
     tickets.find {|ticket| ticket['Id'] == ticket_id}
   end
   
   def self.search(status, auth_token, yard_id, query_string)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -41,7 +41,7 @@ class Ticket
   end
   
   def self.next_available_number(auth_token, yard_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/nextnumber"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/nextnumber"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -50,7 +50,7 @@ class Ticket
   
   
   def self.units_of_measure(auth_token)
-    api_url = "https://71.41.52.58:50002/api/uom"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/uom"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -60,7 +60,7 @@ class Ticket
   def self.create(auth_token, yard_id, customer_id, guid)
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     ticket_number = Ticket.next_available_number(auth_token, yard_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
 #        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
@@ -86,7 +86,7 @@ class Ticket
   end
   
   def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket"
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -113,7 +113,7 @@ class Ticket
   end
   
   def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/item"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -147,7 +147,7 @@ class Ticket
   end
   
   def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/item"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -180,7 +180,7 @@ class Ticket
   end
   
   def self.void_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/item/void"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/item/void"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -213,7 +213,7 @@ class Ticket
   end
   
   def self.acccounts_payable_items(auth_token, yard_id, ticket_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info "********************#{data}****************"
@@ -227,7 +227,7 @@ class Ticket
   
   def self.pay_by_cash(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, amount)
     require 'json'
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
     accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
@@ -248,7 +248,7 @@ class Ticket
   
   def self.pay_by_check(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, check_id, check_account_name, check_number, amount)
     require 'json'
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
     accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
