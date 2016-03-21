@@ -2,33 +2,63 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    .well
-      %h3 
-        = @yard['Name']
-        %br
-        ID:
-        = @yard['Id']
-        %br
-        = @yard['Address1'] unless @yard['Address1'].blank?
-        = @yard['Address2'] unless @yard['Address2'].blank?
-        %br
-        = @yard['City'] unless @yard['City'].blank?
-        = @yard['State'] unless @yard['State'].blank?
-      %p= @yard
-    .col-xs-12.col-sm-4.col-md-4
-      %div.panel.panel-primary
-        %div.list_group
-          %a{href: tickets_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Tickets"}}
-            Tickets
-            .pull-right
-              %i.fa.fa-chevron-right.fa-lg
-    .col-xs-12.col-sm-4.col-md-4
-      %div.panel.panel-primary
-        %div.list_group
-          %a{href: commodities_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}}
+    %div.row
+      %p
+        .col-xs-12
+          %a.btn.btn-primary.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}} 
+            %i.fa.fa-users.fa-lg
+            Customers
+    %div.row
+      %p
+        .col-xs-12
+          %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 'held'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+            %i.fa.fa-folder-open-o.fa-lg
+            Held
+    %div.row
+      %p
+        .col-xs-12
+          %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 'closed'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+            %i.fa.fa-folder.fa-lg
+            Closed
+    %div.row
+      %p
+        .col-xs-6
+          %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 'paid'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
+            %i.fa.fa-dollar.fa-lg
+            Paid
+        .col-xs-6
+          %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}} 
+            %i.fa.fa-th-list.fa-lg
             Commodities
-            .pull-right
-              %i.fa.fa-chevron-right.fa-lg
+
+    -#
+      .well
+        %h3 
+          = @yard['Name']
+          %br
+          ID:
+          = @yard['Id']
+          %br
+          = @yard['Address1'] unless @yard['Address1'].blank?
+          = @yard['Address2'] unless @yard['Address2'].blank?
+          %br
+          = @yard['City'] unless @yard['City'].blank?
+          = @yard['State'] unless @yard['State'].blank?
+        %p= @yard
+      .col-xs-12.col-sm-4.col-md-4
+        %div.panel.panel-primary
+          %div.list_group
+            %a{href: tickets_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Tickets"}}
+              Tickets
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg
+      .col-xs-12.col-sm-4.col-md-4
+        %div.panel.panel-primary
+          %div.list_group
+            %a{href: commodities_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}}
+              Commodities
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg
       -#
         %p
           %strong Commodities
@@ -41,13 +71,13 @@
                     = commodity['MenuText']
                     .pull-right
                       %i.fa.fa-chevron-right.fa-lg
-    .col-xs-12.col-sm-4.col-md-4
-      %div.panel.panel-primary
-        %div.list_group
-          %a{href: customers_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}}
-            Customers
-            .pull-right
-              %i.fa.fa-chevron-right.fa-lg
+      .col-xs-12.col-sm-4.col-md-4
+        %div.panel.panel-primary
+          %div.list_group
+            %a{href: customers_path, class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}}
+              Customers
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg
       -#
         %p
           %strong Customers
