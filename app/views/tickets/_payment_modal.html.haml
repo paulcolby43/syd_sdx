@@ -8,7 +8,7 @@
         .input-group
           .input-group-addon
             %i.fa.fa-dollar
-          = text_field_tag :payment_amount, nil, :placeholder => "Amount", class: "form-control input-lg"
+          = text_field_tag :payment_amount, nil, :placeholder => "Amount", class: "form-control input-lg", readonly: true
         %br
         .btn-group-vertical.btn-block{"data-toggle" => "buttons"}
           %label.btn.btn-lg.btn-default{class: 'active cash_account'}
@@ -34,9 +34,9 @@
               
         
       .modal-footer
-        - if params[:status] == 'Hold'
+        - if params[:status] == 'held'
           = button_tag(name: 'close_and_pay_ticket', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
             Pay
-        - elsif params[:status] == 'Closed'
+        - elsif params[:status] == 'closed'
           = button_tag(name: 'pay_ticket', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
             Pay

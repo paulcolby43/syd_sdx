@@ -9,7 +9,7 @@ class Ticket
   #############################
   
   def self.all(status, auth_token, yard_id)
-    status = 'held' if status == 'Hold'
+#    status = 'held' if status == 'Hold'
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
@@ -243,7 +243,8 @@ class Ticket
       payload: json_encoded_payload)
       
       data= Hash.from_xml(response)
-      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
+#      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
+      return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
   
   def self.pay_by_check(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, check_id, check_account_name, check_number, amount)
@@ -281,9 +282,9 @@ class Ticket
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
       
-#      Rails.logger.info "***********************#{response}****************"
       data= Hash.from_xml(response)
-      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
+#      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
+      return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
   
 end

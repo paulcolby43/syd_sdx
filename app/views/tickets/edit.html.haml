@@ -9,7 +9,7 @@
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
       = hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
       = render partial: "payment_modal"
-      - if params[:status] == 'Paid'
+      - if params[:status] == 'paid'
         .well
           %p
             = "#{@accounts_payable_items.first['PaymentMethod']}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
@@ -242,28 +242,20 @@
             %i.fa.fa-check.fa-lg
             Save
         %div.col-xs-3.col-sm-3
-          - if params[:status] == 'Hold'
+          - if params[:status] == 'held'
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
               %i.fa.fa-folder.fa-lg
               Close
-          - if params[:status] == 'Closed'
+          - if params[:status] == 'closed'
             %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
               Pay
-            -#
-              %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
-                %i.fa.fa-dollar.fa-lg
-                Pay
-        - if params[:status] == 'Hold'
-          -#
+            
+        - if params[:status] == 'held'
           %div.col-xs-3.col-sm-3
             %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
               Pay
-            -#
-              %a.btn.btn-primary.btn-lg.btn-block{class: "", "data-content" => "#{render partial: 'close_and_pay_ticket_options'}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Pay"}
-                %i.fa.fa-dollar.fa-lg
-                Pay
             
     %hr
     %div#images
