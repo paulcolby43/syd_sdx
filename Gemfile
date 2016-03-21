@@ -83,6 +83,9 @@ gem 'sinatra', :require => nil
 gem "polyamorous"#, :github => "activerecord-hackery/polyamorous"
 gem "ransack"#, github: "activerecord-hackery/ransack", branch: "rails-4.1"
 
+# Provide a clear syntax for writing and deploying cron jobs.
+gem 'whenever', :require => false
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
