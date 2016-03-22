@@ -34,9 +34,9 @@
               
         
       .modal-footer
-        - if params[:status] == 'held'
+        - if @ticket['Status'] == '2'
           = button_tag(name: 'close_and_pay_ticket', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
             Pay
-        - elsif params[:status] == 'closed'
+        - elsif @ticket['Status'] == '1'
           = button_tag(name: 'pay_ticket', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
             Pay

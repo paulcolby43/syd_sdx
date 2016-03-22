@@ -9,10 +9,10 @@
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
       = hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
       = render partial: "payment_modal"
-      - if params[:status] == 'paid'
+      - if @ticket['Status'] == '3'
         .well
           %p
-            = "#{@accounts_payable_items.first['PaymentMethod']}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+            = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
             - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
               %br
               = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
@@ -242,16 +242,16 @@
             %i.fa.fa-check.fa-lg
             Save
         %div.col-xs-3.col-sm-3
-          - if params[:status] == 'held'
+          - if @ticket['Status'] == '2'
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
               %i.fa.fa-folder.fa-lg
               Close
-          - if params[:status] == 'closed'
+          - if @ticket['Status'] == '1'
             %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
               Pay
             
-        - if params[:status] == 'held'
+        - if @ticket['Status'] == '2'
           %div.col-xs-3.col-sm-3
             %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg

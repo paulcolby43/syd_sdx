@@ -5,7 +5,7 @@ class TicketsController < ApplicationController
   # GET /tickets
   # GET /tickets.json
   def index
-    @status = "#{params[:status].blank? ? 'held' : params[:status]}"
+    @status = "#{params[:status].blank? ? '2' : params[:status]}"
 #    @next_number = Ticket.next_available_number(current_token, current_yard_id)
 #    @uom = Ticket.units_of_measure(current_token)
 #    Ticket.create(current_token, current_yard_id)

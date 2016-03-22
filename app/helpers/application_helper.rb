@@ -31,5 +31,15 @@ module ApplicationHelper
   def units_of_measure
     [['Each', 'EA'], ['Pound', 'LB'], ['Net Ton', 'NT'], ['Short Ton', 'ST'], ['Gross Ton', 'GT'], ['Kilogram', 'KG'], ['Hundred Weight', 'CW'], ['Metric Ton', 'MT'], ['Load', 'LD']]
   end
+  
+  def ticket_status_string(status_number)
+    status_hash = {"1" => "Closed", "2" => "Held", "3" => "Paid"}
+    return status_hash[status_number]
+  end
+  
+  def payment_method_string(method_number)
+    method_hash = {"0" => "Cash", "1" => "Check"}
+    return method_hash[method_number]
+  end
 
 end

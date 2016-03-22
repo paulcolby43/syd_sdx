@@ -1,23 +1,23 @@
-= render partial: "shared/navbars/tickets_navbar", locals: {title: @status.capitalize}
+= render partial: "shared/navbars/tickets_navbar", locals: {title: ticket_status_string(@status)}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %p
       .btn-group
         = link_to "<i class='fa fa-users fa-lg'></i> Customers".html_safe, customers_path, :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}
-        - if @status == 'held'
+        - if @status == '2'
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-folder-open-o.fa-lg
             Held
-          = link_to "<i class='fa fa-folder fa-lg'></i> Closed".html_safe, tickets_path(status: 'closed'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}
-        - elsif @status == 'closed'
-          = link_to "<i class='fa fa-folder fa-lg'></i> Held".html_safe, tickets_path(status: 'held'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
+          = link_to "<i class='fa fa-folder fa-lg'></i> Closed".html_safe, tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}
+        - elsif @status == '1'
+          = link_to "<i class='fa fa-folder fa-lg'></i> Held".html_safe, tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-folder.fa-lg
             Closed
-        - elsif @status == 'paid'
-          = link_to "<i class='fa fa-folder fa-lg'></i> Held".html_safe, tickets_path(status: 'held'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
-          = link_to "<i class='fa fa-folder fa-lg'></i> Closed".html_safe, tickets_path(status: 'closed'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}
+        - elsif @status == '3'
+          = link_to "<i class='fa fa-folder fa-lg'></i> Held".html_safe, tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
+          = link_to "<i class='fa fa-folder fa-lg'></i> Closed".html_safe, tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-dollar.fa-lg
             Paid
@@ -36,7 +36,7 @@
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
                 %div.list_group
-                  %a{href: edit_ticket_path(ticket['Id'], status: params[:status]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
+                  %a{href: edit_ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
                     .pull-right
                       = number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
                       %i.fa.fa-chevron-right.fa-lg
