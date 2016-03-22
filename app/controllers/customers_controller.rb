@@ -20,7 +20,7 @@ class CustomersController < ApplicationController
   # GET /customers/1
   # GET /customers/1.json
   def show
-    @customer = Customer.find_by_id(current_token, params[:yard_id], params[:id])
+    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
     @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
 #    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], location: current_yard_id)
   end
