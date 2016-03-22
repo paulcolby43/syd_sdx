@@ -11,19 +11,19 @@
     %div.row
       %p
         .col-xs-12
-          %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 'held'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+          %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
             %i.fa.fa-folder-open-o.fa-lg
             Held
     %div.row
       %p
         .col-xs-12
-          %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 'closed'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+          %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
             %i.fa.fa-folder.fa-lg
             Closed
     %div.row
       %p
         .col-xs-6
-          %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 'paid'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
+          %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
             %i.fa.fa-dollar.fa-lg
             Paid
         .col-xs-6
