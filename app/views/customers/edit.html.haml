@@ -5,6 +5,8 @@
   %br
   .well.col-sm-12.col-md-12{id: 'customer_info'}
     = form_tag customer_path(@customer["Id"]), method: 'put', :class => "form-horizontal" do
+      = hidden_field_tag "customer[id]", @customer['Id']
+      = hidden_field_tag "customer[tax_collection]", @customer['TaxCollection']
       .row.form-group
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "First Name", nil, :class => 'control-label'

@@ -96,25 +96,14 @@ class TicketsController < ApplicationController
         end
       end
       ### End Close & Pay Ticket ###
-      if @ticket == 'true'
-        format.html { 
+      format.html { 
+        if @ticket == 'true'
           flash[:success] = 'Ticket was successfully updated.'
-          redirect_to tickets_path 
-          }
-      else
-        format.html { 
+        else
           flash[:danger] = 'Error updating ticket.'
-          redirect_to tickets_path
-#          render :edit, locals: {ticket_number: @ticket['TicketNumber']}
-          }
-      end
-#      if @ticket.update(ticket_params)
-#        format.html { redirect_to @ticket, notice: 'Ticket was successfully updated.' }
-#        format.json { render :show, status: :ok, location: @ticket }
-#      else
-#        format.html { render :edit }
-#        format.json { render json: @ticket.errors, status: :unprocessable_entity }
-#      end
+        end
+        redirect_to tickets_path
+        }
     end
   end
   
