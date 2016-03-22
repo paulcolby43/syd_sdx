@@ -30,7 +30,12 @@ jQuery ->
             dataType: 'json'
             success: ->
               trash_icon.closest('.panel').remove()
-              return
+              sum = 0;
+              $('.amount').each ->
+                sum += Number($(this).val())
+                return
+              $('#total').text '$' + sum.toFixed(2)
+              $('#payment_amount').val sum.toFixed(2)
             error: ->
               spinner_icon.hide()
               trash_icon.show()
@@ -38,11 +43,12 @@ jQuery ->
               return
         else
           $(this).closest('.panel').remove()
-        sum = 0;
-        $('.amount').each ->
-          sum += Number($(this).val())
-          return
-        $('#total').text '$' + sum.toFixed(2)
+          sum = 0;
+          $('.amount').each ->
+            sum += Number($(this).val())
+            return
+          $('#total').text '$' + sum.toFixed(2)
+          $('#payment_amount').val sum.toFixed(2)
         return
       else
         e.preventDefault()

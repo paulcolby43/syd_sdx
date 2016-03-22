@@ -47,7 +47,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
     @accounts_payable_items = AccountsPayable.all(current_token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == 'Closed'} unless @ticket["TicketItemCollection"].blank?
+    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
     @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
   end
