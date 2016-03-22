@@ -12,7 +12,7 @@ class Ticket
 #    status = 'held' if status == 'Hold'
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     Rails.logger.info data
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array

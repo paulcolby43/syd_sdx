@@ -9,7 +9,7 @@ class AccountsPayable
   #############################
   
   def self.all(auth_token, yard_id, ticket_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     if data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"].is_a? Hash # Only one result returned, so put it into an array
