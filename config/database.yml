@@ -21,7 +21,7 @@ production:
 jpegger:
   adapter: sqlserver
   host: <%= ENV["JPEGGER_HOST"] %>
-#  dataserver: <%= ENV["JPEGGER_INSTANCE"] %>
+  dataserver: <%= ENV["JPEGGER_INSTANCE"] %>
   username: <%= ENV["JPEGGER_USERNAME"] %>
   password: <%= ENV["JPEGGER_PASSWORD"] %>
   database: <%= ENV["JPEGGER_DATABASE"] %>
