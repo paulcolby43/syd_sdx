@@ -113,7 +113,7 @@ class Commodity
       "BackgroundColor" => "#ffffff",
       "TextSize" => 16,
       "IsParentItem" => true,
-      "ParentId" => nil,
+      "ParentId" => commodity_params[:parent_id],
       "MenuText" => commodity_params[:menu_text],
       "IsTaxable" => true
       }

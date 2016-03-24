@@ -7,6 +7,7 @@
     = form_tag commodity_path(id: @commodity["Id"]), method: 'put', :class => "form-horizontal" do
       = hidden_field_tag "commodity[yard_name]", current_yard["Name"]
       = hidden_field_tag "commodity[id]", @commodity["Id"]
+      = hidden_field_tag "commodity[parent_id]", @commodity["ParentId"]
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Name", nil, :class => 'control-label'
