@@ -26,6 +26,7 @@ class CommoditiesController < ApplicationController
   # GET /commodities/1.json
   def show
     @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
+    @commodity_types = Commodity.types(current_token, current_yard_id)
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @commodity['MenuText'], "price" => @commodity['ScalePrice']} } 
@@ -34,41 +35,46 @@ class CommoditiesController < ApplicationController
 
   # GET /commodities/new
   def new
-    @commodity = Commodity.new
+#    @commodity = Commodity.new
+    @commodity_types = Commodity.types(current_token, current_yard_id)
   end
 
   # GET /commodities/1/edit
   def edit
     @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
+    @commodity_types = Commodity.types(current_token, current_yard_id)
   end
 
   # POST /commodities
   # POST /commodities.json
   def create
-    @commodity = Commodity.new(commodity_params)
-
+#    @commodity = Commodity.new(commodity_params)
+    @commodity = Commodity.create(current_token, current_yard_id, commodity_params)
     respond_to do |format|
-      if @commodity.save
-        format.html { redirect_to @commodity, notice: 'Commodity was successfully created.' }
-        format.json { render :show, status: :created, location: @commodity }
-      else
-        format.html { render :new }
-        format.json { render json: @commodity.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        if @commodity == 'true'
+          flash[:success] = 'Commodity was successfully created.'
+        else
+          flash[:danger] = 'Error creating commodity.'
+        end
+        redirect_to commodities_path
+      }
     end
   end
 
   # PATCH/PUT /commodities/1
   # PATCH/PUT /commodities/1.json
   def update
+    @commodity = Commodity.update(current_token, current_yard_id, commodity_params)
     respond_to do |format|
-      if @commodity.update(commodity_params)
-        format.html { redirect_to @commodity, notice: 'Commodity was successfully updated.' }
-        format.json { render :show, status: :ok, location: @commodity }
-      else
-        format.html { render :edit }
-        format.json { render json: @commodity.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        if @commodity == 'true'
+          flash[:success] = 'Commodity was successfully updated.'
+        else
+          flash[:danger] = 'Error updating commodity.'
+        end
+        redirect_to commodities_path
+      }
     end
   end
 
@@ -90,6 +96,6 @@ class CommoditiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def commodity_params
-      params.require(:commodity).permit(:commodityname, :password)
+      params.require(:commodity).permit(:id, :name, :code, :menu_text, :description, :unit_of_measure, :scale_price, :yard_name, :type)
     end
 end

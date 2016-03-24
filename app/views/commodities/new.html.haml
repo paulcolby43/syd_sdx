@@ -5,10 +5,15 @@
   %br
   .well.col-sm-6.col-md-4.col-md-offset-4
     = form_tag commodities_path, :class => "form-horizontal" do
+      = hidden_field_tag "commodity[yard_name]", current_yard
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Name", nil, :class => 'control-label'
           = text_field_tag "commodity[name]", nil, :placeholder => "Name", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Code", nil, :class => 'control-label'
+          = text_field_tag "commodity[code]", nil, :placeholder => "Code", class: "form-control input-lg"
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Menu text", nil, :class => 'control-label'
@@ -20,7 +25,11 @@
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Unit of Measure", nil, :class => 'control-label'
-          = select_tag "commodity[unit_of_measure", options_for_select(units_of_measure), prompt: 'Select unit of measure', class: "form-control input-lg"
+          = select_tag "commodity[unit_of_measure]", options_for_select(units_of_measure), prompt: 'Select unit of measure', class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Type", nil, :class => 'control-label'
+          = select_tag "commodity[type]", options_for_select(@commodity_types.collect {|p| [ p['ReportDescription'], p['CodeValue'] ] }), prompt: 'Select type', class: "form-control input-lg"
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Scale Price", nil, :class => 'control-label'
@@ -34,4 +43,4 @@
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
             Create
 
-= render partial: "shared/new_commodity_footer_navbar", locals: {title: "Commodity"}
+=# render partial: "shared/new_commodity_footer_navbar", locals: {title: "Commodity"}

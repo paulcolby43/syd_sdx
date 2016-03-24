@@ -2,9 +2,40 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    .well
-      %h3 
-        = @commodity['MenuText']
-      %p= @commodity
+    -#
+      .well
+        %p= @commodity
+    %div.panel.panel-primary
+      %div.list_group
+        %div.list-group-item
+          %strong= "Name:"
+          .pull-right
+            = "#{@commodity['Name']}"
+        %div.list-group-item
+          %strong= "Code:"
+          .pull-right
+            = "#{@commodity['Code']}"
+        %div.list-group-item
+          %strong= "Menu Text:"
+          .pull-right
+            = "#{@commodity['MenuText']}"
+        %div.list-group-item
+          %strong= "Description:"
+          .pull-right
+            = "#{@commodity['PrintDescription']}"
+        %div.list-group-item
+          %strong= "Unit of Measure:"
+          .pull-right
+            = units_of_measure_hash.key(@commodity['UnitOfMeasure'])
+            =# "#{@commodity['UnitOfMeasure']}"
+        %div.list-group-item
+          %strong= "Type:"
+          .pull-right
+            = @commodity_types.find {|type| type["CodeValue"] == @commodity['Type']}["ReportDescription"]
+            =# "#{@commodity['Type']}"
+        %div.list-group-item
+          %strong= "Scale Price:"
+          .pull-right
+            = "#{number_to_currency(@commodity['ScalePrice'])}"
 
 = render partial: "shared/footer_navbar", locals: {title: "Commodity"}

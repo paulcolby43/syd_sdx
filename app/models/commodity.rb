@@ -16,9 +16,18 @@ class Commodity
     data["ApiPaginatedResponseOfApiCommodity9fKlOoru"]["Items"]["ApiCommodity"]
   end
   
+#  def self.find_by_id(auth_token, yard_id, commodity_id)
+#    commodities = Commodity.all(auth_token, yard_id)
+#    commodities.find {|commodity| commodity['Id'] == commodity_id}
+#  end
+  
   def self.find_by_id(auth_token, yard_id, commodity_id)
-    commodities = Commodity.all(auth_token, yard_id)
-    commodities.find {|commodity| commodity['Id'] == commodity_id}
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/commodity/#{commodity_id}"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+
+    data["ApiItemResponseOfApiCommodity9fKlOoru"]["Item"]
   end
   
   def self.search(auth_token, yard_id, query_string)
@@ -32,6 +41,91 @@ class Commodity
     else # Array of results returned
       return data["ApiPaginatedResponseOfApiCommodity9fKlOoru"]["Items"]["ApiCommodity"]
     end
+  end
+  
+  def self.types(auth_token, yard_id)
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/udl/9"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    
+#    Rails.logger.info data
+    types = data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"]["Items"]["ApiUserDefinedListValue"]
+    Rails.logger.info types
+    types
+  end
+  
+  def self.create(auth_token, yard_id, commodity_params)
+    require 'json'
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/commodity"
+    new_guid = SecureRandom.uuid
+    payload = {
+      "Id" => new_guid,
+      "Code" => commodity_params[:code],
+      "Name" => commodity_params[:name],
+      "PrintDescription" => commodity_params[:description],
+      "YardId" => yard_id,
+      "YardName" => commodity_params[:yard_name],
+      "ScalePrice" => commodity_params[:scale_price],
+      "UnitOfMeasure" => commodity_params[:unit_of_measure],
+      "MaxPrice" => 0.0,
+      "MaxUnit" => "",
+      "Type" => commodity_params[:type],
+      "Shrink" => 0.0,
+      "IsDisabled" => false,
+      "ForegroundColor" => "#000000",
+      "BackgroundColor" => "#ffffff",
+      "TextSize" => 16,
+      "IsParentItem" => true,
+      "ParentId" => nil,
+      "MenuText" => commodity_params[:menu_text],
+      "IsTaxable" => true
+      }
+      
+    json_encoded_payload = JSON.generate(payload)
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+#    return data
+    return data["BaseResponse"]["Success"]
+  end
+  
+  def self.update(auth_token, yard_id, commodity_params)
+    require 'json'
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/commodity"
+    new_guid = SecureRandom.uuid
+    payload = {
+      "Id" => commodity_params[:id],
+      "Code" => commodity_params[:code],
+      "Name" => commodity_params[:name],
+      "PrintDescription" => commodity_params[:description],
+      "YardId" => yard_id,
+      "YardName" => commodity_params[:yard_name],
+      "ScalePrice" => commodity_params[:scale_price],
+      "UnitOfMeasure" => commodity_params[:unit_of_measure],
+      "MaxPrice" => 0.0,
+      "MaxUnit" => "",
+      "Type" => commodity_params[:type],
+      "Shrink" => 0.0,
+      "IsDisabled" => false,
+      "ForegroundColor" => "#000000",
+      "BackgroundColor" => "#ffffff",
+      "TextSize" => 16,
+      "IsParentItem" => true,
+      "ParentId" => nil,
+      "MenuText" => commodity_params[:menu_text],
+      "IsTaxable" => true
+      }
+      
+    json_encoded_payload = JSON.generate(payload)
+    
+    response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+#    return data
+    return data["BaseResponse"]["Success"]
   end
   
 end

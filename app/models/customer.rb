@@ -42,7 +42,6 @@ class Customer
     require 'json'
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/customer"
     new_guid = SecureRandom.uuid
-    
     payload = {
       "Address1"=> customer_params[:address_1], 
       "Address2"=> customer_params[:address_2], 
@@ -99,7 +98,6 @@ class Customer
   def self.update(auth_token, yard_id, customer_params)
     require 'json'
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/customer"
-    
     payload = {
       "Address1"=> customer_params[:address_1], 
       "Address2"=> customer_params[:address_2], 
@@ -140,7 +138,7 @@ class Customer
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
     return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
   end
   
