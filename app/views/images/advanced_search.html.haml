@@ -1,24 +1,9 @@
 = render partial: "shared/navbars/advanced_search_navbar", locals: {title: "Advanced Search"}
 
 .container
+  %br
   .well
     = search_form_for @search, url: advanced_search_images_path, method: :get do |f|
-      -#
-        %div.row.form-group.has-feedback{:id => "ticket_search"}
-          %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-            = label_tag "Start Date", nil, :class => 'control-label'
-            .input-group
-              = date_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg"
-              %span.input-group-addon 
-                %a{href: '#', onclick: "$('#q_sys_date_time_gteq').val('');"}
-                  %i.fa.fa-remove.fa-lg
-          %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-            = label_tag "End Date", nil, :class => 'control-label'
-            .input-group
-              = date_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg"
-              %span.input-group-addon 
-                %a{href: '#', onclick: "$('#q_sys_date_time_lteq').val('');"}
-                  %i.fa.fa-remove.fa-lg
       = f.condition_fields do |c|
         = render "condition_fields", f: c
       %p= link_to_add_fields "Add Conditions", f, :condition
@@ -27,71 +12,6 @@
         %div{:class => "col-xs-12 col-sm-4 col-md-4"}
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
             Search
-    -#
-      %div{:id => "search_form"}
-        = form_tag advanced_search_images_path, :method => 'get', :class => "form-horizontal" do
-          = hidden_field_tag "q[hidden_blank]", 1
-          = hidden_field_tag "q[location_eq]", current_user.location unless current_user.location.blank?
-          %div.row.form-group.has-feedback{:id => "ticket_search"}
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              = label_tag "Ticket Number", nil, :class => 'control-label'
-              .input-group
-                = search_field_tag "q[ticket_nbr_eq]", nil, :placeholder => "Ticket Number", value: @ticket_number, class: "form-control input-lg"
-                %span.input-group-addon 
-                  %a{href: '#', onclick: "$('#q_ticket_nbr_eq').val('');"}
-                    %i.fa.fa-remove.fa-lg
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              = label_tag "Customer", nil, :class => 'control-label'
-              .input-group
-                = select_tag "q[cust_nbr_eq]", options_from_collection_for_select(@vendors, "id", "display_name", @customer_number), prompt: "All", class: "form-control input-lg"
-                =# search_field_tag "q[cust_nbr_eq]", nil, :include_blank => "Customer Number", value: @customer_number, class: "form-control input-lg"
-                %span.input-group-addon 
-                  %a{href: '#', onclick: "$('#q_cust_nbr_eq').val('');"}
-                    %i.fa.fa-remove.fa-lg
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              = label_tag "Commodity", nil, :class => 'control-label'
-              .input-group
-                = select_tag "q[cmdy_name_cont]", options_from_collection_for_select(@items, "name", "name", @commodity_name), prompt: 'All' , class: "form-control input-lg"
-                =# search_field_tag "q[cmdy_name_cont]", nil, :placeholder => "Commodity", value: @commodity_name, class: "form-control input-lg"
-                %span.input-group-addon 
-                  %a{href: '#', onclick: "$('#q_cmdy_name_cont').val('');"}
-                    %i.fa.fa-remove.fa-lg
-          %div.row.form-group
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              = label_tag "Event Code", nil, :class => 'control-label'
-              .input-group
-                = select_tag "q[event_code_eq]", options_for_select(ticket_event_codes, @event_code), prompt: 'All' , class: "form-control input-lg"
-                %span.input-group-addon 
-                  %a{href: '#', onclick: "$('#q_event_code_eq').val('');"}
-                    %i.fa.fa-remove.fa-lg
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              = label_tag "Start Date", nil, :class => 'control-label'
-              .input-group
-                = date_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg"
-                %span.input-group-addon 
-                  %a{href: '#', onclick: "$('#q_sys_date_time_gteq').val('');"}
-                    %i.fa.fa-remove.fa-lg
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              = label_tag "End Date", nil, :class => 'control-label'
-              .input-group
-                = date_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg"
-                %span.input-group-addon 
-                  %a{href: '#', onclick: "$('#q_sys_date_time_lteq').val('');"}
-                    %i.fa.fa-remove.fa-lg
-          %div.row.form-group
-            %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-              - if @ticket_number.blank?
-                %br/
-                = label_tag :one_image_per_ticket, "One result per ticket", :class => 'control-label'
-                = check_box_tag :one_image_per_ticket, 1,  params[:one_image_per_ticket] != '0', id: "one_image_check_box", class: 'input-lg', "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "#{(params[:one_image_per_ticket] != '0') ? '1' : '0'}"
-              - else
-                %br/
-                = label_tag :one_image_per_ticket, "One result per ticket", :class => 'control-label'
-                = check_box_tag :one_image_per_ticket, 1, false, class: 'input-lg', "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "0"
-              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
-                %i.fa.fa-search
-                Search
-
   - if @images.blank?
     .jumbotron
       %p.text-center No results found

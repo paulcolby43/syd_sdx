@@ -2,28 +2,61 @@
   %br/
   -#
     .well.col-sm-6.col-md-6.col-md-offset-3
-  .well.col-sm-6.col-md-4.col-md-offset-4
+    .well.col-sm-6.col-md-4.col-md-offset-4
+  .well
     = form_for @user do |f|
       - @user.errors.each do |attr, msg|
         .alert.alert-danger
           <button type="button" class="close" data-dismiss="alert">×</button>
           = "#{attr} #{msg}" if @user.errors[attr].first == msg
-
       .row.form-group
-        %div{:class => "col-sm-12"}
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "First Name", nil, :class => 'control-label'
+          = text_field_tag :first_name, nil, :autofocus => true, :placeholder => "First Name", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Last Name", nil, :class => 'control-label'
+          = text_field_tag :last_name, nil, :placeholder => "Last Name", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Company Name", nil, :class => 'control-label'
+          = text_field_tag :company_name, nil, :placeholder => "Company Name", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Email", nil, :class => 'control-label'
+          = text_field_tag :email, nil, :placeholder => "Email Address", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6"}
           = f.label :username, :class => "control-label"
           %br/
-          = f.text_field :username, :autofocus => true, :class => "form-control input-lg", placeholder: "Username"
+          = f.text_field :username, :class => "form-control input-lg", placeholder: "Username"
+        %div{:class => "col-sm-6"}
+          = label_tag "Phone", nil, :class => 'control-label'
+          = text_field_tag :phone, nil, :placeholder => "Phone", class: "form-control input-lg"
       .row.form-group
-        %div{:class => "col-sm-12"}
+        %div{:class => "col-sm-6"}
           = f.label :password, :class => "control-label"
           %br/
           = f.password_field :password, :class => "form-control input-lg", placeholder: "Password"
-      .row.form-group
-        %div{:class => "col-sm-12"}
+        %div{:class => "col-sm-6"}
           = f.label :password_confirmation, :class => "control-label"
           %br/
           = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation"
       .row.form-group
-        %div{:class => "col-sm-12"}
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Tickets per Month", nil, :class => 'control-label'
+          .btn-group-horizontal{"data-toggle" => "buttons"}
+            %label.btn.btn-lg.btn-default{class: 'active'}
+              = radio_button_tag :tickets_per_month, '1000'
+              1000
+            %label.btn.btn-lg.btn-default
+              = radio_button_tag :tickets_per_month, '2500'
+              2500
+            %label.btn.btn-lg.btn-default
+              = radio_button_tag :tickets_per_month, '5000'
+              5000
+            %label.btn.btn-lg.btn-default
+              = radio_button_tag :tickets_per_month, '10000'
+              10000
+
+      .row.form-group
+        %div{:class => ".col-sm-6 col-md-4 col-md-offset-4"}
           = f.submit "Sign Up", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }

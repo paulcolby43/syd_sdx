@@ -1,6 +1,4 @@
 class Image < ActiveRecord::Base
-#  attr_accessible :capture_seq_nbr, :ticket_nbr, :receipt_nbr, :blob_id, :camera_name, :camera_group, :sys_date_time,
-#    :location, :branch_code, :event_code, :cust_nbr, :thumbnail, :cmdy_name, :cmdy_nbr
 
   establish_connection :jpegger
 
@@ -80,14 +78,14 @@ class Image < ActiveRecord::Base
   #     Class Methods         #
   #############################
   
-  def self.proper_location(current_user_location)
-#    where('location == ?', current_user_location)
-    where(location: current_user_location)
+  def self.proper_yardid(current_yard_id)
+    where(yardid: current_yard_id)
   end
   
   private
+  
   def self.ransackable_scopes(auth_object = nil)
-    ["proper_location"]
+    ["proper_yardid"]
   end
   
 end

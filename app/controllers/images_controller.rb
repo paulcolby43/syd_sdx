@@ -90,13 +90,11 @@ class ImagesController < ApplicationController
   
   def advanced_search
     unless params[:q].blank?
-      @search = Image.search(params[:q].merge(proper_location: current_user.location))
-      
+      @search = Image.search(params[:q].merge(proper_yardid: current_yard_id))
       @images = @search.result.page(params[:page]).per(6)
-      
     else
       # Default search to today's images
-      params[:q] = {:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, proper_location: current_user.location}
+      params[:q] = {:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, proper_yardid: current_yard_id}
       @search = Image.ransack(params[:q])
       @images = @search.result.page(params[:page]).per(6)
     end

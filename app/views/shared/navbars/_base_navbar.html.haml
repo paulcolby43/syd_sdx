@@ -17,6 +17,7 @@
           %ul.dropdown-menu
             - Yard.all(current_token).each do |yard|
               %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
+        %li= link_to 'PICTURES', images_path
         %li= link_to 'SETTINGS', current_user.user_setting
           
       %ul.nav.navbar-nav.navbar-right
