@@ -5,7 +5,7 @@ class YardsController < ApplicationController
   # GET /yards
   # GET /yards.json
   def index
-    @yards = Yard.all
+    @yards = Yard.all(current_token)
   end
 
   # GET /yards/1

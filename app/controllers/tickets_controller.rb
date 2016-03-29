@@ -5,6 +5,7 @@ class TicketsController < ApplicationController
   # GET /tickets
   # GET /tickets.json
   def index
+    authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
 #    @next_number = Ticket.next_available_number(current_token, current_yard_id)
 #    @uom = Ticket.units_of_measure(current_token)
@@ -26,6 +27,7 @@ class TicketsController < ApplicationController
   # GET /tickets/1
   # GET /tickets/1.json
   def show
+    authorize! :show, :tickets
 #    @ticket = Ticket.find_by_id_and_ticket_number(params[:status], current_token, current_yard_id, params[:id], params[:ticket_number])
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
   end
@@ -41,6 +43,7 @@ class TicketsController < ApplicationController
 
   # GET /tickets/1/edit
   def edit
+    authorize! :edit, :tickets
     @drawers = Drawer.all(current_token, current_yard_id)
     @checking_accounts = CheckingAccount.all(current_token, current_yard_id)
 #    @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])

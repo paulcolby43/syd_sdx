@@ -5,6 +5,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   def index
+    authorize! :index, :customers
     unless params[:q].blank?
       results = Customer.search(current_token, current_yard_id, params[:q])
     else
@@ -20,6 +21,7 @@ class CustomersController < ApplicationController
   # GET /customers/1
   # GET /customers/1.json
   def show
+    authorize! :show, :customers
     @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
     @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
 #    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], location: current_yard_id)
@@ -27,11 +29,13 @@ class CustomersController < ApplicationController
 
   # GET /customers/new
   def new
+    authorize! :create, :customers
     @customer = Customer.new
   end
 
   # GET /customers/1/edit
   def edit
+    authorize! :edit, :customers
     @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
   end
 

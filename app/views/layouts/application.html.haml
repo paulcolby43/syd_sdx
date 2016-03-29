@@ -15,7 +15,10 @@
     - if not logged_in?
       = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"}
     - else
-      = render partial: "shared/navbars/base_navbar", locals: {title: "Home"} if current_page? root_path
+      - if current_user.admin?
+        = render partial: "shared/navbars/base_navbar", locals: {title: "Home"} if current_page? root_path
+      - elsif current_user.customer?
+        = render partial: "shared/navbars/customer_navbar", locals: {title: "Home"}
     - flash.each do |message_type, message|
       %br
       = content_tag(:div, message, class: "alert alert-#{message_type}") do 

@@ -12,7 +12,10 @@
             %i.fa.fa-lock
             Log In
 - else
-  - if current_user.admin?
-    = render 'admin_start'
-  - elsif current_user.customer?
-    = render 'customer_start'
+  .jumbotron
+    .container
+      %p.text-center Customer Portal
+      %div.text-center
+        %p
+          %a{href: images_path, class: 'btn btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
+            Pictures

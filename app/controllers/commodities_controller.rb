@@ -5,6 +5,7 @@ class CommoditiesController < ApplicationController
   # GET /commodities
   # GET /commodities.json
   def index
+    authorize! :index, :commodities
     unless params[:q].blank?
       results = Commodity.search(current_token, current_yard_id, params[:q])
       if results.class == 'Hash'
@@ -25,6 +26,7 @@ class CommoditiesController < ApplicationController
   # GET /commodities/1
   # GET /commodities/1.json
   def show
+    authorize! :show, :commodities
     @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
     @commodity_types = Commodity.types(current_token, current_yard_id)
     respond_to do |format|
@@ -35,12 +37,14 @@ class CommoditiesController < ApplicationController
 
   # GET /commodities/new
   def new
+    authorize! :create, :commodities
 #    @commodity = Commodity.new
     @commodity_types = Commodity.types(current_token, current_yard_id)
   end
 
   # GET /commodities/1/edit
   def edit
+    authorize! :edit, :commodities
     @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
     @commodity_types = Commodity.types(current_token, current_yard_id)
   end

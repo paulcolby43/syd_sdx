@@ -14,6 +14,9 @@
             %i.fa.fa-camera.fa-lg
             = "Pictures" unless mobile_device?
         .col-xs-4.col-sm-4
+          %a{href: "#signature_form", "data-toggle" => "modal", :alt => "new_signature_form"}
+            %i.fa.fa-pencil.fa-lg
+            = "Sign" unless mobile_device?
           -#
             - unless current_user.signature_pad_devices.blank?
               - current_user.signature_pad_devices.each do |signature_pad_device|
@@ -28,4 +31,4 @@
 
 = render partial: "image_files/upload_modal"
 =# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
-=# render partial: "#{current_user.user_setting.table_name.singularize}_files/signature_modal"
+= render partial: "#{current_user.user_setting.table_name.singularize}_files/signature_modal"

@@ -2,7 +2,7 @@ class ImagesController < ApplicationController
   before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
   before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
-#  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
+  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
 
   respond_to :html, :js
 
@@ -38,7 +38,11 @@ class ImagesController < ApplicationController
     else # Show today's tickets
       # Default search to today's images
       @today = true
-      search = Image.ransack(:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :yardid_eq => current_yard_id)
+      unless current_user.customer?
+        search = Image.ransack(:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :yardid_eq => current_yard_id)
+      else
+        search = Image.ransack(:cust_nbr_eq => current_user.customer_guid, :sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :yardid_eq => current_yard_id)
+      end
       params[:q] = {}
       @start_date = Date.today.to_s
       @end_date = Date.today.to_s

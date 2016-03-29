@@ -28,7 +28,7 @@ class ImageFilesController < ApplicationController
   # POST /image_files
   # POST /image_files.json
   def create
-    
+    require 'open3'
     respond_to do |format|
       format.html { 
         @image_file = ImageFile.new(image_file_params)

@@ -1,8 +1,9 @@
 class User < ActiveRecord::Base
+  ROLES = %w[customer admin].freeze
 
   attr_accessor :password
   before_save :prepare_password
-  after_create :generate_token
+  after_create :generate_token, if: :admin?
   
   has_one :access_token
   has_one :user_setting
@@ -57,6 +58,14 @@ class User < ActiveRecord::Base
   
   def shipments_table?
     user_setting.table_name == "shipments"
+  end
+  
+  def admin?
+    role == "admin"
+  end
+  
+  def customer?
+    role == "customer"
   end
   
   #############################
