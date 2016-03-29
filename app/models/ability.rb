@@ -29,7 +29,6 @@ class Ability
     # See the wiki for details:
     # https://github.com/bryanrite/cancancan/wiki/Defining-Abilities
     
-    
     if user.admin?
       
       # Tickets
@@ -72,6 +71,7 @@ class Ability
         true
       end
       can :create, Image
+      can :advance_search, :images
 
       # ImageFiles
       ############

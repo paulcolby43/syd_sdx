@@ -29,6 +29,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        @user.generate_scrap_dragon_token(user_params[:username], user_params[:password]) if @user.admin?
         format.html { 
           flash[:success] = "User was successfully created."
           redirect_to root_path
@@ -47,7 +48,10 @@ class UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
+        format.html { 
+          flash[:success] = "User was successfully updated."
+          redirect_to @user
+        }
         format.json { render :show, status: :ok, location: @user }
       else
         format.html { render :edit }
@@ -74,6 +78,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:username, :password, :first_name, :last_name, :company_name, :email, :phone, :customer_guid, :role)
+      params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, :customer_guid, :role)
     end
 end

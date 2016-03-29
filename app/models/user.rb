@@ -3,12 +3,15 @@ class User < ActiveRecord::Base
 
   attr_accessor :password
   before_save :prepare_password
-  after_create :generate_token, if: :admin?
+#  after_create :generate_token, if: :admin?
   
   has_one :access_token
   has_one :user_setting
   
   after_commit :create_user_settings, :on => :create
+  
+  validates_presence_of :role, :message => 'Please select type of user.'
+  validates_uniqueness_of :username
   
   ############################
   #     Instance Methods     #
@@ -30,6 +33,22 @@ class User < ActiveRecord::Base
     JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 24.hours)
+  end
+  
+  def generate_scrap_dragon_token(user, pass)
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
+    JSON.parse(response)
+    access_token_string = JSON.parse(response)["access_token"]
+    AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
+  end
+  
+  def update_scrap_dragon_token(user, pass)
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
+    JSON.parse(response)
+    access_token_string = JSON.parse(response)["access_token"]
+    access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
   end
   
   def yards
@@ -75,6 +94,7 @@ class User < ActiveRecord::Base
   def self.authenticate(login, pass)
     user = find_by_username(login)
     if user and user.password_hash == user.encrypt_password(pass)
+      user.update_scrap_dragon_token(login, pass) unless user.customer?
       return user 
     end
   end
