@@ -6,6 +6,8 @@ module SessionsHelper
     unless user.customer?
 #      user.update_token 
       session[:auth_token]= user.access_token.token_string
+    else
+      @current_yard_id = nil
     end
 #    cookies[:auth_token] = { value: user.access_token.token_string, expires: 24.hours.from_now } # Store auth_token in a temporary cookie for 24 hours.
   end
@@ -24,6 +26,7 @@ module SessionsHelper
     session.delete(:user_id)
     session.delete(:auth_token)
     cookies.delete(:yard_id)
+    @current_yard_id = nil
     @current_user = nil
   end
   

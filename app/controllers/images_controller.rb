@@ -41,7 +41,7 @@ class ImagesController < ApplicationController
       unless current_user.customer?
         search = Image.ransack(:sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :yardid_eq => current_yard_id)
       else
-        search = Image.ransack(:cust_nbr_eq => "#{current_user.customer_guid.blank? ? 'fubar' : current_user.customer_guid}", :sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, :yardid_eq => current_yard_id)
+        search = Image.ransack(:cust_nbr_eq => "#{current_user.customer_guid.blank? ? 'fubar' : current_user.customer_guid}", :sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day)
       end
       params[:q] = {}
       @start_date = Date.today.to_s
