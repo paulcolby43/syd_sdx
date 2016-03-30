@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  resources :contracts
+  
   resources :accounts_payables
   
   resources :checking_accounts

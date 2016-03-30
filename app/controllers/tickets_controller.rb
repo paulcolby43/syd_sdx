@@ -53,6 +53,7 @@ class TicketsController < ApplicationController
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
     @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
+    @contract = Yard.contract(current_yard_id)
   end
 
   # PATCH/PUT /tickets/1

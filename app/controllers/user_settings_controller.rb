@@ -13,6 +13,7 @@ class UserSettingsController < ApplicationController
   # GET /user_settings/1
   # GET /user_settings/1.json
   def show
+    @contract = Yard.contract(current_yard_id)
   end
 
   # GET /user_settings/new

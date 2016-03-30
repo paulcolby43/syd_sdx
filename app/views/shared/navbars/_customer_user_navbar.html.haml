@@ -10,7 +10,10 @@
         = image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
-        %li= link_to 'PICTURES', images_path
+        %li
+          %a{href: images_path}
+            %i.fa.fa-search
+            PICTURES
           
       %ul.nav.navbar-nav.navbar-right
         %li= link_to "User: <strong>#{current_user.username}</strong>".html_safe, current_user

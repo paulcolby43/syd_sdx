@@ -32,7 +32,7 @@ class UsersController < ApplicationController
         @user.generate_scrap_dragon_token(user_params[:username], user_params[:password]) if @user.admin?
         format.html { 
           flash[:success] = "User was successfully created."
-          redirect_to root_path
+          redirect_to login_path
 #          redirect_to @user
           }
         format.json { render :show, status: :created, location: @user }

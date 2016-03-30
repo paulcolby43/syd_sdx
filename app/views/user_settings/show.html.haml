@@ -3,7 +3,6 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     .col-xs-12.col-sm-6.col-md-offset-3
-
       .panel.panel-default
         .panel-heading
           Show Thumbnails
@@ -66,5 +65,19 @@
                     %p
                       = "Listen Port:"
                       = device.LocalListenPort
+
+    .col-xs-12.col-sm-6.col-md-offset-3
+      - unless @contract.blank?
+        .panel.panel-default
+          .panel-heading
+            %h4.panel-title
+              Contract
+              .pull-right= link_to 'Edit', edit_contract_path(@contract)
+          %ul.list-group
+            %li.list-group-item
+              = @contract.contract_name
+            %li.list-group-item= @contract.verbiage.html_safe
+      - else
+        %p.lead= link_to "New Contract", new_contract_path
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}

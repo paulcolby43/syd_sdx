@@ -1,0 +1,14 @@
+=# render partial: "shared/navbars/show_contract_navbar", locals: {title: truncate(@contract.contract_name, length: 12)}
+- @title="#{@contract.contract_name}" 
+
+.container
+  %div.row
+    .col-xs-12.col-sm-6.col-md-offset-3
+      .well
+        %h3= @contract.contract_name
+        %p= @contract.text1
+        %p= @contract.text2
+        %p= @contract.text3
+        %p= @contract.text4
+
+=# render partial: "shared/contract_footer_navbar", locals: {title: "Contract"}

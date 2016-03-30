@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160328192539) do
+ActiveRecord::Schema.define(version: 20160330184622) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20160328192539) do
     t.string   "container_number"
     t.string   "booking_number"
     t.string   "contract_number"
-    t.boolean  "hidden",           default: false
+    t.boolean  "hidden",            default: false
     t.integer  "blob_id"
     t.string   "tare_seq_nbr"
     t.string   "commodity_name"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20160328192539) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "yard_id"
+    t.string   "contract_verbiage"
   end
 
   create_table "user_settings", force: true do |t|

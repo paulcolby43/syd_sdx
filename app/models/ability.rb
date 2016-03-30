@@ -130,10 +130,10 @@ class Ability
 #
 #      # Contracts
 #      ############
-#      can :manage, Contract do |contract|
-#        contract.company_id == user.location
-#      end
-#      can :create, Contract
+      can :manage, Contract do |contract|
+        true
+      end
+      can :create, Contract
 #
 #      # JpeggerContracts
 #      ############

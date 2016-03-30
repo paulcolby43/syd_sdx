@@ -1,0 +1,6 @@
+=# render partial: "shared/navbars/new_and_edit_contract_navbar", locals: {title: truncate(@contract.contract_name, length: 12)}
+- @title="#{@contract.contract_name}"
+
+.container
+  .col-sm-6.col-md-4.col-md-offset-4
+    = render 'form'

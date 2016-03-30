@@ -11,10 +11,10 @@
           = f.hidden_field :event_code, value: 'SIGNATURE CAPTURE'
           = f.hidden_field :customer_number, value: @ticket["CustomerId"]
           = f.hidden_field :customer_name, value: "#{@ticket['FirstName']} #{@ticket['LastName']}"
-          -#
-            %h3
-              - unless current_company.jpegger_contract.blank?
-                = current_company.jpegger_contract.verbiage.html_safe
+          = f.hidden_field :contract_verbiage, value: @contract.verbiage unless @contract.blank?
+          %h3
+            - unless @contract.blank?
+              = @contract.verbiage.html_safe
           .form-group
             .sigPad
               %div.sigNav

@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_uniqueness_of :username
+  validates_uniqueness_of :email
   
   ############################
   #     Instance Methods     #
@@ -56,7 +57,7 @@ class User < ActiveRecord::Base
   end
   
   def create_user_settings
-    UserSetting.create(user_id: id)
+    UserSetting.create(user_id: id, show_thumbnails: customer? ? true : false)
   end
   
   def show_thumbnails?

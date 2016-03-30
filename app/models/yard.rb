@@ -31,4 +31,8 @@ class Yard
     
     data["ApiItemsResponseOfApiYard43XWZGCj"]["Items"]["ApiYard"].find {|yard| yard['Name'] == yard_name}
   end
+  
+  def self.contract(yard_id)
+    Contract.where(contract_id: yard_id).last
+  end
 end

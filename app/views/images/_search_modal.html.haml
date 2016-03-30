@@ -5,7 +5,9 @@
         .modal-body
           = hidden_field_tag "q[hidden_blank]", 1
           = hidden_field_tag "q[yardid_eq]", current_yard_id unless current_user.customer?
-          = hidden_field_tag "q[cust_nbr_eq]", current_user.customer_guid if current_user.customer?
+          - if current_user.customer?
+            = hidden_field_tag "q[cust_nbr_eq]", current_user.customer_guid unless current_user.customer_guid.blank?
+            = hidden_field_tag "q[cust_nbr_eq]", 'fubar' if current_user.customer_guid.blank?
           %div.form-group.has-feedback{:id => "ticket_search", :class => "col-xs-12"}
             = label_tag "Ticket Number", nil, :class => 'control-label'
             .input-group
@@ -21,14 +23,14 @@
                 %a{href: '#', onclick: "$('#q_event_code_eq').val('');"}
                   %i.fa.fa-remove.fa-lg
           .form-group{:class => "col-xs-12"}
-            = label_tag "Start Date", nil, :class => 'control-label'
+            = label_tag "Start Date (yyyy-mm-dd)", nil, :class => 'control-label'
             .input-group
               = date_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg"
               %span.input-group-addon 
                 %a{href: '#', onclick: "$('#q_sys_date_time_gteq').val('');"}
                   %i.fa.fa-remove.fa-lg
           .form-group{:class => "col-xs-12"}
-            = label_tag "End Date", nil, :class => 'control-label'
+            = label_tag "End Date (yyyy-mm-dd)", nil, :class => 'control-label'
             .input-group
               = date_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg"
               %span.input-group-addon 
