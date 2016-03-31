@@ -131,7 +131,7 @@ class Ability
 #      # Contracts
 #      ############
       can :manage, Contract do |contract|
-        true
+        contract.contract_id == yard_id
       end
       can :create, Contract
 #
