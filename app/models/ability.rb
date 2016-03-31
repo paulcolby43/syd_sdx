@@ -1,7 +1,8 @@
 class Ability
   include CanCan::Ability
 
-  def initialize(user)
+#  def initialize(user)
+  def initialize(user, yard_id=nil)
     # Define abilities for the passed in user here. For example:
     #
     user ||= User.new # guest user (not logged in)
@@ -67,8 +68,7 @@ class Ability
       # Images
       ############
       can :manage, Image do |image|
-#        image.location == user.location
-        true
+        image.yardid == yard_id
       end
       can :create, Image
       can :advance_search, :images
@@ -97,7 +97,7 @@ class Ability
       # CustPics
       ############
       can :manage, CustPic do |cust_pic|
-        true
+        cust_pic.yardid == yard_id
       end
       can :create, CustPic
 
