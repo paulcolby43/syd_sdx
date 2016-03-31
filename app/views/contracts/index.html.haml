@@ -1,21 +1,20 @@
-=# render partial: "shared/navbars/contracts_navbar", locals: {title: "Contracts"}
+= render partial: "shared/navbars/contracts_navbar", locals: {title: "Contracts"}
 - @title="Contracts"
 
 .container
-  - if @contracts.blank?
+  %br
+  - if @contract.blank?
     .jumbotron
       %p.text-center No contracts found
   - else
-    %div{id: 'contracts'}    
-      - @contracts.each do |contract|
-        %div.row
-          .col-xs-12.col-sm-12.col-md-12
-            %div.panel.panel-primary
-              %div.list_group
-                %a{href: contract_path(contract.id), class: "list-group-item contract_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{contract.name}"}}
-                  = contract.name
-                  .pull-right
-                    &nbsp;
-                    %i.fa.fa-chevron-right
+    %div.row
+      .col-xs-12.col-sm-12.col-md-12
+        %div.panel.panel-primary
+          %div.list_group
+            %a{href: contract_path(@contract.id), class: "list-group-item contract_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{@contract.contract_name}"}}
+              = @contract.contract_name
+              .pull-right
+                &nbsp;
+                %i.fa.fa-chevron-right
 
-=# render partial: "shared/contracts_footer_navbar", locals: {title: "Contracts"}
+= render partial: "shared/contracts_footer_navbar", locals: {title: "Contracts"}

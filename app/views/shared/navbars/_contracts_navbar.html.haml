@@ -6,7 +6,7 @@
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          - if current_user.contracts.empty?
+          - if @contract.blank?
             %a{href: new_contract_path}
               %i.fa.fa-plus.fa-lg
               = "Contract" unless mobile_device?

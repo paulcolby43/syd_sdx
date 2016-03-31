@@ -5,7 +5,8 @@ class ContractsController < ApplicationController
   # GET /contracts
   # GET /contracts.json
   def index
-    @contracts = current_user.contracts
+#    @contracts = current_user.contracts
+    @contract = Yard.contract(current_yard_id)
   end
 
   # GET /contracts/1
