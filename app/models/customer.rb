@@ -142,4 +142,32 @@ class Customer
     return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
   end
   
+  def self.default_cust_pic_id(customer_id, yard_id)
+    customer_photos = CustPic.where(cust_nbr: customer_id, yardid: yard_id, event_code: "Customer Photo")
+    unless customer_photos.blank?
+      return customer_photos.last.id
+    else
+      photo_id_pics = CustPic.where(cust_nbr: customer_id, yardid: yard_id, event_code: "Photo ID")
+      unless photo_id_pics.blank?
+        return photo_id_pics.last.id
+      else
+        return nil
+      end
+    end
+  end
+  
+  def self.default_cust_pic(customer_id, yard_id)
+    customer_photos = CustPic.where(cust_nbr: customer_id, yardid: yard_id, event_code: "Customer Photo")
+    unless customer_photos.blank?
+      return customer_photos.last
+    else
+      photo_id_pics = CustPic.where(cust_nbr: customer_id, yardid: yard_id, event_code: "Photo ID")
+      unless photo_id_pics.blank?
+        return photo_id_pics.last
+      else
+        return nil
+      end
+    end
+  end
+  
 end
