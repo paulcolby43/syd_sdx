@@ -3,9 +3,8 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          -#
-            = link_to 'javascript:history.back()' do
-              %i.fa.fa-arrow-left.fa-lg
+          = link_to 'javascript:history.back()' do
+            Back
         .col-xs-4.col-sm-4
           - if params[:status] == '2' or params[:status].blank?
             %i.fa.fa-folder-open-o.fa-lg
@@ -15,6 +14,7 @@
             %i.fa.fa-dollar
           = title
         .col-xs-4.col-sm-4
-          %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
-            %i.fa.fa-plus.fa-lg
-            = "Ticket" unless mobile_device?
+          - unless current_user.customer?
+            %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+              %i.fa.fa-plus.fa-lg
+              = "Ticket" unless mobile_device?

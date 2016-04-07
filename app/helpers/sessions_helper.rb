@@ -3,12 +3,16 @@ module SessionsHelper
   # Logs in the given user.
   def log_in(user)
     session[:user_id] = user.id
-    unless user.customer?
-#      user.update_token 
-      session[:auth_token]= user.access_token.token_string
-    else
-      @current_yard_id = nil
+    session[:auth_token]= user.access_token.token_string
+    if user.customer?
+      cookies[:yard_id] = user.yard_id
     end
+#    unless user.customer?
+##      user.update_token 
+#      session[:auth_token]= user.access_token.token_string
+#    else
+#      @current_yard_id = nil
+#    end
 #    cookies[:auth_token] = { value: user.access_token.token_string, expires: 24.hours.from_now } # Store auth_token in a temporary cookie for 24 hours.
   end
 

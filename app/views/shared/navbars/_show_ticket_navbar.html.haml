@@ -3,11 +3,11 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          -#
-            = link_to 'javascript:history.back()' do
-              %i.fa.fa-arrow-left.fa-lg
+          = link_to 'javascript:history.back()' do
+            Back
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          %a{href: edit_ticket_path(@ticket['Id'], status: @ticket['Status'], yard_id: @ticket['YardId'])}
-            = "Edit"
+          - unless current_user.customer?
+            %a{href: edit_ticket_path(@ticket['Id'], status: @ticket['Status'], yard_id: @ticket['YardId'])}
+              = "Edit"

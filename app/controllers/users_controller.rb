@@ -29,7 +29,11 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        @user.generate_scrap_dragon_token(user_params[:username], user_params[:password]) if @user.admin?
+        unless @user.customer?
+          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password])
+        else
+          @user.generate_scrap_dragon_token('9', '9') # TODO: Get generic customer user for read-only access to tickets
+        end
         format.html { 
           flash[:success] = "User was successfully created."
           redirect_to login_path if current_user.blank?

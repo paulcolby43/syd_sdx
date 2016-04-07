@@ -152,6 +152,11 @@ class Ability
     # End admin user role
     
     elsif user.customer?
+      
+      # Tickets
+      ############
+      can :index, :tickets
+      can :show, :tickets
     
       # Images
       ############

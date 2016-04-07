@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
 #    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
-    JSON.parse(response)
+#    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
   end
@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
 #    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
-    JSON.parse(response)
+#    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 24.hours)
   end
@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   def generate_scrap_dragon_token(user, pass)
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
-    JSON.parse(response)
+#    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
   end
@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
   def update_scrap_dragon_token(user, pass)
     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
-    JSON.parse(response)
+#    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
   end
@@ -95,7 +95,11 @@ class User < ActiveRecord::Base
   def self.authenticate(login, pass)
     user = find_by_username(login)
     if user and user.password_hash == user.encrypt_password(pass)
-      user.update_scrap_dragon_token(login, pass) unless user.customer?
+      unless user.customer?
+        user.update_scrap_dragon_token(login, pass) 
+      else
+        user.update_scrap_dragon_token('9', '9') # TODO: Get generic user for read-only access to tickets 
+      end
       return user 
     end
   end

@@ -14,10 +14,28 @@ class TicketsController < ApplicationController
     unless params[:q].blank?
       results = Ticket.search(@status, current_token, current_yard_id, params[:q])
     else
-      results = Ticket.all(@status, current_token, current_yard_id)
+      results = Ticket.all(@status, current_token, current_yard_id) unless current_user.customer?
+      results = Ticket.search(3, current_token, current_yard_id, current_user.company_name) if current_user.customer?
     end
     unless results.blank?
       results = results.reverse if @status == 'held'
+      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
+    else
+      @tickets = []
+    end
+  end
+  
+  # GET /customer_tickets
+  # GET /customer_tickets.json
+  def customer_tickets
+    authorize! :customer_index, :tickets
+    status = 3
+    unless params[:q].blank?
+      results = Ticket.customer_search(status, current_token, current_yard_id, current_user.customer_guid, params[:q])
+    else
+      results = Ticket.customer_all(status, current_token, current_yard_id, current_user.customer_guid)
+    end
+    unless results.blank?
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
@@ -30,6 +48,7 @@ class TicketsController < ApplicationController
     authorize! :show, :tickets
 #    @ticket = Ticket.find_by_id_and_ticket_number(params[:status], current_token, current_yard_id, params[:id], params[:ticket_number])
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
+    @accounts_payable_items = AccountsPayable.all(current_token, current_yard_id, params[:id])
   end
 
   # GET /tickets/new

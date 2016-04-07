@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     collection do
       get :line_item_fields
       get :void_item
+      get :customer_tickets
     end
   end
   

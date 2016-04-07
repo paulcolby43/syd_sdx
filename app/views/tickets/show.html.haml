@@ -38,18 +38,25 @@
               = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
               = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
               =# line_item 
-    .well
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          %p
-            = "Balance Due:"
-            = "#{number_to_currency(@ticket['BalanceDue'])}"
+    - unless @ticket['Status'] == '3'
+      .well
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            %p
+              = "Balance Due:"
+              = "#{number_to_currency(@ticket['BalanceDue'])}"
+    - if @ticket['Status'] == '3'
+      %p.pull-right
+        = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+        - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
+          %br
+          = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
     -#
-    .well
-      %h3 
-        = @ticket['TicketNumber']
-      %p= "Status: #{@ticket['Status']}"
-      %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-      %p= @ticket
+      .well
+        %h3 
+          = @ticket['TicketNumber']
+        %p= "Status: #{@ticket['Status']}"
+        %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+        %p= @ticket
 
 = render partial: "shared/footer_navbar", locals: {title: "Ticket"}
