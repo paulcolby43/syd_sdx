@@ -1,0 +1,50 @@
+%div{:id => "new_user_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_for @new_user do |f|
+    .modal-dialog
+      .modal-content
+        .modal-header
+          Create customer user login
+          = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+          %br
+        .modal-body
+          - @new_user.errors.each do |attr, msg|
+            .alert.alert-danger
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              = "#{attr} #{msg}" if @new_user.errors[attr].first == msg
+          = f.hidden_field :role, value: 'customer'
+          = f.hidden_field :customer_guid, value: @customer['Id']
+          = f.hidden_field :yard_id, value: current_yard_id
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :first_name, :class => "control-label"
+              %br/
+              = f.text_field :first_name, value: @customer['FirstName'], :class => "form-control input-lg", placeholder: "First Name", :autofocus => true
+            %div{:class => "col-sm-6"}
+              = f.label :last_name, :class => "control-label"
+              %br/
+              = f.text_field :last_name, value: @customer['LastName'], :class => "form-control input-lg", placeholder: "Last Name"
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :company_name, :class => "control-label"
+              %br/
+              = f.text_field :company_name, value: @customer['Company'], :class => "form-control input-lg", placeholder: "Company Name"
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :phone, :class => "control-label"
+              %br/
+              = f.text_field :phone, value: @customer['Phone'], :class => "form-control input-lg", placeholder: "Phone"
+            %div{:class => "col-sm-6"}
+              = f.label :email, :class => "control-label"
+              %br/
+              = f.text_field :email, :class => "form-control input-lg", placeholder: "Email"
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :username, :class => "control-label"
+              %br/
+              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase, :class => "form-control input-lg", placeholder: "Username"
+            %div{:class => "col-sm-6"}
+              = f.label :password, :class => "control-label"
+              %br/
+              = f.password_field :password, :class => "form-control input-lg", placeholder: "Password"
+        .modal-footer
+          = f.submit "Create", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }

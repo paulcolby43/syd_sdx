@@ -9,6 +9,7 @@
         .alert.alert-danger
           <button type="button" class="close" data-dismiss="alert">×</button>
           = "#{attr} #{msg}" if @user.errors[attr].first == msg
+      = f.hidden_field :role, value: 'admin'
       .row.form-group
         %div{:class => "col-sm-6"}
           = f.label :first_name, :class => "control-label"
@@ -46,18 +47,19 @@
             = f.label :password_confirmation, :class => "control-label"
             %br/
             = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "User Type", nil, :class => 'control-label'
-          .btn-group-horizontal{"data-toggle" => "buttons"}
-            %label.btn.btn-lg.btn-default
-              =# radio_button_tag :role, 'admin'
-              = f.radio_button :role, 'admin'
-              I'm a Scrap Yard Company
-            %label.btn.btn-lg.btn-default
-              =# radio_button_tag :role, 'customer'
-              = f.radio_button :role, 'customer'
-              I sell to Scrap Yards
+      -#
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "User Type", nil, :class => 'control-label'
+            .btn-group-horizontal{"data-toggle" => "buttons"}
+              %label.btn.btn-lg.btn-default
+                =# radio_button_tag :role, 'admin'
+                = f.radio_button :role, 'admin'
+                I'm a Scrap Yard Company
+              %label.btn.btn-lg.btn-default
+                =# radio_button_tag :role, 'customer'
+                = f.radio_button :role, 'customer'
+                I sell to Scrap Yards
       -#
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}

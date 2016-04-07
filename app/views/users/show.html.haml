@@ -1,3 +1,6 @@
+= render partial: "shared/navbars/base_navbar" if current_user.admin?
+= render partial: "shared/navbars/customer_user_navbar" if current_user.customer?
+
 .jumbotron
   .container
     .col-sm-6.col-md-4.col-md-offset-4
@@ -21,11 +24,15 @@
         %strong Phone
         %br
         = @user.phone
-      - if @user.customer?
+      - if @user.admin?
         %p
           %strong Customer GUID
           %br
           = @user.customer_guid
+        %p
+          %strong Yard ID
+          %br
+          = @user.yard_id
 
       = link_to 'Edit', edit_user_path(@user), class: 'btn btn-default'
     

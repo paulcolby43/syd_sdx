@@ -35,4 +35,8 @@ class Yard
   def self.contract(yard_id)
     Contract.where(contract_id: yard_id).last
   end
+  
+  def self.device_groups(yard_id)
+    DeviceGroup.where(yardid: yard_id)
+  end
 end

@@ -32,7 +32,8 @@ class UsersController < ApplicationController
         @user.generate_scrap_dragon_token(user_params[:username], user_params[:password]) if @user.admin?
         format.html { 
           flash[:success] = "User was successfully created."
-          redirect_to login_path
+          redirect_to login_path if current_user.blank?
+          redirect_to :back unless current_user.blank?
 #          redirect_to @user
           }
         format.json { render :show, status: :created, location: @user }
@@ -78,6 +79,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, :customer_guid, :role)
+      params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, :customer_guid, :role, :yard_id)
     end
 end

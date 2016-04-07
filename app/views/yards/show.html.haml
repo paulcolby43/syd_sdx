@@ -1,4 +1,5 @@
-= render partial: "shared/navbars/show_yard_navbar", locals: {title: @yard['Name']}
+=# render partial: "shared/navbars/show_yard_navbar", locals: {title: @yard['Name']}
+= render partial: "shared/navbars/base_navbar"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -96,4 +97,4 @@
                     %br
                     %small= customer["Id"]
 
-= render partial: "shared/footer_navbar", locals: {title: "Yard"}
+=# render partial: "shared/footer_navbar", locals: {title: "Yard"}

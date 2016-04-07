@@ -24,6 +24,10 @@ class CustomersController < ApplicationController
     authorize! :show, :customers
     @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
     @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
+    @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
+    if @customer_user.blank?
+      @new_user = User.new
+    end
 #    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], location: current_yard_id)
   end
 
@@ -67,7 +71,7 @@ class CustomersController < ApplicationController
         else
           flash[:danger] = 'Error updating customer.'
         end
-        redirect_to customers_path
+        redirect_to customer_path(customer_params[:id])
       }
     end
   end
@@ -103,6 +107,6 @@ class CustomersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def customer_params
-      params.require(:customer).permit(:id, :first_name, :last_name, :company, :phone, :address_1, :address_2, :city, :state, :zip, :tax_collection)
+      params.require(:customer).permit(:id, :first_name, :last_name, :company, :phone, :email, :address_1, :address_2, :city, :state, :zip, :tax_collection)
     end
 end

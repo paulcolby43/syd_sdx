@@ -1,7 +1,7 @@
 class UserSetting < ActiveRecord::Base
   
   belongs_to :user
-#  belongs_to :device_group
+  belongs_to :device_group
   
   
   #############################

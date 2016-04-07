@@ -8,6 +8,8 @@
           - if current_user.customer?
             = hidden_field_tag "q[cust_nbr_eq]", current_user.customer_guid unless current_user.customer_guid.blank?
             = hidden_field_tag "q[cust_nbr_eq]", 'fubar' if current_user.customer_guid.blank?
+            = hidden_field_tag "q[yardid_eq]", current_user.yard_id unless current_user.yard_id.blank?
+            = hidden_field_tag "q[yardid_eq]", 'fubar' if current_user.yard_id.blank?
           %div.form-group.has-feedback{:id => "ticket_search", :class => "col-xs-12"}
             = label_tag "Ticket Number", nil, :class => 'control-label'
             .input-group
