@@ -9,7 +9,9 @@ class Customer
   #############################
   
   def self.all(auth_token, yard_id)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/customer?t=100"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=100"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -27,7 +29,9 @@ class Customer
   
   def self.search(auth_token, yard_id, query_string)
     require 'uri'
-    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/customer?q=#{query_string}&t=100")
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?q=#{query_string}&t=100")
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -40,7 +44,9 @@ class Customer
   
   def self.create(auth_token, yard_id, customer_params)
     require 'json'
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/customer"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer"
     new_guid = SecureRandom.uuid
     payload = {
       "Address1"=> customer_params[:address_1], 
@@ -97,7 +103,9 @@ class Customer
   
   def self.update(auth_token, yard_id, customer_params)
     require 'json'
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/customer"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer"
     payload = {
       "Address1"=> customer_params[:address_1], 
       "Address2"=> customer_params[:address_2], 

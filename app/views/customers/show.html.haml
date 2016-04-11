@@ -7,7 +7,7 @@
     - unless @customer_user.blank?
       .alert.alert-warning
         %i.fa.fa-compress
-        = "Outside Access"
+        = "Customer has outside access"
         = link_to "Edit customer login", edit_user_path(@customer_user), class: 'btn btn-default'
     - else
       .alert.alert-warning
@@ -40,13 +40,13 @@
     %div.panel.panel-primary
       %div.panel-body
         %strong= "Address:"
-        %p
-          = "#{@customer['Address1']}"
-          - unless @customer['Address2'].blank?
-            %br
-            = "#{@customer['Address2']}"
+        %br
+        = "#{@customer['Address1']}"
+        - unless @customer['Address2'].blank?
           %br
-          = "#{@customer['City']}, #{@customer['State']} #{@customer['Zip']}" unless @customer['City'].blank? and @customer['State'].blank? and @customer['Zip'].blank?
+          = "#{@customer['Address2']}"
+        %br
+        = "#{@customer['City']}, #{@customer['State']} #{@customer['Zip']}" unless @customer['City'].blank? and @customer['State'].blank? and @customer['Zip'].blank?
     
     %hr
     %div#cust_pics
