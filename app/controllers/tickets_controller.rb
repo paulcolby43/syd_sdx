@@ -48,7 +48,9 @@ class TicketsController < ApplicationController
     authorize! :show, :tickets
 #    @ticket = Ticket.find_by_id_and_ticket_number(params[:status], current_token, current_yard_id, params[:id], params[:ticket_number])
     @ticket = Ticket.find_by_id(params[:status], current_token, current_yard_id, params[:id])
+    @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_token, current_yard_id, params[:id])
+#    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
   end
 
   # GET /tickets/new
@@ -71,7 +73,7 @@ class TicketsController < ApplicationController
     @ticket_number = @ticket["TicketNumber"]
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_token, current_yard_id)
-    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
+#    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
     @contract = Yard.contract(current_yard_id)
   end
 
