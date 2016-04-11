@@ -12,6 +12,11 @@
         %strong Username
         %br
         = @user.username
+      - if @user.admin?
+        %p
+          %strong Company
+          %br
+          = link_to @user.company.name, @user.company
       %p
         %strong Company Name
         %br

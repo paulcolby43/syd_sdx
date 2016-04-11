@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   
   has_one :access_token
   has_one :user_setting
+  belongs_to :company
   
   after_commit :create_user_settings, :on => :create
   
@@ -36,16 +37,16 @@ class User < ActiveRecord::Base
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 24.hours)
   end
   
-  def generate_scrap_dragon_token(user, pass)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+  def generate_scrap_dragon_token(user, pass, dragon_api)
+    api_url = "https://#{dragon_api}/token"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
 #    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
   end
   
-  def update_scrap_dragon_token(user, pass)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+  def update_scrap_dragon_token(user, pass, dragon_api)
+    api_url = "https://#{dragon_api}/token"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
 #    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
@@ -96,9 +97,9 @@ class User < ActiveRecord::Base
     user = find_by_username(login)
     if user and user.password_hash == user.encrypt_password(pass)
       unless user.customer?
-        user.update_scrap_dragon_token(login, pass) 
+        user.update_scrap_dragon_token(login, pass, user.company.dragon_api) 
       else
-        user.update_scrap_dragon_token('9', '9') # TODO: Get generic user for read-only access to tickets 
+        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
       end
       return user 
     end

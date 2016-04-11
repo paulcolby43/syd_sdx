@@ -79,6 +79,10 @@ class Ability
         image_file.user_id == user.id
       end
       can :create, ImageFile
+      
+      # Companies
+      ############
+      can :manage, Company
 
 #      # Shipments
 #      ############

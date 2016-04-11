@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber']}
+= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: number_to_currency(@accounts_payable_items.first['PaidAmount'])}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -45,12 +45,13 @@
             %p
               = "Balance Due:"
               = "#{number_to_currency(@ticket['BalanceDue'])}"
-    - if @ticket['Status'] == '3'
-      %p.pull-right
-        = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
-        - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
-          %br
-          = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
+    -#
+      - if @ticket['Status'] == '3'
+        %p.pull-right
+          = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+          - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
+            %br
+            = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
     -#
       .well
         %h3 
@@ -58,5 +59,11 @@
         %p= "Status: #{@ticket['Status']}"
         %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
         %p= @ticket
+    %hr
+    %div#images
+
+    %div{id: 'endless_page'}
+      %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+      %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
 
 = render partial: "shared/footer_navbar", locals: {title: "Ticket"}

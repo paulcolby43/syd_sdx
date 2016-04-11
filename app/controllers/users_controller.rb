@@ -30,9 +30,9 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         unless @user.customer?
-          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password])
+          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], @user.company.dragon_api)
         else
-          @user.generate_scrap_dragon_token('9', '9') # TODO: Get generic customer user for read-only access to tickets
+          @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
         end
         format.html { 
           flash[:success] = "User was successfully created."

@@ -89,6 +89,11 @@ gem 'whenever', :require => false
 # Authorization
 gem 'cancancan'
 
+# Administration interface
+gem 'activeadmin', github: 'gregbell/active_admin'
+# Flexible authentication solution for Rails with Warden. http://blog.plataformatec.com.br/tag/devise/
+gem 'devise'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

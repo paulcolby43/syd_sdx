@@ -10,7 +10,9 @@ class Ticket
   
   def self.all(status, auth_token, yard_id)
 #    status = 'held' if status == 'Hold'
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
@@ -44,7 +46,10 @@ class Ticket
   
   def self.search(status, auth_token, yard_id, query_string)
     require 'uri'
-    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
+#    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -55,27 +60,35 @@ class Ticket
     end
   end
   
+  # Get next available ticket number
   def self.next_available_number(auth_token, yard_id)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/nextnumber"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/nextnumber"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
     data["ApiItemResponseOfApiUniqueNumbermHEMxW_SG"]["Item"]["Value"]
   end
   
-  
+  # Get Scrap Dragon units of measure
   def self.units_of_measure(auth_token)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/uom"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/uom"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
     data["ApiItemsResponseOfApiUnitOfMeasureia6G0PzH"]["Items"]["ApiUnitOfMeasure"]
   end
   
+  # Create a new ticket
   def self.create(auth_token, yard_id, customer_id, guid)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     ticket_number = Ticket.next_available_number(auth_token, yard_id)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
 #        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
@@ -100,8 +113,11 @@ class Ticket
       return data["SaveTicketResponse"]["Success"]
   end
   
+  # Update an existing ticket
   def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -127,8 +143,11 @@ class Ticket
       return data["SaveTicketResponse"]["Success"]
   end
   
+  # Add a line item to a ticket
   def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/item"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -161,8 +180,11 @@ class Ticket
       return data["SaveTicketItemResponse"]["Success"]
   end
   
+  # Update line item of ticket
   def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/item"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -194,8 +216,11 @@ class Ticket
       return data["SaveTicketItemResponse"]["Success"]
   end
   
+  # Void/remove a line item from ticket
   def self.void_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/item/void"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item/void"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -227,8 +252,11 @@ class Ticket
       return data["SaveTicketItemResponse"]["Success"]
   end
   
+  # Get accounts payable items for ticket (multiple items if partial payments)
   def self.acccounts_payable_items(auth_token, yard_id, ticket_id)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info "********************#{data}****************"
@@ -240,9 +268,12 @@ class Ticket
     end
   end
   
+  # Pay ticket by cash
   def self.pay_by_cash(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, amount)
     require 'json'
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
     accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
@@ -262,9 +293,12 @@ class Ticket
       return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
   
+  # Pay ticket by check
   def self.pay_by_check(auth_token, yard_id, ticket_id, accounts_payable_id, drawer_id, check_id, check_account_name, check_number, amount)
     require 'json'
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
     accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }

@@ -265,7 +265,7 @@
       %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
       %p= link_to 'Re-load pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'reload-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#images').empty(); $('a.load-more-images').attr('href', '<%= images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');", style: "display:none;" 
     -#
-    .well
-      %p= @ticket
+      .well
+        %p= @ticket
 
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}

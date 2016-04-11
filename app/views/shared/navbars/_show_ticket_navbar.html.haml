@@ -8,6 +8,7 @@
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          - unless current_user.customer?
-            %a{href: edit_ticket_path(@ticket['Id'], status: @ticket['Status'], yard_id: @ticket['YardId'])}
-              = "Edit"
+          - unless total.blank?
+            #total= total
+          - unless paid_amount.blank?
+            = paid_amount

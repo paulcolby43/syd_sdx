@@ -14,6 +14,7 @@
           = f.hidden_field :role, value: 'customer'
           = f.hidden_field :customer_guid, value: @customer['Id']
           = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :company_id, value: current_user.company_id
           .row.form-group
             %div{:class => "col-sm-6"}
               = f.label :first_name, :class => "control-label"
