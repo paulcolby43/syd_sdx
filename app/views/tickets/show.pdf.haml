@@ -1,0 +1,84 @@
+%center
+  = @ticket_number
+  %br
+  = DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
+-#
+  - unless @current_user.company.logo_url.url.blank?
+    = image_tag ["http://", request.host_with_port, @current_user.company.logo_url.url].join(), size: '50x50'
+  - else
+    = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
+= wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
+%strong= current_user.company.name
+-#
+  %br
+  - unless @company_info.company_address.blank?
+    = @company_info.company_address.line1
+    %br
+    = "#{@company_info.company_address.city}, #{@company_info.company_address.country_sub_division_code} #{@company_info.company_address.postal_code}"
+    %br
+  = @company_info.primary_phone.free_form_number unless @company_info.primary_phone.blank?
+%br
+-#
+  - unless @current_user.company.custom_field_1.blank?
+    %strong= "#{@current_user.company.custom_field_1}: "
+    = @current_user.company.custom_field_1_value
+    %br
+  - unless @current_user.company.custom_field_2.blank?
+    %strong= "#{@current_user.company.custom_field_2}: "
+    = @current_user.company.custom_field_2_value
+    %br
+%strong= "Customer: "
+= @ticket['Company']
+
+%table.table
+  %thead
+    %tr
+      %td Commodity
+      %td Gross
+      %td Tare
+      %td Net
+      %td Unit
+      %td Rate
+      %td Amount
+  %tbody
+    - unless @ticket["TicketItemCollection"].blank?
+      - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+          %tr
+            %td= "#{line_item['PrintDescription']}:"
+            %td= line_item['GrossWeight']
+            %td= line_item['TareWeight']
+            %td= line_item['Quantity']
+            %td= line_item['UnitOfMeasure']
+            %td= "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+            %td= number_to_currency(line_item['ExtendedAmount'])
+      - else
+        %tr
+          %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]}:"
+          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']
+          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']
+          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']
+          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']
+          %td= "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'])}"
+          %td= number_to_currency(@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']) 
+      %tr
+        %td
+        %td
+        %td
+        %td
+        %td
+        %td
+        %td
+          - if params[:status] == '3'
+            %strong= "Total: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+          - elsif params[:status] == '1'
+            %strong= "Total: #{number_to_currency(@ticket['BalanceDue'])}"
+          
+    - unless @signature_image.blank?
+      %tr
+        %td{colspan: "5"}
+          %p= image_tag(@signature_image.jpeg_image_data_uri, style: 'width: 150%')
+    - unless @finger_print_image.blank?
+      %tr
+        %td{colspan: "2"}
+          %p= image_tag(@finger_print_image.jpeg_image_data_uri, style: 'width: 75%')

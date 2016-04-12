@@ -94,6 +94,10 @@ gem 'activeadmin', github: 'gregbell/active_admin'
 # Flexible authentication solution for Rails with Warden. http://blog.plataformatec.com.br/tag/devise/
 gem 'devise'
 
+# PDF generator (from HTML) plugin
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

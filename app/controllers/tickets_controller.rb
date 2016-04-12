@@ -51,6 +51,16 @@ class TicketsController < ApplicationController
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_token, current_yard_id, params[:id])
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
+    respond_to do |format|
+      format.html{}
+      format.pdf do
+        @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
+        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
+        render pdf: "ticket#{@ticket_number}",
+          :layout => 'pdf.html.haml',
+          :zoom => 1.25
+      end
+    end
   end
 
   # GET /tickets/new

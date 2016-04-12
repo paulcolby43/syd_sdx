@@ -4,20 +4,21 @@
     .well
       %p= @customer
   .container
-    - unless @customer_user.blank?
-      .alert.alert-warning
-        %i.fa.fa-compress
-        = "Customer has outside access"
-        = link_to "Edit customer login", edit_user_path(@customer_user), class: 'btn btn-default'
-    - else
-      .alert.alert-warning
-        = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
-      = render partial: 'users/new_modal'
-    -#
-      - if @customer.photo_id_warning?
+    - if current_user.admin?
+      - unless @customer_user.blank?
         .alert.alert-warning
-          %i.fa.fa-warning.fa-lg
-          Customer Photo ID is missing or expired.
+          %i.fa.fa-compress
+          = "Customer has outside access"
+          = link_to "Edit customer login", edit_user_path(@customer_user), class: 'btn btn-default'
+      - else
+        .alert.alert-warning
+          = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
+        = render partial: 'users/new_modal'
+      -#
+        - if @customer.photo_id_warning?
+          .alert.alert-warning
+            %i.fa.fa-warning.fa-lg
+            Customer Photo ID is missing or expired.
 
     %div.panel.panel-primary
       %div.list_group
