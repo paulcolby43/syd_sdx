@@ -9,7 +9,9 @@ class Drawer
   #############################
   
   def self.all(auth_token, yard_id)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/drawer"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/drawer"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info data
@@ -23,7 +25,9 @@ class Drawer
   end
   
   def self.status(auth_token, yard_id, drawer_id)
-    api_url = "https://71.41.52.58:50002/api/yard/#{yard_id}/drawer/#{drawer_id}/status"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "#{user.company.dragon_api}/api/yard/#{yard_id}/drawer/#{drawer_id}/status"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info data
