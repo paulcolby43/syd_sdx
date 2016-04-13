@@ -3,12 +3,13 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
+          = link_to 'Customers', customers_path
           -#
             = link_to 'javascript:history.back()' do
               %i.fa.fa-arrow-left.fa-lg
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          %a{href: create_ticket_customer_path(@customer['Id']), class: "customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
-            %i.fa.fa-plus.fa-lg
-            Ticket
+          %a{href: edit_customer_path(@customer['Id'])}
+            %i.fa.fa-edit.fa-lg
+            = "Edit" unless mobile_device?

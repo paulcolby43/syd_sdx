@@ -6,6 +6,8 @@
           -#
             = link_to 'javascript:history.back()' do
               Back
+          = link_to root_path do
+            Home
         .col-xs-4.col-sm-4
           - if params[:status] == '2' or params[:status].blank?
             %i.fa.fa-folder-open-o.fa-lg

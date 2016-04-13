@@ -3,8 +3,13 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to 'javascript:history.back()' do
-            Cancel
+          - unless @ticket["TicketItemCollection"].blank?
+            = link_to 'javascript:history.back()' do
+              Cancel
+          - else
+            -#
+              %a{href: '', :onclick => "$('#edit_ticket_form').submit()"}
+                Void
         .col-xs-4.col-sm-4
           - if @ticket['Status'] == '2' or @ticket['Status'].blank?
             %i.fa.fa-folder-open-o.fa-lg

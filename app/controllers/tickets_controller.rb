@@ -107,20 +107,18 @@ class TicketsController < ApplicationController
       ### Close Ticket ###
       if params[:close_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
-      end
       ### End Close Ticket ###
       ### Pay Ticket ###
-      if params[:pay_ticket]
+      elsif params[:pay_ticket]
         if params[:checking_account_payment][:id]
           @ticket = Ticket.pay_by_check(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], 
             params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])
         else
           @ticket = Ticket.pay_by_cash(current_token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:payment_amount])
         end
-      end
       ### End Pay Ticket ###
       ### Close & Pay Ticket ###
-      if params[:close_and_pay_ticket]
+      elsif params[:close_and_pay_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
         @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
         if params[:checking_account_payment][:id]
@@ -129,8 +127,12 @@ class TicketsController < ApplicationController
         else
           @ticket = Ticket.pay_by_cash(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:payment_amount])
         end
-      end
       ### End Close & Pay Ticket ###
+      else
+      ### No button params, so Void Ticket ###
+#        @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 0)
+      ### End Void Ticket ###
+      end
       format.html { 
         if @ticket == 'true'
           flash[:success] = 'Ticket was successfully updated.'

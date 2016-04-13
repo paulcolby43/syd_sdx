@@ -8,6 +8,10 @@
               %i.fa.fa-home.fa-lg
               = "Home" unless mobile_device?
         .col-xs-4.col-sm-4
-          
+          -#
+            - unless current_user.customer?
+              - if (params[:controller] == "images") and (params[:action]=='index')
+                %a{href: advanced_search_images_path}
+                  Advanced Search
         .col-xs-4.col-sm-4
           
