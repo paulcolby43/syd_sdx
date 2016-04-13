@@ -13,6 +13,9 @@
         %li
           %a{href: images_path}
             PICTURES
+        %li
+          %a{href: tickets_path(status: 3)}
+            TICKETS
           
       %ul.nav.navbar-nav.navbar-right
         %li= link_to "User: <strong>#{current_user.username}</strong>".html_safe, current_user
