@@ -30,7 +30,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         unless @user.customer?
-          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], @user.company.dragon_api)
+          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
         else
           @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
         end
