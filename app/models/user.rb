@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   belongs_to :company
   
   after_commit :create_user_settings, :on => :create
+  after_commit :create_company, :on => :create
   
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_uniqueness_of :username
@@ -59,6 +60,12 @@ class User < ActiveRecord::Base
   
   def create_user_settings
     UserSetting.create(user_id: id, show_thumbnails: customer? ? true : false)
+  end
+  
+  def create_company
+    company = Company.create(name: "User #{username} Company")
+    self.company_id = company.id
+    self.save
   end
   
   def show_thumbnails?
