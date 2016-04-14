@@ -63,7 +63,11 @@ class User < ActiveRecord::Base
   end
   
   def create_company
-    company = Company.create(name: "User #{username} Company")
+    unless company_name.blank?
+      company = Company.create(name: company_name)
+    else
+      company = Company.create(name: "User #{username} Company")
+    end
     self.company_id = company.id
     self.save
   end
