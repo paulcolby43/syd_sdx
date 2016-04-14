@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   belongs_to :company
   
   after_commit :create_user_settings, :on => :create
-#  after_commit :create_company, :on => :create
+  after_create :create_company
   
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_uniqueness_of :username
