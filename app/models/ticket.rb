@@ -24,6 +24,20 @@ class Ticket
     end
   end
   
+  def self.all_this_week(status, auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=7&t=100"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+  end
+  
   # Get all tickets for given customer ID
   def self.customer_all(status, auth_token, yard_id, query_string)
     require 'uri'
@@ -50,6 +64,21 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
 #    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+  end
+  
+  def self.search_this_week(status, auth_token, yard_id, query_string)
+    require 'uri'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=7&t=3")
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
     
@@ -334,6 +363,61 @@ class Ticket
       data= Hash.from_xml(response)
 #      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
       return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
+  end
+  
+  def self.total_paid(auth_token, yard_id, ticket_id)
+    accounts_payables = AccountsPayable.all(auth_token, yard_id, ticket_id)
+    sum = 0
+    unless accounts_payables.blank?
+      accounts_payables.each do |accounts_payable|
+        sum = sum + accounts_payable["PaidAmount"].to_d
+      end
+    end
+    return sum
+  end
+  
+  def self.commodities(status, auth_token, yard_id, ticket_id)
+    ticket = Ticket.find_by_id(status, auth_token, yard_id, ticket_id)
+    commodities = []
+    unless ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      # Multiple ticket line items
+      ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'}.each do |commodity|
+        commodities << Commodity.find_by_id(auth_token, yard_id, commodity["CommodityId"])
+      end
+    else
+      # Only one ticket line item
+      commodities << Commodity.find_by_id(auth_token, yard_id, ticket["TicketItemCollection"]["ApiTicketItem"]["CommodityId"])
+    end
+    return commodities
+  end
+  
+  def self.line_items(status, auth_token, yard_id, ticket_id)
+    ticket = Ticket.find_by_id(status, auth_token, yard_id, ticket_id)
+    line_items = []
+    unless ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      # Multiple ticket line items
+      ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'}.each do |line_item|
+        line_items << line_item
+      end
+    else
+      # Only one ticket line item
+      line_items << ticket["TicketItemCollection"]["ApiTicketItem"]
+    end
+    return line_items
+  end
+  
+  def self.line_items_total(api_ticket_item)
+    unless api_ticket_item.is_a? Hash
+      # Multiple ticket line items
+      total = 0
+      api_ticket_item.select{|i| i["Status"] == '0'}.each do |line_item|
+        total = total + line_item['ExtendedAmount'].to_d
+      end
+    else
+      # Only one ticket line item
+      total = api_ticket_item['ExtendedAmount']
+    end
+    return total
   end
   
 end

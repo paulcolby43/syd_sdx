@@ -8,6 +8,7 @@ class AccountsPayable
   #     Class Methods         #
   #############################
   
+  # Get all accounts payable by ticket ID
   def self.all(auth_token, yard_id, ticket_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record

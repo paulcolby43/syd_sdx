@@ -18,20 +18,22 @@
             - Yard.all(current_token).each do |yard|
               %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
         %li= link_to 'PICTURES', images_path
-        - unless Yard.device_groups(current_yard_id).blank?
-          %li.dropdown
-            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-              DEVICE GROUPS
-              %b.caret
-            %ul.dropdown-menu
-              -#
-                %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
-              %li= link_to 'None', '#'
-              - Yard.device_groups(current_yard_id).each do |device_group|
-                %li= link_to device_group.DeviceGroupName, '#'
+        -#
+          - unless Yard.device_groups(current_yard_id).blank?
+            %li.dropdown
+              %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+                DEVICE GROUPS
+                %b.caret
+              %ul.dropdown-menu
                 -#
-                  %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
-        %li= link_to 'SETTINGS', current_user.user_setting
+                  %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
+                %li= link_to 'None', '#'
+                - Yard.device_groups(current_yard_id).each do |device_group|
+                  %li= link_to device_group.DeviceGroupName, '#'
+                  -#
+                    %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
+        %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}= link_to 'REPORTS', reports_path
+        %li{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}= link_to 'SETTINGS', current_user.user_setting
           
       %ul.nav.navbar-nav.navbar-right
         - unless current_yard.blank?

@@ -6,7 +6,7 @@ class AccountsPayablesController < ApplicationController
   # GET /accounts_payables.json
   def index
     unless params[:q].blank?
-      tickets = Ticket.search('Paid', current_token, current_yard_id, params[:q])
+      tickets = Ticket.search(3, current_token, current_yard_id, params[:q])
     else
       tickets = nil
     end
