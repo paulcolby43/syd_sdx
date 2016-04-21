@@ -152,7 +152,11 @@ class Ability
 #        company.CompanyID == user.location
 #      end
 #      #can :create, Company
-#      
+      
+      # Reports
+      ############
+      can :index, :reports
+      
     # End admin user role
     
     elsif user.customer?

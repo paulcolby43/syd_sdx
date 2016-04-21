@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require twbs/bootstrap
+//= require jquery.maskedinput
 //= require turbolinks
 //= require jquery.turbolinks
 //= require checkbox-x.min.js

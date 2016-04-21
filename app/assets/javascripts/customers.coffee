@@ -70,3 +70,6 @@ jQuery ->
       $('#cust_pic_file_vin_number').val ''
     return
   ### End event code changed - check if Vehicle ###
+
+  # Force phone format
+  $("#customer_phone").mask("(999) 999-9999")
