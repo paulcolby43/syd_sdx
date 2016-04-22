@@ -38,10 +38,13 @@ class User < ActiveRecord::Base
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 24.hours)
   end
   
-  def generate_scrap_dragon_token(user, pass, dragon_api)
-    api_url = "https://#{dragon_api}/token"
-    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
+#  def generate_scrap_dragon_token(user, pass, dragon_api)
+  def generate_scrap_dragon_token(user_params)
+#    api_url = "https://#{dragon_api}/token"
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
 #    JSON.parse(response)
+    Rails.logger.info response
     access_token_string = JSON.parse(response)["access_token"]
     AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
   end
@@ -52,6 +55,31 @@ class User < ActiveRecord::Base
 #    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+  end
+  
+  def create_scrap_dragon_user(user_params)
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardName" => user_params[:company_name],
+      "YardPhone" => user_params[:phone],
+      "YardAddress1" => user_params[:address1],
+      "YardAddress2" => user_params[:address2],
+      "YardCity" => user_params[:city],
+      "YardState" => user_params[:state]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiUserResponse"]["Success"]
+    
   end
   
   def yards

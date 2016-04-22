@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160408182903) do
+ActiveRecord::Schema.define(version: 20160421205542) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -129,6 +129,10 @@ ActiveRecord::Schema.define(version: 20160408182903) do
     t.string   "customer_guid"
     t.string   "yard_id"
     t.integer  "company_id"
+    t.string   "address1"
+    t.string   "address2"
+    t.string   "city"
+    t.string   "state"
   end
 
 end

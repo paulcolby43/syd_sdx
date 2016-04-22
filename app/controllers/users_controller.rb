@@ -30,12 +30,18 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         unless @user.customer?
-          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
+#          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params)
+          @user.generate_scrap_dragon_token(user_params)
         else
           @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
         end
         format.html { 
-          flash[:success] = "User was successfully created."
+          if create_scrap_dragon_user_response == 'true'
+            flash[:success] = "User was successfully created."
+          else
+            flash[:danger] = "There was a problem creating the Scrap Dragon user."
+          end
           redirect_to login_path if current_user.blank?
           redirect_to :back unless current_user.blank?
 #          redirect_to @user
@@ -84,6 +90,6 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, 
-        :customer_guid, :role, :yard_id, :company_id)
+        :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state)
     end
 end

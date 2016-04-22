@@ -9,8 +9,10 @@ class ReportsController < ApplicationController
     authorize! :index, :reports
     @tickets = Ticket.all_this_week(3, current_token, current_yard_id) 
     @line_items = []
-    @tickets.each do |ticket|
-      @line_items = @line_items + Ticket.line_items(3, current_token, current_yard_id, ticket['Id'])
+    unless @tickets.blank?
+      @tickets.each do |ticket|
+        @line_items = @line_items + Ticket.line_items(3, current_token, current_yard_id, ticket['Id'])
+      end
     end
     @line_items_total = 0
     @line_items.each do |line_item|

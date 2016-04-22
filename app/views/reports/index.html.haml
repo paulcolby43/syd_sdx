@@ -3,51 +3,48 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %p Last 7 Days Payments by Customer Summary
-    %table.table.table-striped.table-responsive
-      %thead
-        %tr
-          %td 
-            %strong Customer
-          %td 
-            %strong Total
-      %tbody
-        - @tickets.group_by{ |t| t['Company']}.each do |ticket_group, tickets|
+    - unless @tickets.blank?
+      %p Last 7 Days Payments by Customer Summary
+      %table.table.table-striped.table-responsive
+        %thead
           %tr
-            %td
-              = ticket_group
-            -#
-              %td= number_to_currency(Customer.paid_tickets_total_this_week(current_token, current_yard_id, ticket_group))
-            %td= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
-          -#
+            %td 
+              %strong Customer
+            %td 
+              %strong Total
+        %tbody
+          - @tickets.group_by{ |t| t['Company']}.each do |ticket_group, tickets|
             %tr
-              %td= tickets
+              %td
+                = ticket_group
               %td= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
-        %tr
-          %td
-          %td
-            %strong Total
-            = number_to_currency(@line_items_total)
-
-    %p Last 7 Days Payments by Commodity Summary
-    
-    %table.table.table-striped.table-responsive
-      %thead
-        %tr
-          %td 
-            %strong Commodity
-          %td 
-            %strong Total
-      %tbody
-        - @line_items.group_by{ |i| i['PrintDescription'] }.each do |line_item_group, line_items|
           %tr
-            %td= line_item_group
             %td
-              = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
-        %tr
-          %td
-          %td
-            %strong Total
-            = number_to_currency(@line_items_total)
+            %td
+              %strong Total
+              = number_to_currency(@line_items_total)
+
+      %p Last 7 Days Payments by Commodity Summary
+
+      %table.table.table-striped.table-responsive
+        %thead
+          %tr
+            %td 
+              %strong Commodity
+            %td 
+              %strong Total
+        %tbody
+          - @line_items.group_by{ |i| i['PrintDescription'] }.each do |line_item_group, line_items|
+            %tr
+              %td= line_item_group
+              %td
+                = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+          %tr
+            %td
+            %td
+              %strong Total
+              = number_to_currency(@line_items_total)
+    - else
+      %p No tickets to report on
         
 =# render partial: "shared/footer_navbar", locals: {title: "Reports"}

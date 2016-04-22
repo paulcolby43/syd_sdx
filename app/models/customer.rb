@@ -178,25 +178,40 @@ class Customer
     end
   end
   
-#  def paid_tickets_total(auth_token, yard_id, customer_id)
-  def self.paid_tickets_total(auth_token, yard_id, company_name)
-    paid_tickets = Ticket.search(3, auth_token, yard_id, company_name)
-    total = 0
-    paid_tickets.each do |paid_ticket|
-      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
+  def self.paid_tickets(auth_token, yard_id, customer_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/3?d=30&t=50"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
-    return total
   end
   
-  #  def paid_tickets_total_this_week(auth_token, yard_id, customer_id)
-  def self.paid_tickets_total_this_week(auth_token, yard_id, company_name)
-    paid_tickets = Ticket.search_this_week(3, auth_token, yard_id, company_name)
-    total = 0
-    Rails.logger.info paid_tickets.count
-    paid_tickets.each do |paid_ticket|
-      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
-    end
-    return total
-  end
+#  def self.paid_tickets_total(auth_token, yard_id, customer_id)
+#    paid_tickets = Ticket.search(3, auth_token, yard_id, company_name)
+#    paid_tickets = Customer.paid_tickets(auth_token, yard_id, customer_id)
+#    total = 0
+#    paid_tickets.each do |paid_ticket|
+#      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
+#    end
+#    return total
+#  end
+#  
+#  #  def paid_tickets_total_this_week(auth_token, yard_id, customer_id)
+#  def self.paid_tickets_total_this_week(auth_token, yard_id, company_name)
+#    paid_tickets = Ticket.search_this_week(3, auth_token, yard_id, company_name)
+#    total = 0
+#    Rails.logger.info paid_tickets.count
+#    paid_tickets.each do |paid_ticket|
+#      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
+#    end
+#    return total
+#  end
   
 end

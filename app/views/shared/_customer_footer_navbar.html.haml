@@ -4,9 +4,8 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           %a{href: root_path}
-            -#
-              %i.fa.fa-home.fa-lg
-              = "Home" unless mobile_device?
+            %i.fa.fa-home.fa-lg
+            = "Home" unless mobile_device?
         .col-xs-4.col-sm-4
           %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
             %i.fa.fa-camera.fa-lg

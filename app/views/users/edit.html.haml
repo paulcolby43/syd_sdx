@@ -41,7 +41,7 @@
           = f.label 'New password', :class => "control-label"
           %br/
           = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password"
-      - if current_user.admin?
+      - if current_user.admin? and @user.customer?
         .row.form-group
           %div{:class => "col-sm-6"}
             = f.label :customer_guid, :class => "control-label"

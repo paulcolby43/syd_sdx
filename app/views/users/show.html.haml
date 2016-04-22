@@ -29,7 +29,7 @@
         %strong Phone
         %br
         = @user.phone
-      - if current_user.admin?
+      - if current_user.admin? and @user.customer?
         %p
           %strong Customer GUID
           %br

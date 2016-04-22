@@ -42,6 +42,24 @@
           = f.label :phone, :class => "control-label"
           %br/
           = f.text_field :phone, :class => "form-control input-lg", placeholder: "Phone"
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :address1, :class => "control-label"
+          %br/
+          = f.text_field :address1, :class => "form-control input-lg", placeholder: "Address 1"
+        %div{:class => "col-sm-6"}
+          = f.label :address2, :class => "control-label"
+          %br/
+          = f.text_field :address2, :class => "form-control input-lg", placeholder: "Address 2"
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :city, :class => "control-label"
+          %br/
+          = f.text_field :city, :class => "form-control input-lg", placeholder: "City"
+        %div{:class => "col-sm-6"}
+          = f.label :state, :class => "control-label"
+          %br/
+          = f.text_field :state, :class => "form-control input-lg", placeholder: "State"
         -#
           %div{:class => "col-sm-6"}
             = f.label :password_confirmation, :class => "control-label"

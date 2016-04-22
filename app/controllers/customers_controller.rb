@@ -22,10 +22,12 @@ class CustomersController < ApplicationController
   # GET /customers/1.json
   def show
     authorize! :show, :customers
+    
     @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
     @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
-    @paid_tickets = Ticket.search(3, current_token, current_yard_id, "#{@customer['Company']}")
+#    @paid_tickets = Ticket.search(3, current_token, current_yard_id, "#{@customer['Company']}")
+    @paid_tickets = Customer.paid_tickets(current_token, current_yard_id, params[:id])
     if @customer_user.blank?
       @new_user = User.new
     end
