@@ -27,9 +27,9 @@ every :reboot do
 #  job_type :application, "cd /usr/local/Ruby/syd_qbo_dev && :task :output"
 #  
   # Mac Mini
-  job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_dev && :task :output"
+  job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_uat && :task :output"
   
-  application "bundle exec unicorn -l 8081 -E development"
+  application "bundle exec unicorn -l 8082 -E development"
   command "redis-server" # Start redis
   application "bundle exec sidekiq"
 end
