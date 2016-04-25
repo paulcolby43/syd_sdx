@@ -34,7 +34,9 @@ class UsersController < ApplicationController
           create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params)
           @user.generate_scrap_dragon_token(user_params)
         else
-          @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_token, user_params)
+          @user.generate_scrap_dragon_token(user_params)
+#          @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
         end
         format.html { 
           if create_scrap_dragon_user_response == 'true'

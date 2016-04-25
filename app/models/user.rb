@@ -79,7 +79,29 @@ class User < ActiveRecord::Base
     data= Hash.from_xml(response)
     Rails.logger.info data
     return data["AddApiUserResponse"]["Success"]
+  end
+  
+  def create_scrap_dragon_customer_user( auth_token, user_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user/customer"
     
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardId" => user_params[:yard_id],
+      "CustomerIdCollection" => [user_params[:customer_guid]],
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiCustomerUserResponse"]["Success"]
   end
   
   def yards
