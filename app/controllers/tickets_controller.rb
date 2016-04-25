@@ -121,7 +121,7 @@ class TicketsController < ApplicationController
       elsif params[:close_and_pay_ticket]
         @ticket = Ticket.update(current_token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
         @accounts_payable_items = Ticket.acccounts_payable_items(current_token, current_yard_id, params[:id])
-        if params[:checking_account_payment][:id]
+        if params[:checking_account_payment] and params[:checking_account_payment][:id]
           @ticket = Ticket.pay_by_check(current_token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
           params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])
         else
