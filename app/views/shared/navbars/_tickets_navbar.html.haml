@@ -15,7 +15,7 @@
             %i.fa.fa-folder.fa-lg
           - elsif params[:status] == '3'
             %i.fa.fa-dollar
-          = title
+          = title unless mobile_device?
         .col-xs-4.col-sm-4
           - unless current_user.customer?
             %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
