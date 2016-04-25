@@ -14,27 +14,6 @@
 - else
   .jumbotron{style: 'background-color: #FFFFFF;'}
     .container
-      -#
-        - unless current_yard_id.blank?
-          -#
-            .well
-              %p 
-                Current Yard:
-                = current_yard.blank? ? 'None' : current_yard['Name']
-              %p
-                Current Yard ID:
-                = current_yard_id.blank? ? 'None' : current_yard_id
-        - else
-          %p Select a Yard
-          - Yard.all(current_token).each do |yard|
-            %div.row
-              .col-xs-12.col-sm-12.col-md-12
-                %div.panel.panel-primary
-                  %div.list_group
-                    %a{href: yard_path(yard['Id']), class: "list-group-item yard_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{yard['Name']}"}}
-                      = yard["Name"]
-                      .pull-right
-                        %i.fa.fa-chevron-right.fa-lg
       - unless current_yard.blank?
         %div.row
           %p
