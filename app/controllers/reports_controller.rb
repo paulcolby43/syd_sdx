@@ -7,7 +7,16 @@ class ReportsController < ApplicationController
   # GET /reports.json
   def index
     authorize! :index, :reports
-    @tickets = Ticket.all_this_week(3, current_token, current_yard_id) 
+    @type = params[:type]
+    @start_date = params[:start_date]
+    @end_date = params[:end_date]
+    unless @start_date.blank? and @end_date.blank?
+      # Search all by date
+      @tickets = Ticket.all_by_date(3, current_token, current_yard_id, @start_date, @end_date) 
+    else
+      # Search all today
+      @tickets = Ticket.all_today(3, current_token, current_yard_id)
+    end
     @line_items = []
     unless @tickets.blank?
       @tickets.each do |ticket|
