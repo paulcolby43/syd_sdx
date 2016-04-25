@@ -1,7 +1,7 @@
 = render partial: "shared/navbars/no_user_navbar", locals: {title: "Log In"}
 
 .container
-  %br
+  = image_tag('dragon_dog_logo_402x206.png', alt: 'dragon_dog_logo_402x206.png', class: 'img-responsive center-block')
   .well.col-sm-6.col-md-4.col-md-offset-4
     = form_tag sessions_path, class: 'form-horizontal' do
       .row.form-group
