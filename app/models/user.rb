@@ -13,6 +13,11 @@ class User < ActiveRecord::Base
   after_create :create_company
   
   validates_presence_of :role, :message => 'Please select type of user.'
+  validates_presence_of :first_name
+  validates_presence_of :last_name
+  validates_presence_of :email
+  validates_presence_of :username
+  validates_presence_of :company_name
   validates_uniqueness_of :username
   validates_uniqueness_of :email
   
