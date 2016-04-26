@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160421205542) do
+ActiveRecord::Schema.define(version: 20160426145442) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -115,9 +115,9 @@ ActiveRecord::Schema.define(version: 20160421205542) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "username",      limit: nil
-    t.string   "password_hash", limit: nil
-    t.string   "password_salt", limit: nil
+    t.string   "username",        limit: nil
+    t.string   "password_hash",   limit: nil
+    t.string   "password_salt",   limit: nil
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "role"
@@ -133,6 +133,8 @@ ActiveRecord::Schema.define(version: 20160421205542) do
     t.string   "address2"
     t.string   "city"
     t.string   "state"
+    t.boolean  "email_confirmed",             default: false
+    t.string   "confirm_token"
   end
 
 end

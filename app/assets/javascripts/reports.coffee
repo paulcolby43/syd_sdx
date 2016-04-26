@@ -3,3 +3,9 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 jQuery ->
+  ### Re-enable disabled_with buttons for back button ###
+  $(document).on 'page:change', ->
+    $('.report_button').each ->
+      $.rails.enableElement $(this)
+      return
+    return

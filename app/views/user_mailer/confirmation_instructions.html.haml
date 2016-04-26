@@ -1,0 +1,4 @@
+%p
+  #{@user.first_name}, welcome to Scrap Yard Dog!
+%p You can confirm your account email through the link below:
+%p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)

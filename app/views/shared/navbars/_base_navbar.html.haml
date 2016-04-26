@@ -54,7 +54,13 @@
                   %li= link_to device_group.DeviceGroupName, '#'
                   -#
                     %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
-        %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}= link_to 'REPORTS', reports_path
+        %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            REPORTS
+            %b.caret
+          %ul.dropdown-menu
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path(type: 'customer_summary')
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path(type: 'commodity_summary')
         %li{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}= link_to 'SETTINGS', current_user.user_setting
           
       %ul.nav.navbar-nav.navbar-right

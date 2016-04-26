@@ -16,10 +16,11 @@
     - if not logged_in?
       = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"}
     - else
-      - if current_user.admin?
-        = render partial: "shared/navbars/base_navbar", locals: {title: "Home"} if current_page? root_path
-      - elsif current_user.customer?
-        = render partial: "shared/navbars/customer_user_navbar", locals: {title: "Home"} if current_page? root_path
+      - unless current_yard.blank?
+        - if current_user.admin?
+          = render partial: "shared/navbars/base_navbar", locals: {title: "Home"} if current_page? root_path
+        - elsif current_user.customer?
+          = render partial: "shared/navbars/customer_user_navbar", locals: {title: "Home"} if current_page? root_path
     - flash.each do |message_type, message|
       %br
       = content_tag(:div, message, class: "alert alert-#{message_type}") do 

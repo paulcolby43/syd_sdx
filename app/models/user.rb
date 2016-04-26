@@ -9,10 +9,16 @@ class User < ActiveRecord::Base
   has_one :user_setting
   belongs_to :company
   
+  before_create :confirmation_token
   after_commit :create_user_settings, :on => :create
   after_create :create_company
   
   validates_presence_of :role, :message => 'Please select type of user.'
+  validates_presence_of :first_name
+  validates_presence_of :last_name
+  validates_presence_of :email
+  validates_presence_of :username
+  validates_presence_of :company_name
   validates_uniqueness_of :username
   validates_uniqueness_of :email
   
@@ -79,7 +85,29 @@ class User < ActiveRecord::Base
     data= Hash.from_xml(response)
     Rails.logger.info data
     return data["AddApiUserResponse"]["Success"]
+  end
+  
+  def create_scrap_dragon_customer_user( auth_token, user_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user/customer"
     
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardId" => user_params[:yard_id],
+      "CustomerIdCollection" => [user_params[:customer_guid]],
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiCustomerUserResponse"]["Success"]
   end
   
   def yards
@@ -128,6 +156,12 @@ class User < ActiveRecord::Base
     role == "customer"
   end
   
+  def email_activate
+    self.email_confirmed = true
+    self.confirm_token = nil
+    save!(:validate => false)
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -154,6 +188,12 @@ class User < ActiveRecord::Base
     unless password.blank?
       self.password_salt = BCrypt::Engine.generate_salt
       self.password_hash = encrypt_password(password)
+    end
+  end
+  
+  def confirmation_token
+    if self.confirm_token.blank?
+        self.confirm_token = SecureRandom.urlsafe_base64.to_s
     end
   end
   
