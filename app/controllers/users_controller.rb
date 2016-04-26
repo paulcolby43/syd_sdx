@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :login_required, :except => [:new, :create]
+  before_filter :login_required, :except => [:new, :create, :confirm_email]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
@@ -40,7 +40,8 @@ class UsersController < ApplicationController
         end
         format.html { 
           if create_scrap_dragon_user_response == 'true'
-            flash[:success] = "User was successfully created."
+            UserMailer.confirmation_instructions(@user).deliver
+            flash[:success] = "Confirmation instructions have been sent to the user email address."
           else
             flash[:danger] = "There was a problem creating the Scrap Dragon user."
           end
@@ -82,6 +83,19 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  def confirm_email
+    user = User.find_by_confirm_token(params[:id])
+    if user
+      user.email_activate
+      flash[:success] = "Welcome to Scrap Yard Dog! Your email has been confirmed.
+      Please sign in to continue."
+      redirect_to login_path
+    else
+      flash[:danger] = "Sorry. User does not exist"
+      redirect_to root_url
+    end
+end
 
   private
     # Use callbacks to share common setup or constraints between actions.

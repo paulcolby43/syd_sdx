@@ -13,4 +13,6 @@
       .row
         %div{:class => "col-sm-12 col-md-12"}
           = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign In"}) do
-            Sign In
+            Log In
+    %br
+    %p= link_to 'Sign Up', signup_path

@@ -19,16 +19,16 @@
             %div{:class => "col-sm-6"}
               = f.label :first_name, :class => "control-label"
               %br/
-              = f.text_field :first_name, value: @customer['FirstName'], :class => "form-control input-lg", placeholder: "First Name", :autofocus => true
+              = f.text_field :first_name, value: @customer['FirstName'], :class => "form-control input-lg", placeholder: "First Name", :autofocus => true, required: true
             %div{:class => "col-sm-6"}
               = f.label :last_name, :class => "control-label"
               %br/
-              = f.text_field :last_name, value: @customer['LastName'], :class => "form-control input-lg", placeholder: "Last Name"
+              = f.text_field :last_name, value: @customer['LastName'], :class => "form-control input-lg", placeholder: "Last Name", required: true
           .row.form-group
             %div{:class => "col-sm-6"}
               = f.label :company_name, :class => "control-label"
               %br/
-              = f.text_field :company_name, value: @customer['Company'], :class => "form-control input-lg", placeholder: "Company Name"
+              = f.text_field :company_name, value: @customer['Company'], :class => "form-control input-lg", placeholder: "Company Name", required: true
           .row.form-group
             %div{:class => "col-sm-6"}
               = f.label :phone, :class => "control-label"
@@ -37,15 +37,15 @@
             %div{:class => "col-sm-6"}
               = f.label :email, :class => "control-label"
               %br/
-              = f.text_field :email, :class => "form-control input-lg", placeholder: "Email"
+              = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
           .row.form-group
             %div{:class => "col-sm-6"}
               = f.label :username, :class => "control-label"
               %br/
-              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase, :class => "form-control input-lg", placeholder: "Username"
+              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase, :class => "form-control input-lg", placeholder: "Username", required: true
             %div{:class => "col-sm-6"}
               = f.label :password, :class => "control-label"
               %br/
-              = f.password_field :password, :class => "form-control input-lg", placeholder: "Password"
+              = f.password_field :password, :class => "form-control input-lg", placeholder: "Password", required: true
         .modal-footer
           = f.submit "Create", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }

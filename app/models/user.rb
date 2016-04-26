@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_one :user_setting
   belongs_to :company
   
+  before_create :confirmation_token
   after_commit :create_user_settings, :on => :create
   after_create :create_company
   
@@ -155,6 +156,12 @@ class User < ActiveRecord::Base
     role == "customer"
   end
   
+  def email_activate
+    self.email_confirmed = true
+    self.confirm_token = nil
+    save!(:validate => false)
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -181,6 +188,12 @@ class User < ActiveRecord::Base
     unless password.blank?
       self.password_salt = BCrypt::Engine.generate_salt
       self.password_hash = encrypt_password(password)
+    end
+  end
+  
+  def confirmation_token
+    if self.confirm_token.blank?
+        self.confirm_token = SecureRandom.urlsafe_base64.to_s
     end
   end
   

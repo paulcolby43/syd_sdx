@@ -45,7 +45,11 @@ Rails.application.routes.draw do
   
   resources :image_files
   
-  resources :users
+  resources :users do
+    member do
+      get :confirm_email
+    end
+  end
   
   resources :yards
   

@@ -24,12 +24,18 @@ class SessionsController < ApplicationController
 #        user.generate_token(:auth_token)
 #        user.save
 #      end
-      log_in user
+      if user.email_confirmed
+        log_in user
+        flash[:success] = "You have been logged in."
+        redirect_to root_path
+      else
+        flash.now[:danger] = 'Please activate your account by following the 
+        instructions in the account confirmation email you received to proceed'
+        render 'new'
+      end
 #      session[:user_id] = user.id # Store user.id as a session variable.
 #      user.update_token
 #      cookies[:auth_token] = user.access_token.token_string # Store auth_token in a temporary cookie.
-      flash[:success] = "You have been logged in."
-      redirect_to root_path
     else
       flash.now[:danger] = "Invalid username or password."
       render 'new' 
