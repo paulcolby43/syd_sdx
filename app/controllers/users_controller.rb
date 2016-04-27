@@ -51,7 +51,14 @@ class UsersController < ApplicationController
           }
         format.json { render :show, status: :created, location: @user }
       else
-        format.html { render :new }
+        format.html { 
+          if current_user.blank?
+            render :new
+          else
+            flash[:danger] = "There was a problem creating the Scrap Dragon user."
+            redirect_to :back 
+          end
+          }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end

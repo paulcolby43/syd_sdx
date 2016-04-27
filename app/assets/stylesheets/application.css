@@ -12,6 +12,7 @@
  *
  *= stub twbs-variables
  *= require twbs
+ *= require bootstrap-editable.css
  *= require checkbox-x.min.css
  *= jquery.fileupload.css
  *= jquery.fileupload-ui.css

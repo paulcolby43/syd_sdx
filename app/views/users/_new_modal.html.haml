@@ -42,7 +42,7 @@
             %div{:class => "col-sm-6"}
               = f.label :username, :class => "control-label"
               %br/
-              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase, :class => "form-control input-lg", placeholder: "Username", required: true
+              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase.gsub(/\s+/, ""), :class => "form-control input-lg", placeholder: "Username", required: true
             %div{:class => "col-sm-6"}
               = f.label :password, :class => "control-label"
               %br/

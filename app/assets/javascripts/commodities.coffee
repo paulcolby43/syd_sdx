@@ -23,3 +23,31 @@ jQuery ->
       $.rails.enableElement $(this)
       return
     return
+
+  ### Edit in place ###
+  # turn to inline mode
+  # $.fn.editable.defaults.mode = 'inline';
+
+  # Force all elements submit via PUT method
+  # $.fn.editable.defaults.ajaxOptions = {type: "put"}
+
+  $('#commodities').editable
+    selector: '.price'
+
+    title: 'Update commodity price'
+    name: 'commodity'
+    placeholder: 'Required'
+    ajaxOptions: 
+      type: 'put'
+      dataType: 'json'
+    validate: (value) ->
+      if $.trim(value) == ''
+        return 'This field is required'
+      return
+    success: (response, newValue) ->
+      if response.status == 'error'
+        return response.msg
+      #msg will be shown in editable form
+      return
+  return
+  ### End Edit in place ###

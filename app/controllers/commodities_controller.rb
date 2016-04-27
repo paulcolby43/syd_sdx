@@ -81,6 +81,26 @@ class CommoditiesController < ApplicationController
       }
     end
   end
+  
+  # PATCH/PUT /commodities/1/update_price
+  # PATCH/PUT /commodities/1/update_price.json
+  def update_price
+    commodity_update_price_response =  Commodity.update_price(current_token, current_yard_id, params[:id], params[:value])
+    respond_to do |format|
+      format.json { 
+        if commodity_update_price_response == 'true'
+          render json: {}, status: :ok 
+        else
+          render json: { status: 'error', msg: 'Error updating price'}, status: :ok
+        end
+        }
+#        if commodity_update_price_response == 'true'
+##          render json: {'success' => :true, 'pk' => params[:id], 'newValue' => params[:value]}, :status => :ok
+#          render json: {}, :status => :ok
+#        else
+#          render json: {error: 'Commodity price was successfully updated.'}, :status => :bad_request
+    end
+  end
 
   # DELETE /commodities/1
   # DELETE /commodities/1.json

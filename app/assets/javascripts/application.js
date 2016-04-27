@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require twbs/bootstrap
+//= require bootstrap-editable.min.js
 //= require jquery.maskedinput
 //= require turbolinks
 //= require jquery.turbolinks

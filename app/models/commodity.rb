@@ -106,7 +106,6 @@ class Commodity
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/commodity"
-    new_guid = SecureRandom.uuid
     payload = {
       "Id" => commodity_params[:id],
       "Code" => commodity_params[:code],
@@ -127,6 +126,45 @@ class Commodity
       "IsParentItem" => true,
       "ParentId" => commodity_params[:parent_id],
       "MenuText" => commodity_params[:menu_text],
+      "IsTaxable" => true
+      }
+      
+    json_encoded_payload = JSON.generate(payload)
+    
+    response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+#    return data
+    return data["BaseResponse"]["Success"]
+  end
+  
+  def self.update_price(auth_token, yard_id, commodity_id, new_price)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/commodity"
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    payload = {
+      "Id" => commodity['Id'],
+      "Code" => commodity['Code'],
+      "Name" => commodity['Name'],
+      "PrintDescription" => commodity['PrintDescription'],
+      "YardId" => commodity['YardId'],
+      "YardName" => commodity['YardName'],
+      "ScalePrice" => new_price,
+      "UnitOfMeasure" => commodity['UnitOfMeasure'],
+      "MaxPrice" => 0.0,
+      "MaxUnit" => "",
+      "Type" => commodity['Type'],
+      "Shrink" => 0.0,
+      "IsDisabled" => false,
+      "ForegroundColor" => "#000000",
+      "BackgroundColor" => "#ffffff",
+      "TextSize" => 16,
+      "IsParentItem" => true,
+      "ParentId" => commodity['ParentId'],
+      "MenuText" => commodity['MenuText'],
       "IsTaxable" => true
       }
       

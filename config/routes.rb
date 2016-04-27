@@ -53,7 +53,11 @@ Rails.application.routes.draw do
   
   resources :yards
   
-  resources :commodities
+  resources :commodities do
+    member do
+      put 'update_price'
+    end
+  end
   
   resources :customers do
     member do
