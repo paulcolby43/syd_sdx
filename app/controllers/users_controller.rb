@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :login_required, :except => [:new, :create, :confirm_email]
+  before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
@@ -102,7 +102,24 @@ class UsersController < ApplicationController
       flash[:danger] = "Sorry. User does not exist"
       redirect_to root_url
     end
-end
+  end
+
+  def resend_confirmation_instructions
+    unless params[:email].blank?
+      @user = User.where(email: params[:email]).first
+      unless @user.blank?
+        unless @user.confirm_token.blank?
+          UserMailer.confirmation_instructions(@user).deliver
+          flash[:success] = "The email confirmation instructions have been re-sent."
+        else
+          flash[:danger] = "This email address has already been confirmed."
+        end
+      else
+        flash[:danger] = "Email address not found."
+      end
+      redirect_to root_path
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -49,6 +49,9 @@ Rails.application.routes.draw do
     member do
       get :confirm_email
     end
+    collection do
+      get :resend_confirmation_instructions
+    end
   end
   
   resources :yards
