@@ -169,11 +169,12 @@ class User < ActiveRecord::Base
   def self.authenticate(login, pass)
     user = find_by_username(login) || find_by_email(login)
     if user and user.password_hash == user.encrypt_password(pass)
-      unless user.customer?
-        user.update_scrap_dragon_token(login, pass, user.company.dragon_api) 
-      else
-        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
-      end
+      user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api)
+#      unless user.customer?
+#        user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api) 
+#      else
+#        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
+#      end
       return user 
     end
   end
