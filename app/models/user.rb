@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
   #############################
   
   def self.authenticate(login, pass)
-    user = find_by_username(login)
+    user = find_by_username(login) || find_by_email(login)
     if user and user.password_hash == user.encrypt_password(pass)
       unless user.customer?
         user.update_scrap_dragon_token(login, pass, user.company.dragon_api) 
