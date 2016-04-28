@@ -55,7 +55,7 @@ class Ticket
   def self.all_by_date(status, auth_token, yard_id, start_date, end_date)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}&enddate=#{end_date}&t=100"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}&enddate=#{end_date}&t=200"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
@@ -390,17 +390,16 @@ class Ticket
     return commodities
   end
   
-  def self.line_items(status, auth_token, yard_id, ticket_id)
-    ticket = Ticket.find_by_id(status, auth_token, yard_id, ticket_id)
+  def self.line_items(api_ticket_item)
     line_items = []
-    unless ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+    unless api_ticket_item.is_a? Hash
       # Multiple ticket line items
-      ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'}.each do |line_item|
+      api_ticket_item.select{|i| i["Status"] == '0'}.each do |line_item|
         line_items << line_item
       end
     else
       # Only one ticket line item
-      line_items << ticket["TicketItemCollection"]["ApiTicketItem"]
+      line_items << api_ticket_item
     end
     return line_items
   end

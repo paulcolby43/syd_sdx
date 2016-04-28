@@ -28,10 +28,10 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_yard_id
   
-  def current_yard
-    @current_yard ||= Yard.find_by_id(current_token, current_yard_id)
-  end
-  helper_method :current_yard
+#  def current_yard
+#    @current_yard ||= Yard.find_by_id(current_token, current_yard_id)
+#  end
+#  helper_method :current_yard
   
   def current_ability
     @current_ability ||= Ability.new(current_user, current_yard_id)

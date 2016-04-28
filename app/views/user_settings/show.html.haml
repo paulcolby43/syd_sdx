@@ -70,14 +70,21 @@
       - unless @contract.blank?
         .panel.panel-default
           .panel-heading
-            %h4.panel-title
-              Contract
-              .pull-right= link_to 'Edit', edit_contract_path(@contract)
+            Contract
+            .pull-right= link_to 'Edit', edit_contract_path(@contract)
           %ul.list-group
             %li.list-group-item
-              = @contract.contract_name
+              %strong= @contract.contract_name
             %li.list-group-item= @contract.verbiage.html_safe
       - else
         %p.lead= link_to "New Contract", new_contract_path
+
+    .col-xs-12.col-sm-6.col-md-offset-3
+      .panel.panel-default
+        .panel-heading
+          Yards
+        %ul.list-group
+          - Yard.all(current_token).each do |yard|
+            %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= link_to yard["Name"], yard_path(yard['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}

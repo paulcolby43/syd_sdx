@@ -3,78 +3,25 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    -#
-      .btn-group
-        - if @type.blank? or @type == 'customer_summary'
-          %button{class: 'btn btn-default btn-lg active'}
-            Customer Summary
-          = link_to "Commodity Summary", reports_path(type: 'commodity_summary', start_date: params[:start_date], end_date: params[:end_date]), :class => "btn btn-default btn-lg report_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodity Summary"}
-        - elsif @type == 'commodity_summary'
-          = link_to "Customer Summary", reports_path(type: 'customer_summary', start_date: params[:start_date], end_date: params[:end_date]), :class => "btn btn-default btn-lg report_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customer Summary"}
-          %button{class: 'btn btn-default btn-lg active'}
-            Commodity Summary
     %p
       = form_tag reports_path, :method => 'get', :class => "form-inline" do
-        = hidden_field_tag :type, @type
+        = hidden_field_tag 'report[type]', @type
         .form-group
           .input-group
-            = date_field_tag :start_date, nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg"
+            = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", readonly: true
         To
         .form-group
           .input-group
-            = date_field_tag :end_date, nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg"
+            = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", readonly: true
         = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}) do
           %i.fa.fa-search
+
     - unless @tickets.blank?
+      .text-muted= "#{@tickets.count} tickets found"
       - unless @type == 'commodity_summary'
-        %p.lead Customer Summary Report
-        %table.table.table-striped.table-responsive
-          %thead
-            %tr
-              %td 
-                %strong Customer
-              %td 
-                %strong Total
-          %tbody
-            - @tickets.group_by{ |t| t['Company']}.each do |ticket_group, tickets|
-              %tr
-                %td
-                  = ticket_group
-                %td= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
-            %tr
-              %td
-              %td
-                %strong Total
-                = number_to_currency(@line_items_total)
+        = render 'customer_summary'
       - else
-        %p.lead Commodity Summary Report
-        %table.table.table-striped.table-responsive
-          %thead
-            %tr
-              %td 
-                %strong Commodity
-              %td 
-                %strong Total
-          %tbody
-            - @line_items.group_by{ |i| i['PrintDescription'] }.each do |line_item_group, line_items|
-              %tr
-                %td
-                  = line_item_group
-                  %ul.list-inline
-                    - line_items.each do |line_item|
-                      %li
-                        %small= "#{line_item['NetWeight']}LB"
-                      %li
-                        %small= "#{number_to_currency(line_item['Price'])}"
-                      %br
-                      =# line_item
-                %td
-                  = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
-            %tr
-              %td
-              %td
-                %strong Total
-                = number_to_currency(@line_items_total)
+        = render 'commodity_summary'
     - else
       %p No tickets to report on
         

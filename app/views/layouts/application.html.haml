@@ -16,7 +16,7 @@
     - if not logged_in?
       = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"}
     - else
-      - unless current_yard.blank?
+      - unless current_yard_id.blank?
         - if current_user.admin?
           = render partial: "shared/navbars/base_navbar", locals: {title: "Home"} if current_page? root_path
         - elsif current_user.customer?

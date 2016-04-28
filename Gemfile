@@ -98,6 +98,9 @@ gem 'devise'
 gem 'wicked_pdf'
 gem 'wkhtmltopdf-binary'
 
+# A Datepicker for Twitter Bootstrap, integrated with Rails assets pipeline
+gem 'bootstrap-datepicker-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
