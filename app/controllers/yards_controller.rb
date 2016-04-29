@@ -13,6 +13,7 @@ class YardsController < ApplicationController
   def show
     @yard = Yard.find_by_id(current_token, params[:id])
     cookies[:yard_id] = params[:id]
+    cookies[:yard_name] = @yard['Name']
   end
 
   # GET /yards/new

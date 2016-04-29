@@ -28,6 +28,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_yard_id
   
+  def current_yard_name
+    @current_yard_name ||= cookies[:yard_name]
+  end
+  helper_method :current_yard_name
+  
 #  def current_yard
 #    @current_yard ||= Yard.find_by_id(current_token, current_yard_id)
 #  end
