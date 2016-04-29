@@ -5,3 +5,10 @@
 jQuery ->
   # Force phone format
   $("#user_phone").mask("(999) 999-9999")
+
+  ### Re-enable disabled_with buttons for back button ###
+  $(document).on 'page:change', ->
+    $('.user_button').each ->
+      $.rails.enableElement $(this)
+      return
+    return

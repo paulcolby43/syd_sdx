@@ -62,7 +62,14 @@
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
             %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
-        -# %li{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}= link_to 'SETTINGS', current_user.user_setting
+        - if current_user.admin?
+          %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              USERS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'All', users_path
+              %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
           
       %ul.nav.navbar-nav.navbar-right
         -#
@@ -74,7 +81,7 @@
             Settings
             %b.caret
           %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}= link_to "User: <strong>#{current_user.username}</strong>".html_safe, current_user
+            %li{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}= link_to "Admin User: <strong>#{current_user.username}</strong>".html_safe, current_user
             %li{:class => "#{(params[:controller] == 'yards') ? 'active' : ''}"}= link_to "Yard: <strong>#{current_yard_name}</strong>".html_safe, yard_path(current_yard_id)
             %li{role: "separator", class: "divider"}
             %li= link_to 'Edit', current_user.user_setting

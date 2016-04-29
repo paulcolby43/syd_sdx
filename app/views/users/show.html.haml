@@ -5,6 +5,10 @@
   .container
     .col-sm-6.col-md-4.col-md-offset-4
       %p
+        %strong Role
+        %br
+        = @user.role.titleize
+      %p
         %strong Name
         %br
         = "#{@user.first_name} #{@user.last_name}"

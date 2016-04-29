@@ -9,6 +9,17 @@
         .alert.alert-danger
           <button type="button" class="close" data-dismiss="alert">×</button>
           = "#{attr} #{msg}" if @user.errors[attr].first == msg
+      - if current_user.admin?
+        .btn-group-horizontal{"data-toggle" => "buttons"}
+          %label.btn.btn-lg.btn-default{class: "#{@user.admin? ? 'active' : ''}"}
+            = f.radio_button :role, 'admin', :checked => @user.admin?
+            Admin User
+          %label.btn.btn-lg.btn-default{class: "#{@user.basic? ? 'active' : ''}"}
+            = f.radio_button :role, 'basic', :checked => @user.basic?
+            Basic User
+          %label.btn.btn-lg.btn-default{class: "#{@user.customer? ? 'active' : ''}"}
+            = f.radio_button :role, 'customer', :checked => @user.customer?
+            Customer User
       .row.form-group
         %div{:class => "col-sm-6"}
           = f.label :first_name, :class => "control-label"

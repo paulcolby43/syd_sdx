@@ -24,7 +24,10 @@
                   %div.list-group-item
                     &nbsp;
                     .pull-right
-                      %a{href: nil, class: 'price', "data-commodity" => 'hey there', "data-commodity-name" =>  commodity['MenuText'], "data-pk" => commodity['Id'], "data-url" => "/commodities/#{commodity['Id']}/update_price"}= number_with_precision(commodity['ScalePrice'], precision: 3) 
+                      - if current_user.admin?
+                        %a{href: nil, class: 'price', "data-commodity" => 'hey there', "data-commodity-name" =>  commodity['MenuText'], "data-pk" => commodity['Id'], "data-url" => "/commodities/#{commodity['Id']}/update_price"}= number_with_precision(commodity['ScalePrice'], precision: 3)
+                      - else
+                        = number_with_precision(commodity['ScalePrice'], precision: 3)
       .row
         .text-center
           %div{id: 'endless_page'}

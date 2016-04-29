@@ -1,11 +1,14 @@
 class UsersController < ApplicationController
   before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource
+  skip_authorize_resource :only => :new
 
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+#    @users = User.all
+    @users = current_user.company.users
   end
 
   # GET /users/1
@@ -31,7 +34,8 @@ class UsersController < ApplicationController
       if @user.save
         unless @user.customer?
 #          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
-          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params)
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params) if current_user.blank?
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user_for_current_user(current_token, user_params) unless current_user.blank?
           @user.generate_scrap_dragon_token(user_params)
         else
           create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_token, user_params)
@@ -46,7 +50,7 @@ class UsersController < ApplicationController
             flash[:danger] = "There was a problem creating the Scrap Dragon user."
           end
           redirect_to login_path if current_user.blank?
-          redirect_to :back unless current_user.blank?
+          redirect_to users_path unless current_user.blank?
 #          redirect_to @user
           }
         format.json { render :show, status: :created, location: @user }

@@ -14,5 +14,7 @@
 - else
   - if current_user.admin?
     = render 'admin_start'
+  - elsif current_user.basic?
+    = render 'basic_start'
   - elsif current_user.customer?
     = render 'customer_start'

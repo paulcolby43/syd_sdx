@@ -38,7 +38,6 @@ class Ability
       can :show, :tickets
       can :edit, :tickets
       
-      
       # Customers
       ############
       can :index, :customers
@@ -111,6 +110,13 @@ class Ability
         cust_pic_file.user_id == user.id
       end
       can :create, CustPicFile
+      
+      # Users
+      ############
+      can :manage, User do |u|
+        u.company_id == user.company_id
+      end
+      can :create, User
 
       # UserSettings
       ############
@@ -118,12 +124,6 @@ class Ability
         user_setting.user_id == user.id
       end
       can :create, UserSetting
-
-      # User
-      ############
-      can :manage, User do |user_record|
-        user_record.id == user.id
-      end
 
 #      # LookupDefs
 #      ############
@@ -159,8 +159,71 @@ class Ability
       
     # End admin user role
     
-    elsif user.customer?
+    elsif user.basic?
+    # Start basic user role
+      # Tickets
+      ############
+      can :index, :tickets
+      can :show, :tickets
+      can :edit, :tickets
       
+      # Customers
+      ############
+      can :index, :customers
+      can :show, :customers
+      
+      # Commodities
+      ############
+      can :index, :commodities
+      can :show, :commodities
+        
+      # Images
+      ############
+      can :manage, Image do |image|
+        image.yardid == yard_id
+      end
+      can :create, Image
+      can :advance_search, :images
+
+      # ImageFiles
+      ############
+      can :manage, ImageFile do |image_file|
+        image_file.user_id == user.id
+      end
+      can :create, ImageFile
+      
+      # CustPics
+      ############
+      can :manage, CustPic do |cust_pic|
+        cust_pic.yardid == yard_id
+      end
+      can :create, CustPic
+
+      # CustPicFiles
+      ############
+      can :manage, CustPicFile do |cust_pic_file|
+        cust_pic_file.user_id == user.id
+      end
+      can :create, CustPicFile
+      
+      # UserSettings
+      ############
+      can :manage, UserSetting do |user_setting|
+        user_setting.user_id == user.id
+      end
+      can :create, UserSetting
+
+      # User
+      ############
+      can :manage, User do |user_record|
+        user_record.id == user.id
+      end
+      cannot :index, User
+    
+    # End basic user role
+    
+    elsif user.customer?
+    # Start customer user role
       # Tickets
       ############
       can :index, :tickets
@@ -171,8 +234,14 @@ class Ability
       can :manage, Image do |image|
         image.cust_nbr == user.customer_guid
       end
-    
-    end # End customer user role
+      
+      # User
+      ############
+      can :manage, User do |user_record|
+        user_record.id == user.id
+      end
+    # End customer user role
+    end 
     
   end
 end

@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   
   before_create :confirmation_token
   after_commit :create_user_settings, :on => :create
-  after_create :create_company
+  after_create :create_company, unless: :company?
   
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_presence_of :first_name
@@ -87,7 +87,31 @@ class User < ActiveRecord::Base
     return data["AddApiUserResponse"]["Success"]
   end
   
-  def create_scrap_dragon_customer_user( auth_token, user_params)
+  def create_scrap_dragon_user_for_current_user(auth_token, user_params)
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardName" => user_params[:company_name],
+      "YardPhone" => user_params[:phone],
+      "YardAddress1" => user_params[:address1],
+      "YardAddress2" => user_params[:address2],
+      "YardCity" => user_params[:city],
+      "YardState" => user_params[:state]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiUserResponse"]["Success"]
+  end
+  
+  def create_scrap_dragon_customer_user(auth_token, user_params)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/user/customer"
@@ -152,6 +176,10 @@ class User < ActiveRecord::Base
     role == "admin"
   end
   
+  def basic?
+    role == "basic"
+  end
+  
   def customer?
     role == "customer"
   end
@@ -160,6 +188,10 @@ class User < ActiveRecord::Base
     self.email_confirmed = true
     self.confirm_token = nil
     save!(:validate => false)
+  end
+  
+  def company?
+    company_id.present?
   end
   
   #############################
