@@ -16,7 +16,8 @@ class TicketsController < ApplicationController
     else
       results = Ticket.all(@status, current_token, current_yard_id) unless current_user.customer?
 #      results = Ticket.search(3, current_token, current_yard_id, current_user.company_name) if current_user.customer?
-      results = Customer.paid_tickets(current_token, current_yard_id, current_user.customer_guid) if current_user.customer?
+#      results = Customer.paid_tickets(current_token, current_yard_id, current_user.customer_guid) if current_user.customer?
+      results = Customer.tickets(@status, current_token, current_yard_id, current_user.customer_guid) if current_user.customer?
     end
     unless results.blank?
       results = results.reverse if @status == 'held'
