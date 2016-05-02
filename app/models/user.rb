@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   validates_presence_of :company_name
   validates_uniqueness_of :username
   validates_uniqueness_of :email
+  validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
   #     Instance Methods     #

@@ -115,9 +115,9 @@ ActiveRecord::Schema.define(version: 20160426145442) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "username",        limit: nil
-    t.string   "password_hash",   limit: nil
-    t.string   "password_salt",   limit: nil
+    t.string   "username"
+    t.string   "password_hash"
+    t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "role"
@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(version: 20160426145442) do
     t.string   "address2"
     t.string   "city"
     t.string   "state"
-    t.boolean  "email_confirmed",             default: false
+    t.boolean  "email_confirmed", default: false
     t.string   "confirm_token"
   end
 
