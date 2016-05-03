@@ -25,16 +25,18 @@
                 %a{href: '#', onclick: "$('#q_event_code_eq').val('');"}
                   %i.fa.fa-remove.fa-lg
           .form-group{:class => "col-xs-12"}
-            = label_tag "Start Date (yyyy-mm-dd)", nil, :class => 'control-label'
+            = label_tag "Start Date", nil, :class => 'control-label'
             .input-group
-              = date_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg"
+              =# date_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg"
+              = text_field_tag "q[sys_date_time_gteq]", nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", readonly: true
               %span.input-group-addon 
                 %a{href: '#', onclick: "$('#q_sys_date_time_gteq').val('');"}
                   %i.fa.fa-remove.fa-lg
           .form-group{:class => "col-xs-12"}
-            = label_tag "End Date (yyyy-mm-dd)", nil, :class => 'control-label'
+            = label_tag "End Date", nil, :class => 'control-label'
             .input-group
-              = date_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg"
+              =# date_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg"
+              = text_field_tag "q[sys_date_time_lteq]", nil, :placeholder => "End Date", value: @end_date, class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", readonly: true
               %span.input-group-addon 
                 %a{href: '#', onclick: "$('#q_sys_date_time_lteq').val('');"}
                   %i.fa.fa-remove.fa-lg
