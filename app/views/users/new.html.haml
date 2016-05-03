@@ -87,7 +87,7 @@
                 and 
                 = link_to 'Privacy Policy', welcome_privacy_path, target: '_blank'
     
-            = f.submit "Sign up", id: 'sign_up_button', :class => "btn btn-lg btn-primary", data: { disable_with: "Please wait ..." }
+            = f.submit "Sign up", id: 'sign_up_button', :class => "btn btn-lg btn-primary", data: { disable_with: "Please wait ..." }, disabled: true
             = link_to 'Cancel', :back, :class => "btn btn-lg btn-default"
             %br
             %br
