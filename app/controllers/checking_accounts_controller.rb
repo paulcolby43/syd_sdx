@@ -5,13 +5,13 @@ class CheckingAccountsController < ApplicationController
   # GET /checking_accounts
   # GET /checking_accounts.json
   def index
-    @checking_accounts = CheckingAccount.all(current_token, current_yard_id)
+    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
   end
 
   # GET /checking_accounts/1
   # GET /checking_accounts/1.json
   def show
-    @checking_account = CheckingAccount.find_by_id(current_token, current_yard_id, params[:id])
+    @checking_account = CheckingAccount.find_by_id(current_user.token, current_yard_id, params[:id])
     respond_to do |format|
       format.html {}
       format.json { render :json => @checking_account }
@@ -25,7 +25,7 @@ class CheckingAccountsController < ApplicationController
 
   # GET /checking_accounts/1/edit
   def edit
-    @checking_account = CheckingAccount.find_by_id(current_token, current_yard_id, params[:id])
+    @checking_account = CheckingAccount.find_by_id(current_user.token, current_yard_id, params[:id])
   end
 
   # POST /checking_accounts
@@ -69,10 +69,10 @@ class CheckingAccountsController < ApplicationController
   end
   
   def create_ticket
-    @checking_account = CheckingAccount.find_by_id(current_token, current_yard_id, params[:id])
-#    @ticket_number = Ticket.next_available_number(current_token, current_yard_id)
+    @checking_account = CheckingAccount.find_by_id(current_user.token, current_yard_id, params[:id])
+#    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_token, current_yard_id, @checking_account['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @checking_account['Id'], @guid)
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'

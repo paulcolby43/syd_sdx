@@ -7,9 +7,9 @@ class CustomersController < ApplicationController
   def index
     authorize! :index, :customers
     unless params[:q].blank?
-      results = Customer.search(current_token, current_yard_id, params[:q])
+      results = Customer.search(current_user.token, current_yard_id, params[:q])
     else
-      results = Customer.all(current_token, current_yard_id)
+      results = Customer.all(current_user.token, current_yard_id)
     end
     unless results.blank?
       @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
@@ -23,11 +23,11 @@ class CustomersController < ApplicationController
   def show
     authorize! :show, :customers
     
-    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
+    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
     @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
-#    @paid_tickets = Ticket.search(3, current_token, current_yard_id, "#{@customer['Company']}")
-    @paid_tickets = Customer.paid_tickets(current_token, current_yard_id, params[:id])
+#    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
+    @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
     if @customer_user.blank?
       @new_user = User.new
     end
@@ -43,14 +43,14 @@ class CustomersController < ApplicationController
   # GET /customers/1/edit
   def edit
     authorize! :edit, :customers
-    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
+    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
   end
 
   # POST /customers
   # POST /customers.json
   def create
 #    @customer = Customer.new(customer_params)
-    @customer = Customer.create(current_token, current_yard_id, customer_params)
+    @customer = Customer.create(current_user.token, current_yard_id, customer_params)
     respond_to do |format|
       format.html {
         if @customer == 'true'
@@ -66,7 +66,7 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1
   # PATCH/PUT /customers/1.json
   def update
-    @customer = Customer.update(current_token, current_yard_id, customer_params)
+    @customer = Customer.update(current_user.token, current_yard_id, customer_params)
     respond_to do |format|
       format.html {
         if @customer == 'true'
@@ -90,10 +90,10 @@ class CustomersController < ApplicationController
   end
   
   def create_ticket
-    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
-#    @ticket_number = Ticket.next_available_number(current_token, current_yard_id)
+    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
+#    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_token, current_yard_id, @customer['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @customer['Id'], @guid)
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'

@@ -3,7 +3,7 @@ module SessionsHelper
   # Logs in the given user.
   def log_in(user)
     session[:user_id] = user.id
-    session[:auth_token]= user.access_token.token_string
+#    session[:auth_token]= user.access_token.token_string
     user_yards = Yard.all(current_token)
     unless user_yards.count > 1
       # Set current yard if user only has one yard
@@ -34,7 +34,7 @@ module SessionsHelper
   
   def log_out
     session.delete(:user_id)
-    session.delete(:auth_token)
+#    session.delete(:auth_token)
 #    cookies.delete(:yard_id)
 #    cookies.delete(:yard_name)
 #    @current_yard_id = nil

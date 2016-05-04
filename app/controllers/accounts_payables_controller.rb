@@ -6,12 +6,12 @@ class AccountsPayablesController < ApplicationController
   # GET /accounts_payables.json
   def index
     unless params[:q].blank?
-      tickets = Ticket.search(3, current_token, current_yard_id, params[:q])
+      tickets = Ticket.search(3, current_user.token, current_yard_id, params[:q])
     else
       tickets = nil
     end
     unless tickets.blank?
-      @accounts_payables = AccountsPayable.all(current_token, current_yard_id, tickets.last["Id"])
+      @accounts_payables = AccountsPayable.all(current_user.token, current_yard_id, tickets.last["Id"])
     else
       @accounts_payables = []
     end
@@ -21,8 +21,8 @@ class AccountsPayablesController < ApplicationController
   # GET /accounts_payables/1
   # GET /accounts_payables/1.json
   def show
-    @accounts_payable = AccountsPayable.find_by_id(current_token, current_yard_id, params[:ticket_id], params[:id])
-#    @ticket = Ticket.find_ticket_number("Closed", current_token, current_yard_id, params[:ticket_id])
+    @accounts_payable = AccountsPayable.find_by_id(current_user.token, current_yard_id, params[:ticket_id], params[:id])
+#    @ticket = Ticket.find_ticket_number("Closed", current_user.token, current_yard_id, params[:ticket_id])
     respond_to do |format|
       format.html {}
       format.json { render :json => @accounts_payable }
@@ -36,7 +36,7 @@ class AccountsPayablesController < ApplicationController
 
   # GET /accounts_payables/1/edit
   def edit
-    @accounts_payable = AccountsPayable.find_by_id(current_token, current_yard_id, params[:id])
+    @accounts_payable = AccountsPayable.find_by_id(current_user.token, current_yard_id, params[:id])
   end
 
   # POST /accounts_payables
@@ -80,10 +80,10 @@ class AccountsPayablesController < ApplicationController
   end
   
   def create_ticket
-    @accounts_payable = AccountsPayable.find_by_id(current_token, current_yard_id, params[:id])
-#    @ticket_number = Ticket.next_available_number(current_token, current_yard_id)
+    @accounts_payable = AccountsPayable.find_by_id(current_user.token, current_yard_id, params[:id])
+#    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_token, current_yard_id, @accounts_payable['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @accounts_payable['Id'], @guid)
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'

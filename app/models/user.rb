@@ -216,6 +216,10 @@ class User < ActiveRecord::Base
     BCrypt::Engine.hash_secret(pass, password_salt)
   end
   
+  def token
+    access_token.token_string
+  end
+  
   private
 
   def prepare_password

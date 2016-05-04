@@ -5,13 +5,13 @@ class YardsController < ApplicationController
   # GET /yards
   # GET /yards.json
   def index
-    @yards = Yard.all(current_token)
+    @yards = Yard.all(current_user.token)
   end
 
   # GET /yards/1
   # GET /yards/1.json
   def show
-    @yard = Yard.find_by_id(current_token, params[:id])
+    @yard = Yard.find_by_id(current_user.token, params[:id])
     cookies[:yard_id] = params[:id]
     cookies[:yard_name] = @yard['Name']
   end

@@ -7,14 +7,14 @@ class CommoditiesController < ApplicationController
   def index
     authorize! :index, :commodities
     unless params[:q].blank?
-      results = Commodity.search(current_token, current_yard_id, params[:q])
+      results = Commodity.search(current_user.token, current_yard_id, params[:q])
       if results.class == 'Hash'
         single_commodity_hash = results
         results = []
         results << single_commodity_hash
       end
     else
-      results = Commodity.all(current_token, current_yard_id)
+      results = Commodity.all(current_user.token, current_yard_id)
     end
     unless results.blank?
       @commodities = Kaminari.paginate_array(results).page(params[:page]).per(10)
@@ -27,8 +27,8 @@ class CommoditiesController < ApplicationController
   # GET /commodities/1.json
   def show
     authorize! :show, :commodities
-    @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
-    @commodity_types = Commodity.types(current_token, current_yard_id)
+    @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
+    @commodity_types = Commodity.types(current_user.token, current_yard_id)
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @commodity['MenuText'], "price" => @commodity['ScalePrice']} } 
@@ -39,21 +39,21 @@ class CommoditiesController < ApplicationController
   def new
     authorize! :create, :commodities
 #    @commodity = Commodity.new
-    @commodity_types = Commodity.types(current_token, current_yard_id)
+    @commodity_types = Commodity.types(current_user.token, current_yard_id)
   end
 
   # GET /commodities/1/edit
   def edit
     authorize! :edit, :commodities
-    @commodity = Commodity.find_by_id(current_token, current_yard_id, params[:id])
-    @commodity_types = Commodity.types(current_token, current_yard_id)
+    @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
+    @commodity_types = Commodity.types(current_user.token, current_yard_id)
   end
 
   # POST /commodities
   # POST /commodities.json
   def create
 #    @commodity = Commodity.new(commodity_params)
-    @commodity = Commodity.create(current_token, current_yard_id, commodity_params)
+    @commodity = Commodity.create(current_user.token, current_yard_id, commodity_params)
     respond_to do |format|
       format.html {
         if @commodity == 'true'
@@ -69,7 +69,7 @@ class CommoditiesController < ApplicationController
   # PATCH/PUT /commodities/1
   # PATCH/PUT /commodities/1.json
   def update
-    @commodity = Commodity.update(current_token, current_yard_id, commodity_params)
+    @commodity = Commodity.update(current_user.token, current_yard_id, commodity_params)
     respond_to do |format|
       format.html {
         if @commodity == 'true'
@@ -85,7 +85,7 @@ class CommoditiesController < ApplicationController
   # PATCH/PUT /commodities/1/update_price
   # PATCH/PUT /commodities/1/update_price.json
   def update_price
-    commodity_update_price_response =  Commodity.update_price(current_token, current_yard_id, params[:id], params[:value])
+    commodity_update_price_response =  Commodity.update_price(current_user.token, current_yard_id, params[:id], params[:value])
     respond_to do |format|
       format.json { 
         if commodity_update_price_response == 'true'

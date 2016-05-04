@@ -18,10 +18,10 @@ class ApplicationController < ActionController::Base
 #  end
 #  helper_method :current_user
   
-  def current_token
-    @current_token ||= session[:auth_token]
-  end
-  helper_method :current_token
+#  def current_token
+#    @current_token ||= session[:auth_token]
+#  end
+#  helper_method :current_token
   
   def current_yard_id
     @current_yard_id ||= cookies[:yard_id]
