@@ -4,7 +4,7 @@ module SessionsHelper
   def log_in(user)
     session[:user_id] = user.id
 #    session[:auth_token]= user.access_token.token_string
-    user_yards = Yard.all(current_token)
+    user_yards = Yard.all(current_user.token)
     unless user_yards.count > 1
       # Set current yard if user only has one yard
       cookies[:yard_id] = user_yards.first['Id']
