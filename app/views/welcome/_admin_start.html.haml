@@ -49,7 +49,7 @@
                 Commodities
       - else
         %p Select a Yard
-        - Yard.all(current_token).each do |yard|
+        - Yard.all(current_user.token).each do |yard|
           %div.row
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary

@@ -38,7 +38,7 @@
               YARDS
               %b.caret
             %ul.dropdown-menu
-              - Yard.all(current_token).each do |yard|
+              - Yard.all(current_user.token).each do |yard|
                 %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
         %li= link_to 'PICTURES', images_path
         -#

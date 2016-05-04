@@ -215,7 +215,7 @@
                   %p= drawer['DrawerName']
                   %p= drawer['CashDrawerId']
                   %p= number_to_currency(drawer["BeginingBalance"])
-                  %p= "Current status: #{Drawer.status(current_token, current_yard_id, drawer['CashDrawerId'])}"
+                  %p= "Current status: #{Drawer.status(current_user.token, current_yard_id, drawer['CashDrawerId'])}"
       -#
         %div.col-xs-4.col-sm-4
           .well

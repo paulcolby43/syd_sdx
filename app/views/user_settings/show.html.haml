@@ -84,7 +84,7 @@
         .panel-heading
           Yards
         %ul.list-group
-          - Yard.all(current_token).each do |yard|
+          - Yard.all(current_user.token).each do |yard|
             %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= link_to yard["Name"], yard_path(yard['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}
