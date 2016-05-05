@@ -33,8 +33,8 @@ class UsersController < ApplicationController
       if @user.save
         unless @user.customer?
 #          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
-          #create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params) if current_user.blank?
-          #create_scrap_dragon_user_response = @user.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params) if current_user.blank?
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
           @user.generate_scrap_dragon_token(user_params)
         else
           create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_user.token, user_params)
