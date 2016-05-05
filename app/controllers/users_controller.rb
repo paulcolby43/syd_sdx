@@ -58,7 +58,7 @@ class UsersController < ApplicationController
           if current_user.blank?
             render :new
           else
-            flash[:danger] = "There was a problem creating the Scrap Dragon user."
+            flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
             redirect_to :back 
           end
           }
