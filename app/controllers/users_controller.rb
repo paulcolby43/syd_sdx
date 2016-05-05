@@ -1,8 +1,7 @@
 class UsersController < ApplicationController
   before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-#  load_and_authorize_resource
-#  skip_authorize_resource :only => [:new, :create, :confirm_email, :resend_confirmation_instructions]
+  load_and_authorize_resource  param_method: :user_params, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
 
   # GET /users
   # GET /users.json
