@@ -14,7 +14,8 @@
 //= require jquery_ujs
 //= require twbs/bootstrap
 //= require bootstrap-editable.min.js
-//= require bootstrap-datepicker
+//= require bootstrap-datepicker/core
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.en-GB.js
 //= require jquery.maskedinput
 //= require turbolinks
 //= require jquery.turbolinks
