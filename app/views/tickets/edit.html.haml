@@ -45,7 +45,7 @@
                     .panel-body
                       = hidden_field_tag "ticket[line_items][][id]", line_item['Id']
                       = hidden_field_tag "ticket[line_items][][status]", line_item['Status']
-                      = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }, line_item['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                      = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, line_item['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
                       %br
                       %div.input-group.gross_input_group
                         %span.input-group-addon
@@ -105,7 +105,7 @@
                   .panel-body
                     = hidden_field_tag "ticket[line_items][][id]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Id']
                     = hidden_field_tag "ticket[line_items][][status]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Status']
-                    = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }, @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                    = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
                     %br
                     %div.input-group.gross_input_group
                       %span.input-group-addon
@@ -163,7 +163,7 @@
                         %i.fa.fa-trash.fa-lg.text-danger
               %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
-                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['MenuText'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
                   %br
                   %div.input-group.gross_input_group
                     %span.input-group-addon

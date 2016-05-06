@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: @commodity["MenuText"]}
+= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: @commodity["PrintDescription"]}
 - @title="Edit commodity"
 
 .container
@@ -8,22 +8,27 @@
       = hidden_field_tag "commodity[yard_name]", @commodity["YardName"]
       = hidden_field_tag "commodity[id]", @commodity["Id"]
       = hidden_field_tag "commodity[parent_id]", @commodity["ParentId"]
+      = hidden_field_tag "commodity[code]", @commodity["Code"]
+      = hidden_field_tag "commodity[menu_text]", @commodity["MenuText"]
+      = hidden_field_tag "commodity[name]", @commodity["Name"]
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Name", nil, :class => 'control-label'
-          = text_field_tag "commodity[name]", @commodity["Name"], :placeholder => "Name", class: "form-control input-lg"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Code", nil, :class => 'control-label'
-          = text_field_tag "commodity[code]", @commodity["Code"], :placeholder => "Code", class: "form-control input-lg"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Menu text", nil, :class => 'control-label'
-          = text_field_tag "commodity[menu_text]", @commodity["MenuText"], :placeholder => "Menu Text", class: "form-control input-lg"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Description", nil, :class => 'control-label'
-          = text_area_tag "commodity[description]", @commodity["PrintDescription"], :placeholder => "Description", class: "form-control input-lg"
+          = label_tag "Print Description", nil, :class => 'control-label'
+          = text_field_tag "commodity[description]", @commodity["PrintDescription"], :placeholder => "Description", class: "form-control input-lg"
+      -#
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Name", nil, :class => 'control-label'
+            = text_field_tag "commodity[name]", @commodity["Name"], :placeholder => "Name", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Code", nil, :class => 'control-label'
+            = text_field_tag "commodity[code]", @commodity["Code"], :placeholder => "Code", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Menu text", nil, :class => 'control-label'
+            = text_field_tag "commodity[menu_text]", @commodity["MenuText"], :placeholder => "Menu Text", class: "form-control input-lg"
+        
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Unit of Measure", nil, :class => 'control-label'

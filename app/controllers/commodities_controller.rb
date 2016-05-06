@@ -17,7 +17,7 @@ class CommoditiesController < ApplicationController
       results = Commodity.all(current_user.token, current_yard_id)
     end
     unless results.blank?
-      @commodities = Kaminari.paginate_array(results).page(params[:page]).per(10)
+      @commodities = Kaminari.paginate_array(results).page(params[:page]).per(50)
     else
       @commodities = []
     end
@@ -31,7 +31,7 @@ class CommoditiesController < ApplicationController
     @commodity_types = Commodity.types(current_user.token, current_yard_id)
     respond_to do |format|
       format.html {}
-      format.json {render json: {"name" => @commodity['MenuText'], "price" => @commodity['ScalePrice']} } 
+      format.json {render json: {"name" => @commodity['PrintDescription'], "price" => @commodity['ScalePrice']} } 
     end
   end
 

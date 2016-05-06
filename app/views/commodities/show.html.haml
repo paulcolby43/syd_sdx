@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/show_commodity_navbar", locals: {title: "#{@commodity['MenuText']}"}
+= render partial: "shared/navbars/show_commodity_navbar", locals: {title: "#{@commodity['PrintDescription']}"}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -7,20 +7,21 @@
         %p= @commodity
     %div.panel.panel-primary
       %div.list_group
+        -#
+          %div.list-group-item
+            %strong= "Name:"
+            .pull-right
+              = "#{@commodity['Name']}"
+          %div.list-group-item
+            %strong= "Code:"
+            .pull-right
+              = "#{@commodity['Code']}"
+          %div.list-group-item
+            %strong= "Menu Text:"
+            .pull-right
+              = "#{@commodity['MenuText']}"
         %div.list-group-item
-          %strong= "Name:"
-          .pull-right
-            = "#{@commodity['Name']}"
-        %div.list-group-item
-          %strong= "Code:"
-          .pull-right
-            = "#{@commodity['Code']}"
-        %div.list-group-item
-          %strong= "Menu Text:"
-          .pull-right
-            = "#{@commodity['MenuText']}"
-        %div.list-group-item
-          %strong= "Description:"
+          %strong= "Print Description:"
           .pull-right
             = "#{@commodity['PrintDescription']}"
         %div.list-group-item

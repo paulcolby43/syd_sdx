@@ -70,8 +70,8 @@ class Commodity
     new_guid = SecureRandom.uuid
     payload = {
       "Id" => new_guid,
-      "Code" => commodity_params[:code],
-      "Name" => commodity_params[:name],
+      "Code" => commodity_params[:description],
+      "Name" => commodity_params[:description],
       "PrintDescription" => commodity_params[:description],
       "YardId" => yard_id,
       "YardName" => commodity_params[:yard_name],
@@ -87,7 +87,7 @@ class Commodity
       "TextSize" => 16,
       "IsParentItem" => true,
       "ParentId" => nil,
-      "MenuText" => commodity_params[:menu_text],
+      "MenuText" => commodity_params[:description],
       "IsTaxable" => true
       }
       

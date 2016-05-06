@@ -58,18 +58,6 @@
               Commodities
               .pull-right
                 %i.fa.fa-chevron-right.fa-lg
-      -#
-        %p
-          %strong Commodities
-        - @commodities.each do |commodity|
-          %div.row
-            .col-xs-12.col-sm-12.col-md-12
-              %div.panel.panel-primary
-                %div.list_group
-                  %a{href: commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['MenuText']}"}}
-                    = commodity['MenuText']
-                    .pull-right
-                      %i.fa.fa-chevron-right.fa-lg
       .col-xs-12.col-sm-4.col-md-4
         %div.panel.panel-primary
           %div.list_group
@@ -77,22 +65,3 @@
               Customers
               .pull-right
                 %i.fa.fa-chevron-right.fa-lg
-      -#
-        %p
-          %strong Customers
-        - @customers.each do |customer|
-          %div.row
-            .col-xs-12.col-sm-12.col-md-12
-              %div.panel.panel-primary
-                %div.list_group
-                  %a{href: customer_path(customer['Id'], yard_id: current_yard_id), class: "list-group-item item_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{customer['FirstName']}"}}
-                    - unless customer["FirstName"].blank? and customer["LastName"].blank?
-                      = "#{customer["FirstName"]} #{customer["LastName"]}"
-                    - else
-                      No Name
-                    .pull-right
-                      %i.fa.fa-chevron-right.fa-lg
-                    %br
-                    %small= customer["Id"]
-
-=# render partial: "shared/footer_navbar", locals: {title: "Yard"}
