@@ -42,11 +42,11 @@ class UsersController < ApplicationController
 #          @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
         end
         format.html { 
-          if create_scrap_dragon_user_response == 'true'
+          if create_scrap_dragon_user_response["Success"] == 'true'
             UserMailer.confirmation_instructions(@user).deliver
             flash[:success] = "Confirmation instructions have been sent to the user email address."
           else
-            flash[:danger] = "There was a problem creating the Scrap Dragon user."
+            flash[:danger] = "There was a problem creating the Scrap Dragon user: #{create_scrap_dragon_user_response['FailureInformation']}"
           end
           redirect_to login_path if current_user.blank?
           redirect_to users_path unless current_user.blank?

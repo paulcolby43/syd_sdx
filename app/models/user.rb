@@ -88,7 +88,8 @@ class User < ActiveRecord::Base
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
     Rails.logger.info data
-    return data["AddApiUserResponse"]["Success"]
+#    return data["AddApiUserResponse"]["Success"]
+    return data["AddApiUserResponse"]
   end
   
   def create_scrap_dragon_user_for_current_user(auth_token, user_params)
