@@ -1,8 +1,8 @@
 = render partial: "shared/navbars/show_customer_navbar", locals: {title: "#{@customer['FirstName']} #{@customer['LastName']}"}
 .jumbotron{style: 'background-color: #FFFFFF;'}
   -#
-    .well
-      %p= @customer
+  .well
+    %p= @customer
   .container
     - if current_user.admin?
       - unless @customer_user.blank?
@@ -48,7 +48,21 @@
           = "#{@customer['Address2']}"
         %br
         = "#{@customer['City']}, #{@customer['State']} #{@customer['Zip']}" unless @customer['City'].blank? and @customer['State'].blank? and @customer['Zip'].blank?
-    
+    %div.panel.panel-primary
+      %div.list_group
+        %div.list-group-item
+          %strong= "ID Number:"
+          .pull-right
+            = "#{@customer['IdNumber']}"
+        %div.list-group-item
+          %strong= "ID State:"
+          .pull-right
+            = "#{@customer['IdState']}"
+        %div.list-group-item
+          %strong= "ID Expiration:"
+          .pull-right
+            = "#{@customer['IdExpires']}"
+
     %hr
     %p.lead Pictures
     %div#cust_pics

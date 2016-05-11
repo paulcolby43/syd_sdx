@@ -1,5 +1,26 @@
 Rails.application.routes.draw do
   
+  resources :devices do
+    member do
+      get :drivers_license_scan
+      get :scale_read
+      get :scale_camera_trigger
+      get :show_scanned_jpeg_image
+      get :drivers_license_camera_trigger
+      get :get_signature
+      get :call_printer_for_purchase_order_pdf
+      get :finger_print_trigger
+      get :scanner_trigger
+    end
+    collection do
+      get :customer_camera_trigger
+      get :customer_scanner_trigger
+      get :customer_scale_camera_trigger
+      get :customer_camera_trigger_from_ticket
+      get :drivers_license_camera_trigger_from_ticket
+    end
+  end
+  
   resources :reports
   
   devise_for :admin_users, ActiveAdmin::Devise.config
