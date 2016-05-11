@@ -43,7 +43,7 @@
         .text-center
           %div{id: 'endless_page'}
             %p= image_tag("ajax-loader.gif", :id => "more_commodities_spinner", :alt => "Loading ...", style: "display:none;")
-            %p= link_to 'Load more ...', commodities_path(:page => @commodities.next_page, :q => params[:q]), :class => 'load-more-commodities btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_commodities_spinner').show();" if @commodities.next_page
+            %p= link_to 'Load more ...', commodities_path(:page => @commodities.next_page, :q => params[:q], :status => @status), :class => 'load-more-commodities btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_commodities_spinner').show();" if @commodities.next_page
     - else
       %p No commodities found
                 
