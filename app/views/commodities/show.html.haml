@@ -38,7 +38,7 @@
           %strong= "Scale Price:"
           .pull-right
             = "#{number_to_currency(@commodity['ScalePrice'])}"
-        %div.list-group-item
+        %div.list-group-item{class: "#{(@commodity['IsDisabled'] == 'true') ? 'list-group-item-danger' : ''}"}
           %strong= "Status:"
           .pull-right
             = "#{(@commodity['IsDisabled'] == 'true') ? 'Disabled' : 'Enabled'}"

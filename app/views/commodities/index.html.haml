@@ -2,19 +2,20 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %p
-      .btn-group
-        - if @status == 'enabled'
-          %button{class: 'btn btn-default btn-lg active'}
-            Enabled
-          = link_to "Disabled", commodities_path(status: 'disabled'), :class => "btn btn-default btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Disabled"}
-        - elsif @status == 'disabled'
-          = link_to "Enabled".html_safe, commodities_path(status: 'enabled'), :class => "btn btn-default btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Enabled"}
-          %button{class: 'btn btn-default btn-lg active'}
-            Disabled
+    -#
+      %p
+        .btn-group
+          - if @status == 'enabled'
+            %button{class: 'btn btn-default btn-lg active'}
+              Enabled
+            = link_to "Disabled", commodities_path(status: 'disabled'), :class => "btn btn-default btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Disabled"}
+          - elsif @status == 'disabled'
+            = link_to "Enabled".html_safe, commodities_path(status: 'enabled'), :class => "btn btn-default btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Enabled"}
+            %button{class: 'btn btn-default btn-lg active'}
+              Disabled
     %p
       = form_tag commodities_path, id: 'commodity_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
-        = hidden_field_tag :status, @status
+        =# hidden_field_tag :status, @status
         .input-group
           = search_field_tag :q, params[:q], :placeholder => "Search commodities", class: "form-control input-lg"
           %span.input-group-btn
@@ -26,7 +27,7 @@
         - @commodities.each do |commodity|
           %div.row
             .col-xs-12.col-sm-12.col-md-12
-              %div.panel.panel-primary
+              %div.panel{class: "#{(commodity['IsDisabled'] == 'true') ? 'panel-danger' : 'panel-primary'}"}
                 %div.list_group
                   %a{href: commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['PrintDescription']}"}}
                     = commodity['PrintDescription']
@@ -43,7 +44,7 @@
         .text-center
           %div{id: 'endless_page'}
             %p= image_tag("ajax-loader.gif", :id => "more_commodities_spinner", :alt => "Loading ...", style: "display:none;")
-            %p= link_to 'Load more ...', commodities_path(:page => @commodities.next_page, :q => params[:q], :status => @status), :class => 'load-more-commodities btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_commodities_spinner').show();" if @commodities.next_page
+            %p= link_to 'Load more ...', commodities_path(:page => @commodities.next_page, :q => params[:q]), :class => 'load-more-commodities btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_commodities_spinner').show();" if @commodities.next_page
     - else
       %p No commodities found
                 

@@ -6,18 +6,18 @@ class CommoditiesController < ApplicationController
   # GET /commodities.json
   def index
     authorize! :index, :commodities
-    @status = "#{params[:status].blank? ? 'enabled' : params[:status]}"
+#    @status = "#{params[:status].blank? ? 'enabled' : params[:status]}"
     unless params[:q].blank?
-      results = Commodity.search(current_user.token, current_yard_id, params[:q]) if @status == 'enabled'
-      results = Commodity.search_disabled(current_user.token, current_yard_id, params[:q]) if @status == 'disabled'
+      results = Commodity.search(current_user.token, current_yard_id, params[:q])
+#      results = Commodity.search_disabled(current_user.token, current_yard_id, params[:q]) if @status == 'disabled'
       if results.class == 'Hash'
         single_commodity_hash = results
         results = []
         results << single_commodity_hash
       end
     else
-      results = Commodity.all(current_user.token, current_yard_id) if @status == 'enabled'
-      results = Commodity.all_disabled(current_user.token, current_yard_id) if @status == 'disabled'
+      results = Commodity.all(current_user.token, current_yard_id)
+#      results = Commodity.all_disabled(current_user.token, current_yard_id) if @status == 'disabled'
     end
     unless results.blank?
       @commodities = Kaminari.paginate_array(results).page(params[:page]).per(50)
