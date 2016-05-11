@@ -3,7 +3,18 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %p
+      .btn-group
+        - if @status == 'enabled'
+          %button{class: 'btn btn-default btn-lg active'}
+            Enabled
+          = link_to "Disabled", commodities_path(status: 'disabled'), :class => "btn btn-default btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Disabled"}
+        - elsif @status == 'disabled'
+          = link_to "Enabled".html_safe, commodities_path(status: 'enabled'), :class => "btn btn-default btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Enabled"}
+          %button{class: 'btn btn-default btn-lg active'}
+            Disabled
+    %p
       = form_tag commodities_path, id: 'commodity_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        = hidden_field_tag :status, @status
         .input-group
           = search_field_tag :q, params[:q], :placeholder => "Search commodities", class: "form-control input-lg"
           %span.input-group-btn
