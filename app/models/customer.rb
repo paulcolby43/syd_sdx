@@ -27,6 +27,16 @@ class Customer
     customers.find {|customer| customer['Id'] == customer_id}
   end
   
+  def self.name_by_id(auth_token, yard_id, customer_id)
+    customers = Customer.all(auth_token, yard_id)
+    customer = customers.find {|customer| customer['Id'] == customer_id}
+    unless customer.blank?
+      return "#{customer['FirstName']} #{customer['LastName']}"
+    else
+      return "Customer"
+    end
+  end
+  
 #  def self.find_by_id(auth_token, yard_id, customer_id)
 #    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
 #    user = access_token.user # Get access token's user record

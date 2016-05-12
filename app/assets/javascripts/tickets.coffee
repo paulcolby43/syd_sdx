@@ -268,3 +268,6 @@ jQuery ->
       $('#image_file_vin_number').val ''
     return
   ### End event code changed - clear data; check if License Plate or VIN or Vehicle ###
+
+  # Invoke select to pull pricing if new ticket comes in from work order
+  $('.new_item').find('#ticket_line_items__commodity').trigger 'change'

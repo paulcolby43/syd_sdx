@@ -11,22 +11,17 @@
                 %div.panel.panel-primary
                   %div.list_group
                     =# workorder
-                    %a{href: '#', class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+                    %a{href: create_ticket_customer_path(workorder['CustomerId'], commodity_id: "#{(workorder['CommodityId'].is_a? Hash) ? nil : workorder['CommodityId']}"), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
                       = workorder['WorkOrderNumber']
+                      = workorder['CustomerId']
+                      =# Customer.name_by_id(current_user.token, current_yard_id, workorder['CustomerId'])
                       .pull-right
                         %i.fa.fa-chevron-right.fa-lg
                     %div.list-group-item
-                      %ul.list-inline
-                        %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
-                        %li= workorder['WorkOrderStatus']
-                      -#
-                        %div.list-group-item
-                          &nbsp;
-                          .pull-right
-                            - if current_user.admin?
-                              %a{href: nil, class: 'price', "data-commodity" => 'hey there', "data-commodity-name" =>  commodity['PrintDescription'], "data-pk" => commodity['Id'], "data-url" => "/commodities/#{commodity['Id']}/update_price"}= number_with_precision(commodity['ScalePrice'], precision: 3)
-                            - else
-                              = number_with_precision(commodity['ScalePrice'], precision: 3)
+                      %small
+                        %ul.list-inline
+                          %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                          %li= Workorder.status(workorder['WorkOrderStatus'])
       
     - else
       %p No Work Orders found

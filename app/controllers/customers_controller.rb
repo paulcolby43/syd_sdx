@@ -97,7 +97,7 @@ class CustomersController < ApplicationController
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'
-        redirect_to edit_ticket_path(@guid, status: 2) 
+        redirect_to edit_ticket_path(@guid, status: 2, commodity_id: params[:commodity_id]) 
         }
     end
   end

@@ -24,4 +24,18 @@ class Workorder
     end
   end
   
+  def self.status(status_number)
+    if status_number == "0"
+      return "Requested"
+    elsif status_number == "1"
+      return "Processing"
+    elsif status_number == "2"
+      return "Fulfilled"
+    elsif status_number == "3"
+      return "Void"
+    else
+      return "Unknown"
+    end
+  end
+  
 end
