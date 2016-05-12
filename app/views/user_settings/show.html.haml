@@ -6,6 +6,7 @@
       .panel.panel-default
         .panel-heading
           Show Thumbnails
+          .pull-right= link_to 'Edit', edit_user_setting_path(@user_setting)
         %ul.list-group
           %li.list-group-item
             %strong= "Vendors:"
@@ -21,50 +22,52 @@
             %strong= "Pictures:"
             .pull-right
               = "#{@user_setting.show_thumbnails? ? 'Yes' : 'No'}"
-        -#
-          - unless current_company.device_groups.blank?
-            .panel-heading
-              - unless current_user.device_group.blank?
-                = "#{current_user.device_group.DeviceGroupName} Device Group"
-              - else
-                No Device Group for this User
-            %ul.list-group
-              - unless current_user.device_group.blank?
-                - unless current_user.device_group.CustomerCamera.blank?
-                  %li.list-group-item
-                    %strong= current_user.device_group.CustomerCamera
-                    %p 
-                      Device Type:
-                      %i.fa.fa-camera.fa-lg
-                      Customer Camera
-                - current_user.device_group.devices.each do |device|
-                  %li.list-group-item
-                    %strong= device.DeviceName
-                    %p
-                      = "Workstation:"
-                      = device.workstation.WorkstationName
-                    %p
-                      = "Workstation IP:"
-                      = device.workstation.Host
-                    %p{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
-                      = "Device Type:"
-                      = device.device_type_icon.html_safe
-                      - if device.scale_camera_only?
-                        Scale camera only - no indicator
-                      - else
-                        = device.type
-                      - if device.printer?
-                        %small= "(Printer Width: #{device.PrinterWidth})"
-                    %p 
-                      = "Device Order:"
-                      = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
-                    - unless device.CameraGroup.blank?
-                      %p
-                        = "Camera Group:"
-                        = device.CameraGroup
-                    %p
-                      = "Listen Port:"
-                      = device.LocalListenPort
+      - unless Yard.device_groups(current_yard_id).blank?
+        .panel.panel-default
+          .panel-heading
+            - unless current_user.device_group.blank?
+              = "#{current_user.device_group.DeviceGroupName} Device Group"
+            - else
+              No Device Group for this User
+            .pull-right= link_to 'Edit', edit_user_setting_path(@user_setting)
+          %ul.list-group
+            - unless current_user.device_group.blank?
+              - unless current_user.device_group.CustomerCamera.blank?
+                %li.list-group-item
+                  %strong= current_user.device_group.CustomerCamera
+                  %br
+                  Device Type:
+                  %i.fa.fa-camera.fa-lg
+                  Customer Camera
+              - current_user.device_group.devices.each do |device|
+                %li.list-group-item
+                  %strong= device.DeviceName
+                  %br
+                  = "Workstation:"
+                  = device.workstation.WorkstationName
+                  %br
+                  = "Workstation IP:"
+                  = device.workstation.Host
+                  %br
+                  %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
+                    = "Device Type:"
+                    = device.device_type_icon.html_safe
+                    - if device.scale_camera_only?
+                      Scale camera only - no indicator
+                    - else
+                      = device.type
+                    - if device.printer?
+                      %small= "(Printer Width: #{device.PrinterWidth})"
+                  %br
+                  = "Device Order:"
+                  = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
+                  - unless device.CameraGroup.blank?
+                    %br
+                    = "Camera Group:"
+                    = device.CameraGroup
+                  %br
+                  = "Listen Port:"
+                  = device.LocalListenPort
 
     .col-xs-12.col-sm-6.col-md-offset-3
       - unless @contract.blank?

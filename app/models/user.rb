@@ -199,6 +199,56 @@ class User < ActiveRecord::Base
     company_id.present?
   end
   
+  ### Devices ###
+  def devices
+    user_setting.devices
+  end
+  
+  def scale_devices
+    user_setting.scale_devices
+  end
+  
+  def camera_devices
+    user_setting.camera_devices
+  end
+  
+  def license_reader_devices
+    user_setting.license_reader_devices
+  end
+  
+  def license_imager_devices
+    user_setting.license_imager_devices
+  end
+  
+  def finger_print_reader_devices
+    user_setting.finger_print_reader_devices
+  end
+  
+  def signature_pad_devices
+    user_setting.signature_pad_devices
+  end
+  
+  def printer_devices
+    user_setting.printer_devices
+  end
+  
+  def qbo_access_credential
+    QboAccessCredential.find_by_company_id(location)
+  end
+  
+  def device_group
+    user_setting.device_group
+  end
+  
+  def customer_camera
+    user_setting.customer_camera
+  end
+  
+  def scanner_devices
+    user_setting.scanner_devices
+  end
+  ### End Devices ###
+  
   #############################
   #     Class Methods         #
   #############################

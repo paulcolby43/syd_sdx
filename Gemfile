@@ -101,6 +101,9 @@ gem 'wkhtmltopdf-binary'
 # A Datepicker for Twitter Bootstrap, integrated with Rails assets pipeline
 gem 'bootstrap-datepicker-rails'
 
+# SOAP calls (TUD devices web service calls)
+gem 'savon'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
