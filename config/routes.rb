@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       get :drivers_license_camera_trigger_from_ticket
     end
   end
+  resources :workorders
   
   resources :reports
   

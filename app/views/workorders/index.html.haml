@@ -1,0 +1,29 @@
+= render partial: "shared/navbars/workorders_navbar", locals: {title: "Work Orders"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @workorders.blank?
+      %div{id: "workorders"}
+        - @workorders.each do |workorder|
+          - unless workorder['CommodityId'].blank?
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list_group
+                    =# workorder
+                    %a{href: create_ticket_customer_path(workorder['CustomerId'], commodity_id: "#{(workorder['CommodityId'].is_a? Hash) ? nil : workorder['CommodityId']}"), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
+                      = workorder['WorkOrderNumber']
+                      = workorder['CustomerId']
+                      =# Customer.name_by_id(current_user.token, current_yard_id, workorder['CustomerId'])
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+                    %div.list-group-item
+                      %small
+                        %ul.list-inline
+                          %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                          %li= Workorder.status(workorder['WorkOrderStatus'])
+      
+    - else
+      %p No Work Orders found
+                
+=# render partial: "shared/commodities_footer_navbar", locals: {title: "Commodities"}

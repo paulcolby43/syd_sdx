@@ -183,7 +183,7 @@
                         %i.fa.fa-3x.collapse_icon
       - else
         / New item
-        %div.ticket_input_fields_wrap
+        %div.ticket_input_fields_wrap.new_item
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default.line-item
               %div.panel-heading{:role => "tab", id: "heading#{1}"}
@@ -197,7 +197,7 @@
                         %i.fa.fa-trash.fa-lg.text-danger
               %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
-                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
                   %br
                   %div.input-group.gross_input_group
                     %span.input-group-addon
