@@ -27,6 +27,16 @@ class Customer
     customers.find {|customer| customer['Id'] == customer_id}
   end
   
+#  def self.find_by_id(auth_token, yard_id, customer_id)
+#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+#    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}"
+#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+#    data= Hash.from_xml(xml_content)
+#    Rails.logger.info data
+#    return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
+#  end
+  
   def self.search(auth_token, yard_id, query_string)
     require 'uri'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record

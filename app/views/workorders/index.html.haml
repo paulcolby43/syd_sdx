@@ -1,0 +1,34 @@
+= render partial: "shared/navbars/workorders_navbar", locals: {title: "Work Orders"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @workorders.blank?
+      %div{id: "workorders"}
+        - @workorders.each do |workorder|
+          - unless workorder['CommodityId'].blank?
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list_group
+                    =# workorder
+                    %a{href: '#', class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+                      = workorder['WorkOrderNumber']
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+                    %div.list-group-item
+                      %ul.list-inline
+                        %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                        %li= workorder['WorkOrderStatus']
+                      -#
+                        %div.list-group-item
+                          &nbsp;
+                          .pull-right
+                            - if current_user.admin?
+                              %a{href: nil, class: 'price', "data-commodity" => 'hey there', "data-commodity-name" =>  commodity['PrintDescription'], "data-pk" => commodity['Id'], "data-url" => "/commodities/#{commodity['Id']}/update_price"}= number_with_precision(commodity['ScalePrice'], precision: 3)
+                            - else
+                              = number_with_precision(commodity['ScalePrice'], precision: 3)
+      
+    - else
+      %p No Work Orders found
+                
+=# render partial: "shared/commodities_footer_navbar", locals: {title: "Commodities"}
