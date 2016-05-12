@@ -7,6 +7,7 @@ class CommoditiesController < ApplicationController
   def index
     authorize! :index, :commodities
 #    @status = "#{params[:status].blank? ? 'enabled' : params[:status]}"
+    @commodity_types = Commodity.types(current_user.token, current_yard_id)
     unless params[:q].blank?
       results = Commodity.search(current_user.token, current_yard_id, params[:q])
 #      results = Commodity.search_disabled(current_user.token, current_yard_id, params[:q]) if @status == 'disabled'
