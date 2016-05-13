@@ -1,8 +1,8 @@
 = render partial: "shared/navbars/show_customer_navbar", locals: {title: "#{@customer['FirstName']} #{@customer['LastName']}"}
 .jumbotron{style: 'background-color: #FFFFFF;'}
   -#
-  .well
-    %p= @customer
+    .well
+      %p= @customer
   .container
     - if current_user.admin?
       - unless @customer_user.blank?

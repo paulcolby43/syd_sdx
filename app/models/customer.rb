@@ -23,13 +23,21 @@ class Customer
   end
   
   def self.find_by_id(auth_token, yard_id, customer_id)
-    customers = Customer.all(auth_token, yard_id)
-    customers.find {|customer| customer['Id'] == customer_id}
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    
+    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Item"]
+    
+#    customers = Customer.all(auth_token, yard_id)
+#    customers.find {|customer| customer['Id'] == customer_id}
   end
   
   def self.name_by_id(auth_token, yard_id, customer_id)
-    customers = Customer.all(auth_token, yard_id)
-    customer = customers.find {|customer| customer['Id'] == customer_id}
+    customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     unless customer.blank?
       return "#{customer['FirstName']} #{customer['LastName']}"
     else
