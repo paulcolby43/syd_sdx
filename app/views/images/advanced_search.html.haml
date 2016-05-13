@@ -2,6 +2,7 @@
 
 .container
   %br
+  %br
   .well
     = search_form_for @search, url: advanced_search_images_path, method: :get do |f|
       = f.condition_fields do |c|
