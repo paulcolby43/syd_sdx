@@ -203,11 +203,11 @@
                     - current_user.scale_devices.each do |scale_device|
                       %span.input-group-addon
                         - if scale_device.scale_camera_only?
-                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
                             %i.fa.fa-camera.fa-lg
                             %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         - else
-                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
                             %i.fa.fa-dashboard.fa-lg
                             %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                     %span.input-group-addon
@@ -221,11 +221,11 @@
                     - current_user.scale_devices.each do |scale_device|
                       %span.input-group-addon
                         - if scale_device.scale_camera_only?
-                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
                             %i.fa.fa-camera.fa-lg
                             %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         - else
-                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
                             %i.fa.fa-dashboard.fa-lg
                             %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                     %span.input-group-addon
