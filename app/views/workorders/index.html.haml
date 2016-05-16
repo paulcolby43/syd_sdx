@@ -16,6 +16,7 @@
                       =# Customer.name_by_id(current_user.token, current_yard_id, workorder['CustomerId'])
                       %ul.list-inline
                         %li= workorder['WorkOrderNumber']
+                        %li= Customer.name_by_id(current_user.token, current_yard_id, workorder['CustomerId'])
                         %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
                         %li= Workorder.status(workorder['WorkOrderStatus'])
                         .pull-right
