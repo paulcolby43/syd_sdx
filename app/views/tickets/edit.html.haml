@@ -200,6 +200,16 @@
                   = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
                   %br
                   %div.input-group.gross_input_group
+                    - current_user.scale_devices.each do |scale_device|
+                      %span.input-group-addon
+                        - if scale_device.scale_camera_only?
+                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-camera.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                        - else
+                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-dashboard.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                     %span.input-group-addon
                       %i.fa.fa-plus{style: "font-size:0.7em;"}
                     = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
@@ -208,6 +218,16 @@
                         %i.fa.fa-upload.fa-2x
                   %br
                   %div.input-group.tare_input_group
+                    - current_user.scale_devices.each do |scale_device|
+                      %span.input-group-addon
+                        - if scale_device.scale_camera_only?
+                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-camera.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                        - else
+                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-dashboard.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                     %span.input-group-addon
                       %i.fa.fa-minus{style: "font-size:0.7em;"}
                     = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true

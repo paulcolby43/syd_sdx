@@ -1,0 +1,21 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          - unless @ticket_number.blank?
+            = link_to 'javascript:history.back()' do
+              Back
+          - else
+            = link_to root_path do
+              Home
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4
+          - if (params[:controller]=='shipments') and params[:action]=='index'
+            %a{href: "#search_form", "data-toggle" => "modal", :alt => "search_form"}
+              %i.fa.fa-search.fa-lg
+              = "Search" unless mobile_device?
+
+- unless current_user.blank?
+  = render partial: "shipments/search_modal"

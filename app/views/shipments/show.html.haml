@@ -1,0 +1,43 @@
+= render partial: "shared/search_navbar", locals: {title: "#{@shipment.ticket_nbr}"}
+.jumbotron
+  .container
+    %div.row
+      .col-xs-12.col-sm-6.col-md-offset-3
+        =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'thumbnail img-responsive')
+        = link_to image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
+    - unless mobile_device?
+      %div{:id => "shipment_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+        .modal-dialog.modal-lg
+          .modal-content
+            .modal-body
+              = image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive')
+    %div.row
+      .col-xs-12.col-sm-6.col-md-offset-3
+        %div.panel.panel-primary
+          %div.list_group
+            -#
+              %div.list-group-item
+                %strong= "Ticket:"
+                .pull-right
+                  = "#{@shipment.ticket_nbr}"
+            - unless @shipment.event_code.blank?
+              %div.list-group-item
+                %strong= "Event:"
+                .pull-right
+                  = "#{@shipment.event_code}"
+            - unless @shipment.camera_name.blank?
+              %div.list-group-item
+                %strong= "Camera:"
+                .pull-right
+                  = "#{@shipment.camera_name}"
+            %div.list-group-item
+              %strong= "Date/Time:"
+              .pull-right
+                = "#{@shipment.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")}"
+    -#        
+      %div.row
+        .text-center
+          .col-xs-12.col-sm-6.col-md-offset-3
+            %p= link_to 'New Shipment', '#', :class => 'btn btn-primary btn-lg btn-block'
+
+= render partial: "shared/footer_navbar", locals: {title: "Shipments"}

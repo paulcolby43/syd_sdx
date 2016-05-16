@@ -24,6 +24,10 @@ module ApplicationHelper
     ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Vendor"]
   end
   
+  def shipment_event_codes
+    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up"]
+  end
+  
   def cust_pic_event_codes
     ["Photo ID", "Customer Photo", "Certificate", "Finger Print", "Vehicle"]
   end

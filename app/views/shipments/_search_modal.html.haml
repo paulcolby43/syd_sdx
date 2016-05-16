@@ -1,16 +1,12 @@
 %div{:id => "search_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
-  = form_tag images_path, :method => 'get', :class => "form-horizontal" do
+  = form_tag shipments_path, :method => 'get', :class => "form-horizontal" do
     .modal-dialog.modal-sm
       .modal-content
         .modal-body
           = hidden_field_tag "q[hidden_blank]", 1
-          = hidden_field_tag "q[yardid_eq]", current_yard_id unless current_user.customer?
-          - if current_user.customer?
-            = hidden_field_tag "q[cust_nbr_eq]", current_user.customer_guid unless current_user.customer_guid.blank?
-            = hidden_field_tag "q[cust_nbr_eq]", 'fubar' if current_user.customer_guid.blank?
-            = hidden_field_tag "q[yardid_eq]", current_yard_id
-            =# hidden_field_tag "q[yardid_eq]", current_user.yard_id unless current_user.yard_id.blank?
-            =# hidden_field_tag "q[yardid_eq]", 'fubar' if current_user.yard_id.blank?
+          = hidden_field_tag "q[yardid_eq]", current_yard_id
+          =# hidden_field_tag "q[yardid_eq]", current_user.yard_id unless current_user.yard_id.blank?
+          =# hidden_field_tag "q[yardid_eq]", 'fubar' if current_user.yard_id.blank?
           %div.form-group.has-feedback{:id => "ticket_search", :class => "col-xs-12"}
             = label_tag "Ticket Number", nil, :class => 'control-label'
             .input-group
@@ -21,7 +17,7 @@
           %div.form-group{:class => "col-xs-12"}
             = label_tag "Event Code", nil, :class => 'control-label'
             .input-group
-              = select_tag "q[event_code_eq]", options_for_select(ticket_event_codes, @event_code), prompt: 'All' , class: "form-control input-lg"
+              = select_tag "q[event_code_eq]", options_for_select(shipment_event_codes, @event_code), prompt: 'All' , class: "form-control input-lg"
               %span.input-group-addon 
                 %a{href: '#', onclick: "$('#q_event_code_eq').val('');"}
                   %i.fa.fa-remove.fa-lg
@@ -54,9 +50,9 @@
               = label_tag :one_image_per_ticket, "One result per ticket", :class => 'control-label'
               =# check_box_tag :one_image_per_ticket, 1, false, id: "one_image_check_box"
               = check_box_tag :one_image_per_ticket, 1, false, class: 'input-lg', "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "0"
-          
+              
           %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} x
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
-            Search
             %i.fa.fa-search
+            Search
             
