@@ -3,6 +3,7 @@
 
 .container
   %br
+  %br
   %ul{class: 'list-inline'}
     - current_user.license_reader_devices.each do |license_reader_device|
       %li
@@ -15,10 +16,10 @@
       .row.form-group
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "First Name", nil, :class => 'control-label'
-          = text_field_tag "customer[first_name]", nil, :placeholder => "First Name", class: "form-control input-lg"
+          = text_field_tag "customer[first_name]", params[:first_name], :placeholder => "First Name", class: "form-control input-lg"
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "Last Name", nil, :class => 'control-label'
-          = text_field_tag "customer[last_name]", nil, :placeholder => "Last Name", class: "form-control input-lg"
+          = text_field_tag "customer[last_name]", params[:last_name], :placeholder => "Last Name", class: "form-control input-lg"
       .row.form-group
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "Company", nil, :class => 'control-label'
@@ -30,35 +31,36 @@
       .row.form-group
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "Address 1", nil, :class => 'control-label'
-          = text_field_tag "customer[address_1]", nil, :placeholder => "Address 1", class: "form-control input-lg"
+          = text_field_tag "customer[address_1]", params[:streetaddress], :placeholder => "Address 1", class: "form-control input-lg"
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "Address 2", nil, :class => 'control-label'
           = text_field_tag "customer[address_2]", nil, :placeholder => "Address 2", class: "form-control input-lg"
       .row.form-group
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "City", nil, :class => 'control-label'
-          = text_field_tag "customer[city]", nil, :placeholder => "City", class: "form-control input-lg"
+          = text_field_tag "customer[city]", params[:city], :placeholder => "City", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "State", nil, :class => 'control-label'
-          = text_field_tag "customer[state]", nil, :placeholder => "State", class: "form-control input-lg"
+          = text_field_tag "customer[state]", params[:state], :placeholder => "State", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "Zip", nil, :class => 'control-label'
-          = text_field_tag "customer[zip]", nil, :placeholder => "Zip", class: "form-control input-lg"
+          = text_field_tag "customer[zip]", params[:zip], :placeholder => "Zip", class: "form-control input-lg"
       %hr
       .row.form-group
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "ID Number", nil, :class => 'control-label'
-          = text_field_tag "customer[id_number]", nil, :placeholder => "ID Number", class: "form-control input-lg"
+          = text_field_tag "customer[id_number]", params[:license_number], :placeholder => "ID Number", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "ID State", nil, :class => 'control-label'
           = text_field_tag "customer[id_state]", nil, :placeholder => "ID State", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "ID Expiration", nil, :class => 'control-label'
-          = date_field_tag "customer[id_expiration]", nil, :placeholder => "ID Expiration", class: "form-control input-lg"
+          =# date_field_tag "customer[id_expiration]", params[:expiration_date], :placeholder => "ID Expiration", class: "form-control input-lg"
+          = text_field_tag "customer[id_expiration]", params[:expiration_date], :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", readonly: true
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
             Create
 
-= render partial: "shared/new_customer_footer_navbar", locals: {title: "Customer"}
+=# render partial: "shared/new_customer_footer_navbar", locals: {title: "Customer"}

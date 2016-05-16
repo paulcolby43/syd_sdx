@@ -64,11 +64,12 @@
           = text_field_tag "customer[id_state]", @customer['IdState'], :placeholder => "ID State", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "ID Expiration", nil, :class => 'control-label'
-          = date_field_tag "customer[id_expiration]", @customer['IdExpires'], :placeholder => "ID Expiration", class: "form-control input-lg"
+          =# date_field_tag "customer[id_expiration]", @customer['IdExpires'], :placeholder => "ID Expiration", class: "form-control input-lg"
+          = text_field_tag "customer[id_expiration]", @customer['IdExpires'], :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd"#, readonly: true
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
             Save
 
-= render partial: "shared/new_customer_footer_navbar", locals: {title: "Customer"}
+=# render partial: "shared/new_customer_footer_navbar", locals: {title: "Customer"}

@@ -151,3 +151,48 @@ jQuery ->
     
     drivers_license_scan_ajax()
     ### End Drivers license scan ###
+
+  ### Find or create by license scan ###
+  $('.drivers_license_scan_and_search').on 'click', ->
+    device_id = $(this).data( "device-id" )
+    drivers_license_scan_and_search_ajax = ->
+      $.ajax
+        url: "/devices/" + device_id + "/drivers_license_scan"
+        dataType: 'json'
+        success: (data) ->
+          firstname = data.firstname
+          lastname = data.lastname
+          licensenumber = data.licensenumber
+          dob = data.dob
+          sex = data.sex
+          issue_date = data.issue_date
+          expiration_date = data.expiration_date
+          streetaddress = data.streetaddress
+          city = data.city
+          state = data.state
+          zip = data.zip
+          
+          # Find or create vendor
+          $('#search').val firstname + ' ' + lastname
+          $('#first_name').val firstname
+          $('#last_name').val lastname
+          $('#license_number').val licensenumber
+          $('#dob').val dob
+          $('#sex').val sex
+          $('#issue_date').val issue_date
+          $('#expiration_date').val expiration_date
+          $('#streetaddress').val streetaddress
+          $('#city').val city
+          $('#state').val state
+          $('#zip').val zip
+          
+          $('.data_scan_spinner').hide()
+          $("#customer_search_button").click()
+          return
+        error: ->
+          $('#spinner').hide()
+          $('.data_scan_spinner').hide()
+          return
+    
+    drivers_license_scan_and_search_ajax()
+    ### End Find or create by license scan ###

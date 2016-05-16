@@ -1,9 +1,9 @@
-= render partial: "shared/search_navbar", locals: {title: "Cust Pic"}
+= render partial: "shared/navbars/show_image_navbar", locals: {title: ""}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %div.row
-      .col-xs-12.col-sm-12.col-md-12
+      .col-xs-12.col-sm-6.col-md-offset-3
         =# link_to image_tag(show_jpeg_image_cust_pic_path(@cust_pic), alt: @cust_pic.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
         - unless @cust_pic.pdf?
           = link_to image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'

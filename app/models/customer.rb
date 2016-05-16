@@ -126,7 +126,9 @@ class Customer
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    Rails.logger.info data
+#    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    return data["ApiItemResponseOfApiCustomerC9S9lUui"]
   end
   
   def self.update(auth_token, yard_id, customer_params)
@@ -174,8 +176,9 @@ class Customer
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-#    Rails.logger.info data
-    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    Rails.logger.info data
+#    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    return data["ApiItemResponseOfApiCustomerC9S9lUui"]
   end
   
   def self.default_cust_pic_id(customer_id, yard_id)
