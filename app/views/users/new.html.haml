@@ -73,7 +73,7 @@
                   = link_to 'Terms of Service', welcome_tos_path, target: '_blank'
                   and 
                   = link_to 'Privacy Policy', welcome_privacy_path, target: '_blank'
-
+              %p.lead A confirmation link will be sent to your email address in order to activate your live account.
               = f.submit "Sign up", id: 'sign_up_button', :class => "btn btn-lg btn-primary", data: { disable_with: "Please wait ..." }#, disabled: true
               = link_to 'Cancel', :back, :class => "btn btn-lg btn-default"
               %br
