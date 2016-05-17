@@ -14,9 +14,9 @@ jQuery ->
     return
 
   # Disable/enable sign up button on TOS check
-  $('#user_terms_of_service').click ->
-    if $(this).is(':checked')
-      $('#sign_up_button').removeAttr 'disabled'
-    else
-      $('#sign_up_button').attr 'disabled', 'disabled'
-    return
+  #$('#user_terms_of_service').click ->
+  #  if $(this).is(':checked')
+  #    $('#sign_up_button').removeAttr 'disabled'
+  #  else
+  #    $('#sign_up_button').attr 'disabled', 'disabled'
+  #  return
