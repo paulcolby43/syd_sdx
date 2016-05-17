@@ -45,5 +45,9 @@ module ApplicationHelper
     method_hash = {"0" => "Cash", "1" => "Check"}
     return method_hash[method_number]
   end
+  
+  def empty_guid
+    '00000000-0000-0000-0000-000000000000'
+  end
 
 end
