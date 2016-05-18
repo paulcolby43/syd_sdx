@@ -28,4 +28,5 @@
 //= require jquery-fileupload/jquery.fileupload
 //= require jquery-fileupload/jquery.fileupload-process
 //= require jquery-fileupload/jquery.fileupload-image
+//= require select2
 //= require_tree .

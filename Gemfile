@@ -104,6 +104,9 @@ gem 'bootstrap-datepicker-rails'
 # SOAP calls (TUD devices web service calls)
 gem 'savon'
 
+# Integrate Select2 javascript library with Rails asset pipeline https://github.com/argerim/select2-rails
+gem "select2-rails"
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

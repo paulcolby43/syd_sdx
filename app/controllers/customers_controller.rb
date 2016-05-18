@@ -7,16 +7,32 @@ class CustomersController < ApplicationController
   def index
     authorize! :index, :customers
     unless params[:q].blank?
-      results = Customer.search(current_user.token, current_yard_id, params[:q])
+      search = Customer.search(current_user.token, current_yard_id, params[:q])
     else
-      results = Customer.all(current_user.token, current_yard_id)
+      search = Customer.all(current_user.token, current_yard_id)
     end
-    unless results.blank?
-      @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
-    else
-      redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
-        sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
-      @customers = []
+    respond_to do |format|
+      format.html {
+        unless search.blank?
+          @customers = Kaminari.paginate_array(search).page(params[:page]).per(10)
+        else
+          redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
+            sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
+          @customers = []
+        end
+      }
+      format.json {
+#        @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
+#        render json: @customers.map{|c| c['Id']}
+#        @customers = results.map {|customer| ["#{customer['FirstName']} #{customer['LastName']}", customer['Id']]}
+        unless search.blank?
+          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']}"} }
+        else
+          @customers = nil
+        end
+        Rails.logger.info "results: {#{@customers}}"
+        render json: {results: @customers}
+      }
     end
   end
 

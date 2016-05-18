@@ -17,6 +17,8 @@
  *= require checkbox-x.min.css
  *= jquery.fileupload.css
  *= jquery.fileupload-ui.css
+ *= require select2
+ *= require select2-bootstrap
  *= require_tree .
  *= require_self
  */

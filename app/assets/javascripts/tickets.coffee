@@ -591,5 +591,15 @@ jQuery ->
         #alert 'Finger print trigger failed'
         return
   ### End finger print reader ###
+
   # Invoke select to pull pricing if new ticket comes in from work order
   $('.new_item').find('#ticket_line_items__commodity').trigger 'change'
+
+  # Dropdown select for ticket's customer
+  $('#ticket_CustomerId').select2
+    theme: 'bootstrap'
+    minimumInputLength: 3
+    ajax:
+      url: '/customers'
+      dataType: 'json'
+      delay: 250
