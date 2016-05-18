@@ -603,3 +603,14 @@ jQuery ->
       url: '/customers'
       dataType: 'json'
       delay: 250
+
+  ### Customer ID changed ###
+  $('#ticket_CustomerId').on 'change', ->
+    input_select = $(this)
+    customer_id = input_select.val()
+    panel = input_select.closest('.panel')
+    name = input_select.closest('.panel').find($( "#ticket_CustomerId option:selected" )).text()
+    panel.closest('.collapse').collapse('toggle')
+    $(this).closest('.panel-collapse').collapse('hide')
+    input_select.closest('.panel').find('#vendor_name').text name
+  ### End Customer ID changed ###

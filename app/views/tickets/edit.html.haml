@@ -16,15 +16,19 @@
             - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
               %br
               = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
-
-      .panel.panel-default
-        %div.panel-heading{:role => "tab", id: "vendor_heading"}
-          %h4.panel-title
-            - if not (@ticket["FirstName"].blank? and @ticket["LastName"].blank?)
-              %div.text-success= "#{@ticket['FirstName']} #{@ticket['LastName']}"
-            - else
-              %div.text-success= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
-            =# select_tag "ticket[CustomerId]", @ticket['CustomerId'], prompt: 'Choose a customer', class: "form-control input-lg", required: true
+      #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        .panel.panel-default
+          %div.panel-heading{:role => "tab", id: "vendor_heading"}
+            %h4.panel-title
+              %a.text-success{"aria-controls" => "collapseVendor", "aria-expanded" => "true", "data-parent" => "#vendor_accordion", "data-toggle" => "collapse", :href => "#collapseVendor", :role => "button" }
+                #vendor_name.text-success
+                  - if not (@ticket["FirstName"].blank? and @ticket["LastName"].blank?)
+                    = "#{@ticket['FirstName']} #{@ticket['LastName']}"
+                  - else
+                    = "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
+          %div{id: "collapseVendor", "aria-labelledby" => "headingOne", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
+            .panel-body
+              = select_tag "ticket[CustomerId]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
       - unless @ticket["TicketItemCollection"].blank?
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
           / Multiple ticket line items

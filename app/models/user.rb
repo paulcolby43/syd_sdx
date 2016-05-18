@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
   after_create :create_company, unless: :company?
   
   validates :password, confirmation: true
-  validates :password_confirmation, presence: true
+  validates :password_confirmation, presence: true, on: :create
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_presence_of :first_name
   validates_presence_of :last_name

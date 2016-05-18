@@ -33,6 +33,15 @@ class CustomersController < ApplicationController
         Rails.logger.info "results: {#{@customers}}"
         render json: {results: @customers}
       }
+      format.js {
+        unless search.blank?
+          @customers = Kaminari.paginate_array(search).page(params[:page]).per(10)
+        else
+          redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
+            sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
+          @customers = []
+        end
+      }
     end
   end
 
