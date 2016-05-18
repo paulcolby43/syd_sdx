@@ -596,7 +596,7 @@ jQuery ->
   $('.new_item').find('#ticket_line_items__commodity').trigger 'change'
 
   # Dropdown select for ticket's customer
-  $('#ticket_CustomerId').select2
+  $('#ticket_customer_id').select2
     theme: 'bootstrap'
     minimumInputLength: 3
     ajax:
@@ -605,11 +605,11 @@ jQuery ->
       delay: 250
 
   ### Customer ID changed ###
-  $('#ticket_CustomerId').on 'change', ->
+  $('#ticket_customer_id').on 'change', ->
     input_select = $(this)
     customer_id = input_select.val()
     panel = input_select.closest('.panel')
-    name = input_select.closest('.panel').find($( "#ticket_CustomerId option:selected" )).text()
+    name = input_select.closest('.panel').find($( "#ticket_customer_id option:selected" )).text()
     panel.closest('.collapse').collapse('toggle')
     $(this).closest('.panel-collapse').collapse('hide')
     input_select.closest('.panel').find('#vendor_name').text name

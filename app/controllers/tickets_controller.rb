@@ -106,12 +106,17 @@ class TicketsController < ApplicationController
         end
       end
       @ticket = "true"
+      ### Save Ticket ###
+      if params[:save]
+        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status])
+      ### End Save Ticket ###
       ### Close Ticket ###
-      if params[:close_ticket]
+      elsif params[:close_ticket]
         @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
       ### End Close Ticket ###
       ### Pay Ticket ###
       elsif params[:pay_ticket]
+        Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status])
         if params[:checking_account_payment] and params[:checking_account_payment][:id]
           @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], 
             params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])
@@ -121,7 +126,7 @@ class TicketsController < ApplicationController
       ### End Pay Ticket ###
       ### Close & Pay Ticket ###
       elsif params[:close_and_pay_ticket]
-        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
+        Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
         @accounts_payable_items = Ticket.acccounts_payable_items(current_user.token, current_yard_id, params[:id])
         if params[:checking_account_payment] and params[:checking_account_payment][:id]
           @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
@@ -131,6 +136,7 @@ class TicketsController < ApplicationController
         end
       ### End Close & Pay Ticket ###
       else
+        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status])
       ### No button params, so Void Ticket ###
 #        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 0)
       ### End Void Ticket ###
@@ -187,6 +193,6 @@ class TicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:ticket_number, :customer_id, :id, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :status])
+      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :status])
     end
 end

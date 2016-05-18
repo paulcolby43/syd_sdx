@@ -4,7 +4,8 @@
   .container
     = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
       = hidden_field_tag "ticket[ticket_number]", @ticket_number
-      = hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
+      =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
+      = hidden_field_tag "ticket[status]", @ticket['Status']
       =# hidden_field_tag "ticket[id]", @ticket['Id']
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
       = hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
@@ -28,7 +29,7 @@
                     = "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
           %div{id: "collapseVendor", "aria-labelledby" => "headingOne", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
             .panel-body
-              = select_tag "ticket[CustomerId]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
+              = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
       - unless @ticket["TicketItemCollection"].blank?
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
           / Multiple ticket line items
