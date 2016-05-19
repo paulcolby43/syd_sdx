@@ -1,7 +1,7 @@
 class ShipmentFilesController < ApplicationController
-  before_filter :authenticate_user!
-  before_action :set_shipment_file, only: [:show, :edit, :update, :destroy]
-  load_and_authorize_resource
+  before_filter :login_required
+  before_action :set_image_file, only: [:show, :edit, :update, :destroy]
+#  load_and_authorize_resource
 
   # GET /shipment_files
   # GET /shipment_files.json
@@ -28,18 +28,26 @@ class ShipmentFilesController < ApplicationController
   # POST /shipment_files
   # POST /shipment_files.json
   def create
-    @shipment_file = ShipmentFile.new(shipment_file_params)
-
     respond_to do |format|
-      if @shipment_file.save
-#        format.html { redirect_to shipments_path, notice: 'Shipment file was successfully created.' }
-#        format.html { redirect_to @shipment_file, notice: 'Shipment file was successfully created.' }
-        format.html { redirect_to :back, notice: 'Shipment file was successfully created.' }
-        format.json { render :show, status: :created, location: @shipment_file }
-      else
-        format.html { render :new }
-        format.json { render json: @shipment_file.errors, status: :unprocessable_entity }
-      end
+      format.html { 
+        @shipment_file = ImageFile.new(shipment_file_params)
+        if @shipment_file.save
+          redirect_to :back, notice: 'Shipment file was successfully created.' 
+        else
+          render :new
+        end
+        }
+      format.json { 
+        @shipment_file = ShipmentFile.new(shipment_file_params)
+        if @shipment_file.save
+          render :show, status: :created, location: @shipment_file 
+        else
+          render json: @shipment_file.errors, status: :unprocessable_entity
+        end
+        }
+      format.js {
+        @shipment_file = ImageFile.create(shipment_file_params)
+      }
     end
   end
 
@@ -76,7 +84,7 @@ class ShipmentFilesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_file_params
       # order matters here in that to have access to model attributes in uploader methods, they need to show up before the file param in this permitted_params list 
-      params.require(:shipment_file).permit(:ticket_number, :name, :file, :user_id, :customer_number, :branch_code, :location, :yard_id, :event_code, 
+      params.require(:shipment_file).permit(:ticket_number, :name, :file, :user_id, :customer_number, :customer_name, :branch_code, :location, :yard_id, :event_code, 
         :shipment_id, :container_number, :booking_number, :contract_number, :hidden, :blob_id)
     end
 end

@@ -63,7 +63,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     end
 
     # lower captions
-    unless model.commodity_name.blank?
+    unless model.class.to_s.underscore == 'shipment_file' or model.commodity_name.blank?
       manipulate! do |source|
         txt = Magick::Draw.new
         txt.pointsize = 20
@@ -76,7 +76,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
         source.annotate(txt, 0, 0, 0, 20, name)
       end
     end
-    unless model.weight.blank?
+    unless model.class.to_s.underscore == 'shipment_file' or model.weight.blank?
       manipulate! do |source|
         txt = Magick::Draw.new
         txt.pointsize = 20

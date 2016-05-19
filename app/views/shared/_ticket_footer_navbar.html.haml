@@ -11,7 +11,7 @@
         .col-xs-4.col-sm-4
           %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
             %i.fa.fa-camera.fa-lg
-            = "Pictures" unless mobile_device?
+            = "Picture" unless mobile_device?
         .col-xs-4.col-sm-4
           - unless current_user.signature_pad_devices.blank?
             - current_user.signature_pad_devices.each do |signature_pad_device|

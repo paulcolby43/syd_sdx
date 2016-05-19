@@ -5,95 +5,31 @@
         .modal-header
           = @ticket_number
           = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
-        %br
         .modal-body
           = f.hidden_field :user_id, value: current_user.id
-          .form-group
-            = f.label "Ticket Number*", :class => 'control-label'
-            -#
-              .input-group
-            = f.text_field :ticket_number, :placeholder => "Ticket Number", value: @ticket_number, class: "form-control input-lg", autofocus: true, required: true
-            -#
-              %span.input-group-addon 
-                %a{href: '#', onclick: "$('#shipment_file_ticket_number').val('');"}
-                  %i.fa.fa-remove.fa-lg
-          -#
-            .form-group{:id => "event_code"}
-              = f.label "Event Code*", :class => 'control-label'
-              =# f.select :event_code, options_for_select(Shipment.event_codes.map(&:event_code)), {prompt: "Select event code"}, {:class => "form-control input-lg", required: true}
-              =# f.text_field :event_code, :placeholder => "Event Code", class: "form-control typeahead input-lg", data: { events: "#{Shipment.event_codes.map(&:event_code)}"}, required: true
-              =# f.text_field :event_code, :placeholder => "Event Code", class: "form-control typeahead input-lg", data: { events: "#{LookupDef.shipment_event_codes.map(&:LookupDisplay)}"}, required: true
-              =# f.select :event_code, options_for_select(Shipment.event_codes.map(&:event_code)), {prompt: "Select event code"}, {:class => "form-control input-lg", required: true}
-              =# f.select :event_code, options_for_select(LookupDef.shipment_event_codes.map(&:LookupValue)), {prompt: "Select event code"}, {:class => "form-control input-lg", required: true}
-          .form-group
-            = f.label "File*", :class => 'control-label'
-            = f.file_field :file, title: "<i class='fa fa-photo'/> Choose image".html_safe, class: 'btn btn-warning', required: true
+          = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :ticket_number, value: @ticket_number
+          .form-group{:id => "event_code"}
+            = f.label "Event Code", :class => 'control-label'
+            = f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
+          %div{:id => 'uploads', :style => 'display:block;'}
+            %p{id: "upload_button", style: "display:none;"}
+              = f.file_field :file, name: "shipment_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+
+          .picture_loading_spinner{:style => "display:none;", :id => "spinner"}
+            = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+            Uploading ...
+          #pictures
+
+          .clear
+          %script{:id => "template-upload", :type => "text/x-tmpl"}
+            .upload
+              {%=o.name%}
+              .progress.progress-striped
+                .progress-bar{:style => "width: 0%"}
+          %script{:id => "template-download", :type => "text/x-tmpl"}
+            .download
+              {%=o.name%}
+
         .modal-footer
-          %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} x
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', id: "new_shipment_file_submit") do
-            Upload
-            %i.fa.fa-arrow-up
-
-:javascript
-  //$('input[type=file]').bootstrapFileInput();
-
-  //Required attribute fallback
-  function attributeSupported(attribute) {
-    return (attribute in document.createElement("input"));
-  }
-  function isSafariOnly() {
-    return navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
-  }
-  $(function () {
-    $('#new_shipment_file').submit(function () {
-      if (!attributeSupported("required") || isSafariOnly()) {
-        $("#new_shipment_file [required]").each(function (index) {
-          if (!$(this).val()) {
-            alert("Please Fill In All Required Fields.");
-            return false;
-          }
-        });
-      }
-      return true;
-    });
-  });
-
-  // Don't allow for form submit until form fields completed
-  //$("#new_shipment_file_submit").attr("disabled", "disabled");
-  $("#new_shipment_file_submit").hide();
-
-  // Make check if ticket number changes
-  $("#shipment_file_ticket_number").on("change", function() {
-    if($("#shipment_file_ticket_number").val() && $("#shipment_file_file").val() && $("#shipment_file_event_code").val()) {
-      //$("#new_shipment_file_submit").removeAttr("disabled");
-      $("#new_shipment_file_submit").show();
-    }
-    else {
-      //$("#new_shipment_file_submit").attr("disabled", "disabled");
-      $("#new_shipment_file_submit").hide();
-    }
-  });
-
-  // Make check if file changes
-  $("#shipment_file_file").on("change", function() {
-    if($("#shipment_file_ticket_number").val() && $("#shipment_file_file").val() && $("#shipment_file_event_code").val()) {
-      //$("#new_shipment_file_submit").removeAttr("disabled");
-      $("#new_shipment_file_submit").show();
-    }
-    else {
-      //$("#new_shipment_file_submit").attr("disabled", "disabled");
-      $("#new_shipment_file_submit").hide();
-    }
-  });
-
-  // Make check if event code changes
-  $("#shipment_file_event_code").on("change", function() {
-    if($("#shipment_file_ticket_number").val() && $("#shipment_file_file").val() && $("#shipment_file_event_code").val()) {
-      //$("#new_shipment_file_submit").removeAttr("disabled");
-      $("#new_shipment_file_submit").show();
-    }
-    else {
-      //$("#new_shipment_file_submit").attr("disabled", "disabled");
-      $("#new_shipment_file_submit").hide();
-    }
-  });
+          %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
