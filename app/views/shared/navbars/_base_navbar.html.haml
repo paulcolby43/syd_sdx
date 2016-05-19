@@ -48,9 +48,7 @@
               DEVICE GROUPS
               %b.caret
             %ul.dropdown-menu
-              -#
-                %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
-              %li= link_to 'None', '#'
+              %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
               - Yard.device_groups(current_yard_id).each do |device_group|
                 -#
                   %li= link_to device_group.DeviceGroupName, '#'

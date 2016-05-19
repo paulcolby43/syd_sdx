@@ -34,12 +34,12 @@ module SessionsHelper
   
   def log_out
     session.delete(:user_id)
-#    session.delete(:auth_token)
-#    cookies.delete(:yard_id)
-#    cookies.delete(:yard_name)
-#    @current_yard_id = nil
-#    @current_yard_name = nil
     @current_user = nil
+#    session.delete(:auth_token)
+    cookies.delete(:yard_id)
+    cookies.delete(:yard_name)
+    @current_yard_id = nil
+    @current_yard_name = nil
   end
   
   def login_required

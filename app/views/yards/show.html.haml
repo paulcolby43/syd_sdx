@@ -5,19 +5,12 @@
   .container
     %div.row
       %p
-        .col-xs-12
-          %a.btn.btn-primary.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}} 
-            %i.fa.fa-users.fa-lg
-            Customers
-    %div.row
-      %p
-        .col-xs-12
+        .col-xs-6
           %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
             %i.fa.fa-folder-open-o.fa-lg
             Held
-    %div.row
       %p
-        .col-xs-12
+        .col-xs-6
           %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
             %i.fa.fa-folder.fa-lg
             Closed
@@ -25,9 +18,26 @@
       %p
         .col-xs-6
           %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
+            %i.fa.fa-dollar.fa-lg
             Paid
+      %p
+        .col-xs-6
+          -#
+            %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}} 
+              %i.fa.fa-image.fa-lg
+              Pictures
+          %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Quick Ticket"}} 
+            %i.fa.fa-ticket.fa-lg
+            Quick Ticket
+    %div.row
+      %p
+        .col-xs-6
+          %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}} 
+            %i.fa.fa-users.fa-lg
+            Customers
         .col-xs-6
           %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}} 
+            %i.fa.fa-list.fa-lg
             Commodities
 
     -#
