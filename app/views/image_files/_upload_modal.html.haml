@@ -56,7 +56,7 @@
                   %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                   = "#{license_imager_device.DeviceName}"
                   =# image_tag("ajax-loader.gif", :id => "image_scan_spinner", :class => "save_to_jpegger_spinner", :alt => "Loading ...", style: "display:none;")
-          .picture_loading_spinner{:style => "display:none;"}
+          .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
             = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
             Uploading ...
           #pictures

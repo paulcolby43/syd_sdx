@@ -25,7 +25,7 @@
             %p{id: "upload_button", style: "display:none;"}
               = f.file_field :file, name: "shipment_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
 
-          .picture_loading_spinner{:style => "display:none;"}
+          .picture_loading_spinner{:style => "display:none;", :id => "shipment_file_spinner"}
             = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
             Uploading ...
           #pictures
