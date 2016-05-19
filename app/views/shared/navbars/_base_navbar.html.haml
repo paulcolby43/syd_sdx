@@ -42,6 +42,7 @@
               - Yard.all(current_user.token).each do |yard|
                 %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
         %li= link_to 'PICTURES', images_path
+        %li= link_to 'SHIPMENTS', shipments_path
         - unless Yard.device_groups(current_yard_id).blank?
           %li.dropdown
             %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}

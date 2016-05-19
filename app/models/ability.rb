@@ -83,12 +83,12 @@ class Ability
       ############
       can :manage, Company
 
-#      # Shipments
-#      ############
-#      can :manage, Shipment do |shipment|
-#        shipment.location == user.location
-#      end
-#      can :create, Shipment
+      # Shipments
+      ############
+      can :manage, Shipment do |shipment|
+        shipment.yardid == yard_id
+      end
+      can :create, Shipment
 #
 #      # ShipmentFiles
 #      ############

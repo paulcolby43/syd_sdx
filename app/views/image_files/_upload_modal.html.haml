@@ -5,7 +5,6 @@
         .modal-header
           = @ticket["TicketNumber"]
           = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
-          %br
         .modal-body
           = f.hidden_field :user_id, value: current_user.id
           =# f.hidden_field :location, value: current_yard_id
@@ -15,8 +14,7 @@
           = f.hidden_field :tare_seq_nbr
           = f.hidden_field :commodity_name
           = f.hidden_field :weight
-          .form-group
-            = f.hidden_field :ticket_number, :placeholder => "Ticket Number", value: @ticket["TicketNumber"], class: "form-control input-lg", required: true, readonly: true
+          = f.hidden_field :ticket_number, value: @ticket["TicketNumber"]
           .form-group{:id => "event_code"}
             = f.label "Event Code", :class => 'control-label'
             = f.select :event_code, options_for_select(ticket_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
@@ -75,26 +73,3 @@
         
         .modal-footer
           %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
-
-:javascript
-
-  //Required attribute fallback
-  function attributeSupported(attribute) {
-    return (attribute in document.createElement("input"));
-  }
-  function isSafariOnly() {
-    return navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
-  }
-  $(function () {
-    $('#new_image_file').submit(function () {
-      if (!attributeSupported("required") || isSafariOnly()) {
-        $("#new_image_file [required]").each(function (index) {
-          if (!$(this).val()) {
-            alert("Please Fill In All Required Fields.");
-            return false;
-          }
-        });
-      }
-      return true;
-    });
-  });
