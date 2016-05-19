@@ -12,6 +12,15 @@
           .form-group{:id => "event_code"}
             = f.label "Event Code", :class => 'control-label'
             = f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
+          .form-group
+            = f.label :container_number, :class => 'control-label'
+            = f.text_field :container_number, :placeholder => "Container Number", class: "form-control input-lg"
+          .form-group
+            = f.label :booking_number, :class => 'control-label'
+            = f.text_field :booking_number, :placeholder => "Booking Number", class: "form-control input-lg"
+          .form-group
+            = f.label :contract_number, :class => 'control-label'
+            = f.text_field :contract_number, :placeholder => "Contract Number", class: "form-control input-lg"
           %div{:id => 'uploads', :style => 'display:block;'}
             %p{id: "upload_button", style: "display:none;"}
               = f.file_field :file, name: "shipment_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe

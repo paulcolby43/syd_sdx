@@ -30,7 +30,7 @@ class ShipmentFilesController < ApplicationController
   def create
     respond_to do |format|
       format.html { 
-        @shipment_file = ImageFile.new(shipment_file_params)
+        @shipment_file = ShipmentFile.new(shipment_file_params)
         if @shipment_file.save
           redirect_to :back, notice: 'Shipment file was successfully created.' 
         else
@@ -46,7 +46,7 @@ class ShipmentFilesController < ApplicationController
         end
         }
       format.js {
-        @shipment_file = ImageFile.create(shipment_file_params)
+        @shipment_file = ShipmentFile.create(shipment_file_params)
       }
     end
   end
