@@ -48,7 +48,7 @@ end
 every 1.day, :at => '4:30 am' do
   runner "CarrierWave.clean_cached_files!"
   runner "ImageFile.delete_files"
-#  runner "ShipmentFile.delete_files"
+  runner "ShipmentFile.delete_files"
   runner "CustPicFile.delete_files"
   
   ### Remove Temporary Leads Online and BWI XML Files Older than One Day ###
