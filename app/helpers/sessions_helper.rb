@@ -33,7 +33,8 @@ module SessionsHelper
   end
   
   def log_out
-    session.delete(:user_id)
+#    session.delete(:user_id)
+    session[:user_id] = user.id
     @current_user = nil
 #    session.delete(:auth_token)
     cookies.delete(:yard_id)
