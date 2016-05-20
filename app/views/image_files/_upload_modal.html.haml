@@ -5,7 +5,6 @@
         .modal-header
           = @ticket["TicketNumber"]
           = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
-          %br
         .modal-body
           = f.hidden_field :user_id, value: current_user.id
           =# f.hidden_field :location, value: current_yard_id
@@ -15,8 +14,7 @@
           = f.hidden_field :tare_seq_nbr
           = f.hidden_field :commodity_name
           = f.hidden_field :weight
-          .form-group
-            = f.hidden_field :ticket_number, :placeholder => "Ticket Number", value: @ticket["TicketNumber"], class: "form-control input-lg", required: true, readonly: true
+          = f.hidden_field :ticket_number, value: @ticket["TicketNumber"]
           .form-group{:id => "event_code"}
             = f.label "Event Code", :class => 'control-label'
             = f.select :event_code, options_for_select(ticket_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
@@ -30,36 +28,35 @@
           %div{:id => 'uploads', :style => 'display:block;'}
             %p{id: "upload_button", style: "display:none;"}
               = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
-              -#
-                / Devices
-                - current_user.scanner_devices.each do |scanner_device|
-                  %a{href: '#', class: "scanner_trigger btn btn-lg btn-block btn-info", 'data-device-id' => scanner_device.id, 'data-location' => current_user.location, 'data-ticket-number' => @doc_number, title: scanner_device.DeviceName, 'data-vendor-id' => @vendor.id}
-                    %i.fa.fa-newspaper-o
-                    Scanner
-                    %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                - current_user.scale_devices.each do |scale_device|
-                  - if scale_device.scale_camera_only?
-                    %a{href: '#', style: "color: hotpink;", class: "tud_camera_trigger btn btn-default btn-lg btn-block", 'data-ticket-number' => @doc_number, 'data-location' => current_user.location, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-vendor-id' => @vendor.id }
-                      %i.fa.fa-camera
-                      %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                      = scale_device.DeviceName
-                  - else
-                    %a{href: '#', class: "tud_camera_trigger btn btn-default btn-lg btn-block", 'data-ticket-number' => @doc_number, 'data-location' => current_user.location, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-vendor-id' => @vendor.id }
-                      %i.fa.fa-camera
-                      %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                      = scale_device.DeviceName
-                - unless current_user.customer_camera.blank?
-                  %a{href: '#', style: "color: hotpink;", class: "customer_camera_trigger_from_ticket btn btn-lg btn-block btn-default", 'data-ticket-number' => @doc_number, 'data-location' => current_user.location, 'data-vendor-id' => @vendor.id, 'data-camera-name' => current_user.customer_camera, title: current_user.customer_camera}
+              / Devices
+              - current_user.scanner_devices.each do |scanner_device|
+                %a{href: '#', class: "scanner_trigger btn btn-lg btn-block btn-info", 'data-device-id' => scanner_device.id, 'data-yard-id' => current_yard_id, 'data-ticket-number' => @ticket_number, title: scanner_device.DeviceName, 'data-customer-id' => @ticket['CustomerId']}
+                  %i.fa.fa-newspaper-o
+                  Scanner
+                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+              - current_user.scale_devices.each do |scale_device|
+                - if scale_device.scale_camera_only?
+                  %a{href: '#', style: "color: hotpink;", class: "tud_camera_trigger btn btn-default btn-lg btn-block", 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
                     %i.fa.fa-camera
                     %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    Customer Camera
-                - current_user.license_imager_devices.each do |license_imager_device|
-                  %a{href: '#', onclick: "$(this).find('.save_to_jpegger_spinner:first').show();", class: 'save_license_scan_to_jpegger_from_ticket btn btn-lg btn-block btn-default', 'data-ticket-number' => @doc_number, 'data-location' => current_user.location, 'data-vendor-id' => @vendor.id, 'data-camera-name' => "#{license_imager_device.DeviceName}"}
-                    %i.fa.fa-user
+                    = scale_device.DeviceName
+                - else
+                  %a{href: '#', class: "tud_camera_trigger btn btn-default btn-lg btn-block", 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                    %i.fa.fa-camera
                     %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    = "#{license_imager_device.DeviceName}"
-                    =# image_tag("ajax-loader.gif", :id => "image_scan_spinner", :class => "save_to_jpegger_spinner", :alt => "Loading ...", style: "display:none;")
-          .picture_loading_spinner{:style => "display:none;", :id => "spinner"}
+                    = scale_device.DeviceName
+              - unless current_user.customer_camera.blank?
+                %a{href: '#', style: "color: hotpink;", class: "customer_camera_trigger_from_ticket btn btn-lg btn-block btn-default", 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-id' => @ticket['CustomerId'], 'data-camera-name' => current_user.customer_camera, title: current_user.customer_camera}
+                  %i.fa.fa-camera
+                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                  Customer Camera
+              - current_user.license_imager_devices.each do |license_imager_device|
+                %a{href: '#', onclick: "$(this).find('.save_to_jpegger_spinner:first').show();", class: 'save_license_scan_to_jpegger_from_ticket btn btn-lg btn-block btn-default', 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-id' => @ticket['CustomerId'], 'data-camera-name' => "#{license_imager_device.DeviceName}"}
+                  %i.fa.fa-user
+                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                  = "#{license_imager_device.DeviceName}"
+                  =# image_tag("ajax-loader.gif", :id => "image_scan_spinner", :class => "save_to_jpegger_spinner", :alt => "Loading ...", style: "display:none;")
+          .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
             = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
             Uploading ...
           #pictures
@@ -76,26 +73,3 @@
         
         .modal-footer
           %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
-
-:javascript
-
-  //Required attribute fallback
-  function attributeSupported(attribute) {
-    return (attribute in document.createElement("input"));
-  }
-  function isSafariOnly() {
-    return navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
-  }
-  $(function () {
-    $('#new_image_file').submit(function () {
-      if (!attributeSupported("required") || isSafariOnly()) {
-        $("#new_image_file [required]").each(function (index) {
-          if (!$(this).val()) {
-            alert("Please Fill In All Required Fields.");
-            return false;
-          }
-        });
-      }
-      return true;
-    });
-  });

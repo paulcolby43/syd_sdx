@@ -7,14 +7,41 @@ class CustomersController < ApplicationController
   def index
     authorize! :index, :customers
     unless params[:q].blank?
-      results = Customer.search(current_token, current_yard_id, params[:q])
+      search = Customer.search(current_user.token, current_yard_id, params[:q])
     else
-      results = Customer.all(current_token, current_yard_id)
+      search = Customer.all(current_user.token, current_yard_id)
     end
-    unless results.blank?
-      @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
-    else
-      @customers = []
+    respond_to do |format|
+      format.html {
+        unless search.blank?
+          @customers = Kaminari.paginate_array(search).page(params[:page]).per(10)
+        else
+          redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
+            sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
+          @customers = []
+        end
+      }
+      format.json {
+#        @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
+#        render json: @customers.map{|c| c['Id']}
+#        @customers = results.map {|customer| ["#{customer['FirstName']} #{customer['LastName']}", customer['Id']]}
+        unless search.blank?
+          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']}"} }
+        else
+          @customers = nil
+        end
+        Rails.logger.info "results: {#{@customers}}"
+        render json: {results: @customers}
+      }
+      format.js {
+        unless search.blank?
+          @customers = Kaminari.paginate_array(search).page(params[:page]).per(10)
+        else
+          redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
+            sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
+          @customers = []
+        end
+      }
     end
   end
 
@@ -23,11 +50,11 @@ class CustomersController < ApplicationController
   def show
     authorize! :show, :customers
     
-    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
+    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
     @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
-#    @paid_tickets = Ticket.search(3, current_token, current_yard_id, "#{@customer['Company']}")
-    @paid_tickets = Customer.paid_tickets(current_token, current_yard_id, params[:id])
+#    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
+    @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
     if @customer_user.blank?
       @new_user = User.new
     end
@@ -43,22 +70,24 @@ class CustomersController < ApplicationController
   # GET /customers/1/edit
   def edit
     authorize! :edit, :customers
-    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
+    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
   end
 
   # POST /customers
   # POST /customers.json
   def create
 #    @customer = Customer.new(customer_params)
-    @customer = Customer.create(current_token, current_yard_id, customer_params)
+    create_customer_response = Customer.create(current_user.token, current_yard_id, customer_params)
     respond_to do |format|
       format.html {
-        if @customer == 'true'
+        if create_customer_response["Success"] == 'true'
           flash[:success] = 'Customer was successfully created.'
+          redirect_to customer_path(create_customer_response['Item']['Id'])
+#          redirect_to customers_path
         else
           flash[:danger] = 'Error creating customer.'
+          redirect_to customers_path
         end
-        redirect_to customers_path
       }
     end
   end
@@ -66,10 +95,10 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1
   # PATCH/PUT /customers/1.json
   def update
-    @customer = Customer.update(current_token, current_yard_id, customer_params)
+    create_customer_response = Customer.update(current_user.token, current_yard_id, customer_params)
     respond_to do |format|
       format.html {
-        if @customer == 'true'
+        if create_customer_response["Success"] == 'true'
           flash[:success] = 'Customer was successfully updated.'
         else
           flash[:danger] = 'Error updating customer.'
@@ -90,14 +119,14 @@ class CustomersController < ApplicationController
   end
   
   def create_ticket
-    @customer = Customer.find_by_id(current_token, current_yard_id, params[:id])
-#    @ticket_number = Ticket.next_available_number(current_token, current_yard_id)
+    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
+#    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_token, current_yard_id, @customer['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @customer['Id'], @guid)
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'
-        redirect_to edit_ticket_path(@guid, status: 2) 
+        redirect_to edit_ticket_path(@guid, status: 2, commodity_id: params[:commodity_id]) 
         }
     end
   end
@@ -110,6 +139,7 @@ class CustomersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def customer_params
-      params.require(:customer).permit(:id, :first_name, :last_name, :company, :phone, :email, :address_1, :address_2, :city, :state, :zip, :tax_collection)
+      params.require(:customer).permit(:id, :first_name, :last_name, :company, :phone, :email, :address_1, :address_2, :city, :state, :zip, :tax_collection, 
+        :id_number, :id_expiration, :id_state)
     end
 end

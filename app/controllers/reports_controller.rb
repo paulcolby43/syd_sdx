@@ -7,20 +7,20 @@ class ReportsController < ApplicationController
   # GET /reports.json
   def index
     authorize! :index, :reports
-    @type = params[:type]
-    @start_date = params[:start_date]
-    @end_date = params[:end_date]
+    @type = report_params[:type] || 'customer_summary'
+    @start_date = report_params[:start_date]
+    @end_date = report_params[:end_date]
     unless @start_date.blank? and @end_date.blank?
       # Search all by date
-      @tickets = Ticket.all_by_date(3, current_token, current_yard_id, @start_date, @end_date) 
+      @tickets = Ticket.all_by_date(3, current_user.token, current_yard_id, @start_date, @end_date) 
     else
       # Search all today
-      @tickets = Ticket.all_today(3, current_token, current_yard_id)
+      @tickets = Ticket.all_today(3, current_user.token, current_yard_id)
     end
     @line_items = []
     unless @tickets.blank?
       @tickets.each do |ticket|
-        @line_items = @line_items + Ticket.line_items(3, current_token, current_yard_id, ticket['Id'])
+        @line_items = @line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
       end
     end
     @line_items_total = 0
@@ -33,6 +33,7 @@ class ReportsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def report_params
-      params.require(:report).permit(:name, :dragon_api)
+#      params.require(:report).permit(:start_date, :end_date, :type)
+      params.fetch(:report, {}).permit(:start_date, :end_date, :type)
     end
 end

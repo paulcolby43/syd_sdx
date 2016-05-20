@@ -6,9 +6,25 @@
       = form_tag customers_path, id: 'customer_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
         .input-group
           = search_field_tag :q, params[:q], :placeholder => "Search customers", class: "form-control input-lg"
+          = hidden_field_tag :first_name, params[:first_name]
+          = hidden_field_tag :last_name, params[:last_name]
+          = hidden_field_tag :license_number, params[:license_number]
+          = hidden_field_tag :dob, params[:dob]
+          = hidden_field_tag :sex, params[:sex]
+          = hidden_field_tag :issue_date, params[:issue_date]
+          = hidden_field_tag :expiration_date, params[:expiration_date]
+          = hidden_field_tag :streetaddress, params[:streetaddress]
+          = hidden_field_tag :city, params[:city]
+          = hidden_field_tag :state, params[:state]
+          = hidden_field_tag :zip, params[:zip]
           %span.input-group-btn
-            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+            %button.btn.btn-default.btn-lg{id: 'customer_search_button', :type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
               %i.fa.fa-search
+            - current_user.license_reader_devices.each do |license_reader_device|
+              %a{href: '#', 'data-device-id' => license_reader_device.id, onclick: "$(this).find('.data_scan_spinner:first').show();", class: 'drivers_license_scan_and_search btn btn-lg btn-default'}
+                %i.fa.fa-list-alt
+                = "#{license_reader_device.DeviceName}"
+                = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
     - unless @customers.blank?
       %div{id: "customers"}
         - @customers.each do |customer|

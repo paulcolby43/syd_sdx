@@ -1,0 +1,10 @@
+$('#shipments').append('<div class="row"><%= j render @shipments %></div>');
+$('#more_images_spinner').hide();
+
+<% if @shipments.next_page %>
+  $('a.load-more-shipments').show();
+  $('a.load-more-shipments').attr('href', '<%= shipments_path page: @shipments.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-shipments').remove();
+<% end %>

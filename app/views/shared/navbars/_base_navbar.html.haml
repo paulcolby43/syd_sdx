@@ -32,39 +32,56 @@
           %ul.dropdown-menu
             %li= link_to 'All', commodities_path
             %li= link_to 'New', new_commodity_path
-        %li.dropdown
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            YARDS
-            %b.caret
-          %ul.dropdown-menu
-            - Yard.all(current_token).each do |yard|
-              %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
-        %li= link_to 'PICTURES', images_path
+        %li= link_to 'WORK ORDERS', workorders_path
         -#
-          - unless Yard.device_groups(current_yard_id).blank?
-            %li.dropdown
-              %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-                DEVICE GROUPS
-                %b.caret
-              %ul.dropdown-menu
+          %li.dropdown
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              YARDS
+              %b.caret
+            %ul.dropdown-menu
+              - Yard.all(current_user.token).each do |yard|
+                %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
+        %li= link_to 'PICTURES', images_path
+        %li= link_to 'SHIPMENTS', shipments_path
+        - unless Yard.device_groups(current_yard_id).blank?
+          %li.dropdown
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              DEVICE GROUPS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
+              - Yard.device_groups(current_yard_id).each do |device_group|
                 -#
-                  %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
-                %li= link_to 'None', '#'
-                - Yard.device_groups(current_yard_id).each do |device_group|
                   %li= link_to device_group.DeviceGroupName, '#'
-                  -#
-                    %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
+                %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
         %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             REPORTS
             %b.caret
           %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'reports') and (params[:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path(type: 'customer_summary')
-            %li{:class => "#{(params[:controller] == 'reports') and (params[:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path(type: 'commodity_summary')
-        %li{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}= link_to 'SETTINGS', current_user.user_setting
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
+        - if current_user.admin?
+          %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              USERS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'All', users_path
+              %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
           
       %ul.nav.navbar-nav.navbar-right
-        - unless current_yard.blank?
-          %li= link_to current_yard['Name'], yard_path(current_yard_id)
-        %li= link_to "User: <strong>#{current_user.username}</strong>".html_safe, current_user
+        -#
+          - unless current_yard_id.blank?
+            %li= link_to current_yard['Name'], yard_path(current_yard_id)
+        %li.dropdown{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            %i.fa.fa-gear
+            Settings
+            %b.caret
+          %ul.dropdown-menu
+            %li{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}= link_to "Admin User: <strong>#{current_user.username}</strong>".html_safe, current_user
+            %li{:class => "#{(params[:controller] == 'yards') ? 'active' : ''}"}= link_to "Yard: <strong>#{current_yard_name}</strong>".html_safe, yard_path(current_yard_id)
+            %li{role: "separator", class: "divider"}
+            %li= link_to 'Edit', current_user.user_setting
         %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }

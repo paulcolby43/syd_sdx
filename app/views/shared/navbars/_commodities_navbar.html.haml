@@ -9,5 +9,7 @@
           = title
         .col-xs-4.col-sm-4
           %a{href: new_commodity_path, class: 'commodity_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
-            %i.fa.fa-plus.fa-lg
-            = "Commodity" unless mobile_device?
+            New
+            -#
+              %i.fa.fa-plus.fa-lg
+              = "Commodity" unless mobile_device?

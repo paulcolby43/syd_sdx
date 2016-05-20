@@ -5,3 +5,18 @@
 jQuery ->
   # Force phone format
   $("#user_phone").mask("(999) 999-9999")
+
+  ### Re-enable disabled_with buttons for back button ###
+  $(document).on 'page:change', ->
+    $('.user_button').each ->
+      $.rails.enableElement $(this)
+      return
+    return
+
+  # Disable/enable sign up button on TOS check
+  #$('#user_terms_of_service').click ->
+  #  if $(this).is(':checked')
+  #    $('#sign_up_button').removeAttr 'disabled'
+  #  else
+  #    $('#sign_up_button').attr 'disabled', 'disabled'
+  #  return

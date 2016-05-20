@@ -18,20 +18,25 @@ class ApplicationController < ActionController::Base
 #  end
 #  helper_method :current_user
   
-  def current_token
-    @current_token ||= session[:auth_token]
-  end
-  helper_method :current_token
+#  def current_token
+#    @current_token ||= session[:auth_token]
+#  end
+#  helper_method :current_token
   
   def current_yard_id
     @current_yard_id ||= cookies[:yard_id]
   end
   helper_method :current_yard_id
   
-  def current_yard
-    @current_yard ||= Yard.find_by_id(current_token, current_yard_id)
+  def current_yard_name
+    @current_yard_name ||= cookies[:yard_name]
   end
-  helper_method :current_yard
+  helper_method :current_yard_name
+  
+#  def current_yard
+#    @current_yard ||= Yard.find_by_id(current_token, current_yard_id)
+#  end
+#  helper_method :current_yard
   
   def current_ability
     @current_ability ||= Ability.new(current_user, current_yard_id)

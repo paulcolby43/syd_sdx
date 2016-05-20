@@ -1,0 +1,52 @@
+= form_for @image_file do |f|
+  - if @image_file.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@image_file.errors.count, "error")} prohibited this image_file from being saved:"
+      %ul
+        - @image_file.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :file
+    = f.text_field :file
+  .field
+    = f.label :user_id
+    = f.number_field :user_id
+  .field
+    = f.label :ticket_number
+    = f.text_field :ticket_number
+  .field
+    = f.label :customer_number
+    = f.text_field :customer_number
+  .field
+    = f.label :branch_code
+    = f.text_field :branch_code
+  .field
+    = f.label :location
+    = f.text_field :location
+  .field
+    = f.label :event_code
+    = f.text_field :event_code
+  .field
+    = f.label :image_id
+    = f.number_field :image_id
+  .field
+    = f.label :container_number
+    = f.text_field :container_number
+  .field
+    = f.label :booking_number
+    = f.text_field :booking_number
+  .field
+    = f.label :contract_number
+    = f.text_field :contract_number
+  .field
+    = f.label :hidden
+    = f.check_box :hidden
+  .field
+    = f.label :blob_id
+    = f.number_field :blob_id
+  .actions
+    = f.submit 'Save'

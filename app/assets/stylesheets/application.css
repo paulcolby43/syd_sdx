@@ -12,14 +12,18 @@
  *
  *= stub twbs-variables
  *= require twbs
+ *= require bootstrap-editable.css
+ *= require bootstrap-datepicker3
  *= require checkbox-x.min.css
  *= jquery.fileupload.css
  *= jquery.fileupload-ui.css
+ *= require select2
+ *= require select2-bootstrap
  *= require_tree .
  *= require_self
  */
 
-body { padding-top: 50px; }
+body { padding-top: 30px; }
 
 .navbar-center
 {

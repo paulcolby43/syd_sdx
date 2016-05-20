@@ -1,0 +1,75 @@
+%p.lead Commodity Summary Report
+- @line_items.group_by{ |i| i['PrintDescription'] }.each do |line_item_group, line_items|
+  %div.panel.panel-default
+    %div.panel-heading
+      %h3.panel-title= line_item_group
+    %table.table.table-striped.table-responsive
+      %thead
+        %tr
+          %td 
+            %strong Date
+          %td 
+            %strong Ticket
+          %td 
+            %strong Customer
+          %td
+            %strong Net (LB)
+          %td
+            %strong Price
+          %td 
+            %strong Amount
+      %tbody
+        - line_items.each do |line_item|
+          %tr
+            %td= line_item["DateCreated"].to_date.strftime("%m/%d/%y")
+            %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
+            %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+            %td= "#{line_item['NetWeight'].to_d.round(2)}"
+            %td= "#{number_to_currency(line_item['Price'])}"
+            %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
+            -#
+              %td= line_item
+        %tr
+          %td
+          %td
+          %td
+          %td
+            %strong= "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round(2)}"
+          %td
+          %td
+            %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+
+-#
+  %table.table.table-striped.table-responsive
+    %thead
+      %tr
+        %td 
+          %strong Commodity
+        %td 
+          %strong Total
+    %tbody
+      - @line_items.group_by{ |i| i['PrintDescription'] }.each do |line_item_group, line_items|
+        %tr
+          %td
+            = line_item_group
+            %ul.list-inline
+              - line_items.each do |line_item|
+                %li
+                  %small= "#{line_item['NetWeight']}LB"
+                %li
+                  %small= "#{number_to_currency(line_item['Price'])}"
+                %br
+                =# line_item
+          %td
+            = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+      %tr
+        %td
+        %td
+          %strong Total
+          = number_to_currency(@line_items_total)
+
+%hr
+  .pull-right
+    %p.lead
+      %strong Total
+      = number_to_currency(@line_items_total)

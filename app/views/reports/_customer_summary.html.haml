@@ -1,0 +1,34 @@
+%p.lead Customer Summary Report
+- @tickets.group_by{ |t| t['Company']}.each do |ticket_group, tickets|
+  %div.panel.panel-default
+    %div.panel-heading
+      %h3.panel-title= ticket_group
+    %table.table.table-striped.table-responsive
+      %thead
+        %tr
+          %td 
+            %strong Date
+          %td 
+            %strong Ticket
+          %td 
+            %strong Amount
+          -#
+            %td
+              %strong Ticket record
+      %tbody
+        - tickets.each do |ticket|
+          %tr
+            %td= ticket["DateClosed"].to_date.strftime("%m/%d/%y")
+            %td= ticket["TicketNumber"]
+            %td= number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+            -# %td= ticket
+        %tr
+          %td
+          %td
+          %td
+            %strong= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+%hr
+  .pull-right
+    %p.lead
+      %strong Total
+      = number_to_currency(@line_items_total)

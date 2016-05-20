@@ -73,3 +73,126 @@ jQuery ->
 
   # Force phone format
   $("#customer_phone").mask("(999) 999-9999")
+
+  ### Save license image to jpegger ###
+  $('.save_license_scan_to_jpegger').on 'click', ->
+    device_id = $(this).data( "device-id" )
+    customer_number = $(this).data( "customer-id" )
+    yard_id = $(this).data( "yard-id" )
+    save_license_scan_to_jpegger_ajax = ->
+      $.ajax
+        url: "/devices/" + device_id + "/drivers_license_camera_trigger"
+        dataType: 'json'
+        data:
+          customer_first_name: $('#customer_first_name').val()
+          customer_last_name: $('#customer_last_name').val()
+          license_number: $('#customer_id_number').val()
+          #dob: $('#vendor_dob').val()
+          #sex: $('#vendor_sex').val()
+          #license_issue_date: $('#vendor_license_issue_date').val()
+          license_expiration_date: $('#customer_id_expiration').val()
+          customer_number: customer_number
+          event_code: "Photo ID"
+          yard_id: yard_id
+          address1: $('#customer_address_1').val()
+          city: $('#customer_city').val()
+          state: $('#customer_state').val()
+          zip: $('#customer_zip').val()
+        success: (data) ->
+          $('.save_to_jpegger_spinner').hide()
+          #alert 'Saved scanned image to Jpegger.'
+          return
+        error: ->
+          $('.save_to_jpegger_spinner').hide()
+          #alert 'Error saving scanned image to Jpegger.'
+          return
+    
+    save_license_scan_to_jpegger_ajax()
+  ### End Save license image to jpegger ###
+
+  ### Drivers license scan ###
+  $('.drivers_license_scan').on 'click', ->
+    device_id = $(this).data( "device-id" )
+    drivers_license_scan_ajax = ->
+      $.ajax
+        url: "/devices/" + device_id + "/drivers_license_scan"
+        dataType: 'json'
+        success: (data) ->
+          firstname = data.firstname
+          lastname = data.lastname
+          licensenumber = data.licensenumber
+          dob = data.dob
+          sex = data.sex
+          issue_date = data.issue_date
+          expiration_date = data.expiration_date
+          streetaddress = data.streetaddress
+          city = data.city
+          state = data.state
+          zip = data.zip
+          $('#customer_first_name').val firstname
+          $('#customer_last_name').val lastname
+          $('#customer_id_number').val licensenumber
+          #$('#vendor_dob').val dob
+          #$('#vendor_sex').val sex
+          #$('#vendor_license_issue_date').val issue_date
+          $('#customer_id_expiration').val expiration_date
+          $('#customer_address_1').val streetaddress
+          $('#customer_city').val city
+          $('#customer_state').val state
+          $('#customer_zip').val zip
+          $('.data_scan_spinner').hide()
+          
+          return
+        error: ->
+          $('#spinner').hide()
+          $('.data_scan_spinner').hide()
+          #alert 'Error reading license.'
+          return
+    
+    drivers_license_scan_ajax()
+    ### End Drivers license scan ###
+
+  ### Find or create by license scan ###
+  $('.drivers_license_scan_and_search').on 'click', ->
+    device_id = $(this).data( "device-id" )
+    drivers_license_scan_and_search_ajax = ->
+      $.ajax
+        url: "/devices/" + device_id + "/drivers_license_scan"
+        dataType: 'json'
+        success: (data) ->
+          firstname = data.firstname
+          lastname = data.lastname
+          licensenumber = data.licensenumber
+          dob = data.dob
+          sex = data.sex
+          issue_date = data.issue_date
+          expiration_date = data.expiration_date
+          streetaddress = data.streetaddress
+          city = data.city
+          state = data.state
+          zip = data.zip
+          
+          # Find or create vendor
+          $('#q').val firstname + ' ' + lastname
+          $('#first_name').val firstname
+          $('#last_name').val lastname
+          $('#license_number').val licensenumber
+          $('#dob').val dob
+          $('#sex').val sex
+          $('#issue_date').val issue_date
+          $('#expiration_date').val expiration_date
+          $('#streetaddress').val streetaddress
+          $('#city').val city
+          $('#state').val state
+          $('#zip').val zip
+          
+          $('.data_scan_spinner').hide()
+          $("#customer_search_button").click()
+          return
+        error: ->
+          $('#spinner').hide()
+          $('.data_scan_spinner').hide()
+          return
+    
+    drivers_license_scan_and_search_ajax()
+    ### End Find or create by license scan ###

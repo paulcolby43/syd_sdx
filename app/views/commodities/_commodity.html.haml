@@ -3,7 +3,14 @@
     .col-xs-12.col-sm-12.col-md-12
       %div.panel.panel-primary
         %div.list_group
-          %a{href: commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['MenuText']}"}}
-            = commodity['MenuText']
+          %a{href: edit_commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['PrintDescription']} (#{commodity['UnitOfMeasure']})"}}
+            = "#{commodity['PrintDescription']} (#{commodity['UnitOfMeasure']})"
             .pull-right
               %i.fa.fa-chevron-right.fa-lg
+          %div.list-group-item
+            %small= @commodity_types.find {|type| type["CodeValue"] == commodity['Type']}["ReportDescription"]
+            .pull-right
+              - if current_user.admin?
+                %a{href: nil, class: 'price', "data-commodity" => 'hey there', "data-commodity-name" =>  commodity['PrintDescription'], "data-pk" => commodity['Id'], "data-url" => "/commodities/#{commodity['Id']}/update_price"}= number_with_precision(commodity['ScalePrice'], precision: 3)
+              - else
+                = number_with_precision(commodity['ScalePrice'], precision: 3)

@@ -13,6 +13,9 @@
 //= require jquery
 //= require jquery_ujs
 //= require twbs/bootstrap
+//= require bootstrap-editable.min.js
+//= require bootstrap-datepicker/core
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.en-GB.js
 //= require jquery.maskedinput
 //= require turbolinks
 //= require jquery.turbolinks
@@ -25,4 +28,5 @@
 //= require jquery-fileupload/jquery.fileupload
 //= require jquery-fileupload/jquery.fileupload-process
 //= require jquery-fileupload/jquery.fileupload-image
+//= require select2
 //= require_tree .

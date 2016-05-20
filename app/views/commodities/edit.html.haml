@@ -1,29 +1,35 @@
-= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: @commodity["MenuText"]}
-- @title="New commodity"
+= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: @commodity["PrintDescription"]}
+- @title="Edit commodity"
 
 .container
   %br
+  %br
   .well.col-sm-6.col-md-4.col-md-offset-4
     = form_tag commodity_path(id: @commodity["Id"]), method: 'put', :class => "form-horizontal" do
-      = hidden_field_tag "commodity[yard_name]", current_yard["Name"]
+      = hidden_field_tag "commodity[yard_name]", @commodity["YardName"]
       = hidden_field_tag "commodity[id]", @commodity["Id"]
       = hidden_field_tag "commodity[parent_id]", @commodity["ParentId"]
+      = hidden_field_tag "commodity[code]", @commodity["Code"]
+      = hidden_field_tag "commodity[menu_text]", @commodity["MenuText"]
+      = hidden_field_tag "commodity[name]", @commodity["Name"]
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Name", nil, :class => 'control-label'
-          = text_field_tag "commodity[name]", @commodity["Name"], :placeholder => "Name", class: "form-control input-lg"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Code", nil, :class => 'control-label'
-          = text_field_tag "commodity[code]", @commodity["Code"], :placeholder => "Code", class: "form-control input-lg"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Menu text", nil, :class => 'control-label'
-          = text_field_tag "commodity[menu_text]", @commodity["MenuText"], :placeholder => "Menu Text", class: "form-control input-lg"
-      .row.form-group
-        %div{:class => "col-sm-12 col-md-12"}
-          = label_tag "Description", nil, :class => 'control-label'
-          = text_area_tag "commodity[description]", @commodity["PrintDescription"], :placeholder => "Description", class: "form-control input-lg"
+          = label_tag "Print Description", nil, :class => 'control-label'
+          = text_field_tag "commodity[description]", @commodity["PrintDescription"], :placeholder => "Description", class: "form-control input-lg"
+      -#
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Name", nil, :class => 'control-label'
+            = text_field_tag "commodity[name]", @commodity["Name"], :placeholder => "Name", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Code", nil, :class => 'control-label'
+            = text_field_tag "commodity[code]", @commodity["Code"], :placeholder => "Code", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Menu text", nil, :class => 'control-label'
+            = text_field_tag "commodity[menu_text]", @commodity["MenuText"], :placeholder => "Menu Text", class: "form-control input-lg"
+        
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Unit of Measure", nil, :class => 'control-label'
@@ -39,6 +45,10 @@
             %span.input-group-addon
               $
             = text_field_tag "commodity[scale_price]", @commodity["ScalePrice"], :placeholder => "Scale Price", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Disabled", nil, :class => 'control-label'
+          = text_field_tag "commodity[is_disabled]", "#{(@commodity['IsDisabled'] == 'true')} ? 'true' : 'false' ", class: 'input-lg', "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "#{(@commodity['IsDisabled'] == 'true') ? 1 : 0}"
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}

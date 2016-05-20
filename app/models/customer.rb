@@ -23,9 +23,37 @@ class Customer
   end
   
   def self.find_by_id(auth_token, yard_id, customer_id)
-    customers = Customer.all(auth_token, yard_id)
-    customers.find {|customer| customer['Id'] == customer_id}
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    
+    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Item"]
+    
+#    customers = Customer.all(auth_token, yard_id)
+#    customers.find {|customer| customer['Id'] == customer_id}
   end
+  
+  def self.name_by_id(auth_token, yard_id, customer_id)
+    customer = Customer.find_by_id(auth_token, yard_id, customer_id)
+    unless customer.blank?
+      return "#{customer['FirstName']} #{customer['LastName']}"
+    else
+      return "Customer"
+    end
+  end
+  
+#  def self.find_by_id(auth_token, yard_id, customer_id)
+#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+#    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}"
+#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+#    data= Hash.from_xml(xml_content)
+#    Rails.logger.info data
+#    return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
+#  end
   
   def self.search(auth_token, yard_id, query_string)
     require 'uri'
@@ -67,9 +95,9 @@ class Customer
       "Extension"=>"", 
       "FirstName"=> customer_params[:first_name], 
       "Id"=>new_guid, 
-      "IdExpires"=>nil, 
-      "IdNumber"=>"", 
-      "IdState"=>"", 
+      "IdExpires"=> customer_params[:id_expiration], 
+      "IdNumber"=> customer_params[:id_number], 
+      "IdState"=> customer_params[:id_state], 
       "IsDisabled"=>"false", 
       "LastName"=> customer_params[:last_name], 
       "MiddleName"=>"", 
@@ -98,7 +126,9 @@ class Customer
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    Rails.logger.info data
+#    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    return data["ApiItemResponseOfApiCustomerC9S9lUui"]
   end
   
   def self.update(auth_token, yard_id, customer_params)
@@ -125,9 +155,9 @@ class Customer
       "Extension"=>"", 
       "FirstName"=> customer_params[:first_name], 
       "Id"=> customer_params[:id], 
-      "IdExpires"=>nil, 
-      "IdNumber"=>"", 
-      "IdState"=>"", 
+      "IdExpires"=> customer_params[:id_expiration], 
+      "IdNumber"=> customer_params[:id_number],
+      "IdState"=> customer_params[:id_state], 
       "IsDisabled"=>"false", 
       "LastName"=> customer_params[:last_name], 
       "MiddleName"=>"", 
@@ -146,8 +176,9 @@ class Customer
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-#    Rails.logger.info data
-    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    Rails.logger.info data
+#    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]
+    return data["ApiItemResponseOfApiCustomerC9S9lUui"]
   end
   
   def self.default_cust_pic_id(customer_id, yard_id)
@@ -175,6 +206,21 @@ class Customer
       else
         return nil
       end
+    end
+  end
+  
+  def self.tickets(status, auth_token, yard_id, customer_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/#{status}?d=30&t=50"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
   end
   

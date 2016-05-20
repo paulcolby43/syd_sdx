@@ -15,9 +15,26 @@
   .jumbotron
     .container
       %p.text-center Customer Portal
-      %div.text-center
+      %div.row
         %p
-          %a{href: images_path, class: 'btn btn-lg btn-primary welcome_button',  data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
-            Pictures
-          %a{href: tickets_path(status: 3), class: 'btn btn-lg btn-primary welcome_button',  data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Tickets"}}
-            Tickets
+          .col-xs-4
+            %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+              %i.fa.fa-folder.fa-lg
+              Closed
+        %p
+          .col-xs-4
+            %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
+              %i.fa.fa-dollar.fa-lg
+              Paid
+        %p
+          .col-xs-4
+            %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}} 
+              %i.fa.fa-image.fa-lg
+              Pictures
+      -#
+        %div.text-center
+          %p
+            %a{href: images_path, class: 'btn btn-lg btn-primary welcome_button',  data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
+              Pictures
+            %a{href: tickets_path(status: 3), class: 'btn btn-lg btn-primary welcome_button',  data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Tickets"}}
+              Tickets

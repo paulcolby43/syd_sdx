@@ -10,6 +10,6 @@
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          %a{href: edit_customer_path(@customer['Id'])}
-            %i.fa.fa-edit.fa-lg
-            = "Edit" unless mobile_device?
+          - if current_user.admin?
+            %a{href: edit_customer_path(@customer['Id'])}
+              = "Edit"

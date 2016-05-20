@@ -1,11 +1,13 @@
 class UsersController < ApplicationController
-  before_filter :login_required, :except => [:new, :create, :confirm_email]
+  before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource  param_method: :user_params, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
 
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+#    @users = User.all
+    @users = current_user.company.users
   end
 
   # GET /users/1
@@ -31,27 +33,35 @@ class UsersController < ApplicationController
       if @user.save
         unless @user.customer?
 #          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
-          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params)
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params) if current_user.blank?
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
           @user.generate_scrap_dragon_token(user_params)
         else
-          create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_token, user_params)
+          create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_user.token, user_params)
           @user.generate_scrap_dragon_token(user_params)
 #          @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
         end
         format.html { 
-          if create_scrap_dragon_user_response == 'true'
+          if create_scrap_dragon_user_response["Success"] == 'true'
             UserMailer.confirmation_instructions(@user).deliver
             flash[:success] = "Confirmation instructions have been sent to the user email address."
           else
-            flash[:danger] = "There was a problem creating the Scrap Dragon user."
+            flash[:danger] = "There was a problem creating the Scrap Dragon user: #{create_scrap_dragon_user_response['FailureInformation']}"
           end
           redirect_to login_path if current_user.blank?
-          redirect_to :back unless current_user.blank?
+          redirect_to users_path unless current_user.blank?
 #          redirect_to @user
           }
         format.json { render :show, status: :created, location: @user }
       else
-        format.html { render :new }
+        format.html { 
+          if current_user.blank?
+            render :new
+          else
+            flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
+            redirect_to :back 
+          end
+          }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -95,7 +105,24 @@ class UsersController < ApplicationController
       flash[:danger] = "Sorry. User does not exist"
       redirect_to root_url
     end
-end
+  end
+
+  def resend_confirmation_instructions
+    unless params[:email].blank?
+      @user = User.where(email: params[:email]).first
+      unless @user.blank?
+        unless @user.confirm_token.blank?
+          UserMailer.confirmation_instructions(@user).deliver
+          flash[:success] = "The email confirmation instructions have been re-sent."
+        else
+          flash[:danger] = "This email address has already been confirmed."
+        end
+      else
+        flash[:danger] = "Email address not found."
+      end
+      redirect_to root_path
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -106,6 +133,6 @@ end
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, 
-        :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state)
+        :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state, :terms_of_service, :email_confirmed, :confirm_token)
     end
 end

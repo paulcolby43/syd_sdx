@@ -1,19 +1,47 @@
-%h1 Listing users
+= render partial: "shared/navbars/base_navbar", locals: {title: "Users"}
+- @title="Users"
 
-%table
-  %thead
-    %tr
-      %th
-      %th
-      %th
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @users.blank?
+      %div{id: "users"}
+        -# @users.each do |user|
+        - @users.group_by{ |u| u.role }.each do |user_role, users|
+          %p= user_role.titleize
+          - users.each do |user|
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel{class: "#{user.admin? ? 'panel-danger' : user.customer? ? 'panel-warning' : 'panel-primary'}"}
+                  %div.list_group
+                    %a{href: user_path(user.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{user.first_name} #{user.last_name}"}, class: "list-group-item user_button"}
+                      = "#{user.first_name} #{user.last_name}"
+                      .pull-right
+                        &nbsp;
+                        %i.fa.fa-chevron-right.fa-lg
+                    %div.list-group-item
+                      = "#{user.role} user"
+                      %br
+                      = "#{user.email_confirmed? ? 'Email confirmed' : 'Email not confirmed'}"
+    - else
+      %p No users found            
+    
+-#
+  %h1 Listing users
 
-  %tbody
-    - @users.each do |user|
+  %table
+    %thead
       %tr
-        %td= link_to 'Show', user
-        %td= link_to 'Edit', edit_user_path(user)
-        %td= link_to 'Destroy', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
+        %th
+        %th
+        %th
 
-%br
+    %tbody
+      - @users.each do |user|
+        %tr
+          %td= link_to 'Show', user
+          %td= link_to 'Edit', edit_user_path(user)
+          %td= link_to 'Destroy', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
-= link_to 'New User', new_user_path
+  %br
+
+  = link_to 'New User', new_user_path

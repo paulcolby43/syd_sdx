@@ -63,7 +63,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     end
 
     # lower captions
-    unless model.commodity_name.blank?
+    unless model.class.to_s.underscore == 'shipment_file' or model.commodity_name.blank?
       manipulate! do |source|
         txt = Magick::Draw.new
         txt.pointsize = 20
@@ -76,7 +76,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
         source.annotate(txt, 0, 0, 0, 20, name)
       end
     end
-    unless model.weight.blank?
+    unless model.class.to_s.underscore == 'shipment_file' or model.weight.blank?
       manipulate! do |source|
         txt = Magick::Draw.new
         txt.pointsize = 20
@@ -105,7 +105,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
       unless model.contract_verbiage.blank?
         caption = "#{model.contract_verbiage}" 
       else
-        caption = "Contract verbiage goes here."
+        caption = "I hereby swear that I own this material."
       end
 #      caption = "#{model.customer_name} #{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{model.event_code}"
       source.annotate(txt, 0, 0, 0, 0, caption)

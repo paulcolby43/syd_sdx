@@ -1,5 +1,27 @@
 Rails.application.routes.draw do
   
+  resources :devices do
+    member do
+      get :drivers_license_scan
+      get :scale_read
+      get :scale_camera_trigger
+      get :show_scanned_jpeg_image
+      get :drivers_license_camera_trigger
+      get :get_signature
+      get :call_printer_for_purchase_order_pdf
+      get :finger_print_trigger
+      get :scanner_trigger
+    end
+    collection do
+      get :customer_camera_trigger
+      get :customer_scanner_trigger
+      get :customer_scale_camera_trigger
+      get :customer_camera_trigger_from_ticket
+      get :drivers_license_camera_trigger_from_ticket
+    end
+  end
+  resources :workorders
+  
   resources :reports
   
   devise_for :admin_users, ActiveAdmin::Devise.config
@@ -35,6 +57,13 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :shipments do
+    member do
+      get 'show_jpeg_image'
+      get 'show_preview_image'
+    end
+  end
+  
   ### Start sidekiq stuff ###
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -45,15 +74,24 @@ Rails.application.routes.draw do
   
   resources :image_files
   
+  resources :shipment_files
+  
   resources :users do
     member do
       get :confirm_email
+    end
+    collection do
+      get :resend_confirmation_instructions
     end
   end
   
   resources :yards
   
-  resources :commodities
+  resources :commodities do
+    member do
+      put 'update_price'
+    end
+  end
   
   resources :customers do
     member do
@@ -74,6 +112,9 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
    root 'welcome#index'
+   
+  get 'welcome/privacy' => 'welcome#privacy'
+  get 'welcome/tos' => 'welcome#tos'
    
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'

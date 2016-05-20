@@ -1,0 +1,44 @@
+%div{:id => "upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_for ShipmentFile.new do |f|
+    .modal-dialog.modal-sm
+      .modal-content
+        .modal-header
+          = @ticket_number
+          = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+        .modal-body
+          = f.hidden_field :user_id, value: current_user.id
+          = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :ticket_number, value: @ticket_number
+          .form-group{:id => "event_code"}
+            = f.label "Event Code", :class => 'control-label'
+            = f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
+          .form-group
+            = f.label :container_number, :class => 'control-label'
+            = f.text_field :container_number, :placeholder => "Container Number", class: "form-control input-lg"
+          .form-group
+            = f.label :booking_number, :class => 'control-label'
+            = f.text_field :booking_number, :placeholder => "Booking Number", class: "form-control input-lg"
+          .form-group
+            = f.label :contract_number, :class => 'control-label'
+            = f.text_field :contract_number, :placeholder => "Contract Number", class: "form-control input-lg"
+          %div{:id => 'uploads', :style => 'display:block;'}
+            %p{id: "upload_button", style: "display:none;"}
+              = f.file_field :file, name: "shipment_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+
+          .picture_loading_spinner{:style => "display:none;", :id => "shipment_file_spinner"}
+            = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+            Uploading ...
+          #pictures
+
+          .clear
+          %script{:id => "template-upload", :type => "text/x-tmpl"}
+            .upload
+              {%=o.name%}
+              .progress.progress-striped
+                .progress-bar{:style => "width: 0%"}
+          %script{:id => "template-download", :type => "text/x-tmpl"}
+            .download
+              {%=o.name%}
+
+        .modal-footer
+          %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done

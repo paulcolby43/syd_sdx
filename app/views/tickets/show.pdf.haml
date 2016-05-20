@@ -28,7 +28,10 @@
     = @current_user.company.custom_field_2_value
     %br
 %strong= "Customer: "
-= @ticket['Company']
+- if not (@ticket["FirstName"].blank? and @ticket["LastName"].blank?)
+  = "#{@ticket['FirstName']} #{@ticket['LastName']}"
+- else
+  = @ticket['Company']
 
 %table.table
   %thead

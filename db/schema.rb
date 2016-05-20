@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160426145442) do
+ActiveRecord::Schema.define(version: 20160519182858) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -57,6 +57,9 @@ ActiveRecord::Schema.define(version: 20160426145442) do
   create_table "companies", force: true do |t|
     t.string "name"
     t.string "dragon_api"
+    t.string "leads_online_store_id"
+    t.string "leads_online_ftp_username"
+    t.string "leads_online_ftp_password"
   end
 
   create_table "cust_pic_files", force: true do |t|
@@ -103,6 +106,27 @@ ActiveRecord::Schema.define(version: 20160426145442) do
     t.string   "contract_verbiage"
   end
 
+  create_table "shipment_files", force: true do |t|
+    t.string   "name"
+    t.string   "file"
+    t.integer  "user_id"
+    t.string   "ticket_number"
+    t.string   "customer_number"
+    t.string   "branch_code"
+    t.string   "location"
+    t.string   "yard_id"
+    t.string   "event_code"
+    t.integer  "shipment_id"
+    t.string   "container_number"
+    t.string   "booking_number"
+    t.string   "contract_number"
+    t.boolean  "hidden",           default: false
+    t.integer  "blob_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "customer_name"
+  end
+
   create_table "user_settings", force: true do |t|
     t.boolean  "show_thumbnails",          default: false
     t.string   "table_name",               default: "images"
@@ -115,9 +139,9 @@ ActiveRecord::Schema.define(version: 20160426145442) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "username",        limit: nil
-    t.string   "password_hash",   limit: nil
-    t.string   "password_salt",   limit: nil
+    t.string   "username"
+    t.string   "password_hash"
+    t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "role"
@@ -133,7 +157,7 @@ ActiveRecord::Schema.define(version: 20160426145442) do
     t.string   "address2"
     t.string   "city"
     t.string   "state"
-    t.boolean  "email_confirmed",             default: false
+    t.boolean  "email_confirmed", default: false
     t.string   "confirm_token"
   end
 

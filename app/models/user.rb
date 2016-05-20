@@ -11,16 +11,22 @@ class User < ActiveRecord::Base
   
   before_create :confirmation_token
   after_commit :create_user_settings, :on => :create
-  after_create :create_company
+  after_create :create_company, unless: :company?
   
+  validates :password, confirmation: true
+  validates :password_confirmation, presence: true, on: :create
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_presence_of :first_name
   validates_presence_of :last_name
   validates_presence_of :email
   validates_presence_of :username
   validates_presence_of :company_name
+  validates_presence_of :address1
+  validates_presence_of :city
+  validates_presence_of :state
   validates_uniqueness_of :username
   validates_uniqueness_of :email
+  validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
   #     Instance Methods     #
@@ -84,10 +90,35 @@ class User < ActiveRecord::Base
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
     Rails.logger.info data
+#    return data["AddApiUserResponse"]["Success"]
+    return data["AddApiUserResponse"]
+  end
+  
+  def create_scrap_dragon_user_for_current_user(auth_token, user_params)
+    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardName" => user_params[:company_name],
+      "YardPhone" => user_params[:phone],
+      "YardAddress1" => user_params[:address1],
+      "YardAddress2" => user_params[:address2],
+      "YardCity" => user_params[:city],
+      "YardState" => user_params[:state]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
     return data["AddApiUserResponse"]["Success"]
   end
   
-  def create_scrap_dragon_customer_user( auth_token, user_params)
+  def create_scrap_dragon_customer_user(auth_token, user_params)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/user/customer"
@@ -152,6 +183,10 @@ class User < ActiveRecord::Base
     role == "admin"
   end
   
+  def basic?
+    role == "basic"
+  end
+  
   def customer?
     role == "customer"
   end
@@ -162,24 +197,83 @@ class User < ActiveRecord::Base
     save!(:validate => false)
   end
   
+  def company?
+    company_id.present?
+  end
+  
+  ### Devices ###
+  def devices
+    user_setting.devices
+  end
+  
+  def scale_devices
+    user_setting.scale_devices
+  end
+  
+  def camera_devices
+    user_setting.camera_devices
+  end
+  
+  def license_reader_devices
+    user_setting.license_reader_devices
+  end
+  
+  def license_imager_devices
+    user_setting.license_imager_devices
+  end
+  
+  def finger_print_reader_devices
+    user_setting.finger_print_reader_devices
+  end
+  
+  def signature_pad_devices
+    user_setting.signature_pad_devices
+  end
+  
+  def printer_devices
+    user_setting.printer_devices
+  end
+  
+  def qbo_access_credential
+    QboAccessCredential.find_by_company_id(location)
+  end
+  
+  def device_group
+    user_setting.device_group
+  end
+  
+  def customer_camera
+    user_setting.customer_camera
+  end
+  
+  def scanner_devices
+    user_setting.scanner_devices
+  end
+  ### End Devices ###
+  
   #############################
   #     Class Methods         #
   #############################
   
   def self.authenticate(login, pass)
-    user = find_by_username(login)
+    user = find_by_username(login) || find_by_email(login)
     if user and user.password_hash == user.encrypt_password(pass)
-      unless user.customer?
-        user.update_scrap_dragon_token(login, pass, user.company.dragon_api) 
-      else
-        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
-      end
+      user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api)
+#      unless user.customer?
+#        user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api) 
+#      else
+#        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
+#      end
       return user 
     end
   end
   
   def encrypt_password(pass)
     BCrypt::Engine.hash_secret(pass, password_salt)
+  end
+  
+  def token
+    access_token.token_string
   end
   
   private

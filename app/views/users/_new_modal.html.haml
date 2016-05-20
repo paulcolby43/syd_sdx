@@ -42,10 +42,14 @@
             %div{:class => "col-sm-6"}
               = f.label :username, :class => "control-label"
               %br/
-              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase, :class => "form-control input-lg", placeholder: "Username", required: true
+              = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase.gsub(/\s+/, ""), :class => "form-control input-lg", placeholder: "Username", required: true
             %div{:class => "col-sm-6"}
               = f.label :password, :class => "control-label"
               %br/
               = f.password_field :password, :class => "form-control input-lg", placeholder: "Password", required: true
+          .row.form-group
+            %div{:class => "col-sm-12"}
+              = f.check_box :terms_of_service, required: true
+              Customer has been given Terms of Service
         .modal-footer
           = f.submit "Create", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }
