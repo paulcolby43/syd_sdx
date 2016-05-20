@@ -65,7 +65,7 @@
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "ID Expiration", nil, :class => 'control-label'
           =# date_field_tag "customer[id_expiration]", @customer['IdExpires'], :placeholder => "ID Expiration", class: "form-control input-lg"
-          = text_field_tag "customer[id_expiration]", @customer['IdExpires'], :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd"#, readonly: true
+          = text_field_tag "customer[id_expiration]", @customer['IdExpires'], :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
