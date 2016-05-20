@@ -24,7 +24,7 @@ set :environment, 'development'
 
 every :reboot do
   # CentOS VM
-  job_type :application, "cd /usr/local/Ruby/syd_qbo_dev && :task :output"
+  job_type :application, "cd /usr/local/Ruby/syd_sdx_dev && :task :output"
 #  
   # Mac Mini
 #  job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_dev && :task :output"
