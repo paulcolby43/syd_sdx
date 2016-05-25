@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   attr_accessor :password
   before_save :prepare_password
 #  after_create :generate_token, if: :admin?
+  attr_accessor :account_number
   
   has_one :access_token
   has_one :user_setting
@@ -52,8 +53,9 @@ class User < ActiveRecord::Base
   
 #  def generate_scrap_dragon_token(user, pass, dragon_api)
   def generate_scrap_dragon_token(user_params)
-#    api_url = "https://#{dragon_api}/token"
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    user = User.find(user_params[:id])
+    api_url = "https://#{user.company.dragon_api}/token"
+#    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
 #    JSON.parse(response)
     Rails.logger.info response
@@ -70,7 +72,9 @@ class User < ActiveRecord::Base
   end
   
   def create_scrap_dragon_user(user_params)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    user = User.find(user_params[:id])
+    api_url = "https://#{user.company.dragon_api}/api/user"
+#    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
     payload = {
       "Id" => nil,
       "Username" => user_params[:username],
@@ -150,10 +154,13 @@ class User < ActiveRecord::Base
   end
   
   def create_company
-    unless company_name.blank?
-      company = Company.create(name: company_name)
-    else
-      company = Company.create(name: "User #{username} Company")
+    company = Company.where(account_number: account_number).last
+    if company.blank?
+      unless company_name.blank?
+        company = Company.create(name: company_name)
+      else
+        company = Company.create(name: "User #{username} Company")
+      end
     end
     self.company_id = company.id
     self.save

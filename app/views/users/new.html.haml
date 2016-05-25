@@ -44,10 +44,13 @@
           %div{:class => "col-sm-4"}
             = f.label :password_confirmation, :class => "control-label"
             = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation"#, required: true
-        .row.form-group.required
+        .row.form-group
           %div{:class => "col-sm-6"}
             = f.label :phone, :class => "control-label"
-            = f.text_field :phone, :class => "form-control input-lg", placeholder: "Phone", required: true
+            = f.text_field :phone, :class => "form-control input-lg", placeholder: "Phone"
+          %div{:class => "col-sm-6"}
+            = f.label :account_number, :class => "control-label"
+            = f.text_field :account_number, :class => "form-control input-lg", placeholder: "Scrap Dragon Account Number (leave blank if not sure)"
         .row.form-group.required
           %div{:class => "col-sm-6"}
             = f.label :address1, :class => "control-label"
