@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   attr_accessor :password
   before_save :prepare_password
 #  after_create :generate_token, if: :admin?
+  before_save { |user| user.username = username.downcase }
+  before_save { |user| user.email = email.downcase }
   
   has_one :access_token
   has_one :user_setting
@@ -255,8 +257,8 @@ class User < ActiveRecord::Base
   
   def self.authenticate(login, pass, account_number)
 #    user = find_by_username(login) || find_by_email(login)
-    user = User.where(username: login, dragon_account_number: [nil, '']).first || User.where(email: login, dragon_account_number: [nil, '']).first if account_number.blank?
-    user = User.where(username: login, dragon_account_number: account_number).first || User.where(email: login, dragon_account_number: account_number).first unless account_number.blank?
+    user = User.where(username: login.downcase, dragon_account_number: [nil, '']).first || User.where(email: login.downcase, dragon_account_number: [nil, '']).first if account_number.blank?
+    user = User.where(username: login.downcase, dragon_account_number: account_number).first || User.where(email: login.downcase, dragon_account_number: account_number).first unless account_number.blank?
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
       user.update_scrap_dragon_token(user.id, pass)
@@ -266,6 +268,8 @@ class User < ActiveRecord::Base
 #        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
 #      end
       return user 
+    else
+      
     end
   end
   

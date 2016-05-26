@@ -44,9 +44,14 @@ class UsersController < ApplicationController
         format.html { 
           if create_scrap_dragon_user_response["Success"] == 'true'
             UserMailer.confirmation_instructions(@user).deliver
-            flash[:success] = "Confirmation instructions have been sent to the user email address."
+            flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
           else
-            flash[:danger] = "There was a problem creating the Scrap Dragon user: #{create_scrap_dragon_user_response['FailureInformation']}"
+            if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists'
+              UserMailer.confirmation_instructions(@user).deliver
+              flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
+            else
+              flash[:danger] = "There was a problem creating the Scrap Dragon user: #{create_scrap_dragon_user_response['FailureInformation']}"
+            end
           end
           redirect_to login_path if current_user.blank?
           redirect_to users_path unless current_user.blank?
