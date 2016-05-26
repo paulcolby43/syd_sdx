@@ -32,25 +32,6 @@ class User < ActiveRecord::Base
   #     Instance Methods     #
   ############################
   
-  def generate_token
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
-#    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
-#    JSON.parse(response)
-    access_token_string = JSON.parse(response)["access_token"]
-    AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
-  end
-  
-  def update_token
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: '9', password: '9'})
-#    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
-#    JSON.parse(response)
-    access_token_string = JSON.parse(response)["access_token"]
-    access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 24.hours)
-  end
-  
-#  def generate_scrap_dragon_token(user, pass, dragon_api)
   def generate_scrap_dragon_token(user_params)
 #    user = User.find(user_params[:id])
     company = Company.where(account_number: user_params[:dragon_account_number]).first
@@ -107,7 +88,9 @@ class User < ActiveRecord::Base
   end
   
   def create_scrap_dragon_user_for_current_user(auth_token, user_params)
-    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user"
     payload = {
       "Id" => nil,
       "Username" => user_params[:username],
