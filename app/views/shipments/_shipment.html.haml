@@ -11,6 +11,9 @@
           - unless shipment.event_code.blank?
             %br/
             %small= shipment.event_code
+          - unless shipment.container_nbr.blank?
+            %br
+            = "#{shipment.container_nbr}"
           - unless shipment.camera_name.blank?
             %br/
             %small= shipment.camera_name

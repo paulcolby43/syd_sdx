@@ -35,8 +35,8 @@
                   %div.list-group-item
                     .pull-right
                       %p
-                        %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
-                          %i.fa.fa-plus.fa-lg
+                        %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                          %i.fa.fa-plus
                           Ticket
                     - if current_user.user_setting.show_customer_thumbnails? and not Customer.default_cust_pic_id(customer['Id'], current_yard_id).blank?
                       = image_tag(Customer.default_cust_pic(customer['Id'], current_yard_id).preview_data_uri, class: 'thumbnail img-responsive')
