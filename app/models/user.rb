@@ -4,7 +4,6 @@ class User < ActiveRecord::Base
   attr_accessor :password
   before_save :prepare_password
 #  after_create :generate_token, if: :admin?
-  attr_accessor :account_number
   
   has_one :access_token
   has_one :user_setting
@@ -20,13 +19,13 @@ class User < ActiveRecord::Base
   validates_presence_of :first_name
   validates_presence_of :last_name
   validates_presence_of :email
-  validates_presence_of :username
+  validates_presence_of :username, length: { minimum: 7 }
   validates_presence_of :company_name
   validates_presence_of :address1
   validates_presence_of :city
   validates_presence_of :state
-  validates_uniqueness_of :username
-  validates_uniqueness_of :email
+#  validates_uniqueness_of :username
+#  validates_uniqueness_of :email
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
@@ -53,9 +52,13 @@ class User < ActiveRecord::Base
   
 #  def generate_scrap_dragon_token(user, pass, dragon_api)
   def generate_scrap_dragon_token(user_params)
-    user = User.find(user_params[:id])
-    api_url = "https://#{user.company.dragon_api}/token"
-#    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+#    user = User.find(user_params[:id])
+    company = Company.where(account_number: user_params[:dragon_account_number]).first
+    unless company.blank?
+      api_url = "https://#{company.dragon_api}/token"
+    else
+     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    end
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
 #    JSON.parse(response)
     Rails.logger.info response
@@ -63,18 +66,23 @@ class User < ActiveRecord::Base
     AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
   end
   
-  def update_scrap_dragon_token(user, pass, dragon_api)
-    api_url = "https://#{dragon_api}/token"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user, password: pass})
+  def update_scrap_dragon_token(user_id, pass)
+    user = User.find(user_id)
+    api_url = "https://#{user.company.dragon_api}/token"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
 #    JSON.parse(response)
     access_token_string = JSON.parse(response)["access_token"]
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
   end
   
   def create_scrap_dragon_user(user_params)
-    user = User.find(user_params[:id])
-    api_url = "https://#{user.company.dragon_api}/api/user"
-#    api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+#    user = User.find(user_params[:id])
+    company = Company.where(account_number: user_params[:dragon_account_number]).first
+    unless company.blank?
+      api_url = "https://#{company.dragon_api}/api/user"
+    else
+      api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    end
     payload = {
       "Id" => nil,
       "Username" => user_params[:username],
@@ -154,12 +162,12 @@ class User < ActiveRecord::Base
   end
   
   def create_company
-    company = Company.where(account_number: account_number).last
+    company = Company.where(account_number: dragon_account_number).last
     if company.blank?
       unless company_name.blank?
-        company = Company.create(name: company_name)
+        company = Company.create(name: company_name, account_number: dragon_account_number)
       else
-        company = Company.create(name: "User #{username} Company")
+        company = Company.create(name: "User #{username} Company", account_number: dragon_account_number)
       end
     end
     self.company_id = company.id
@@ -262,10 +270,13 @@ class User < ActiveRecord::Base
   #     Class Methods         #
   #############################
   
-  def self.authenticate(login, pass)
-    user = find_by_username(login) || find_by_email(login)
-    if user and user.password_hash == user.encrypt_password(pass)
-      user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api)
+  def self.authenticate(login, pass, account_number)
+#    user = find_by_username(login) || find_by_email(login)
+    user = User.where(username: login, dragon_account_number: [nil, '']).first || User.where(email: login, dragon_account_number: [nil, '']).first if account_number.blank?
+    user = User.where(username: login, dragon_account_number: account_number).first || User.where(email: login, dragon_account_number: account_number).first unless account_number.blank?
+#    if user and user.password_hash == user.encrypt_password(pass)
+    if user
+      user.update_scrap_dragon_token(user.id, pass)
 #      unless user.customer?
 #        user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api) 
 #      else

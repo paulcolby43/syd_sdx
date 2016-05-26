@@ -10,6 +10,9 @@
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             = password_field_tag :password, nil, :placeholder => "Password", :class => "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = text_field_tag :dragon_account_number, cookies[:dragon_account_number], :placeholder => "Scrap Dragon Account Number", :class => "form-control input-lg"
         .row
           %div{:class => "col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign In"}) do

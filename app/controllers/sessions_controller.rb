@@ -18,12 +18,13 @@ class SessionsController < ApplicationController
 #  end
   
   def create
-    user = User.authenticate(params[:username], params[:password])
+    user = User.authenticate(params[:username], params[:password], params[:dragon_account_number])
     if user
 #      if user.user_signed_in? # User already signed in, so create new :auth_token
 #        user.generate_token(:auth_token)
 #        user.save
 #      end
+      cookies.permanent[:dragon_account_number] = user.dragon_account_number # Store Dragon account number in a permanent cookie so can remember next time.
       if user.email_confirmed
         log_in user
         flash[:success] = "You have been logged in."
