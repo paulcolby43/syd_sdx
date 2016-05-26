@@ -33,20 +33,21 @@
           %div{:class => "col-sm-6"}
             = f.label :company_name, :class => "control-label"
             = f.text_field :company_name, :class => "form-control input-lg", placeholder: "Company Name", required: true
-        .row.form-group
           %div{:class => "col-sm-6"}
             = f.label :phone, :class => "control-label"
             = f.text_field :phone, :class => "form-control input-lg", placeholder: "Phone"
-          %div{:class => "col-sm-6"}
-            = f.label :email, :class => "control-label"
-            = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
         .row.form-group
           %div{:class => "col-sm-6"}
             = f.label :username, :class => "control-label"
-            = f.text_field :username, :class => "form-control input-lg", placeholder: "Username", required: true
+            = f.text_field :username, :class => "form-control input-lg", placeholder: "Username", readonly: true, required: true
           %div{:class => "col-sm-6"}
-            = f.label 'New password', :class => "control-label"
-            = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password"
+            = f.label :email, :class => "control-label"
+            = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
+        -#
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label 'New password', :class => "control-label"
+              = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password"
         - if current_user.admin? and @user.customer?
           .row.form-group
             %div{:class => "col-sm-6"}
