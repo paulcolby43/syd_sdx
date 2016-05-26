@@ -26,8 +26,8 @@ class User < ActiveRecord::Base
   validates_presence_of :address1
   validates_presence_of :city
   validates_presence_of :state
-#  validates_uniqueness_of :username
-#  validates_uniqueness_of :email
+  validates_uniqueness_of :username
+  validates_uniqueness_of :email
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
