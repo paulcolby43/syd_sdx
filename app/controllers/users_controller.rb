@@ -46,7 +46,7 @@ class UsersController < ApplicationController
             UserMailer.confirmation_instructions(@user).deliver
             flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
           else
-            if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists'
+            if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists.'
               UserMailer.confirmation_instructions(@user).deliver
               flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
             else
