@@ -137,7 +137,7 @@ class Ticket
           "PayToId" => customer_id,
           "TicketNumber" => ticket_number,
           "Status" => 2,
-          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a",
+          "CurrencyId" => user.user_setting.currency_id,
   #        "DateClosed" => "2016-02-18T22:01:30.217",
           "DateCreated" => Time.now.utc
           }
@@ -166,7 +166,7 @@ class Ticket
           "PayToId" => customer_id,
           "TicketNumber" => ticket_number,
           "Status" => status,
-          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a",
+          "CurrencyId" => user.user_setting.currency_id,
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
           "DateClosed" =>  "",
           "DateCreated" => Time.now.utc
@@ -188,7 +188,7 @@ class Ticket
       payload: {
         "TicketItem"=>{
           "CommodityId" => commodity_id,
-          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
+          "CurrencyId" => user.user_setting.currency_id, 
           "DateCreated" => Time.now.utc, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
@@ -225,7 +225,7 @@ class Ticket
       payload: {
         "TicketItem"=>{
           "CommodityId" => commodity_id,
-          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
+          "CurrencyId" => user.user_setting.currency_id, 
           "DateCreated" => Time.now.utc, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
@@ -261,7 +261,7 @@ class Ticket
       payload: {
         "TicketItem"=>{
           "CommodityId" => commodity_id,
-          "CurrencyId" => "ce98ebe1-c6e7-4c97-b8bb-e026897e982a", 
+          "CurrencyId" => user.user_setting.currency_id, 
           "DateCreated" => Time.now.utc, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
@@ -357,7 +357,7 @@ class Ticket
         "Zip" => "",
         "CheckStatus" => "",
         "CheckAccountName" => check_account_name,
-        "CurrencyId" => "",
+        "CurrencyId" => user.user_setting.currency_id,
         "CurrencyConversionFactor" => ""
         }
       }
@@ -423,6 +423,17 @@ class Ticket
       total = api_ticket_item['ExtendedAmount']
     end
     return total
+  end
+  
+  def self.currencies(auth_token)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/currency"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    return data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"]
   end
   
 end

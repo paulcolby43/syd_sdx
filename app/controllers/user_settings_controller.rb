@@ -14,6 +14,7 @@ class UserSettingsController < ApplicationController
   # GET /user_settings/1.json
   def show
     @contract = Yard.contract(current_yard_id)
+    @currencies = Ticket.currencies(current_user.token)
   end
 
   # GET /user_settings/new
@@ -22,13 +23,14 @@ class UserSettingsController < ApplicationController
 
   # GET /user_settings/1/edit
   def edit
+    @currencies = Ticket.currencies(current_user.token)
   end
 
   # POST /user_settings
   # POST /user_settings.json
   def create
     @user_setting = UserSetting.new(user_setting_params)
-
+    @currencies = Ticket.currencies(current_user.token)
     respond_to do |format|
       if @user_setting.save
 #        format.html { redirect_to images_path, notice: 'User setting was successfully created.' }
@@ -45,6 +47,7 @@ class UserSettingsController < ApplicationController
   # PATCH/PUT /user_settings/1.json
   def update
     respond_to do |format|
+      @currencies = Ticket.currencies(current_user.token)
       if @user_setting.update(user_setting_params)
         format.html { 
           flash[:success] = 'User setting was successfully updated.'
@@ -95,6 +98,6 @@ class UserSettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_setting_params
-      params.require(:user_setting).permit(:show_thumbnails, :table_name, :show_customer_thumbnails, :show_ticket_thumbnails, :device_group_id)
+      params.require(:user_setting).permit(:show_thumbnails, :table_name, :show_customer_thumbnails, :show_ticket_thumbnails, :device_group_id, :currency_id)
     end
 end

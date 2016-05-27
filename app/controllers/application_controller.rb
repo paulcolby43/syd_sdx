@@ -24,12 +24,14 @@ class ApplicationController < ActionController::Base
 #  helper_method :current_token
   
   def current_yard_id
-    @current_yard_id ||= cookies[:yard_id]
+    @current_yard_id ||= session[:yard_id]
+#    @current_yard_id ||= cookies[:yard_id]
   end
   helper_method :current_yard_id
   
   def current_yard_name
-    @current_yard_name ||= cookies[:yard_name]
+    @current_yard_name ||= session[:yard_name]
+#    @current_yard_name ||= cookies[:yard_name]
   end
   helper_method :current_yard_name
   

@@ -23,8 +23,13 @@ class SessionsController < ApplicationController
       cookies.permanent[:dragon_account_number] = user.dragon_account_number # Store Dragon account number in a permanent cookie so can remember next time.
       if user.email_confirmed
         log_in user
-        flash[:success] = "You have been logged in."
-        redirect_to root_path
+        unless user.user_setting.currency_id.blank?
+          flash[:success] = "You have been logged in."
+          redirect_to root_path
+        else
+          flash[:danger] = "Please choose a currency before proceeding."
+          redirect_to edit_user_setting_path(user.user_setting)
+        end
       else
         flash.now[:danger] = 'Please activate your account by following the 
         instructions in the account confirmation email you received to proceed'

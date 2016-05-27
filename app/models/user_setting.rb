@@ -3,6 +3,8 @@ class UserSetting < ActiveRecord::Base
   belongs_to :user
   belongs_to :device_group
   
+  validates :currency_id, presence: true, on: :update
+  
   
   #############################
   #     Instance Methods      #

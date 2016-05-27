@@ -7,8 +7,8 @@ module SessionsHelper
     user_yards = Yard.all(current_user.token)
     unless user_yards.count > 1
       # Set current yard if user only has one yard
-      cookies[:yard_id] = user_yards.first['Id']
-      cookies[:yard_name] = user_yards.first['Name']
+      session[:yard_id] = user_yards.first['Id']
+      session[:yard_name] = user_yards.first['Name']
     end
 #    if user.customer?
 #      cookies[:yard_id] = user.yard_id
@@ -37,8 +37,8 @@ module SessionsHelper
     reset_session
     @current_user = nil
 #    session.delete(:auth_token)
-    cookies.delete(:yard_id)
-    cookies.delete(:yard_name)
+    session.delete(:yard_id)
+    session.delete(:yard_name)
     @current_yard_id = nil
     @current_yard_name = nil
   end
