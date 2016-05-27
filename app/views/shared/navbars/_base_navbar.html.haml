@@ -68,7 +68,8 @@
               %b.caret
             %ul.dropdown-menu
               %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'All', users_path
-              %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
+              -#
+                %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
           
       %ul.nav.navbar-nav.navbar-right
         -#

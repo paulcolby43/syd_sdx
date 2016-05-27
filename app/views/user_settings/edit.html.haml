@@ -38,8 +38,7 @@
             %li.list-group-item
               .row.form-group
                 %div{:class => "col-sm-10"}
-                  = f.select :currency_id, options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']] }, @user_setting.currency_id), {:include_blank => 'None'}, {:class => "form-control input-lg"}
-
+                  = f.select :currency_id, options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']] }, @user_setting.currency_id), {:include_blank => 'None'}, {:class => "form-control input-lg", required: true}
 
         %div.panel.panel-default
           %div.panel-heading
