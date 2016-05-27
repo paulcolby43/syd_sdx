@@ -3,6 +3,10 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    -#
+      - @currencies.each do |currency|
+        .well
+          = currency
     %div.row
       %p
         .col-xs-6

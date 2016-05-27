@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160525194029) do
+ActiveRecord::Schema.define(version: 20160527163255) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 20160525194029) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "currency_id"
   end
 
   create_table "users", force: true do |t|

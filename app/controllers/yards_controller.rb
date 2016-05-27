@@ -12,8 +12,10 @@ class YardsController < ApplicationController
   # GET /yards/1.json
   def show
     @yard = Yard.find_by_id(current_user.token, params[:id])
-    cookies[:yard_id] = params[:id]
-    cookies[:yard_name] = @yard['Name']
+    session[:yard_id] = params[:id]
+    session[:yard_name] = @yard['Name']
+    @currencies = Ticket.currencies(current_user.token)
+    cookies[:current_currency_id] = params[:currency_id] unless params[:currency_id].blank?
   end
 
   # GET /yards/new
