@@ -147,7 +147,7 @@ class User < ActiveRecord::Base
   end
   
   def create_company
-    company = Company.where(account_number: dragon_account_number).last
+    company = Company.where(account_number: dragon_account_number).last unless dragon_account_number.blank?
     if company.blank?
       unless company_name.blank?
         company = Company.create(name: company_name, account_number: dragon_account_number)
