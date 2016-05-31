@@ -288,7 +288,7 @@ class Ticket
   end
   
   # Get accounts payable items for ticket (multiple items if partial payments)
-  def self.acccounts_payable_items(auth_token, yard_id, ticket_id)
+  def self.accounts_payable_items(auth_token, yard_id, ticket_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
@@ -309,7 +309,7 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
-    accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
+    accounts_payable_line_item = Ticket.accounts_payable_items(auth_token, yard_id, ticket_id).last
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
     payload = {
@@ -324,6 +324,7 @@ class Ticket
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
+    Rails.logger.info data
 #    return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
     return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
@@ -334,7 +335,7 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem/#{accounts_payable_id}/pay"
-    accounts_payable_line_item = Ticket.acccounts_payable_items(auth_token, yard_id, ticket_id).last
+    accounts_payable_line_item = Ticket.accounts_payable_items(auth_token, yard_id, ticket_id).last
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=nil  if v == {"i:nil"=>"true"} }
     accounts_payable_line_item.each {|k,v| accounts_payable_line_item[k]=""  if v == nil }
     payload = {

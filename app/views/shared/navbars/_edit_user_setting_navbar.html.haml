@@ -5,7 +5,7 @@
         .col-xs-4.col-sm-4
           -#
             %a{href: user_setting_path(@user_setting)}
-          = link_to 'Cancel', :back unless @user_setting.currency_id.blank?
+          = link_to 'Cancel', @user_setting unless @user_setting.currency_id.blank?
           =# link_to "Cancel", @user_setting
         .col-xs-4.col-sm-4
           = title
