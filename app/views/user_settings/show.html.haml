@@ -82,7 +82,6 @@
           .panel-heading
             %h5
               Contract
-              .pull-right= link_to 'Edit', edit_contract_path(@contract)
           %ul.list-group
             %li.list-group-item
               = @contract.contract_name
@@ -93,7 +92,6 @@
           .panel-heading
             %h5
               Contract
-              .pull-right= link_to "New", new_contract_path
           %ul.list-group
             %li.list-group-item
               No existing contract
@@ -104,6 +102,6 @@
           %h5 Yards
         %ul.list-group
           - Yard.all(current_user.token).each do |yard|
-            %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= link_to yard["Name"], yard_path(yard['Id']), class: 'yard_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
+            %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= yard["Name"]
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}

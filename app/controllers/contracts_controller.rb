@@ -31,7 +31,8 @@ class ContractsController < ApplicationController
       if @contract.save
         format.html { 
           flash[:success] = 'Contract was successfully created.'
-          redirect_to @contract
+          redirect_to edit_user_setting_path(current_user.user_setting)
+#          redirect_to @contract
         }
         format.json { render :show, status: :created, location: @contract }
       else
@@ -48,9 +49,9 @@ class ContractsController < ApplicationController
       if @contract.update(contract_params)
         format.html { 
           flash[:success] = 'Contract was successfully updated.'
-          redirect_to @contract
+          redirect_to edit_user_setting_path(current_user.user_setting)
+#          redirect_to @contract
           }
-        format.html { redirect_to current_company, notice: 'Contract was successfully updated.' }
         format.json { render :show, status: :ok, location: @contract }
       else
         format.html { render :edit }

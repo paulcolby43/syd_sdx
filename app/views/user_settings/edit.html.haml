@@ -76,7 +76,14 @@
             %h5 Yards
           %ul.list-group
             - Yard.all(current_user.token).each do |yard|
-              %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= link_to yard["Name"], yard_path(yard['Id']), class: 'yard_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
-
+              - unless yard['Id'] == current_yard_id
+                %li.list-group-item= link_to yard["Name"], yard_path(yard['Id']), class: 'yard_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
+              - else
+                %li.list-group-item.active= yard["Name"]
+      
+      .col-sm-6.col-md-4.col-md-offset-4
+        %br
+        %br
+        %br
         = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}, autocomplete: "off") do
           Update
