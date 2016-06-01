@@ -1,0 +1,37 @@
+%p
+  %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-block", target: '_blank'}
+    %i.fa.fa-file-pdf-o
+    Print
+
+%p
+  %a.btn.btn-primary.btn-block{href: "#ticket_#{ticket['Id']}_payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+    %i.fa.fa-dollar
+    = 'Pay'
+
+= render partial: "quick_payment_modal", locals: {ticket: ticket}
+
+-#
+  %p
+    %a{href: bill_path(bill.id, now: DateTime.now, format: 'pdf'), class: 'btn btn-default btn-lg btn-block', target: '_blank'}
+      %i.fa.fa-file-pdf-o.fa-lg
+      Print
+  - if current_company.leads_online_config_settings_present?
+    %p
+      %a{href: send_to_leads_online_bill_path(bill.id), class: "btn btn-primary btn-lg btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
+        %i.fa.fa-search
+        Send to Leads
+  - if current_company.bwi_config_settings_present?
+    %p
+      %a{href: send_to_bwi_bill_path(bill.id), class: "btn btn-primary btn-lg btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to BWI"}}
+        %i.fa.fa-search
+        Send to BWI
+
+  = form_tag bill_payments_path, id: 'bill_payment_form', :class => "form-inline" do |f|
+    .form-group
+      = hidden_field "bill_payment[vendor]", bill.vendor_ref
+      = select_tag "bill_payment[pay_account]", options_from_collection_for_select(@accounts, "id", "name"), class: "form-control input-lg", required: true
+      = hidden_field_tag "bill_payment[total]", bill.balance
+      = hidden_field_tag "bill_payment[doc_number]", bill.doc_number
+      = hidden_field_tag :bill_id, bill.id
+    = button_tag(:type => 'submit', :class => 'btn btn-success btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay..."}, autocomplete: "off") do
+      $ Pay

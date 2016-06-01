@@ -16,7 +16,7 @@ class Ticket
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
     else # Array of results returned
@@ -173,7 +173,7 @@ class Ticket
           }
         })
       
-      Rails.logger.info response
+#      Rails.logger.info response
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
@@ -282,7 +282,7 @@ class Ticket
           "UnitOfMeasure" => "LB"
           }
         })
-      Rails.logger.info response
+#      Rails.logger.info response
       data= Hash.from_xml(response)
       return data["SaveTicketItemResponse"]["Success"]
   end
@@ -324,7 +324,7 @@ class Ticket
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
     return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
@@ -433,7 +433,7 @@ class Ticket
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     
     if data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"]]

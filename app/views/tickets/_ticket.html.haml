@@ -10,8 +10,18 @@
               =# number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
               = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
               %i.fa.fa-chevron-right.fa-lg
-          %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item"}
-            = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-            .pull-right
-              %i.fa.fa-file-pdf-o.fa-lg
-              Print
+          -# if @status == '1' 
+          - if false
+            %div.list-group-item
+              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+              .pull-right
+                %a.btn.btn-primary{"data-content" => "#{render partial: 'more_bill_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Print or Pay"}
+                  More
+              %br
+              %br
+          - else
+            %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
+              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+              .pull-right
+                %i.fa.fa-file-pdf-o.fa-lg
+                Print
