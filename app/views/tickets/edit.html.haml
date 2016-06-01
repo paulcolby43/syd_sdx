@@ -8,7 +8,7 @@
       = hidden_field_tag "ticket[status]", @ticket['Status']
       =# hidden_field_tag "ticket[id]", @ticket['Id']
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
-      = hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
+      =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
       = render partial: "payment_modal"
       - if @ticket['Status'] == '3'
         .well

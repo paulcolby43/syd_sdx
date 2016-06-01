@@ -7,9 +7,8 @@ class TicketsController < ApplicationController
   def index
     authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
-#    @next_number = Ticket.next_available_number(current_user.token, current_yard_id)
-#    @uom = Ticket.units_of_measure(current_user.token)
-#    Ticket.create(current_user.token, current_yard_id)
+    @drawers = Drawer.all(current_user.token, current_yard_id)
+    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
     unless params[:q].blank?
       results = Ticket.search(@status, current_user.token, current_yard_id, params[:q])
@@ -117,17 +116,18 @@ class TicketsController < ApplicationController
       ### Pay Ticket ###
       elsif params[:pay_ticket]
         Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status])
+        @accounts_payable_items = Ticket.accounts_payable_items(current_user.token, current_yard_id, params[:id])
         if params[:checking_account_payment] and params[:checking_account_payment][:id]
-          @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], 
+          @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
             params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])
         else
-          @ticket = Ticket.pay_by_cash(current_user.token, current_yard_id, params[:id], params[:accounts_payable_id], params[:drawer_id], params[:payment_amount])
+          @ticket = Ticket.pay_by_cash(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], params[:payment_amount])
         end
       ### End Pay Ticket ###
       ### Close & Pay Ticket ###
       elsif params[:close_and_pay_ticket]
         Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1)
-        @accounts_payable_items = Ticket.acccounts_payable_items(current_user.token, current_yard_id, params[:id])
+        @accounts_payable_items = Ticket.accounts_payable_items(current_user.token, current_yard_id, params[:id])
         if params[:checking_account_payment] and params[:checking_account_payment][:id]
           @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
           params[:checking_account_payment][:id], params[:checking_account_payment][:name], params[:checking_account_payment][:check_number], params[:payment_amount])

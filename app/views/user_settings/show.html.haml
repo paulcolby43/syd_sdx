@@ -2,51 +2,51 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    .col-xs-12.col-sm-6.col-md-offset-3
+    .col-xs-12.col-sm-6
       .panel.panel-default
         .panel-heading
-          Show Thumbnails
-          .pull-right= link_to 'Edit', edit_user_setting_path(@user_setting)
+          %h5 
+            Defaults
         %ul.list-group
           %li.list-group-item
-            %strong= "Vendors:"
+            = "Show customer thumbnails:"
             .pull-right
               = "#{@user_setting.show_customer_thumbnails? ? 'Yes' : 'No'}"
 
           %li.list-group-item
-            %strong= "Tickets:"
+            = "Show ticket thumbnails:"
             .pull-right
               = "#{@user_setting.show_ticket_thumbnails? ? 'Yes' : 'No'}"
 
           %li.list-group-item
-            %strong= "Pictures:"
+            = "Show picture search thumbnails:"
             .pull-right
               = "#{@user_setting.show_thumbnails? ? 'Yes' : 'No'}"
           %li.list-group-item
-            %strong= "Currency:"
+            = "Currency:"
             .pull-right
               = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
-      %hr
+    .col-xs-12.col-sm-6  
       - unless Yard.device_groups(current_yard_id).blank?
         .panel.panel-default
           .panel-heading
-            - unless current_user.device_group.blank?
-              = "#{current_user.device_group.DeviceGroupName} Device Group"
-            - else
-              No Device Group for this User
-            .pull-right= link_to 'Edit', edit_user_setting_path(@user_setting)
+            %h5
+              - unless current_user.device_group.blank?
+                = "#{current_user.device_group.DeviceGroupName} Device Group"
+              - else
+                No Device Group for this User
           %ul.list-group
             - unless current_user.device_group.blank?
               - unless current_user.device_group.CustomerCamera.blank?
                 %li.list-group-item
-                  %strong= current_user.device_group.CustomerCamera
+                  = current_user.device_group.CustomerCamera
                   %br
                   Device Type:
                   %i.fa.fa-camera.fa-lg
                   Customer Camera
               - current_user.device_group.devices.each do |device|
                 %li.list-group-item
-                  %strong= device.DeviceName
+                  = device.DeviceName
                   %br
                   = "Workstation:"
                   = device.workstation.WorkstationName
@@ -76,36 +76,32 @@
       - else
         %p No device groups
 
-    .col-xs-12.col-sm-6.col-md-offset-3
-      %hr
+    .col-xs-12.col-sm-6
       - unless @contract.blank?
         .panel.panel-default
           .panel-heading
-            Contract
-            .pull-right= link_to 'Edit', edit_contract_path(@contract)
+            %h5
+              Contract
           %ul.list-group
             %li.list-group-item
-              %strong= @contract.contract_name
-            %li.list-group-item= @contract.verbiage.html_safe
+              = @contract.contract_name
+              %br
+              = @contract.verbiage.html_safe
       - else
-        %p.lead No existing contract
-        = link_to "Create new contract", new_contract_path
-
-    .col-xs-12.col-sm-6.col-md-offset-3
-      %hr
-      .panel.panel-default
-        .panel-heading
-          Yards
-        %ul.list-group
-          - Yard.all(current_user.token).each do |yard|
-            %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= link_to yard["Name"], yard_path(yard['Id']), class: 'yard_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
-    -#
-      .col-xs-12.col-sm-6.col-md-offset-3
-        %hr
         .panel.panel-default
           .panel-heading
-            Currencies
+            %h5
+              Contract
           %ul.list-group
-            - @currencies.each do |currency|
-              %li.list-group-item{:class => (currency['Id'] == current_currency_id) ? "list-group-item-warning" : ""}= link_to currency["Description"], yard_path(current_yard_id, currency_id: currency["Id"]), class: 'yard_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing currency to #{currency['Description']}"}
+            %li.list-group-item
+              No existing contract
+
+    .col-xs-12.col-sm-6
+      .panel.panel-default
+        .panel-heading
+          %h5 Yards
+        %ul.list-group
+          - Yard.all(current_user.token).each do |yard|
+            %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= yard["Name"]
+
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}
