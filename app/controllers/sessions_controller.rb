@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
       cookies.permanent[:dragon_account_number] = user.dragon_account_number # Store Dragon account number in a permanent cookie so can remember next time.
       if user.email_confirmed
         log_in user
-        unless user.user_setting.currency_id.blank?
+        unless user.user_setting.currency_id.blank? and not user.customer?
           flash[:success] = "You have been logged in."
           redirect_to root_path
         else
