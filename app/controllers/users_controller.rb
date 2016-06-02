@@ -35,14 +35,14 @@ class UsersController < ApplicationController
 #          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
           create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params) if current_user.blank?
           create_scrap_dragon_user_response = @user.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
-          @user.generate_scrap_dragon_token(user_params)
+#          @user.generate_scrap_dragon_token(user_params)
         else
           create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_user.token, user_params)
-          @user.generate_scrap_dragon_token(user_params)
-#          @user.generate_scrap_dragon_token('9', '9', @user.company.dragon_api) # TODO: Get generic customer user for read-only access to tickets
+#          @user.generate_scrap_dragon_token(user_params)
         end
         format.html { 
           if create_scrap_dragon_user_response["Success"] == 'true'
+            @user.generate_scrap_dragon_token(user_params)
             UserMailer.confirmation_instructions(@user).deliver
             flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
           else
