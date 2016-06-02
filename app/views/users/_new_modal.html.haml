@@ -15,7 +15,8 @@
           = f.hidden_field :customer_guid, value: @customer['Id']
           = f.hidden_field :yard_id, value: current_yard_id
           = f.hidden_field :company_id, value: current_user.company_id
-          .row.form-group
+          = f.hidden_field :dragon_account_number, value: "#{current_user.blank? ? '' : current_user.dragon_account_number}"
+          .row.form-group.required
             %div{:class => "col-sm-6"}
               = f.label :first_name, :class => "control-label"
               %br/
@@ -26,27 +27,45 @@
               = f.text_field :last_name, value: @customer['LastName'], :class => "form-control input-lg", placeholder: "Last Name", required: true
           .row.form-group
             %div{:class => "col-sm-6"}
-              = f.label :company_name, :class => "control-label"
+              = f.label :company_name, :class => "control-label required"
               %br/
               = f.text_field :company_name, value: @customer['Company'], :class => "form-control input-lg", placeholder: "Company Name", required: true
-          .row.form-group
             %div{:class => "col-sm-6"}
-              = f.label :phone, :class => "control-label"
+              = f.label 'Mobile Phone', :class => "control-label"
               %br/
-              = f.text_field :phone, value: @customer['Phone'], :class => "form-control input-lg", placeholder: "Phone"
-            %div{:class => "col-sm-6"}
-              = f.label :email, :class => "control-label"
-              %br/
-              = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
-          .row.form-group
+              = f.text_field :phone, value: @customer['Phone'], :class => "form-control input-lg", placeholder: "Mobile Phone"
+          .row.form-group.required
             %div{:class => "col-sm-6"}
               = f.label :username, :class => "control-label"
               %br/
               = f.text_field :username, value: "#{@customer['FirstName']}#{@customer['LastName']}".downcase.gsub(/\s+/, ""), :class => "form-control input-lg", placeholder: "Username", required: true
             %div{:class => "col-sm-6"}
+              = f.label :email, :class => "control-label"
+              %br/
+              = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
+          .row.form-group.required
+            %div{:class => "col-sm-6"}
               = f.label :password, :class => "control-label"
               %br/
               = f.password_field :password, :class => "form-control input-lg", placeholder: "Password", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :password_confirmation, :class => "control-label"
+              %br/
+              = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation", required: true
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :address1, :class => "control-label required"
+              = f.text_field :address1, :class => "form-control input-lg", placeholder: "Address 1", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :address2, :class => "control-label"
+              = f.text_field :address2, :class => "form-control input-lg", placeholder: "Address 2"
+          .row.form-group.required
+            %div{:class => "col-sm-6"}
+              = f.label :city, :class => "control-label"
+              = f.text_field :city, :class => "form-control input-lg", placeholder: "City", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :state, :class => "control-label"
+              = f.text_field :state, :class => "form-control input-lg", placeholder: "State", required: true
           .row.form-group
             %div{:class => "col-sm-12"}
               = f.check_box :terms_of_service, required: true

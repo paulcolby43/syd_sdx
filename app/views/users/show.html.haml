@@ -40,10 +40,10 @@
           %strong Customer GUID
           %br
           = @user.customer_guid
-        %p
-          %strong Yard ID
-          %br
-          = @user.yard_id
+      %p
+        %strong Yard ID
+        %br
+        = current_yard_id
 
       = link_to 'Edit', edit_user_path(@user), class: 'btn btn-default'
     
