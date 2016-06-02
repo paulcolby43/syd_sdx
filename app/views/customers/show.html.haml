@@ -61,7 +61,10 @@
         %div.list-group-item
           %strong= "ID Expiration:"
           .pull-right
-            = "#{@customer['IdExpires'].to_date.strftime("%m/%d/%Y")}"
+            - unless @customer['IdExpires'] == {"i:nil"=>"true"}
+              = "#{@customer['IdExpires'].to_date.strftime("%m/%d/%Y")}" 
+            - else
+              Not set correctly
 
     %hr
     %p.lead Pictures
