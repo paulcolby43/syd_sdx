@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   
   def generate_scrap_dragon_token(user_params)
 #    user = User.find(user_params[:id])
-    company = Company.where(account_number: user_params[:dragon_account_number]).first
+    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
     unless company.blank?
       api_url = "https://#{company.dragon_api}/token"
     else
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
   
   def create_scrap_dragon_user(user_params)
 #    user = User.find(user_params[:id])
-    company = Company.where(account_number: user_params[:dragon_account_number]).first
+    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
     unless company.blank?
       api_url = "https://#{company.dragon_api}/api/user"
     else
@@ -112,7 +112,7 @@ class User < ActiveRecord::Base
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
     Rails.logger.info data
-    return data["AddApiUserResponse"]["Success"]
+    return data["AddApiUserResponse"]
   end
   
   def create_scrap_dragon_customer_user(auth_token, user_params)
@@ -135,7 +135,7 @@ class User < ActiveRecord::Base
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
     Rails.logger.info data
-    return data["AddApiCustomerUserResponse"]["Success"]
+    return data["AddApiCustomerUserResponse"]
   end
   
   def yards
