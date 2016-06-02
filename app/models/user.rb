@@ -135,7 +135,7 @@ class User < ActiveRecord::Base
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
     Rails.logger.info data
-    return data["AddApiCustomerUserResponse"]["Success"]
+    return data["AddApiCustomerUserResponse"]
   end
   
   def yards
