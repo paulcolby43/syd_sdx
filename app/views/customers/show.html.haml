@@ -61,7 +61,7 @@
         %div.list-group-item
           %strong= "ID Expiration:"
           .pull-right
-            = "#{@customer['IdExpires']}"
+            = "#{@customer['IdExpires'].to_date.strftime("%m/%d/%Y")}"
 
     %hr
     %p.lead Pictures

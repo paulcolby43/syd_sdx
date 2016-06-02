@@ -16,6 +16,8 @@
         %strong Username
         %br
         = @user.username
+      %p
+        = link_to 'User settings', @user.user_setting
       - if @user.admin?
         %p
           %strong Company
