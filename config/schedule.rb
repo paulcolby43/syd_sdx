@@ -29,7 +29,7 @@ every :reboot do
   # Mac Mini
 #  job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_dev && :task :output"
   
-  application "bundle exec unicorn -l 8082 -E development"
+  application "bundle exec unicorn -l 8082 -E production -c ./config/unicorn.rb"
 #  command "redis-server" # Start redis
   application "bundle exec sidekiq"
 end
