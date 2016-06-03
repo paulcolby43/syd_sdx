@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   validates_presence_of :city
   validates_presence_of :state
   validates_uniqueness_of :username, scope: :dragon_account_number, case_sensitive: false
-  validates_uniqueness_of :email
+#  validates_uniqueness_of :email
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
@@ -251,6 +251,14 @@ class User < ActiveRecord::Base
   end
   ### End Devices ###
   
+  def encrypt_password(pass)
+    BCrypt::Engine.hash_secret(pass, password_salt)
+  end
+  
+  def token
+    access_token.token_string
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -273,12 +281,103 @@ class User < ActiveRecord::Base
     end
   end
   
-  def encrypt_password(pass)
-    BCrypt::Engine.hash_secret(pass, password_salt)
+  def self.generate_scrap_dragon_token(user_params, user_id)
+    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
+    unless company.blank?
+      api_url = "https://#{company.dragon_api}/token"
+    else
+     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    end
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
+    Rails.logger.info response
+    access_token_string = JSON.parse(response)["access_token"]
+    AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours)
   end
   
-  def token
-    access_token.token_string
+  def self.update_scrap_dragon_token(user_id, pass)
+    user = User.find(user_id)
+    api_url = "https://#{user.company.dragon_api}/token"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
+    access_token_string = JSON.parse(response)["access_token"]
+    access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+  end
+  
+  def self.create_scrap_dragon_user(user_params)
+    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
+    unless company.blank?
+      api_url = "https://#{company.dragon_api}/api/user"
+    else
+      api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/user"
+    end
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardName" => user_params[:company_name],
+      "YardPhone" => user_params[:phone],
+      "YardAddress1" => user_params[:address1],
+      "YardAddress2" => user_params[:address2],
+      "YardCity" => user_params[:city],
+      "YardState" => user_params[:state]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiUserResponse"]
+  end
+  
+  def self.create_scrap_dragon_user_for_current_user(auth_token, user_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user"
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardName" => user_params[:company_name],
+      "YardPhone" => user_params[:phone],
+      "YardAddress1" => user_params[:address1],
+      "YardAddress2" => user_params[:address2],
+      "YardCity" => user_params[:city],
+      "YardState" => user_params[:state]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiUserResponse"]
+  end
+  
+  def self.create_scrap_dragon_customer_user(auth_token, user_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user/customer"
+    
+    payload = {
+      "Id" => nil,
+      "Username" => user_params[:username],
+      "Password" => user_params[:password],
+      "FirstName" => user_params[:first_name],
+      "LastName" => user_params[:last_name],
+      "Email" => user_params[:email],
+      "YardId" => user_params[:yard_id],
+      "CustomerIdCollection" => [user_params[:customer_guid]],
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
+    return data["AddApiCustomerUserResponse"]
   end
   
   private

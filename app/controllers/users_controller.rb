@@ -30,45 +30,56 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     respond_to do |format|
-      if @user.save
-        unless @user.customer?
+#      if @user.save
+      unless @user.customer?
 #          @user.generate_scrap_dragon_token(user_params[:username], user_params[:password], "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}")
-          create_scrap_dragon_user_response = @user.create_scrap_dragon_user(user_params) if current_user.blank?
-          create_scrap_dragon_user_response = @user.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
+        create_scrap_dragon_user_response = User.create_scrap_dragon_user(user_params) if current_user.blank?
+        create_scrap_dragon_user_response = User.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
 #          @user.generate_scrap_dragon_token(user_params)
-        else
-          create_scrap_dragon_user_response = @user.create_scrap_dragon_customer_user(current_user.token, user_params)
+      else
+        create_scrap_dragon_user_response = User.create_scrap_dragon_customer_user(current_user.token, user_params)
 #          @user.generate_scrap_dragon_token(user_params)
-        end
-        format.html { 
-          if create_scrap_dragon_user_response["Success"] == 'true'
-            @user.generate_scrap_dragon_token(user_params)
+      end
+      format.html { 
+        if create_scrap_dragon_user_response["Success"] == 'true'
+          if @user.save
+            User.generate_scrap_dragon_token(user_params, @user.id)
             UserMailer.confirmation_instructions(@user).deliver
             flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
           else
-            if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists.'
-              UserMailer.confirmation_instructions(@user).deliver
-              flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
+            if current_user.blank?
+              render :new
             else
-              flash[:danger] = "There was a problem creating the Scrap Dragon user: #{create_scrap_dragon_user_response['FailureInformation']}"
+              flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
+              redirect_to :back 
             end
           end
-          redirect_to login_path if current_user.blank?
-          redirect_to users_path unless current_user.blank?
-#          redirect_to @user
-          }
-        format.json { render :show, status: :created, location: @user }
-      else
-        format.html { 
-          if current_user.blank?
-            render :new
+        else
+          if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists.'
+            if @user.save
+              User.generate_scrap_dragon_token(user_params, @user.id)
+              UserMailer.confirmation_instructions(@user).deliver
+              flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
+            end
           else
-            flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
-            redirect_to :back 
+            flash[:danger] = "There was a problem creating the user in Scrap Dragon #{create_scrap_dragon_user_response['FailureInformation']}"
           end
-          }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+        end
+        redirect_to login_path if current_user.blank?
+        redirect_to users_path unless current_user.blank?
+#          redirect_to @user
+        }
+#      else
+#        format.html { 
+#          if current_user.blank?
+#            render :new
+#          else
+#            flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
+#            redirect_to :back 
+#          end
+#          }
+#        format.json { render json: @user.errors, status: :unprocessable_entity }
+#      end
     end
   end
 
