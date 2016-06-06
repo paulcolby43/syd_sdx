@@ -21,7 +21,7 @@ class CommoditiesController < ApplicationController
 #      results = Commodity.all_disabled(current_user.token, current_yard_id) if @status == 'disabled'
     end
     unless results.blank?
-      @commodities = Kaminari.paginate_array(results).page(params[:page]).per(50)
+      @commodities = Kaminari.paginate_array(results).page(params[:page]).per(25)
     else
       @commodities = []
     end

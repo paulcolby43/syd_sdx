@@ -11,11 +11,12 @@
               %a{href: '', :onclick => "$('#edit_ticket_form').submit()"}
                 Void
         .col-xs-4.col-sm-4
-          - if @ticket['Status'] == '2' or @ticket['Status'].blank?
-            %i.fa.fa-folder-open-o.fa-lg
-          - elsif @ticket['Status'] == '1'
-            %i.fa.fa-folder.fa-lg
-          - elsif @ticket['Status'] == '3'
+          - unless mobile_device?
+            - if @ticket['Status'] == '2' or @ticket['Status'].blank?
+              %i.fa.fa-folder-open-o.fa-lg
+            - elsif @ticket['Status'] == '1'
+              %i.fa.fa-folder.fa-lg
+            - elsif @ticket['Status'] == '3'
           = title
         .col-xs-4.col-sm-4
           - unless total.blank?

@@ -250,9 +250,10 @@
               %div.panel-footer
                 %ul{class: 'list-inline'}
                   %li.calculation_details
-                  %li.pull-right
-                    %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
-                      %i.fa.fa-check-square.fa-3x.collapse_icon
+                  - unless mobile_device?
+                    %li.pull-right
+                      %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
+                        %i.fa.fa-check-square.fa-3x.collapse_icon
       
       .row.form-group
         %div.col-xs-3.col-sm-3
@@ -263,7 +264,7 @@
         %div.col-xs-3.col-sm-3
           = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
             %i.fa.fa-check.fa-lg
-            = 'Save'  unless mobile_device?
+            = 'Save' unless mobile_device?
         %div.col-xs-3.col-sm-3
           - if @ticket['Status'] == '2'
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do

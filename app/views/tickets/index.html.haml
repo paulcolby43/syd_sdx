@@ -4,23 +4,36 @@
   .container
     - unless current_user.customer?
       .btn-group
-        =# link_to "<i class='fa fa-users fa-lg'></i> Customers".html_safe, customers_path, :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}
         - if @status == '2'
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-folder-open-o.fa-lg
-            Held
-          = link_to "<i class='fa fa-folder fa-lg'></i> Closed".html_safe, tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}
+            = "Held" unless mobile_device?
+          %a{href: tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+            %i.fa.fa-folder.fa-lg
+            = "Closed" unless mobile_device?
+          %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+            %i.fa.fa-dollar.fa-lg
+            = "Paid" unless mobile_device?
         - elsif @status == '1'
-          = link_to "<i class='fa fa-folder-open-o fa-lg'></i> Held".html_safe, tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
+          %a{href: tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+            %i.fa.fa-folder-open-o.fa-lg
+            = "Held" unless mobile_device?
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-folder.fa-lg
-            Closed
+            = "Closed" unless mobile_device?
+          %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+            %i.fa.fa-dollar.fa-lg
+            = "Paid" unless mobile_device?
         - elsif @status == '3'
-          = link_to "<i class='fa fa-folder-open-o fa-lg'></i> Held".html_safe, tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}
-          = link_to "<i class='fa fa-folder fa-lg'></i> Closed".html_safe, tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}
+          %a{href: tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+            %i.fa.fa-folder-open-o.fa-lg
+            = "Held" unless mobile_device?
+          %a{href: tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+            %i.fa.fa-folder.fa-lg
+            = "Closed" unless mobile_device?
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-dollar
-            Paid
+            = "Paid" unless mobile_device?
       %p
         = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
           .input-group
