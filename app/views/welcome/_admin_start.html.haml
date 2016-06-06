@@ -18,39 +18,39 @@
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                 %i.fa.fa-folder-open-o.fa-lg
-                Held
+                = "Held" unless mobile_device?
           %p
             .col-xs-6
-              %a.btn.btn-primary.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                 %i.fa.fa-folder.fa-lg
-                Closed
+                = "Closed" unless mobile_device?
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Paid"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                 %i.fa.fa-dollar.fa-lg
-                Paid
+                = "Paid" unless mobile_device?
           %p
             .col-xs-6
               -#
-                %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}} 
+                %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                   %i.fa.fa-image.fa-lg
                   Pictures
-              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Quick Ticket"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                 %i.fa.fa-ticket.fa-lg
-                Quick Ticket
+                = "Quick Ticket" unless mobile_device?
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customers"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                 %i.fa.fa-users.fa-lg
-                Customers
+                = "Customers" unless mobile_device?
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Commodities"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                 %i.fa.fa-list.fa-lg
-                Commodities
+                = "Commodities" unless mobile_device?
       - else
         .navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
           .container-fluid
@@ -58,7 +58,8 @@
               %div{class: 'navbar-brand navbar-center'}
                 .col-xs-4.col-sm-4
                 .col-xs-4.col-sm-4
-                  Scrap Yard Dog
+                  = "Scrap Yard Dog" unless mobile_device?
+                  = "SYD" if mobile_device?
                 .col-xs-4.col-sm-4
         %p Select a Yard
         - Yard.all(current_user.token).each do |yard|

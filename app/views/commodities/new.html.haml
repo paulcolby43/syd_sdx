@@ -1,7 +1,8 @@
-= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: "New commodity"}
+= render partial: "shared/navbars/new_and_edit_commodity_navbar", locals: {title: "Commodity"}
 - @title="New commodity"
 
 .container
+  %br
   %br
   .well.col-sm-6.col-md-4.col-md-offset-4
     = form_tag commodities_path, :class => "form-horizontal" do

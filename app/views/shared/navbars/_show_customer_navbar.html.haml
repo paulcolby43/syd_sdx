@@ -3,13 +3,21 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to 'Customers', customers_path
+          %a{href: customers_path}
+            %i.fa.fa-angle-left.fa-lg
+            Back
           -#
             = link_to 'javascript:history.back()' do
               %i.fa.fa-arrow-left.fa-lg
         .col-xs-4.col-sm-4
-          = title
+          - unless mobile_device?
+            = title
+          - else
+            = truncate(title, length: 8)
         .col-xs-4.col-sm-4
           - if current_user.admin?
             %a{href: edit_customer_path(@customer['Id'])}
-              = "Edit"
+              - unless mobile_device?
+                = "Edit"
+              - else
+                .pull-right Edit
