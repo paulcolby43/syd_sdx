@@ -27,7 +27,7 @@ class SessionsController < ApplicationController
           flash[:success] = "You have been logged in."
           redirect_to root_path
         else
-          flash[:danger] = "Please choose a currency before proceeding."
+          flash[:danger] = "Please verify your settings before proceeding."
           redirect_to edit_user_setting_path(user.user_setting)
         end
       else
