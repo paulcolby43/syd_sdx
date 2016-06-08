@@ -1,15 +1,33 @@
-= render partial: "shared/navbars/base_navbar", locals: {title: "Company"}
+= render partial: "shared/navbars/show_company_navbar", locals: {title: @company.name}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     .col-xs-12.col-sm-6.col-md-offset-3
       .panel.panel-default
         .panel-heading
-          = @company.name
+          %h4.panel-title Scrap Dragon API
         %ul.list-group
           %li.list-group-item
-            %strong= "Scrap Dragon API Location:"
+            %strong= "Location"
             .pull-right
               = "#{@company.dragon_api}"
+          
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title 
+            Leads Online Info 
+        %ul.list-group
+          %li.list-group-item
+            = "Leads Online Store ID"
+            .pull-right
+              = "#{@company.leads_online_store_id}"
+          %li.list-group-item
+            = "Leads Online FTP Username"
+            .pull-right
+              = "#{@company.leads_online_ftp_username}"
+          %li.list-group-item
+            = "Leads Online FTP Password"
+            .pull-right
+              = "#{@company.leads_online_ftp_password}"
        
 =# render partial: "shared/footer_navbar", locals: {title: "Settings"}

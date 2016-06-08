@@ -81,7 +81,10 @@ class Ability
       
       # Companies
       ############
-      can :manage, Company
+      can :manage, Company do |company|
+        company.id == user.company_id
+      end
+      cannot :index, Company
 
       # Shipments
       ############
