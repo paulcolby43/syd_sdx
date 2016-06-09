@@ -1,10 +1,10 @@
 class SendTicketToLeadsWorker
   include Sidekiq::Worker
   
-  def perform(access_token, path_to_file, ticket_id, yard_id, user_id)
+  def perform(status, access_token, path_to_file, ticket_id, yard_id, user_id)
     require 'net/ftp'
     
-    ticket = Ticket.find_by_id(3, access_token, yard_id, ticket_id)
+    ticket = Ticket.find_by_id(status, access_token, yard_id, ticket_id)
     user = User.find(user_id)
     images = Image.where(ticket_nbr: ticket['TicketNumber'], yardid: yard_id)
     
