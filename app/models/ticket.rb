@@ -476,35 +476,39 @@ class Ticket
             xml.cust_nm_first(customer['FirstName'])
             xml.cust_nm_middle
             xml.cust_nm_suffix
-            xml.cust_addr1(customer.address1)
-            xml.cust_addr2
-            xml.cust_city(customer.city)
-            xml.cust_state(customer.state)
-            xml.cust_zip(customer.zip)
-            xml.cust_phone(customer.primary_phone)
+            xml.cust_addr1(customer['Address1'])
+            xml.cust_addr2(customer['Address2'])
+            xml.cust_city(customer['City'])
+            xml.cust_state(customer['State'])
+            xml.cust_zip(customer['Zip'])
+            xml.cust_phone(customer['Phone'])
             xml.cust_id_type("DL")
-            xml.cust_id_state(customer.state)
-            xml.cust_id_number(customer.license_number)
-            xml.cust_id_exp(customer.expiration_date)
-            xml.cust_birthdate(customer.dob)
-            xml.cust_weight(customer.weight)
-            xml.cust_height(customer.height)
-            xml.cust_eye(customer.eye_color)
-            xml.cust_hair(customer.hair_color)
+            xml.cust_id_state(customer['IdState'])
+            xml.cust_id_number(customer['IdNumber'])
+            unless customer['IdExpires'] == {"i:nil"=>"true"}
+              xml.cust_id_exp(customer['IdExpires'].to_date.strftime("%Y-%m-%d"))
+            else
+              xml.cust_id_exp
+            end
+            xml.cust_birthdate
+            xml.cust_weight
+            xml.cust_height
+            xml.cust_eye
+            xml.cust_hair
             xml.cust_race
-            xml.cust_sex(customer.sex)
+            xml.cust_sex
             xml.cust_info
             xml.cust_picture(:code => "C")
             xml.cust_picture(:code => "I")
             xml.cust_picture(:code => "T")
             xml.cust_picture(:code => "S")
-            xml.employer_nm(customer.employer)
+            xml.employer_nm(customer['Company'])
             xml.employer_addr1
             xml.employer_addr2
             xml.employer_city
             xml.employer_state
             xml.employer_zip
-            xml.employer_phone(customer.employer_phone)
+            xml.employer_phone
           end
           xml.vehicle do
             xml.vehicle_license
@@ -523,9 +527,34 @@ class Ticket
             xml.vehicle_picture(:code => "L")
           end
           xml.property do
-            bill.line_items.each do |line_item|
+            unless ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+              ticket["TicketItemCollection"]["ApiTicketItem"].each_with_index do |line_item, index|
+                xml.item do
+                  xml.item_number(line_item['Id'])
+                  xml.item_make
+                  xml.item_model
+                  xml.item_serial
+                  xml.item_color
+                  xml.item_condition
+                  xml.item_volts
+                  xml.item_amps
+                  xml.item_desc(line_item["PrintDescription"])
+                  xml.item_notes
+                  xml.item_net_wt(line_item['NetWeight'])
+                  xml.item_amount(line_item['ExtendedAmount'])
+                  xml.item_received_title("N")
+                  if index == 0
+                    unless images.blank?
+                      images.each do |image|
+                        xml.item_picture(image.jpeg_image_base_64, :code => "A", :type => 'jpg')
+                      end
+                    end
+                  end
+                end
+              end
+            else
               xml.item do
-                xml.item_number(line_item.id)
+                xml.item_number(ticket["TicketItemCollection"]["ApiTicketItem"]['Id'])
                 xml.item_make
                 xml.item_model
                 xml.item_serial
@@ -533,13 +562,15 @@ class Ticket
                 xml.item_condition
                 xml.item_volts
                 xml.item_amps
-                xml.item_desc(item_service.fetch_by_id(line_item.item_based_expense_line_detail.item_ref).name)
+                xml.item_desc(ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"])
                 xml.item_notes
-                xml.item_net_wt(line_item.item_based_expense_line_detail.quantity)
-                xml.item_amount(line_item.amount)
+                xml.item_net_wt(ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'])
+                xml.item_amount(ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'])
                 xml.item_received_title("N")
-                images.each do |image|
-                  xml.item_picture(image.jpeg_image_base_64, :code => "A", :type => 'jpg')
+                unless images.blank?
+                  images.each do |image|
+                    xml.item_picture(image.jpeg_image_base_64, :code => "A", :type => 'jpg')
+                  end
                 end
               end
             end

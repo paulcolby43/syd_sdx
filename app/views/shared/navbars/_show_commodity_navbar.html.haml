@@ -6,7 +6,10 @@
           -#
             = link_to 'javascript:history.back()' do
               Back
-          = link_to 'Commodities', commodities_path
+          %a{href: 'javascript:history.back()'}
+            %i.fa.fa-angle-left.fa-lg
+            Commodities
+          =# link_to 'Commodities', commodities_path
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title

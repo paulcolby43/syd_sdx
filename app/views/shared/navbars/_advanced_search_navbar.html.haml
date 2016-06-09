@@ -3,7 +3,8 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to 'javascript:history.back()' do
+          %a{href: 'javascript:history.back()'}
+            %i.fa.fa-angle-left.fa-lg
             Back
         .col-xs-4.col-sm-4
           = title

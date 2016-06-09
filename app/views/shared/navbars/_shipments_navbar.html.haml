@@ -4,7 +4,8 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           - unless @ticket_number.blank?
-            = link_to 'javascript:history.back()' do
+            %a{href: 'javascript:history.back()'}
+              %i.fa.fa-angle-left.fa-lg
               Back
           - else
             = link_to root_path do

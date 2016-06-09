@@ -10,7 +10,7 @@
           %i.fa.fa-compress
           = "Customer has outside access"
           = link_to "Edit customer login", edit_user_path(@customer_user), class: 'btn btn-default'
-      - else
+      -#
         .alert.alert-warning
           = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
         = render partial: 'users/new_modal'
@@ -19,7 +19,6 @@
           .alert.alert-warning
             %i.fa.fa-warning.fa-lg
             Customer Photo ID is missing or expired.
-    %p.lead Details
     %div.panel.panel-primary
       %div.list_group
         %div.list-group-item

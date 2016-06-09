@@ -12,6 +12,14 @@ class Company < ActiveRecord::Base
     self.dragon_api ||= "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}"
   end
   
+  def leads_online_config_settings_present?
+    if leads_online_store_id.blank? or leads_online_ftp_username.blank? or leads_online_ftp_password.blank?
+      return false
+    else
+      return true
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################

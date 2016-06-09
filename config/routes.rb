@@ -105,6 +105,9 @@ Rails.application.routes.draw do
       get :void_item
       get :customer_tickets
     end
+    member do
+      get :send_to_leads_online
+    end
   end
   
   # The priority is based upon order of creation: first created -> highest priority.
