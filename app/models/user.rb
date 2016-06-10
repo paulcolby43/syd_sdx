@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
     api_url = "https://#{user.company.dragon_api}/token"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
 #    JSON.parse(response)
-    Rails.logger.info response
+#    Rails.logger.info response
     access_token_string = JSON.parse(response)["access_token"]
     access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
   end
