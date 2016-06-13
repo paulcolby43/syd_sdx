@@ -19,9 +19,9 @@
     .panel.panel-default
       #headingOne.panel-heading{:role => "tab"}
         %h4.panel-title
-          %a{"aria-controls" => "collapseOne", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :role => "button"}
+          %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :role => "button"}
             Leads Online Info
-      #collapseOne.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+      #collapseOne.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
         .panel-body
           .row.form-group
             %div{:class => "col-sm-6"}
