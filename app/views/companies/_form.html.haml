@@ -15,25 +15,26 @@
         %div{:class => "col-sm-6"}
           = f.label :dragon_api, :class => "control-label"
           = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg"
-  #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-    .panel.panel-default
-      #headingOne.panel-heading{:role => "tab"}
-        %h4.panel-title
-          %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :role => "button"}
-            Leads Online Info
-      #collapseOne.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-        .panel-body
-          .row.form-group
-            %div{:class => "col-sm-6"}
-              = f.label :leads_online_store_id, "Leads Online Store ID", :class => "control-label"
-              = f.text_field :leads_online_store_id, :placeholder => "Leads Online Store ID", class: "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-6"}
-              = f.label :leads_online_store_id, "Leads Online FTP Username", :class => "control-label"
-              = f.text_field :leads_online_ftp_username, :placeholder => "Leads Online FTP Username", class: "form-control input-lg"
-            %div{:class => "col-sm-6"}
-              = f.label :leads_online_store_id, "Leads Online FTP Password", :class => "control-label"
-              = f.text_field :leads_online_ftp_password, :placeholder => "Leads Online FTP Password", class: "form-control input-lg"
+  - if @company.include_leads_online?
+    #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+      .panel.panel-default
+        #headingOne.panel-heading{:role => "tab"}
+          %h4.panel-title
+            %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :role => "button"}
+              Leads Online Info
+        #collapseOne.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+          .panel-body
+            .row.form-group
+              %div{:class => "col-sm-6"}
+                = f.label :leads_online_store_id, "Leads Online Store ID", :class => "control-label"
+                = f.text_field :leads_online_store_id, :placeholder => "Leads Online Store ID", class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-sm-6"}
+                = f.label :leads_online_store_id, "Leads Online FTP Username", :class => "control-label"
+                = f.text_field :leads_online_ftp_username, :placeholder => "Leads Online FTP Username", class: "form-control input-lg"
+              %div{:class => "col-sm-6"}
+                = f.label :leads_online_store_id, "Leads Online FTP Password", :class => "control-label"
+                = f.text_field :leads_online_ftp_password, :placeholder => "Leads Online FTP Password", class: "form-control input-lg"
     -#
       .panel.panel-default
         #headingTwo.panel-heading{:role => "tab"}
