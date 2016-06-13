@@ -52,11 +52,16 @@ class User < ActiveRecord::Base
   def update_scrap_dragon_token(user_id, pass)
     user = User.find(user_id)
     api_url = "https://#{user.company.dragon_api}/token"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
-#    JSON.parse(response)
+    begin
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
 #    Rails.logger.info response
-    access_token_string = JSON.parse(response)["access_token"]
-    access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+      access_token_string = JSON.parse(response)["access_token"]
+      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+      return 'success'
+    rescue => exception
+      Rails.logger.info exception.response
+      exception.response
+    end
   end
   
   def create_scrap_dragon_user(user_params)
@@ -270,15 +275,12 @@ class User < ActiveRecord::Base
     user = User.where(username: login.downcase, dragon_account_number: account_number).first || User.where(email: login.downcase, dragon_account_number: account_number).first unless account_number.blank?
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
-      user.update_scrap_dragon_token(user.id, pass)
-#      unless user.customer?
-#        user.update_scrap_dragon_token(user.username, pass, user.company.dragon_api) 
-#      else
-#        user.update_scrap_dragon_token('9', '9', user.company.dragon_api) # TODO: Get generic user for read-only access to tickets 
-#      end
-      return user 
+      response = user.update_scrap_dragon_token(user.id, pass)
+      if response == 'success'
+        return user 
+      end
     else
-      
+      nil
     end
   end
   
