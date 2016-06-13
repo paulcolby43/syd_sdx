@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160527163255) do
+ActiveRecord::Schema.define(version: 20160613154130) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -55,12 +55,13 @@ ActiveRecord::Schema.define(version: 20160527163255) do
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
 
   create_table "companies", force: true do |t|
-    t.string "name"
-    t.string "dragon_api"
-    t.string "leads_online_store_id"
-    t.string "leads_online_ftp_username"
-    t.string "leads_online_ftp_password"
-    t.string "account_number"
+    t.string  "name"
+    t.string  "dragon_api"
+    t.string  "leads_online_store_id"
+    t.string  "leads_online_ftp_username"
+    t.string  "leads_online_ftp_password"
+    t.string  "account_number"
+    t.boolean "include_leads_online",      default: true
   end
 
   create_table "cust_pic_files", force: true do |t|
