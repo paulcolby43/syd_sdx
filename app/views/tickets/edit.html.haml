@@ -291,5 +291,8 @@
     -#
       .well
         %p= @ticket
+    -#
+      .well
+        = Ticket.generate_leads_online_xml(current_user.token, params[:id], current_yard_id, current_user, @ticket['CustomerId'], Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id))
 
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}

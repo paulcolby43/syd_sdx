@@ -1,0 +1,66 @@
+= form_for @company do |f|
+  - @company.errors.each do |attr, msg|
+    .alert.alert-danger
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      = "#{attr} #{msg}" if @company.errors[attr].first == msg
+  .panel.panel-default
+    #headingTop.panel-heading{:role => "tab"}
+      %h4.panel-title
+        Company Info
+    .panel-body
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :name, :class => "control-label"
+          = f.text_field :name, :placeholder => "Company Name", class: "form-control input-lg"
+        %div{:class => "col-sm-6"}
+          = f.label :dragon_api, :class => "control-label"
+          = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg"
+  #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+    .panel.panel-default
+      #headingOne.panel-heading{:role => "tab"}
+        %h4.panel-title
+          %a{"aria-controls" => "collapseOne", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :role => "button"}
+            Leads Online Info
+      #collapseOne.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+        .panel-body
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :leads_online_store_id, "Leads Online Store ID", :class => "control-label"
+              = f.text_field :leads_online_store_id, :placeholder => "Leads Online Store ID", class: "form-control input-lg"
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :leads_online_store_id, "Leads Online FTP Username", :class => "control-label"
+              = f.text_field :leads_online_ftp_username, :placeholder => "Leads Online FTP Username", class: "form-control input-lg"
+            %div{:class => "col-sm-6"}
+              = f.label :leads_online_store_id, "Leads Online FTP Password", :class => "control-label"
+              = f.text_field :leads_online_ftp_password, :placeholder => "Leads Online FTP Password", class: "form-control input-lg"
+    -#
+      .panel.panel-default
+        #headingTwo.panel-heading{:role => "tab"}
+          %h4.panel-title
+            %a.collapsed{"aria-controls" => "collapseTwo", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseTwo", :role => "button"}
+              BWI Info
+        #collapseTwo.panel-collapse.collapse{"aria-labelledby" => "headingTwo", :role => "tabpanel"}
+          .panel-body
+            .row.form-group
+              %div{:class => "col-sm-6"}
+                = f.label :bwi_company_id, "BWI Company ID", :class => "control-label"
+                = f.text_field :bwi_company_id, :placeholder => "BWI Company ID", class: "form-control input-lg"
+              %div{:class => "col-sm-6"}
+                = f.label :bwi_company_name, "BWI Company Name", :class => "control-label"
+                = f.text_field :bwi_company_name, :placeholder => "BWI Company Name", class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-sm-6"}
+                = f.label :bwi_username, "BWI Username", :class => "control-label"
+                = f.text_field :bwi_username, :placeholder => "BWI Username", class: "form-control input-lg"
+              %div{:class => "col-sm-6"}
+                = f.label :bwi_password, "BWI Password", :class => "control-label"
+                = f.text_field :bwi_password, :placeholder => "BWI Password", class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-sm-6"}
+                = f.label :bwi_upload_url, "BWI Upload URL", :class => "control-label"
+                = f.text_field :bwi_upload_url, :placeholder => "BWI Upload URL", class: "form-control input-lg"
+  .row.form-group
+    %div{:class => "col-sm-6"}
+      = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+        Save

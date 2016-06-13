@@ -55,9 +55,9 @@ class CustomersController < ApplicationController
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
-    if @customer_user.blank?
-      @new_user = User.new
-    end
+#    if @customer_user.blank?
+#      @new_user = User.new
+#    end
 #    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], location: current_yard_id)
   end
 
@@ -71,6 +71,10 @@ class CustomersController < ApplicationController
   def edit
     authorize! :edit, :customers
     @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
+    @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
+    if @customer_user.blank?
+      @new_user = User.new
+    end
   end
 
   # POST /customers

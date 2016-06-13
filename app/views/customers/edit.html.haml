@@ -17,6 +17,12 @@
           %i.fa.fa-user
           = "#{license_imager_device.DeviceName}"
           = image_tag("ajax-loader.gif", :id => "image_scan_spinner", :class => "save_to_jpegger_spinner", :alt => "Loading ...", style: "display:none;")
+
+  - if current_user.admin?
+    - if @customer_user.blank?
+      .alert.alert-warning
+        = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
+      = render partial: 'users/new_modal'
         
   .well.col-sm-12.col-md-12{id: 'customer_info'}
     = form_tag customer_path(@customer["Id"]), method: 'put', :class => "form-horizontal" do

@@ -37,6 +37,7 @@ class Ability
       can :index, :tickets
       can :show, :tickets
       can :edit, :tickets
+      can :send_to_leads_online, :tickets
       
       # Customers
       ############
@@ -81,7 +82,10 @@ class Ability
       
       # Companies
       ############
-      can :manage, Company
+      can :manage, Company do |company|
+        company.id == user.company_id
+      end
+      cannot :index, Company
 
       # Shipments
       ############

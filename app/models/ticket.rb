@@ -441,5 +441,144 @@ class Ticket
       return data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"]
     end
   end
+
+  def self.generate_leads_online_xml(auth_token, ticket_id, yard_id, user, customer_id, images)
+    yard = Yard.find_by_id(auth_token, yard_id)
+    ticket = Ticket.find_by_id(3, auth_token, yard_id, ticket_id)
+    customer = Customer.find_by_id(auth_token, yard_id, customer_id)
+    xml = ::Builder::XmlMarkup.new(:indent => 2)
+    xml.instruct!
+    xml.LeadsOnlineUpload do
+      xml.software do
+        xml.name("Scrap Yard Dog")
+        xml.version("1.0")
+      end
+      xml.store_info do
+        xml.company_nm(user.company.name)
+        xml.store_number(yard_id)
+        xml.store_nm(yard['Name'])
+        xml.store_addr1(yard['Address1'])
+        xml.store_addr2(yard['Address2'])
+        xml.store_city(yard['City'])
+        xml.store_state(yard['State'])
+        xml.store_zip(yard['Division'])
+        xml.store_county
+        xml.store_phone
+      end
+      xml.tickets do
+        xml.ticket do
+          xml.ticket_number(ticket["TicketNumber"])
+          xml.enter_date(ticket["DateCreated"])
+          xml.clerk(user.email)
+          xml.void("N")
+          xml.customer do
+            xml.cust_nm_last(customer['LastName'])
+            xml.cust_nm_first(customer['FirstName'])
+            xml.cust_nm_middle
+            xml.cust_nm_suffix
+            xml.cust_addr1(customer['Address1'])
+            xml.cust_addr2(customer['Address2'])
+            xml.cust_city(customer['City'])
+            xml.cust_state(customer['State'])
+            xml.cust_zip(customer['Zip'])
+            xml.cust_phone(customer['Phone'])
+            xml.cust_id_type("DL")
+            xml.cust_id_state(customer['IdState'])
+            xml.cust_id_number(customer['IdNumber'])
+            unless customer['IdExpires'] == {"i:nil"=>"true"}
+              xml.cust_id_exp(customer['IdExpires'].to_date.strftime("%Y-%m-%d"))
+            else
+              xml.cust_id_exp
+            end
+            xml.cust_birthdate
+            xml.cust_weight
+            xml.cust_height
+            xml.cust_eye
+            xml.cust_hair
+            xml.cust_race
+            xml.cust_sex
+            xml.cust_info
+            xml.cust_picture(:code => "C")
+            xml.cust_picture(:code => "I")
+            xml.cust_picture(:code => "T")
+            xml.cust_picture(:code => "S")
+            xml.employer_nm(customer['Company'])
+            xml.employer_addr1
+            xml.employer_addr2
+            xml.employer_city
+            xml.employer_state
+            xml.employer_zip
+            xml.employer_phone
+          end
+          xml.vehicle do
+            xml.vehicle_license
+            xml.vehicle_license_state
+            xml.vehicle_license_exp
+            xml.vehicle_make
+            xml.vehicle_model
+            xml.vehicle_year
+            xml.vehicle_color
+            xml.trailer_desc
+            xml.trailer_color
+            xml.trailer_license
+            xml.trailer_license_state
+            xml.trailer_license_exp
+            xml.vehicle_picture(:code => "V")
+            xml.vehicle_picture(:code => "L")
+          end
+          xml.property do
+            unless ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+              ticket["TicketItemCollection"]["ApiTicketItem"].each_with_index do |line_item, index|
+                xml.item do
+                  xml.item_number(line_item['Id'])
+                  xml.item_make
+                  xml.item_model
+                  xml.item_serial
+                  xml.item_color
+                  xml.item_condition
+                  xml.item_volts
+                  xml.item_amps
+                  xml.item_desc(line_item["PrintDescription"])
+                  xml.item_notes
+                  xml.item_net_wt(line_item['NetWeight'])
+                  xml.item_amount(line_item['ExtendedAmount'])
+                  xml.item_received_title("N")
+                  if index == 0
+                    unless images.blank?
+                      images.each do |image|
+                        xml.item_picture(image.jpeg_image_base_64, :code => "A", :type => 'jpg')
+                      end
+                    end
+                  end
+                end
+              end
+            else
+              xml.item do
+                xml.item_number(ticket["TicketItemCollection"]["ApiTicketItem"]['Id'])
+                xml.item_make
+                xml.item_model
+                xml.item_serial
+                xml.item_color
+                xml.item_condition
+                xml.item_volts
+                xml.item_amps
+                xml.item_desc(ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"])
+                xml.item_notes
+                xml.item_net_wt(ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'])
+                xml.item_amount(ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'])
+                xml.item_received_title("N")
+                unless images.blank?
+                  images.each do |image|
+                    xml.item_picture(image.jpeg_image_base_64, :code => "A", :type => 'jpg')
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    
+  end
   
 end

@@ -2,106 +2,110 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    .col-xs-12.col-sm-6
-      .panel.panel-default
-        .panel-heading
-          %h5 
-            Defaults
-        %ul.list-group
-          %li.list-group-item
-            = "Show customer thumbnails:"
-            .pull-right
-              = "#{@user_setting.show_customer_thumbnails? ? 'Yes' : 'No'}"
-
-          %li.list-group-item
-            = "Show ticket thumbnails:"
-            .pull-right
-              = "#{@user_setting.show_ticket_thumbnails? ? 'Yes' : 'No'}"
-
-          %li.list-group-item
-            = "Show picture search thumbnails:"
-            .pull-right
-              = "#{@user_setting.show_thumbnails? ? 'Yes' : 'No'}"
-          %li.list-group-item
-            = "Currency:"
-            .pull-right
-              = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
-    .col-xs-12.col-sm-6  
-      - unless Yard.device_groups(current_yard_id).blank?
+    .row
+      .col-xs-12.col-sm-6
         .panel.panel-default
           .panel-heading
-            %h5
+            %h5 
+              Defaults
+          %ul.list-group
+            %li.list-group-item
+              = "Show customer thumbnails:"
+              .pull-right
+                = "#{@user_setting.show_customer_thumbnails? ? 'Yes' : 'No'}"
+
+            %li.list-group-item
+              = "Show ticket thumbnails:"
+              .pull-right
+                = "#{@user_setting.show_ticket_thumbnails? ? 'Yes' : 'No'}"
+
+            %li.list-group-item
+              = "Show picture search thumbnails:"
+              .pull-right
+                = "#{@user_setting.show_thumbnails? ? 'Yes' : 'No'}"
+            %li.list-group-item
+              = "Currency:"
+              .pull-right
+                = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
+      .col-xs-12.col-sm-6  
+        - unless Yard.device_groups(current_yard_id).blank?
+          .panel.panel-default
+            .panel-heading
+              %h5
+                - unless current_user.device_group.blank?
+                  = "#{current_user.device_group.DeviceGroupName} Device Group"
+                - else
+                  No Device Group for this User
+            %ul.list-group
               - unless current_user.device_group.blank?
-                = "#{current_user.device_group.DeviceGroupName} Device Group"
-              - else
-                No Device Group for this User
-          %ul.list-group
-            - unless current_user.device_group.blank?
-              - unless current_user.device_group.CustomerCamera.blank?
-                %li.list-group-item
-                  = current_user.device_group.CustomerCamera
-                  %br
-                  Device Type:
-                  %i.fa.fa-camera.fa-lg
-                  Customer Camera
-              - current_user.device_group.devices.each do |device|
-                %li.list-group-item
-                  = device.DeviceName
-                  %br
-                  = "Workstation:"
-                  = device.workstation.WorkstationName
-                  %br
-                  = "Workstation IP:"
-                  = device.workstation.Host
-                  %br
-                  %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
-                    = "Device Type:"
-                    = device.device_type_icon.html_safe
-                    - if device.scale_camera_only?
-                      Scale camera only - no indicator
-                    - else
-                      = device.type
-                    - if device.printer?
-                      %small= "(Printer Width: #{device.PrinterWidth})"
-                  %br
-                  = "Device Order:"
-                  = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
-                  - unless device.CameraGroup.blank?
+                - unless current_user.device_group.CustomerCamera.blank?
+                  %li.list-group-item
+                    = current_user.device_group.CustomerCamera
                     %br
-                    = "Camera Group:"
-                    = device.CameraGroup
-                  %br
-                  = "Listen Port:"
-                  = device.LocalListenPort
-      - else
-        %p No device groups
+                    Device Type:
+                    %i.fa.fa-camera.fa-lg
+                    Customer Camera
+                - current_user.device_group.devices.each do |device|
+                  %li.list-group-item
+                    = device.DeviceName
+                    %br
+                    = "Workstation:"
+                    = device.workstation.WorkstationName
+                    %br
+                    = "Workstation IP:"
+                    = device.workstation.Host
+                    %br
+                    %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
+                      = "Device Type:"
+                      = device.device_type_icon.html_safe
+                      - if device.scale_camera_only?
+                        Scale camera only - no indicator
+                      - else
+                        = device.type
+                      - if device.printer?
+                        %small= "(Printer Width: #{device.PrinterWidth})"
+                    %br
+                    = "Device Order:"
+                    = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
+                    - unless device.CameraGroup.blank?
+                      %br
+                      = "Camera Group:"
+                      = device.CameraGroup
+                    %br
+                    = "Listen Port:"
+                    = device.LocalListenPort
+        - else
+          .panel.panel-default
+            .panel-heading
+              %h5
+                No Device Groups
+    .row
+      .col-xs-12.col-sm-6
+        - unless @contract.blank?
+          .panel.panel-default
+            .panel-heading
+              %h5
+                Contract
+            %ul.list-group
+              %li.list-group-item
+                = @contract.contract_name
+                %br
+                = @contract.verbiage.html_safe
+        - else
+          .panel.panel-default
+            .panel-heading
+              %h5
+                Contract
+            %ul.list-group
+              %li.list-group-item
+                No existing contract
 
-    .col-xs-12.col-sm-6
-      - unless @contract.blank?
+      .col-xs-12.col-sm-6
         .panel.panel-default
           .panel-heading
-            %h5
-              Contract
+            %h5 Yards
           %ul.list-group
-            %li.list-group-item
-              = @contract.contract_name
-              %br
-              = @contract.verbiage.html_safe
-      - else
-        .panel.panel-default
-          .panel-heading
-            %h5
-              Contract
-          %ul.list-group
-            %li.list-group-item
-              No existing contract
-
-    .col-xs-12.col-sm-6
-      .panel.panel-default
-        .panel-heading
-          %h5 Yards
-        %ul.list-group
-          - Yard.all(current_user.token).each do |yard|
-            %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= yard["Name"]
+            - Yard.all(current_user.token).each do |yard|
+              %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= yard["Name"]
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}
