@@ -45,7 +45,8 @@ class CompaniesController < ApplicationController
       if @company.update(company_params)
         format.html { 
           flash[:success] = 'Company was successfully updated.'
-          redirect_to root_path
+#          redirect_to root_path
+          redirect_to edit_user_setting_path(current_user.user_setting)
           }
 #        format.html { redirect_to @company, notice: 'Company was successfully updated.' }
         format.json { render :show, status: :ok, location: @company }
