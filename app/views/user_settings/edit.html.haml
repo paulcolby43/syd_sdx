@@ -12,7 +12,7 @@
         .col-xs-12.col-sm-6
           %div.panel.panel-default
             %div.panel-heading
-              %h5 Defaults
+              %h5.panel-title Defaults
             %ul.list-group
               %li.list-group-item
                 .row.form-group
@@ -43,7 +43,7 @@
           - unless Yard.device_groups(current_yard_id).blank?
             %div.panel.panel-default
               %div.panel-heading
-                %h5 Device Group
+                %h5.panel-title Device Group
               %ul.list-group
                 %li.list-group-item
                   .row.form-group
@@ -52,14 +52,14 @@
           - else
             .panel.panel-default
               .panel-heading
-                %h5
+                %h5.panel-title
                   No Device Groups
       .row
         .col-xs-12.col-sm-6
           - unless @contract.blank?
             %div.panel.panel-default
               .panel-heading
-                %h5
+                %h5.panel-title
                   Contract
                   .pull-right= link_to 'Edit', edit_contract_path(@contract)
               %ul.list-group
@@ -70,7 +70,7 @@
           - else
             %div.panel.panel-default
               .panel-heading
-                %h5
+                %h5.panel-title
                   Contract
                   .pull-right= link_to 'New', new_contract_path
               %ul.list-group
@@ -80,17 +80,51 @@
         .col-xs-12.col-sm-6
           %div.panel.panel-default
             .panel-heading
-              %h5 Yards
+              %h5.panel-title Yards
             %ul.list-group
               - Yard.all(current_user.token).each do |yard|
                 - unless yard['Id'] == current_yard_id
                   %li.list-group-item= link_to yard["Name"], yard_path(yard['Id']), class: 'yard_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Changing yard to #{yard['Name']}"}
                 - else
-                  %li.list-group-item.active= yard["Name"]
-      
-      .col-sm-6.col-md-4.col-md-offset-4
-        %br
-        %br
-        %br
-        = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}, autocomplete: "off") do
-          Save
+                  %li.list-group-item.list-group-item-warning= yard["Name"]
+      .row
+        .col-xs-12.col-sm-6
+          %div.panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                Scrap Dragon API
+                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+            %ul.list-group
+              %li.list-group-item
+                = "Location"
+                .pull-right
+                  = "#{current_user.company.dragon_api}"
+              %li.list-group-item
+                = "Yard ID"
+                .pull-right
+                  = "#{current_yard_id}"
+        - if current_user.company.include_leads_online? 
+          .col-xs-12.col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title 
+                  Leads Online Info 
+                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+              %ul.list-group
+                %li.list-group-item
+                  = "Leads Online Store ID"
+                  .pull-right
+                    = "#{current_user.company.leads_online_store_id}"
+                %li.list-group-item
+                  = "Leads Online FTP Username"
+                  .pull-right
+                    = "#{current_user.company.leads_online_ftp_username}"
+                %li.list-group-item
+                  = "Leads Online FTP Password"
+                  .pull-right
+                    = "#{current_user.company.leads_online_ftp_password}"
+
+      .row
+        .col-sm-6.col-md-4.col-md-offset-4
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}, autocomplete: "off") do
+            Save

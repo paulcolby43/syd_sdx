@@ -6,7 +6,7 @@
       .col-xs-12.col-sm-6
         .panel.panel-default
           .panel-heading
-            %h5 
+            %h5.panel-title 
               Defaults
           %ul.list-group
             %li.list-group-item
@@ -31,7 +31,7 @@
         - unless Yard.device_groups(current_yard_id).blank?
           .panel.panel-default
             .panel-heading
-              %h5
+              %h5.panel-title 
                 - unless current_user.device_group.blank?
                   = "#{current_user.device_group.DeviceGroupName} Device Group"
                 - else
@@ -77,14 +77,14 @@
         - else
           .panel.panel-default
             .panel-heading
-              %h5
+              %h5.panel-title 
                 No Device Groups
     .row
       .col-xs-12.col-sm-6
         - unless @contract.blank?
           .panel.panel-default
             .panel-heading
-              %h5
+              %h5.panel-title 
                 Contract
             %ul.list-group
               %li.list-group-item
@@ -94,7 +94,7 @@
         - else
           .panel.panel-default
             .panel-heading
-              %h5
+              %h5.panel-title 
                 Contract
             %ul.list-group
               %li.list-group-item
@@ -103,9 +103,43 @@
       .col-xs-12.col-sm-6
         .panel.panel-default
           .panel-heading
-            %h5 Yards
+            %h5.panel-title  Yards
           %ul.list-group
             - Yard.all(current_user.token).each do |yard|
               %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= yard["Name"]
+
+    .row
+      .col-xs-12.col-sm-6
+        .panel.panel-default
+          .panel-heading
+            %h5.panel-title Scrap Dragon API
+          %ul.list-group
+            %li.list-group-item
+              = "Location"
+              .pull-right
+                = "#{current_user.company.dragon_api}"
+            %li.list-group-item
+              = "Yard ID"
+              .pull-right
+                = "#{current_yard_id}"
+      - if current_user.company.include_leads_online? 
+        .col-xs-12.col-sm-6
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                Leads Online Info 
+            %ul.list-group
+              %li.list-group-item
+                = "Leads Online Store ID"
+                .pull-right
+                  = "#{current_user.company.leads_online_store_id}"
+              %li.list-group-item
+                = "Leads Online FTP Username"
+                .pull-right
+                  = "#{current_user.company.leads_online_ftp_username}"
+              %li.list-group-item
+                = "Leads Online FTP Password"
+                .pull-right
+                  = "#{current_user.company.leads_online_ftp_password}"
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}
