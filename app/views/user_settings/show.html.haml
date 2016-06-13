@@ -106,7 +106,7 @@
             %h5.panel-title  Yards
           %ul.list-group
             - Yard.all(current_user.token).each do |yard|
-              %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= yard["Name"]
+              %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= yard["Name"]
 
     .row
       .col-xs-12.col-sm-6
