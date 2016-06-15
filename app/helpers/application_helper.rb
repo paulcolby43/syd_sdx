@@ -21,7 +21,7 @@ module ApplicationHelper
   end
   
   def ticket_event_codes
-    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Vendor"]
+    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer"]
   end
   
   def shipment_event_codes
