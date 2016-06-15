@@ -375,7 +375,7 @@ jQuery ->
     this_ticket_number = $(this).data( "ticket-number" )
     device_id = $(this).data( "device-id" )
     this_event_code = $('#image_file_event_code').val()
-    this_yard_id = $(this).data( "yard-id" )
+    this_yard_id = $(this).data( "yard-id")
     this_customer_number = $(this).data( "customer-id" )
     this_vin_number = $('#image_file_vin_number').val()
     this_tag_number = $('#image_file_tag_number').val()
