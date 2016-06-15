@@ -24,6 +24,11 @@
             %p{id: "upload_button", style: "display:none;"}
               = f.file_field :file, name: "cust_pic_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
               / Devices
+              - unless current_user.customer_camera.blank?
+                %a{href: '#', style: "color: hotpink;", class: "customer_camera_trigger btn btn-lg btn-block btn-default", 'data-yard-id' => current_yard_id, 'data-first-name' => @customer['FirstName'], 'data-last-name' => @customer['LastName'], 'data-customer-id' => @customer['Id'], 'data-camera-name' => current_user.customer_camera, title: current_user.customer_camera}
+                  %i.fa.fa-camera
+                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                  current_user.customer_camera
               - current_user.scanner_devices.each do |scanner_device|
                 %a{href: '#', class: "customer_scanner_trigger btn btn-lg btn-block btn-info", 'data-yard-id' => current_yard_id, 'data-first-name' => @customer['FirstName'], 'data-last-name' => @customer['LastName'], 'data-customer-id' => @customer['Id'], 'data-camera-name' => scanner_device.DeviceName, title: scanner_device.DeviceName}
                   %i.fa.fa-newspaper-o
