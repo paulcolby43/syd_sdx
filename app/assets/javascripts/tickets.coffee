@@ -380,6 +380,8 @@ jQuery ->
     this_vin_number = $('#image_file_vin_number').val()
     this_tag_number = $('#image_file_tag_number').val()
       
+    scanner_icon = $(this).find( ".fa-newspaper-o" )
+    scanner_icon.hide()
     spinner_icon = $(this).find('.fa-spinner')
     spinner_icon.show()
 
@@ -396,9 +398,11 @@ jQuery ->
         tag_number: this_tag_number
       success: (response) ->
         spinner_icon.hide()
+        scanner_icon.show()
         return
       error: ->
         spinner_icon.hide()
+        scanner_icon.show()
         alert 'Scanner trigger failed'
         return
   ### End Scanner Trigger ###

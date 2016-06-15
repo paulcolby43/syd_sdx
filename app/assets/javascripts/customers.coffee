@@ -215,6 +215,8 @@ jQuery ->
     else
       this_last_name = $(this).data( "last-name" )
       
+    scanner_icon = $(this).find( ".fa-newspaper-o" )
+    scanner_icon.hide()
     spinner_icon = $(this).find('.fa-spinner')
     spinner_icon.show()
 
@@ -233,10 +235,12 @@ jQuery ->
         tag_number: this_tag_number
       success: (response) ->
         spinner_icon.hide()
+        scanner_icon.show()
         #alert 'Customer scanner trigger successful.'
         return
       error: ->
         spinner_icon.hide()
+        scanner_icon.show()
         #alert 'Customer scanner trigger failed'
         return
   ### End Customer Scanner Trigger ###
