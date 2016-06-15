@@ -49,7 +49,7 @@
                 %a{href: '#', style: "color: hotpink;", class: "customer_camera_trigger_from_ticket btn btn-lg btn-block btn-default", 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-id' => @ticket['CustomerId'], 'data-camera-name' => current_user.customer_camera, title: current_user.customer_camera}
                   %i.fa.fa-camera
                   %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                  Customer Camera
+                  = current_user.customer_camera
               - current_user.license_imager_devices.each do |license_imager_device|
                 %a{href: '#', onclick: "$(this).find('.save_to_jpegger_spinner:first').show();", class: 'save_license_scan_to_jpegger_from_ticket btn btn-lg btn-block btn-default', 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-id' => @ticket['CustomerId'], 'data-camera-name' => "#{license_imager_device.DeviceName}"}
                   %i.fa.fa-user
