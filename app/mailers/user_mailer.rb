@@ -11,5 +11,12 @@ class UserMailer < ActionMailer::Base
     @user = user
     mail(:to => user.email, :subject => "Reset password")
   end
+  
+  def new_user_registration(user)
+    @user = user
+    @to = 'john@tranact.com'
+    @cc = "info@tranact.com, patrick@tranact.com, ken@tranact.com, brian@tranact.com, jeremy@tranact.com"
+    mail(to: @to, subject: 'SYD SDX New User Sign Up')
+  end
 
 end

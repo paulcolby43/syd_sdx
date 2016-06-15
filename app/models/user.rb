@@ -14,7 +14,8 @@ class User < ActiveRecord::Base
   before_create :confirmation_token
   after_commit :create_user_settings, :on => :create
   after_create :create_company, unless: :company?
-  
+  after_commit :send_registration_notice_email, :on => :create
+    
   validates :password, confirmation: true
   validates :password_confirmation, presence: true, on: :create
   validates_presence_of :role, :message => 'Please select type of user.'
@@ -276,6 +277,10 @@ class User < ActiveRecord::Base
   
   def token
     access_token.token_string
+  end
+  
+  def send_registration_notice_email
+    NewUserRegistrationWorker.perform_async(self.id) # Send out admin email to notify of new user registration, in sidekiq background process
   end
   
   #############################
