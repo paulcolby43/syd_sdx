@@ -34,17 +34,18 @@
                   %i.fa.fa-newspaper-o
                   %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                   Scanner
-              -#
-                - unless current_user.customer_camera.blank?
-                  %a{href: '#', style: "color: hotpink;", class: "customer_camera_trigger btn btn-lg btn-block btn-default", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => current_user.customer_camera, title: current_user.customer_camera}
+              - current_user.scale_devices.each do |scale_device|
+                - if scale_device.scale_camera_only?
+                  %a{href: '#', style: "color: hotpink;", class: "customer_scale_camera_trigger btn btn-default btn-lg btn-block", 'data-yard-id' => current_yard_id, 'data-first-name' => @customer['FirstName'], 'data-last-name' => @customer['LastName'], 'data-customer-id' => @customer['Id'], 'data-camera-name' => scale_device.DeviceName, title: scale_device.DeviceName }
                     %i.fa.fa-camera
                     %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    Customer Camera
-                - current_user.scanner_devices.each do |scanner_device|
-                  %a{href: '#', class: "customer_scanner_trigger btn btn-lg btn-block btn-info", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => scanner_device.DeviceName, title: scanner_device.DeviceName}
-                    %i.fa.fa-newspaper-o
+                    = scale_device.DeviceName
+                - else
+                  %a{href: '#', class: "customer_scale_camera_trigger btn btn-default btn-lg btn-block", 'data-yard-id' => current_yard_id, 'data-first-name' => @customer['FirstName']e, 'data-last-name' => @customer['LastName'], 'data-customer-id' => @customer['Id'], 'data-camera-name' => scale_device.DeviceName, title: scale_device.DeviceName }
+                    %i.fa.fa-camera
                     %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    Scanner
+                    = scale_device.DeviceName
+              -#
                 - current_user.scale_devices.each do |scale_device|
                   - if scale_device.scale_camera_only?
                     %a{href: '#', style: "color: hotpink;", class: "customer_scale_camera_trigger btn btn-default btn-lg btn-block", 'data-location' => current_user.location, 'data-given-name' => @vendor.given_name, 'data-family-name' => @vendor.family_name, 'data-vendor-id' => @vendor.id, 'data-camera-name' => scale_device.DeviceName, title: scale_device.DeviceName }
