@@ -1,7 +1,7 @@
 %div{:id => "ticket_#{ticket['Id']}_payment_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
   .modal-dialog.modal-sm
     .modal-content
-      = form_tag "tickets/#{ticket['Id']}", method: 'put', id: 'pay_ticket_form', :class => "form-horizontal" do
+      = form_tag "tickets/#{ticket['Id']}", method: 'put', :class => "form-horizontal" do
         = hidden_field_tag "ticket[ticket_number]", ticket['TicketNumber']
         = hidden_field_tag "ticket[status]", ticket['Status']
         = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
@@ -17,14 +17,16 @@
           %br
           .btn-group-vertical.btn-block{"data-toggle" => "buttons"}
             %label.btn.btn-lg.btn-default{class: 'active cash_account'}
-              = radio_button_tag :cash_payment, true, checked: true
+              =# radio_button_tag :cash_payment, true, checked: true
+              = radio_button_tag :payment_type, 'cash', checked: true
               %i.fa.fa-dollar
               Cash
             - unless @checking_accounts.blank?
               - @checking_accounts.each do |checking_account|
-                %label.btn.btn-lg.btn-default{class: "checking_account", "data-checking-account-id" => checking_account["Id"]}
-                  = radio_button_tag "checking_account_payment[id]", checking_account["Id"]
-                  = hidden_field_tag "checking_account_payment[name]", checking_account["Name"]
+                %label.btn.btn-lg.btn-default{class: "checking_account", "data-checking-account-id" => checking_account["Id"], "data-checking-account-name" => checking_account["Name"]}
+                  = radio_button_tag :payment_type, 'check'
+                  =# radio_button_tag "checking_account_payment[id]", checking_account["Id"]
+                  =# hidden_field_tag "checking_account_payment[name]", checking_account["Name"]
                   %i.fa.fa-pencil
                   = checking_account["Name"]
           %br
@@ -36,6 +38,8 @@
                   %i.fa.fa-spinner.fa-lg.fa-spin{id: 'finding_check_number_spinner', style: 'display:none;'}
                   %i.fa.fa-hashtag
                 = text_field_tag "checking_account_payment[check_number]", nil, :placeholder => "Check", class: "form-control input-lg"
+            = hidden_field_tag "checking_account_payment[id]", nil
+            = hidden_field_tag "checking_account_payment[name]", nil
 
 
         .modal-footer

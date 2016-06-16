@@ -234,7 +234,40 @@ jQuery ->
       focus: false
     return
 
-  ### Payments ###
+  ### Quick Payment of Ticket form Ticket Index Page ###
+  # Choose a checking account to pay ticket with
+  $('body').on 'click', '.checking_account', ->
+    $('#finding_check_number_spinner').show()
+    $('.fa-hashtag').hide()
+    $('#check_number_field').show()
+    checking_account_id = $(this).data( "checking-account-id" )
+    checking_account_name = $(this).data( "checking-account-name" )
+    $.ajax
+      url: "/checking_accounts/" + checking_account_id
+      dataType: 'json'
+      success: (data) ->
+        #console.log 'success', data
+        $('#finding_check_number_spinner').hide()
+        $('.fa-hashtag').show()
+        $('#checking_account_payment_check_number').val data.NextNo
+        $('#checking_account_payment_id').val checking_account_id
+        $('#checking_account_payment_name').val checking_account_name
+        return
+      error: ->
+        $('#finding_check_number_spinner').hide()
+        $('.fa-hashtag').show()
+        alert 'Error getting next check number.'
+        return
+    return
+
+  # Choose cash to pay ticket with
+  $('body').on 'click', '.cash_account', ->
+    $('#checking_account_payment_check_number').val ''
+    $('#check_number_field').hide()
+    return
+  ### End Quick Payment of Ticket form Ticket Index Page ###
+
+  ### Payment within Ticket ###
   # Choose a checking account to pay ticket with
   $('#payment_form').on 'click', '.checking_account', ->
     $('#finding_check_number_spinner').show()
@@ -255,7 +288,6 @@ jQuery ->
         $('.fa-hashtag').show()
         alert 'Error getting next check number.'
         return
-    
     return
 
   # Choose cash to pay ticket with
@@ -264,7 +296,7 @@ jQuery ->
     $('#check_number_field').hide()
     #alert checking_account_id
     return
-  ### End Payments ###
+  ### End Payment within Ticket ###
 
   ### Event code changed - clear data; check if License Plate or VIN or Vehicle ###
   $('#image_file_event_code').on 'change', ->
