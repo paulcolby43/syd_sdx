@@ -18,18 +18,18 @@
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Held'}"}} 
                 %i.fa.fa-folder-open-o.fa-lg
                 = "Held" unless mobile_device?
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Closed'}"}} 
                 %i.fa.fa-folder.fa-lg
                 = "Closed" unless mobile_device?
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}} 
                 %i.fa.fa-dollar.fa-lg
                 = "Paid" unless mobile_device?
           %p
@@ -38,17 +38,17 @@
                 %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                   %i.fa.fa-image.fa-lg
                   Pictures
-              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Quick Ticket'}"}} 
                 %i.fa.fa-ticket.fa-lg
                 = "Quick Ticket" unless mobile_device?
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Customers'}"}} 
                 %i.fa.fa-users.fa-lg
                 = "Customers" unless mobile_device?
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Commodities'}"}} 
                 %i.fa.fa-list.fa-lg
                 = "Commodities" unless mobile_device?
       - else
