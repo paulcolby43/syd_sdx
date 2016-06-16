@@ -93,15 +93,17 @@ class TicketsController < ApplicationController
   def update
     respond_to do |format|
 #      @drawers = Drawer.all(current_user.token, current_yard_id)
-      ticket_params[:line_items].each do |line_item|
-        if line_item[:status].blank?
-          # Create new item
-          Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
-            line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
-        else
-          # Update existing item
-          Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
-            line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
+      unless ticket_params[:line_items].blank?
+        ticket_params[:line_items].each do |line_item|
+          if line_item[:status].blank?
+            # Create new item
+            Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
+          else
+            # Update existing item
+            Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount])
+          end
         end
       end
       @ticket = "true"

@@ -51,6 +51,6 @@ class Yard
   end
   
   def self.device_groups(yard_id)
-    DeviceGroup.where(yardid: yard_id)
+    DeviceGroup.where(CompanyID: yard_id)
   end
 end

@@ -214,8 +214,24 @@ jQuery ->
     return
   ### End clear the commodity picture upload fields for generic picture uploads ###
 
-  $ ->
-    $('[data-toggle="popover"]').popover()
+  $('[data-toggle="popover"]').popover()
+
+  # Dismiss popovers when click outside of popover
+  $('body').on 'click', (e) ->
+    $('[data-toggle="popover"]').each ->
+      #the 'is' for buttons that trigger popups
+      #the 'has' for icons within a button that triggers a popup
+      if !$(this).is(e.target) and $(this).has(e.target).length == 0 and $('.popover').has(e.target).length == 0
+        $(this).popover 'hide'
+      return
+    return
+
+  # Don't require two clicks to re-show popover after clicked once already
+  $('body').on 'hidden.bs.popover', (e) ->
+    $(e.target).data('bs.popover').inState =
+      click: false
+      hover: false
+      focus: false
     return
 
   ### Payments ###

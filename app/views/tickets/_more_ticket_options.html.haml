@@ -3,8 +3,7 @@
     %i.fa.fa-file-pdf-o
     Print
 
--# if @status == '1'
--#
+- if @status == '1'
   %p
     %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
       %i.fa.fa-dollar
