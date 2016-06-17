@@ -4,76 +4,82 @@
   .container
     .row
       .col-xs-12.col-sm-6
-        .panel.panel-default
-          .panel-heading
-            %h5.panel-title 
-              Defaults
-          %ul.list-group
-            %li.list-group-item
-              = "Show customer thumbnails:"
-              .pull-right
-                = "#{@user_setting.show_customer_thumbnails? ? 'Yes' : 'No'}"
-
-            %li.list-group-item
-              = "Show ticket thumbnails:"
-              .pull-right
-                = "#{@user_setting.show_ticket_thumbnails? ? 'Yes' : 'No'}"
-
-            %li.list-group-item
-              = "Show picture search thumbnails:"
-              .pull-right
-                = "#{@user_setting.show_thumbnails? ? 'Yes' : 'No'}"
-            %li.list-group-item
-              = "Currency:"
-              .pull-right
-                = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
-      .col-xs-12.col-sm-6  
-        - unless Yard.device_groups(current_yard_id).blank?
+        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           .panel.panel-default
             .panel-heading
               %h5.panel-title 
-                - unless current_user.device_group.blank?
-                  = "#{current_user.device_group.DeviceGroupName} Device Group"
-                - else
-                  No Device Group for this User
-            %ul.list-group
-              - unless current_user.device_group.blank?
-                - unless current_user.device_group.CustomerCamera.blank?
-                  %li.list-group-item
-                    = current_user.device_group.CustomerCamera
-                    %br
-                    Device Type:
-                    %i.fa.fa-camera.fa-lg
-                    Customer Camera
-                - current_user.device_group.devices.each do |device|
-                  %li.list-group-item
-                    = device.DeviceName
-                    %br
-                    = "Workstation:"
-                    = device.workstation.WorkstationName
-                    %br
-                    = "Workstation IP:"
-                    = device.workstation.Host
-                    %br
-                    %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
-                      = "Device Type:"
-                      = device.device_type_icon.html_safe
-                      - if device.scale_camera_only?
-                        Scale camera only - no indicator
-                      - else
-                        = device.type
-                      - if device.printer?
-                        %small= "(Printer Width: #{device.PrinterWidth})"
-                    %br
-                    = "Device Order:"
-                    = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
-                    - unless device.CameraGroup.blank?
-                      %br
-                      = "Camera Group:"
-                      = device.CameraGroup
-                    %br
-                    = "Listen Port:"
-                    = device.LocalListenPort
+                %a{"aria-controls" => "defaults", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#defaults", :role => "button"}
+                  Defaults
+            #defaults.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "Show customer thumbnails:"
+                  .pull-right
+                    = "#{@user_setting.show_customer_thumbnails? ? 'Yes' : 'No'}"
+
+                %li.list-group-item
+                  = "Show ticket thumbnails:"
+                  .pull-right
+                    = "#{@user_setting.show_ticket_thumbnails? ? 'Yes' : 'No'}"
+
+                %li.list-group-item
+                  = "Show picture search thumbnails:"
+                  .pull-right
+                    = "#{@user_setting.show_thumbnails? ? 'Yes' : 'No'}"
+                %li.list-group-item
+                  = "Currency:"
+                  .pull-right
+                    = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
+      .col-xs-12.col-sm-6  
+        - unless Yard.device_groups(current_yard_id).blank?
+          #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title 
+                  - unless current_user.device_group.blank?
+                    %a{"aria-controls" => "devices", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#devices", :role => "button"}
+                      = "#{current_user.device_group.DeviceGroupName} Device Group"
+                  - else
+                    No Device Group for this User
+              #devices.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  - unless current_user.device_group.blank?
+                    - unless current_user.device_group.CustomerCamera.blank?
+                      %li.list-group-item
+                        = current_user.device_group.CustomerCamera
+                        %br
+                        Device Type:
+                        %i.fa.fa-camera.fa-lg
+                        Customer Camera
+                    - current_user.device_group.devices.each do |device|
+                      %li.list-group-item
+                        = device.DeviceName
+                        %br
+                        = "Workstation:"
+                        = device.workstation.WorkstationName
+                        %br
+                        = "Workstation IP:"
+                        = device.workstation.Host
+                        %br
+                        %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
+                          = "Device Type:"
+                          = device.device_type_icon.html_safe
+                          - if device.scale_camera_only?
+                            Scale camera only - no indicator
+                          - else
+                            = device.type
+                          - if device.printer?
+                            %small= "(Printer Width: #{device.PrinterWidth})"
+                        %br
+                        = "Device Order:"
+                        = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
+                        - unless device.CameraGroup.blank?
+                          %br
+                          = "Camera Group:"
+                          = device.CameraGroup
+                        %br
+                        = "Listen Port:"
+                        = device.LocalListenPort
         - else
           .panel.panel-default
             .panel-heading
@@ -82,64 +88,76 @@
     .row
       .col-xs-12.col-sm-6
         - unless @contract.blank?
-          .panel.panel-default
-            .panel-heading
-              %h5.panel-title 
-                Contract
-            %ul.list-group
-              %li.list-group-item
-                = @contract.contract_name
-                %br
-                = @contract.verbiage.html_safe
+          #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title 
+                  %a{"aria-controls" => "contract", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#contract", :role => "button"}
+                    Contract
+              #contract.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  %li.list-group-item
+                    %strong= @contract.contract_name
+                    %br
+                    = @contract.verbiage.html_safe
         - else
           .panel.panel-default
             .panel-heading
               %h5.panel-title 
-                Contract
-            %ul.list-group
-              %li.list-group-item
-                No existing contract
+                No Contracts
 
       .col-xs-12.col-sm-6
-        .panel.panel-default
-          .panel-heading
-            %h5.panel-title  Yards
-          %ul.list-group
-            - Yard.all(current_user.token).each do |yard|
-              %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= yard["Name"]
+        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{"aria-controls" => "yards", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#yards", :role => "button"}
+                  Yards
+            #yards.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                - Yard.all(current_user.token).each do |yard|
+                  %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= yard["Name"]
 
     .row
       .col-xs-12.col-sm-6
-        .panel.panel-default
-          .panel-heading
-            %h5.panel-title Scrap Dragon API
-          %ul.list-group
-            %li.list-group-item
-              = "Location"
-              .pull-right
-                = "#{current_user.company.dragon_api}"
-            %li.list-group-item
-              = "Yard ID"
-              .pull-right
-                = "#{current_yard_id}"
-      - if current_user.company.include_leads_online? 
-        .col-xs-12.col-sm-6
+        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           .panel.panel-default
             .panel-heading
-              %h5.panel-title 
-                Leads Online Info 
-            %ul.list-group
-              %li.list-group-item
-                = "Leads Online Store ID"
-                .pull-right
-                  = "#{current_user.company.leads_online_store_id}"
-              %li.list-group-item
-                = "Leads Online FTP Username"
-                .pull-right
-                  = "#{current_user.company.leads_online_ftp_username}"
-              %li.list-group-item
-                = "Leads Online FTP Password"
-                .pull-right
-                  = "#{current_user.company.leads_online_ftp_password}"
+              %h5.panel-title
+                %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#dragon_api", :role => "button"}
+                  Scrap Dragon API
+            #dragon_api.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "Location"
+                  .pull-right
+                    = "#{current_user.company.dragon_api}"
+                %li.list-group-item
+                  = "Yard ID"
+                  .pull-right
+                    = "#{current_yard_id}"
+
+      - if current_user.company.include_leads_online? 
+        .col-xs-12.col-sm-6
+          #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title
+                  %a{"aria-controls" => "leads", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#leads", :role => "button"}
+                    Leads Online Info
+              #leads.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  %li.list-group-item
+                    = "Leads Online Store ID"
+                    .pull-right
+                      = "#{current_user.company.leads_online_store_id}"
+                  %li.list-group-item
+                    = "Leads Online FTP Username"
+                    .pull-right
+                      = "#{current_user.company.leads_online_ftp_username}"
+                  %li.list-group-item
+                    = "Leads Online FTP Password"
+                    .pull-right
+                      = "#{current_user.company.leads_online_ftp_password}"
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}
