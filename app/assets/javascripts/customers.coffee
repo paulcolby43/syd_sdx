@@ -196,3 +196,143 @@ jQuery ->
     
     drivers_license_scan_and_search_ajax()
     ### End Find or create by license scan ###
+
+  ### Customer Camera Trigger ###
+  $('.customer_camera_trigger').click ->
+    # Get data from button
+    this_customer_id = $(this).data( "customer-id" )
+    this_event_code = $('#cust_pic_file_event_code').val()
+    this_yard_id = $(this).data( "yard-id")
+    this_camera_name = $(this).data( "camera-name" )
+    this_vin_number = $('#cust_pic_file_vin_number').val()
+    this_tag_number = $('#cust_pic_file_tag_number').val()
+    if $('#customer_first_name').length > 0
+      this_first_name = $('#customer_first_name').val()
+    else
+      this_first_name = $(this).data( "first-name" )
+    if $('#customer_last_name').length > 0
+      this_last_name = $('#customer_last_name').val()
+    else
+      this_last_name = $(this).data( "last-name" )
+      
+    camera_icon = $(this).find( ".fa-camera" )
+    camera_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
+
+    # Make call to trigger customer camera
+    $.ajax
+      url: "/devices/customer_camera_trigger"
+      dataType: 'json'
+      data:
+        customer_number: this_customer_id
+        customer_first_name: this_first_name
+        customer_last_name: this_last_name
+        event_code: this_event_code
+        yard_id: this_yard_id
+        camera_name: this_camera_name
+        vin_number: this_vin_number
+        tag_number: this_tag_number
+      success: (response) ->
+        spinner_icon.hide()
+        camera_icon.show()
+        return
+      error: ->
+        spinner_icon.hide()
+        camera_icon.show()
+        return
+  ### End Customer Camera Trigger ###
+
+  ### Customer scale camera trigger ###
+  $('.customer_scale_camera_trigger').click ->
+    # Get data from button
+    this_customer_id = $(this).data( "customer-id" )
+    this_event_code = $('#cust_pic_file_event_code').val()
+    this_yard_id = $(this).data( "yard-id")
+    this_camera_name = $(this).data( "camera-name" )
+    this_vin_number = $('#cust_pic_file_vin_number').val()
+    this_tag_number = $('#cust_pic_file_tag_number').val()
+    if $('#customer_first_name').length > 0
+      this_first_name = $('#customer_first_name').val()
+    else
+      this_first_name = $(this).data( "first-name" )
+    if $('#customer_last_name').length > 0
+      this_last_name = $('#customer_last_name').val()
+    else
+      this_last_name = $(this).data( "last-name" )
+      
+    camera_icon = $(this).find( ".fa-camera" )
+    camera_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
+
+    # Make call to trigger customer camera
+    $.ajax
+      url: "/devices/customer_scale_camera_trigger"
+      dataType: 'json'
+      data:
+        customer_number: this_customer_id
+        customer_first_name: this_first_name
+        customer_last_name: this_last_name
+        event_code: this_event_code
+        yard_id: this_yard_id
+        camera_name: this_camera_name
+        vin_number: this_vin_number
+        tag_number: this_tag_number
+      success: (response) ->
+        spinner_icon.hide()
+        camera_icon.show()
+        return
+      error: ->
+        spinner_icon.hide()
+        camera_icon.show()
+        return
+  ### End Customer scale camera trigger ###
+
+  ### Customer Scanner Trigger ###
+  $('.customer_scanner_trigger').click ->
+    # Get data from button
+    this_customer_id = $(this).data( "customer-id" )
+    this_event_code = $('#cust_pic_file_event_code').val()
+    this_yard_id = $(this).data( "yard-id")
+    this_camera_name = $(this).data( "camera-name" )
+    this_vin_number = $('#cust_pic_file_vin_number').val()
+    this_tag_number = $('#cust_pic_file_tag_number').val()
+    if $('#customer_first_name').length > 0
+      this_first_name = $('#customer_first_name').val()
+    else
+      this_first_name = $(this).data( "first-name" )
+    if $('#customer_last_name').length > 0
+      this_last_name = $('#customer_last_name').val()
+    else
+      this_last_name = $(this).data( "last-name" )
+      
+    scanner_icon = $(this).find( ".fa-newspaper-o" )
+    scanner_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
+
+    # Make call to trigger customer scanner
+    $.ajax
+      url: "/devices/customer_scanner_trigger"
+      dataType: 'json'
+      data:
+        customer_number: this_customer_id
+        customer_first_name: this_first_name
+        customer_last_name: this_last_name
+        event_code: this_event_code
+        yard_id: this_yard_id
+        camera_name: this_camera_name
+        vin_number: this_vin_number
+        tag_number: this_tag_number
+      success: (response) ->
+        spinner_icon.hide()
+        scanner_icon.show()
+        #alert 'Customer scanner trigger successful.'
+        return
+      error: ->
+        spinner_icon.hide()
+        scanner_icon.show()
+        #alert 'Customer scanner trigger failed'
+        return
+  ### End Customer Scanner Trigger ###

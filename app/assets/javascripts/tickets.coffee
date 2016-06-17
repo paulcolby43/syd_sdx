@@ -214,11 +214,60 @@ jQuery ->
     return
   ### End clear the commodity picture upload fields for generic picture uploads ###
 
-  $ ->
-    $('[data-toggle="popover"]').popover()
+  $('[data-toggle="popover"]').popover()
+
+  # Dismiss popovers when click outside of popover
+  $('body').on 'click', (e) ->
+    $('[data-toggle="popover"]').each ->
+      #the 'is' for buttons that trigger popups
+      #the 'has' for icons within a button that triggers a popup
+      if !$(this).is(e.target) and $(this).has(e.target).length == 0 and $('.popover').has(e.target).length == 0
+        $(this).popover 'hide'
+      return
     return
 
-  ### Payments ###
+  # Don't require two clicks to re-show popover after clicked once already
+  $('body').on 'hidden.bs.popover', (e) ->
+    $(e.target).data('bs.popover').inState =
+      click: false
+      hover: false
+      focus: false
+    return
+
+  ### Quick Payment of Ticket form Ticket Index Page ###
+  # Choose a checking account to pay ticket with
+  $('body').on 'click', '.checking_account', ->
+    $('#finding_check_number_spinner').show()
+    $('.fa-hashtag').hide()
+    $('#check_number_field').show()
+    checking_account_id = $(this).data( "checking-account-id" )
+    checking_account_name = $(this).data( "checking-account-name" )
+    $.ajax
+      url: "/checking_accounts/" + checking_account_id
+      dataType: 'json'
+      success: (data) ->
+        #console.log 'success', data
+        $('#finding_check_number_spinner').hide()
+        $('.fa-hashtag').show()
+        $('#checking_account_payment_check_number').val data.NextNo
+        $('#checking_account_payment_id').val checking_account_id
+        $('#checking_account_payment_name').val checking_account_name
+        return
+      error: ->
+        $('#finding_check_number_spinner').hide()
+        $('.fa-hashtag').show()
+        alert 'Error getting next check number.'
+        return
+    return
+
+  # Choose cash to pay ticket with
+  $('body').on 'click', '.cash_account', ->
+    $('#checking_account_payment_check_number').val ''
+    $('#check_number_field').hide()
+    return
+  ### End Quick Payment of Ticket form Ticket Index Page ###
+
+  ### Payment within Ticket ###
   # Choose a checking account to pay ticket with
   $('#payment_form').on 'click', '.checking_account', ->
     $('#finding_check_number_spinner').show()
@@ -239,7 +288,6 @@ jQuery ->
         $('.fa-hashtag').show()
         alert 'Error getting next check number.'
         return
-    
     return
 
   # Choose cash to pay ticket with
@@ -248,7 +296,7 @@ jQuery ->
     $('#check_number_field').hide()
     #alert checking_account_id
     return
-  ### End Payments ###
+  ### End Payment within Ticket ###
 
   ### Event code changed - clear data; check if License Plate or VIN or Vehicle ###
   $('#image_file_event_code').on 'change', ->
@@ -375,11 +423,13 @@ jQuery ->
     this_ticket_number = $(this).data( "ticket-number" )
     device_id = $(this).data( "device-id" )
     this_event_code = $('#image_file_event_code').val()
-    this_yard_id = $(this).data( "yard-id" )
+    this_yard_id = $(this).data( "yard-id")
     this_customer_number = $(this).data( "customer-id" )
     this_vin_number = $('#image_file_vin_number').val()
     this_tag_number = $('#image_file_tag_number').val()
       
+    scanner_icon = $(this).find( ".fa-newspaper-o" )
+    scanner_icon.hide()
     spinner_icon = $(this).find('.fa-spinner')
     spinner_icon.show()
 
@@ -396,9 +446,11 @@ jQuery ->
         tag_number: this_tag_number
       success: (response) ->
         spinner_icon.hide()
+        scanner_icon.show()
         return
       error: ->
         spinner_icon.hide()
+        scanner_icon.show()
         alert 'Scanner trigger failed'
         return
   ### End Scanner Trigger ###

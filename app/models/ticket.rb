@@ -324,8 +324,7 @@ class Ticket
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
-#    Rails.logger.info data
-#    return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
+#    Rails.logger.info "******************* Pay by cash: #{data} *******************************"
     return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
   
@@ -367,9 +366,9 @@ class Ticket
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
       
-      data= Hash.from_xml(response)
-#      return data["ApiItemsResponseOfApiPayAccountsPayableLineItemResponsedmIQzVzw"]["Success"]
-      return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
+    data= Hash.from_xml(response)
+    Rails.logger.info "******************* Pay by check: #{data} *******************************"
+    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
   
   def self.total_paid(auth_token, yard_id, ticket_id)

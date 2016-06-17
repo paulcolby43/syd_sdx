@@ -14,7 +14,8 @@ class User < ActiveRecord::Base
   before_create :confirmation_token
   after_commit :create_user_settings, :on => :create
   after_create :create_company, unless: :company?
-  
+  after_commit :send_registration_notice_email, :on => :create
+    
   validates :password, confirmation: true
   validates :password_confirmation, presence: true, on: :create
   validates_presence_of :role, :message => 'Please select type of user.'
@@ -27,7 +28,7 @@ class User < ActiveRecord::Base
   validates_presence_of :city
   validates_presence_of :state
   validates_uniqueness_of :username, scope: :dragon_account_number, case_sensitive: false
-#  validates_uniqueness_of :email
+  validates_uniqueness_of :email
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
@@ -134,7 +135,7 @@ class User < ActiveRecord::Base
       "LastName" => user_params[:last_name],
       "Email" => user_params[:email],
       "YardId" => user_params[:yard_id],
-      "CustomerIdCollection" => [user_params[:customer_guid]],
+      "CustomerIdCollection" => [user_params[:customer_guid]]
       }
     json_encoded_payload = JSON.generate(payload)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
@@ -142,6 +143,19 @@ class User < ActiveRecord::Base
     data= Hash.from_xml(response)
     Rails.logger.info data
     return data["AddApiCustomerUserResponse"]
+  end
+  
+  def reset_scrap_dragon_password(new_password)
+    api_url = "https://#{company.dragon_api}/api/user/#{username}/password"
+    
+    payload = {
+      "Password" => new_password
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{user.token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info data
   end
   
   def yards
@@ -265,6 +279,10 @@ class User < ActiveRecord::Base
     access_token.token_string
   end
   
+  def send_registration_notice_email
+    NewUserRegistrationWorker.perform_async(self.id) # Send out admin email to notify of new user registration, in sidekiq background process
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -381,6 +399,17 @@ class User < ActiveRecord::Base
     data= Hash.from_xml(response)
     Rails.logger.info data
     return data["AddApiCustomerUserResponse"]
+  end
+  
+  def send_password_reset
+    create_password_reset_token
+    self.password_reset_sent_at = Time.zone.now
+    save!
+    UserMailer.forgot_password_instructions(self).deliver
+  end
+  
+  def create_password_reset_token
+    self.password_reset_token = SecureRandom.urlsafe_base64.to_s
   end
   
   private

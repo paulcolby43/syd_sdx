@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  resources :password_resets
+
   resources :devices do
     member do
       get :drivers_license_scan
@@ -82,6 +84,7 @@ Rails.application.routes.draw do
     end
     collection do
       get :resend_confirmation_instructions
+      get :send_forgot_password_instructions
     end
   end
   
