@@ -22,18 +22,18 @@ class PasswordResetsController < ApplicationController
   
   def update
     @user = User.find_by_password_reset_token!(params[:id])
-    if @user.password_reset_sent_at < 2.hours.ago
+    if @user.blank? or @user.password_reset_sent_at < 2.hours.ago
       flash[:danger] = "Password reset has expired."
       redirect_to new_password_reset_path
     else
-#      @user.reset_scrap_dragon_password(params[:user][:password]) unless params[:user].blank?
-      flash[:success] = "Password has been reset."
-      redirect_to login_path
-#      if @user.update_attributes(params[:user])
-#        redirect_to root_url, :notice => "Password has been reset."
-#      else
-#        render :edit
-#      end
+      reset_scrap_dragon_password_response = @user.reset_scrap_dragon_password(@user.id, params[:user][:password]) unless params[:user].blank?
+      if reset_scrap_dragon_password_response["Success"] == 'true'
+        flash[:success] = "Password has been reset."
+        redirect_to login_path
+      else
+        flash[:danger] = "There was a problem resetting your password: #{reset_scrap_dragon_password_response["FailureInformation"]}"
+        redirect_to login_path
+      end
     end
   end
   
