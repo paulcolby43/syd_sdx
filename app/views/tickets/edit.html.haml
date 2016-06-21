@@ -12,11 +12,12 @@
       = render partial: "payment_modal"
       - if @ticket['Status'] == '3'
         .well
+          =# @accounts_payable_items.first
+          =# @apcashier
           %p
-            = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
-            - if @accounts_payable_items.first['CheckNumber'].is_a? Integer
-              %br
-              = "Check Number: #{@accounts_payable_items.first['CheckNumber']}"
+            = "Payment by #{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+          - if @apcashier['PaymentMethod'] == '1'
+            = "Check Number: #{@apcashier['CheckNumber']}"
       #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         .panel.panel-default
           %div.panel-heading{:role => "tab", id: "vendor_heading"}
