@@ -19,6 +19,10 @@
           = title
         .col-xs-4.col-sm-4
           - unless current_user.customer?
-            %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+            %a{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' Ticket'}"}} 
               %i.fa.fa-ticket.fa-lg
               = "Ticket" unless mobile_device?
+            -#
+              %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+                %i.fa.fa-ticket.fa-lg
+                = "Ticket" unless mobile_device?
