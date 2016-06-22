@@ -145,8 +145,9 @@ class User < ActiveRecord::Base
     return data["AddApiCustomerUserResponse"]
   end
   
-  def reset_scrap_dragon_password(new_password)
-    api_url = "https://#{company.dragon_api}/api/user/#{username}/password"
+  def reset_scrap_dragon_password(user_id, new_password)
+    user = User.find(user_id)
+    api_url = "https://#{user.company.dragon_api}/api/user/#{user.username}/password"
     
     payload = {
       "Password" => new_password
@@ -155,7 +156,8 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{user.token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
+    return data["ResetUserPasswordResponse"]
   end
   
   def yards

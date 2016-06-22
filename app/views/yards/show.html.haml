@@ -30,9 +30,9 @@
             %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
               %i.fa.fa-image.fa-lg
               Pictures
-          %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Quick Ticket'}"}} 
+          %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Ticket'}"}} 
             %i.fa.fa-ticket.fa-lg
-            = "Quick Ticket" unless mobile_device?
+            = "Ticket" unless mobile_device?
     %div.row
       %p
         .col-xs-6

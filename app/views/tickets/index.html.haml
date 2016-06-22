@@ -11,9 +11,13 @@
           %a{href: tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Closed'}"}}
             %i.fa.fa-folder.fa-lg
             = "Closed" unless mobile_device?
-          %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
-            %i.fa.fa-dollar.fa-lg
-            = "Paid" unless mobile_device?
+          %a{href: customers_path, :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Customers'}"}}
+            %i.fa.fa-users.fa-lg
+            = "Customers" unless mobile_device?
+          -#
+            %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
+              %i.fa.fa-dollar.fa-lg
+              = "Paid" unless mobile_device?
         - elsif @status == '1'
           %a{href: tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Held'}"}}
             %i.fa.fa-folder-open-o.fa-lg
@@ -21,9 +25,9 @@
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-folder.fa-lg
             = "Closed" unless mobile_device?
-          %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
-            %i.fa.fa-dollar.fa-lg
-            = "Paid" unless mobile_device?
+          %a{href: customers_path, :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Customers'}"}}
+            %i.fa.fa-users.fa-lg
+            = "Customers" unless mobile_device?
         - elsif @status == '3'
           %a{href: tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Held'}"}}
             %i.fa.fa-folder-open-o.fa-lg

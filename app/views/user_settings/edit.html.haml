@@ -93,7 +93,8 @@
             .panel-heading
               %h5.panel-title 
                 Scrap Dragon API
-                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+                -#
+                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
             %ul.list-group
               %li.list-group-item
                 = "Location"
