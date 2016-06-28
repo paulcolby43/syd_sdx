@@ -22,6 +22,13 @@
           %i.fa.fa-dollar.fa-lg
         = text_field_tag "ticket[line_items][][price]", nil, :placeholder => "Rate", class: "form-control input-lg amount-calculation-field", required: true
       = hidden_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+      %br
+      %a{"aria-controls" => "more_#{index}", "aria-expanded" => "false", "data-target" => "#more_#{index}", "data-toggle" => "collapse"}
+        More
+      %div.collapse{id: "more_#{index}"}
+        = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
+        %br
+        = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
   %div.panel-footer
     %ul{class: 'list-inline'}
       %li.calculation_details
