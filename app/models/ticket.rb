@@ -179,7 +179,7 @@ class Ticket
   end
   
   # Add a line item to a ticket
-  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount)
+  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount, notes, serial_number)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
@@ -195,14 +195,14 @@ class Ticket
           "GrossWeight" => gross,
           "Id" => SecureRandom.uuid, 
           "NetWeight" => net,
-          "Notes" => "", 
+          "Notes" => notes, 
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
           "Quantity" => amount,
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
-          "SerialNumber" => "", 
+          "SerialNumber" => serial_number, 
           "Status" => 'Hold', 
          "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
@@ -216,7 +216,7 @@ class Ticket
   end
   
   # Update line item of ticket
-  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
+  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
@@ -232,14 +232,14 @@ class Ticket
           "GrossWeight" => gross,
           "Id" => item_id, 
           "NetWeight" => net,
-          "Notes" => "", 
+          "Notes" => notes, 
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
           "Quantity" => amount,
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
-          "SerialNumber" => "", 
+          "SerialNumber" => serial_number, 
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
