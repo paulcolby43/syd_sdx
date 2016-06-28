@@ -30,7 +30,7 @@ every :reboot do
   job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_prod && :task :output"
   
   application "bundle exec unicorn -l 3000 -E production -c ./config/unicorn.rb"
-#  command "redis-server" # Start redis
+  command "redis-server" # Start redis
   application "bundle exec sidekiq"
 end
 #
