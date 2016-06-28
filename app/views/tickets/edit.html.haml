@@ -105,12 +105,13 @@
                           = text_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                       = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                       %br
-                      %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
-                        More
-                      %div.collapse{id: "more_#{line_item['Id']}"}
-                        = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
-                        %br
-                        = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+                      %p
+                        %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
+                          More
+                        %div.collapse{id: "more_#{line_item['Id']}"}
+                          = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
+                          %br
+                          = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
                   .panel-footer
                     %ul{class: 'list-inline'}
                       %li.calculation_details
@@ -186,12 +187,13 @@
                       = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                     %br
-                    %a{"aria-controls" => "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse"}
-                      More
-                    %div.collapse{id: "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
-                      = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
-                      %br
-                      = text_area_tag "ticket[line_items][][notes]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+                    %p
+                      %a{"aria-controls" => "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse"}
+                        More
+                      %div.collapse{id: "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
+                        = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
+                        %br
+                        = text_area_tag "ticket[line_items][][notes]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'], :placeholder => "Notes", class: "form-control input-lg"
                 .panel-footer
                   %ul{class: 'list-inline'}
                     %li.calculation_details
@@ -263,12 +265,13 @@
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                   %br
-                  %a{"aria-controls" => "more#{1}", "aria-expanded" => "false", "data-target" => "#more_#{1}", "data-toggle" => "collapse"}
-                    More
-                  %div.collapse{id: "more_#{1}"}
-                    = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
-                    %br
-                    = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
+                  %p
+                    %a{"aria-controls" => "more#{1}", "aria-expanded" => "false", "data-target" => "#more_#{1}", "data-toggle" => "collapse"}
+                      More
+                    %div.collapse{id: "more_#{1}"}
+                      = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
+                      %br
+                      = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
               %div.panel-footer
                 %ul{class: 'list-inline'}
                   %li.calculation_details
