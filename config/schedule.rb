@@ -31,7 +31,7 @@ every :reboot do
   
   application "bundle exec unicorn -l 3000 -E production -c ./config/unicorn.rb"
   command "redis-server" # Start redis
-  application "bundle exec sidekiq"
+  application "bundle exec sidekiq -e production"
 end
 #
 ## Clear out public/uploads/tmp directory
