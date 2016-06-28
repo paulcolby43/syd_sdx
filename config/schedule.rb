@@ -24,10 +24,10 @@ set :environment, 'production'
 
 every :reboot do
   # CentOS VM
-  job_type :application, "cd /usr/local/Ruby/syd_sdx_prod && :task :output"
+#  job_type :application, "cd /usr/local/Ruby/syd_sdx_prod && :task :output"
 #  
   # Mac Mini
-#  job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_dev && :task :output"
+  job_type :application, "cd /Users/syd/RubyProjects/syd_sdx_prod && :task :output"
   
   application "bundle exec unicorn -l 3000 -E production -c ./config/unicorn.rb"
 #  command "redis-server" # Start redis
