@@ -5,7 +5,8 @@
       %h3.panel-title
         %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
           = line_item_group
-          #details.pull-right
+          #details.text-muted.pull-right
+            = "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
             = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
     %div.panel-collapse.collapse{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
       %table.table.table-striped.table-responsive

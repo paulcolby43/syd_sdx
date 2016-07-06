@@ -5,7 +5,7 @@
       %h3.panel-title
         %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
           = ticket_group
-          #details.pull-right
+          #details.text-muted.pull-right
             = number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
     %div.panel-collapse.collapse{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
       %table.table.table-striped.table-responsive
