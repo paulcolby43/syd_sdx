@@ -13,7 +13,7 @@
           .input-group
             .input-group-addon
               %i.fa.fa-dollar
-            = text_field_tag :payment_amount, "#{ticket['TicketItemCollection'].blank? ? nil : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])}", :placeholder => "Amount", class: "form-control input-lg", readonly: true
+            = text_field_tag :payment_amount, "#{ticket['TicketItemCollection'].blank? ? nil : number_with_precision(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']), precision: 2)}", :placeholder => "Amount", class: "form-control input-lg", readonly: true
           %br
           .btn-group-vertical.btn-block{"data-toggle" => "buttons"}
             %label.btn.btn-lg.btn-default{class: 'active cash_account'}

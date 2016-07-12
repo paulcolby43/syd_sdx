@@ -10,6 +10,7 @@
                   %i.fa.fa-ticket
                   Ticket
             %p.lead
+              = customer["CustomerNumber"]
               - unless customer["FirstName"].blank? and customer["LastName"].blank?
                 = "#{customer["FirstName"]} #{customer["LastName"]}"
               - else
