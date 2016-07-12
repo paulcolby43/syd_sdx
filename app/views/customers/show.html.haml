@@ -1,8 +1,8 @@
 = render partial: "shared/navbars/show_customer_navbar", locals: {title: "#{@customer['FirstName']} #{@customer['LastName']}"}
+-#
+.well
+  %p= @customer
 .jumbotron{style: 'background-color: #FFFFFF;'}
-  -#
-    .well
-      %p= @customer
   .container
     - if current_user.admin?
       - unless @customer_user.blank?
@@ -21,6 +21,10 @@
             Customer Photo ID is missing or expired.
     %div.panel.panel-primary
       %div.list_group
+        %div.list-group-item
+          %strong= "Number:"
+          .pull-right
+            = "#{@customer['CustomerNumber']}"
         %div.list-group-item
           %strong= "First Name:"
           .pull-right

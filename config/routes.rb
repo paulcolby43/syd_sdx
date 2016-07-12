@@ -93,6 +93,7 @@ Rails.application.routes.draw do
   resources :commodities do
     member do
       put 'update_price'
+      get :price
     end
   end
   

@@ -100,26 +100,35 @@ jQuery ->
   $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
     item_id = $(this).val()
     input_select = $(this)
-    $.ajax(url: "/commodities/" + item_id, dataType: 'json').done (data) ->
-      name = data.name
-      price = parseFloat(data.price).toFixed(3)
-      #console.log 'success', price
-      net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
-      input_select.closest('.panel').find('.calculation_details').text ''
-      input_select.closest('.panel').find('.line_item_name').text name
+    current_customer_id = $('#ticket_customer_id').val()
+    $.ajax
+      url: "/commodities/" + item_id + "/price"
+      dataType: 'json'
+      data:
+        customer_id: current_customer_id
+      success: (data) ->
+        name = data.name
+        price = parseFloat(data.price).toFixed(3)
+        #console.log 'success', price
+        net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
+        input_select.closest('.panel').find('.calculation_details').text ''
+        input_select.closest('.panel').find('.line_item_name').text name
 
-      input_select.closest('.panel').find('#ticket_line_items__price:first').val price
-      amount = (parseFloat(price) * parseFloat(net))
-      input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
-      input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
-      input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
-      input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
-      input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
-      input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
-      input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
-      $('.amount-calculation-field').keyup()
-
-      return
+        input_select.closest('.panel').find('#ticket_line_items__price:first').val price
+        amount = (parseFloat(price) * parseFloat(net))
+        input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
+        input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
+        input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
+        input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
+        input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
+        input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
+        input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
+        $('.amount-calculation-field').keyup()
+        return
+      error: ->
+        alert 'Error getting commodity price.'
+        return
+    return
   ### End line item changed ###
 
   ### Line item calculation field value changed ###
@@ -644,8 +653,9 @@ jQuery ->
         return
   ### End finger print reader ###
 
-  # Invoke select to pull pricing if new ticket comes in from work order
-  $('.new_item').find('#ticket_line_items__commodity').trigger 'change'
+  # Invoke select to pull pricing if new ticket comes in from work order with a commodity
+  if $('.new_item').find('#ticket_line_items__commodity').val()
+    $('.new_item').find('#ticket_line_items__commodity').trigger 'change'
 
   # Dropdown select for ticket's customer
   $('#ticket_customer_id').select2
@@ -665,4 +675,5 @@ jQuery ->
     panel.closest('.collapse').collapse('toggle')
     $(this).closest('.panel-collapse').collapse('hide')
     input_select.closest('.panel').find('#vendor_name').text name
+    $('.item_select').trigger 'change' # Re-select line items in case new pricing needs to be applied
   ### End Customer ID changed ###
