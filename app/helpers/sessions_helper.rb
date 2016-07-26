@@ -29,7 +29,7 @@ module SessionsHelper
 
   # Returns true if the user is logged in, false otherwise.
   def logged_in?
-    !current_user.nil?
+    !current_user.nil? and !current_user.access_token.expired?
   end
   
   def log_out

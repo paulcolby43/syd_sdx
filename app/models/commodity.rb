@@ -204,4 +204,52 @@ class Commodity
     return data["BaseResponse"]["Success"]
   end
   
+  def self.price(auth_token, commodity_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/commodity/#{commodity_id}/price"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    
+    Rails.logger.info data
+#    price = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["Price"]
+    response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
+    return response
+  end
+  
+  def self.price_by_customer(auth_token, commodity_id, customer_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/commodity/#{commodity_id}/price?customerId=#{customer_id}"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    
+    Rails.logger.info data
+#    response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
+    price = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["Price"]
+    return price
+  end
+  
+  def self.taxes_by_customer(auth_token, commodity_id, customer_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/commodity/#{commodity_id}/price?customerId=#{customer_id}"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    
+    Rails.logger.info data
+#    response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
+    if data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"].is_a? Hash # Only one tax collection result returned
+      unless data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"]["ApiTax"].blank?
+        return [data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"]["ApiTax"]]
+      else
+        nil # No tax
+      end
+    else
+      # Multiple taxes
+#      return data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"]
+      return data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"].map{ |x| x["ApiTax"]}
+    end
+  end
+  
 end
