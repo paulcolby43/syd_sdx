@@ -46,7 +46,7 @@
   %tbody
     - unless @ticket["TicketItemCollection"].blank?
       - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
-        - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+        - @line_items.each do |line_item|
           %tr
             %td= "#{line_item['PrintDescription']}:"
             %td= line_item['GrossWeight']
