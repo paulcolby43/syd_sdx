@@ -151,7 +151,9 @@ class TicketsController < ApplicationController
         else
           flash[:danger] = 'Error updating ticket.'
         end
-        redirect_to tickets_path(status: ticket_params[:status])
+        redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
+        # Redirect to paid tickets list so can print
+        redirect_to tickets_path(status: '3') if params[:pay_ticket] or params[:close_and_pay_ticket]
         }
     end
   end
