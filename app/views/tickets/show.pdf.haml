@@ -9,6 +9,15 @@
     = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 %strong= current_user.company.name
+%br
+- unless @current_user.company.custom_field_1.blank? and @current_user.company.custom_field_1_value.blank?
+  %strong= "#{@current_user.company.custom_field_1}: "
+  = @current_user.company.custom_field_1_value
+  %br
+- unless @current_user.company.custom_field_2.blank? and @current_user.company.custom_field_2_value.blank?
+  %strong= "#{@current_user.company.custom_field_2}: "
+  = @current_user.company.custom_field_2_value
+  %br
 -#
   %br
   - unless @company_info.company_address.blank?
