@@ -29,7 +29,11 @@
             %tr
               %td= line_item["DateCreated"].to_date.strftime("%m/%d/%y")
               %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
-              %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+              %td
+                - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
+                  = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+                - else
+                  = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
               %td= "#{line_item['NetWeight'].to_d.round(2)}"
               %td= "#{number_to_currency(line_item['Price'])}"
               %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
