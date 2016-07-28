@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160614143951) do
+ActiveRecord::Schema.define(version: 20160728182141) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -62,6 +62,10 @@ ActiveRecord::Schema.define(version: 20160614143951) do
     t.string  "leads_online_ftp_password"
     t.string  "account_number"
     t.boolean "include_leads_online",      default: true
+    t.string  "custom_field_1"
+    t.string  "custom_field_1_value"
+    t.string  "custom_field_2"
+    t.string  "custom_field_2_value"
   end
 
   create_table "cust_pic_files", force: true do |t|
