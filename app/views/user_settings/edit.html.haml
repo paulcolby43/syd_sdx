@@ -104,26 +104,26 @@
                 = "Yard ID"
                 .pull-right
                   = "#{current_yard_id}"
-        - if current_user.company.include_leads_online? 
-          .col-xs-12.col-sm-6
-            .panel.panel-default
-              .panel-heading
-                %h5.panel-title 
-                  Leads Online Info 
-                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
-              %ul.list-group
-                %li.list-group-item
-                  = "Leads Online Store ID"
-                  .pull-right
-                    = "#{current_user.company.leads_online_store_id}"
-                %li.list-group-item
-                  = "Leads Online FTP Username"
-                  .pull-right
-                    = "#{current_user.company.leads_online_ftp_username}"
-                %li.list-group-item
-                  = "Leads Online FTP Password"
-                  .pull-right
-                    = "#{current_user.company.leads_online_ftp_password}"
+        -# if current_user.company.include_leads_online? 
+        .col-xs-12.col-sm-6
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                Company Info 
+                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+            %ul.list-group
+              %li.list-group-item
+                = "Leads Online Store ID"
+                .pull-right
+                  = "#{current_user.company.leads_online_store_id}"
+              %li.list-group-item
+                = "Leads Online FTP Username"
+                .pull-right
+                  = "#{current_user.company.leads_online_ftp_username}"
+              %li.list-group-item
+                = "Leads Online FTP Password"
+                .pull-right
+                  = "#{current_user.company.leads_online_ftp_password}"
 
       .row
         .col-sm-6.col-md-4.col-md-offset-4
