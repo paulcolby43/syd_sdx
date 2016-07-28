@@ -78,6 +78,7 @@ class DevicesController < ApplicationController
 #      format.json {render json: {"name" => @item.name, "description" => @item.description, "unit_price" => @item.unit_price} } 
       format.json {
         unless scan_result_hash.blank?
+          Rails.logger.info "*****************************results: {#{scan_result_hash}}"
           render json: {
             "firstname" => scan_result_hash["FIRSTNAME"], "lastname" => scan_result_hash["LASTNAME"], "licensenumber" => scan_result_hash["LICENSENUMBER"], "dob" => scan_result_hash["DOB"],
             "sex" => scan_result_hash["SEX"], "issue_date" => scan_result_hash["ISSDATE"], "expiration_date" => scan_result_hash["EXPDATE"],
