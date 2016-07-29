@@ -1,5 +1,6 @@
 %p.lead Customer Summary Report
-- @tickets.group_by{ |t| t['Company']}.each_with_index do |(ticket_group, tickets), index|
+-# @tickets.group_by{ |t| t['Company']}.each_with_index do |(ticket_group, tickets), index|
+- @tickets.group_by{ |t| "#{t['FirstName']} #{t['LastName']}"}.each_with_index do |(ticket_group, tickets), index|
   %div.panel.panel-default
     %div.panel-heading
       %h3.panel-title
