@@ -151,6 +151,12 @@
                   = "Name"
                   .pull-right
                     = "#{current_user.company.name}"
+                - unless current_user.company.full_address.blank?
+                  %li.list-group-item
+                    = current_user.company.full_address.html_safe
+                %li.list-group-item
+                  Phone
+                  .pull-right= current_user.company.phone
                 - unless current_user.company.custom_field_1.blank? and current_user.company.custom_field_1_value.blank?
                   %li.list-group-item
                     = current_user.company.custom_field_1

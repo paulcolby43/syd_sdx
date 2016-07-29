@@ -20,6 +20,12 @@ class Company < ActiveRecord::Base
     end
   end
   
+  def full_address
+    unless (address1.blank? and city.blank? and state.blank? and zip.blank?)
+      "#{address1}<br>#{address2.blank? ? '' : address2 + '<br>'} #{city} #{state} #{zip}"
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################
