@@ -55,7 +55,7 @@ class Ticket
   def self.all_by_date(status, auth_token, yard_id, start_date, end_date)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}&enddate=#{end_date}&t=200"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T24:59:59&t=200"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
     data= Hash.from_xml(xml_content)
