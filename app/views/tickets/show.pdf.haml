@@ -9,6 +9,12 @@
     = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 %strong= current_user.company.name
+- unless current_user.company.full_address.blank?
+  %br
+  = current_user.company.full_address.html_safe
+- unless current_user.company.phone.blank?
+  %br
+  = current_user.company.phone
 %br
 - unless @current_user.company.custom_field_1.blank? and @current_user.company.custom_field_1_value.blank?
   %strong= "#{@current_user.company.custom_field_1}: "

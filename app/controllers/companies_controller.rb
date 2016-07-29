@@ -82,6 +82,6 @@ class CompaniesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_params
       params.require(:company).permit(:name, :dragon_api, :leads_online_store_id, :leads_online_ftp_username, :leads_online_ftp_password,
-      :custom_field_1, :custom_field_2, :custom_field_1_value, :custom_field_2_value)
+      :custom_field_1, :custom_field_2, :custom_field_1_value, :custom_field_2_value, :address1, :address2, :city, :state, :zip, :phone)
     end
 end
