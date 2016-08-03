@@ -58,9 +58,21 @@ class TicketsController < ApplicationController
       format.pdf do
         @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
         @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
-        render pdf: "ticket#{@ticket_number}",
-          :layout => 'pdf.html.haml',
-          :zoom => 1.25
+        unless current_user.printer_devices.blank?
+          printer = current_user.printer_devices.last
+          render pdf: "ticket#{@ticket_number}",
+            :layout => 'pdf.html.haml',
+#            :zoom => 1.25
+            :zoom => "#{printer.PrinterWidth < 10 ? 2 : 1.25}",
+            :save_to_file => Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf")
+          printer.call_printer_for_ticket_pdf(Base64.encode64(File.binread(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))))
+          # Remove the temporary pdf file that was created above
+          FileUtils.remove(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))
+        else
+          render pdf: "ticket#{@ticket_number}",
+            :layout => 'pdf.html.haml',
+            :zoom => 1.25
+        end
       end
     end
   end
