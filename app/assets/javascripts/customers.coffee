@@ -79,6 +79,10 @@ jQuery ->
     device_id = $(this).data( "device-id" )
     customer_number = $(this).data( "customer-id" )
     yard_id = $(this).data( "yard-id" )
+    user_icon = $(this).find( ".fa-user" )
+    user_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
     save_license_scan_to_jpegger_ajax = ->
       $.ajax
         url: "/devices/" + device_id + "/drivers_license_camera_trigger"
@@ -99,7 +103,9 @@ jQuery ->
           state: $('#customer_state').val()
           zip: $('#customer_zip').val()
         success: (data) ->
-          $('.save_to_jpegger_spinner').hide()
+          #$('.save_to_jpegger_spinner').hide()
+          spinner_icon.hide()
+          user_icon.show()
           #alert 'Saved scanned image to Jpegger.'
           return
         error: ->
