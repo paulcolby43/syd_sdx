@@ -109,7 +109,9 @@ jQuery ->
           #alert 'Saved scanned image to Jpegger.'
           return
         error: ->
-          $('.save_to_jpegger_spinner').hide()
+          spinner_icon.hide()
+          user_icon.show()
+          #$('.save_to_jpegger_spinner').hide()
           #alert 'Error saving scanned image to Jpegger.'
           return
     
