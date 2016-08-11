@@ -81,6 +81,10 @@ jQuery ->
     yard_id = $(this).data( "yard-id" )
     customer_first_name = $(this).data( "customer-first-name" )
     customer_last_name = $(this).data( "customer-last-name" )
+    if !customer_first_name #Get value from form field
+      customer_first_name = $('#customer_first_name').val()
+    if !customer_last_name #Get value from form field
+      customer_last_name = $('#customer_last_name').val()
     camera_name = $(this).data( "camera-name" )
     user_icon = $(this).find( ".fa-user" )
     user_icon.hide()
@@ -92,14 +96,8 @@ jQuery ->
         dataType: 'json'
         data:
           camera_name: camera_name
-          if typeof customer_first_name == 'undefined'
-            customer_first_name: $('#customer_first_name').val()
-          else
-            customer_first_name: customer_first_name
-          if typeof customer_last_name == 'undefined'
-            customer_last_name: $('#customer_last_name').val()
-          else
-            customer_last_name: customer_last_name
+          customer_first_name: customer_first_name
+          customer_last_name: customer_last_name
           license_number: $('#customer_id_number').val()
           #dob: $('#vendor_dob').val()
           #sex: $('#vendor_sex').val()
