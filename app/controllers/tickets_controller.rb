@@ -100,7 +100,7 @@ class TicketsController < ApplicationController
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
     @contract = Yard.contract(current_yard_id)
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
-    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
+#    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
   end
 
   # PATCH/PUT /tickets/1
