@@ -79,6 +79,9 @@ jQuery ->
     device_id = $(this).data( "device-id" )
     customer_number = $(this).data( "customer-id" )
     yard_id = $(this).data( "yard-id" )
+    customer_first_name = $(this).data( "customer-first-name" )
+    customer_last_name = $(this).data( "customer-last-name" )
+    camera_name = $(this).data( "camera-name" )
     user_icon = $(this).find( ".fa-user" )
     user_icon.hide()
     spinner_icon = $(this).find('.fa-spinner')
@@ -88,8 +91,15 @@ jQuery ->
         url: "/devices/" + device_id + "/drivers_license_camera_trigger"
         dataType: 'json'
         data:
-          customer_first_name: $('#customer_first_name').val()
-          customer_last_name: $('#customer_last_name').val()
+          camera_name: camera_name
+          if typeof customer_first_name == 'undefined'
+            customer_first_name: $('#customer_first_name').val()
+          else
+            customer_first_name: customer_first_name
+          if typeof customer_last_name == 'undefined'
+            customer_last_name: $('#customer_last_name').val()
+          else
+            customer_last_name: customer_last_name
           license_number: $('#customer_id_number').val()
           #dob: $('#vendor_dob').val()
           #sex: $('#vendor_sex').val()

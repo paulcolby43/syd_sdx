@@ -13,7 +13,7 @@
           = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
     - current_user.license_imager_devices.each do |license_imager_device|
       %li
-        %a{href: '#', class: 'save_license_scan_to_jpegger btn btn-lg btn-default', 'data-device-id' => license_imager_device.id, 'data-customer-id' => @customer['Id'], 'data-yard-id' => current_yard_id}
+        %a{href: '#', class: 'save_license_scan_to_jpegger btn btn-lg btn-default', 'data-device-id' => license_imager_device.id, 'data-customer-id' => @customer['Id'], 'data-yard-id' => current_yard_id, 'data-camera-name' => license_imager_device.DeviceName}
           %i.fa.fa-user
           %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
           = "#{license_imager_device.DeviceName}"
