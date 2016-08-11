@@ -79,8 +79,8 @@ jQuery ->
     device_id = $(this).data( "device-id" )
     customer_number = $(this).data( "customer-id" )
     yard_id = $(this).data( "yard-id" )
-    customer_first_name = $(this).data( "customer-first-name" )
-    customer_last_name = $(this).data( "customer-last-name" )
+    customer_first_name = $(this).data( "first-name" )
+    customer_last_name = $(this).data( "last-name" )
     if !customer_first_name #Get value from form field
       customer_first_name = $('#customer_first_name').val()
     if !customer_last_name #Get value from form field
