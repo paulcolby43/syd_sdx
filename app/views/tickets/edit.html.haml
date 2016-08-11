@@ -10,11 +10,13 @@
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
       =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
       = render partial: "payment_modal"
+      =# @accounts_payable_items
       - unless @accounts_payable_items.blank?
         - @accounts_payable_items.each do |accounts_payable_item|
           .well
             Amount Due:
             = number_to_currency(accounts_payable_item["AmountDue"])
+            =# accounts_payable_item
       - if @ticket['Status'] == '3'
         .well
           =# @accounts_payable_items.first

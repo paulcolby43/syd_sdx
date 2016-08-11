@@ -41,7 +41,8 @@
           = text_field_tag "customer[city]", params[:city], :placeholder => "City", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "State", nil, :class => 'control-label'
-          = text_field_tag "customer[state]", params[:state], :placeholder => "State", class: "form-control input-lg"
+          =# text_field_tag "customer[state]", params[:state], :placeholder => "State", class: "form-control input-lg"
+          = select_tag "customer[state]", options_for_select(us_states), :class => "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "Zip", nil, :class => 'control-label'
           = text_field_tag "customer[zip]", params[:zip], :placeholder => "Zip", class: "form-control input-lg"
