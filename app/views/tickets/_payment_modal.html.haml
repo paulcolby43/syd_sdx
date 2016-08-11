@@ -5,6 +5,10 @@
         Pay Ticket
         = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
       .modal-body
+        - @accounts_payable_items.each do |accounts_payable_item|
+          .well
+            = accounts_payable_item["Id"]
+            = number_to_currency(accounts_payable_item["AmountDue"])
         .input-group
           .input-group-addon
             %i.fa.fa-dollar

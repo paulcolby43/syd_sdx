@@ -42,6 +42,8 @@ class UsersController < ApplicationController
             User.generate_scrap_dragon_token(user_params, @user.id)
             UserMailer.confirmation_instructions(@user).deliver
             flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
+            redirect_to login_path if current_user.blank?
+            redirect_to users_path unless current_user.blank?
           else
             if current_user.blank?
               render :new
@@ -56,13 +58,19 @@ class UsersController < ApplicationController
               User.generate_scrap_dragon_token(user_params, @user.id)
               UserMailer.confirmation_instructions(@user).deliver
               flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
+              redirect_to login_path if current_user.blank?
+              redirect_to users_path unless current_user.blank?
+            else
+              #flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
+              render :new
             end
           else
             flash[:danger] = "There was a problem creating the user in Scrap Dragon #{create_scrap_dragon_user_response['FailureInformation']}"
+            redirect_to login_path if current_user.blank?
+            redirect_to users_path unless current_user.blank?
           end
         end
-        redirect_to login_path if current_user.blank?
-        redirect_to users_path unless current_user.blank?
+        
         }
     end
   end
