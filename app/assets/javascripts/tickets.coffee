@@ -576,7 +576,7 @@ jQuery ->
           return
         error: ->
           spinner_icon.hide()
-          image_icon.show()
+          user_icon.show()
           #alert 'Error saving scanned image to Jpegger.'
           return
     
