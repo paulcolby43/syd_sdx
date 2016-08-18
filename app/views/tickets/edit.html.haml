@@ -101,8 +101,7 @@
                             %i.fa.fa-upload.fa-2x
                       %br
                       %div
-                        = text_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
-                      %br
+                        = hidden_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
                       %div.input-group
                         %span.input-group-addon
                           %i.fa.fa-dollar.fa-lg
@@ -189,8 +188,7 @@
                           %i.fa.fa-upload.fa-2x
                     %br
                     %div
-                      = text_field_tag "ticket[line_items][][net]", @ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
-                    %br
+                      = hidden_field_tag "ticket[line_items][][net]", @ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
                     %div.input-group
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
