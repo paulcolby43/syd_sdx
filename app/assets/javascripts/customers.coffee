@@ -352,3 +352,7 @@ jQuery ->
         #alert 'Customer scanner trigger failed'
         return
   ### End Customer Scanner Trigger ###
+
+  $('#save_customer_navbar_link').click ->
+    $('#customer_form').submit()
+    return
