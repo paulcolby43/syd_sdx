@@ -26,7 +26,7 @@
       = render partial: 'users/new_modal'
         
   .well.col-sm-12.col-md-12{id: 'customer_info'}
-    = form_tag customer_path(@customer["Id"]), method: 'put', :class => "form-horizontal" do
+    = form_tag customer_path(@customer["Id"]), method: 'put', :class => "form-horizontal", id: 'customer_form' do
       = hidden_field_tag "customer[id]", @customer['Id']
       = hidden_field_tag "customer[tax_collection]", @customer['TaxCollection']
       .row.form-group
@@ -80,7 +80,7 @@
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
             Save
 
 = render partial: "shared/edit_customer_footer_navbar", locals: {title: "Customer"}
