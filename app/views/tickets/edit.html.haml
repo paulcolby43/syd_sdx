@@ -46,7 +46,7 @@
             #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
               - @line_items.each do |line_item|
                 -#
-                  .well= line_item
+                .well= line_item
                 .panel.panel-default.line-item
                   %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                     %h4.panel-title
@@ -134,6 +134,8 @@
         - else
           / Only one ticket line item
           %div.ticket_input_fields_wrap
+            .well
+              = @ticket["TicketItemCollection"]["ApiTicketItem"]
             #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
               .panel.panel-default.line-item
                 %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}

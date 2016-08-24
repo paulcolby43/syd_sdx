@@ -51,9 +51,9 @@ class CommoditiesController < ApplicationController
     authorize! :edit, :commodities
     @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
     @commodity_types = Commodity.types(current_user.token, current_yard_id)
-#    @price = Commodity.price(current_user.token, params[:id])
-#    @customer_price = Commodity.price_by_customer(current_user.token, params[:id], "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
-#    @customer_taxes = Commodity.taxes_by_customer(current_user.token, params[:id], "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
+    @price = Commodity.price(current_user.token, params[:id])
+    @customer_price = Commodity.price_by_customer(current_user.token, params[:id], "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
+    @customer_taxes = Commodity.taxes_by_customer(current_user.token, params[:id], "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
 #    @customer_price = Commodity.price_by_customer(current_user.token, params[:id], "45aa5872-77f1-48fe-8688-22ed04aa1100")
   end
 

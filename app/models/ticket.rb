@@ -210,19 +210,19 @@ class Ticket
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
           "UnitOfMeasure" => "LB",
-          "TicketItemTax" =>{
-            "Id" => taxes.first['Id'],
+          "TaxCollection" =>[{
+            "Id" => SecureRandom.uuid,
             "TicketItemId" => new_id,
-            "SalesTaxId" => SecureRandom.uuid,
+            "SalesTaxId" => taxes.first['Id'],
             "TaxName" => taxes.first['TaxName'],
             "TaxPercent" => taxes.first['TaxPercent'],
-            "TaxAmount" => amount * taxes.first['TaxPercent'].to_d,
-            "TaxAmountInAssignedCurrency" => amount * taxes.first['TaxPercent'].to_d,
+            "TaxAmount" => 2.91,
+            "TaxAmountInAssignedCurrency" => 2.91,
             "CustomerRateOverride" => false,
             "TaxCode" => taxes.first['TaxCode'],
             "CurrencyId" => user.user_setting.currency_id,
             "DateApplied" => Time.now.utc
-            }
+            }]
           }
         })
       
