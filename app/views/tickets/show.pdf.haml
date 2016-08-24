@@ -51,13 +51,20 @@
 %table.table
   %thead
     %tr
-      %td Commodity
-      %td Gross
-      %td Tare
-      %td Net
-      %td Unit
-      %td Rate
-      %td Amount
+      %td 
+        %strong Commodity
+      %td  
+        %strong Gross
+      %td  
+        %strong Tare
+      %td  
+        %strong Net
+      %td  
+        %strong Unit
+      %td  
+        %strong Rate
+      %td  
+        %strong Amount
   %tbody
     - unless @ticket["TicketItemCollection"].blank?
       - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
@@ -70,6 +77,13 @@
             %td= line_item['UnitOfMeasure']
             %td= "$#{number_with_precision(line_item['Price'], :precision => 3)}"
             %td= number_to_currency(line_item['ExtendedAmount'])
+          - unless line_item['SerialNumber'].blank? and line_item['Notes'].blank?
+            %tr
+              - unless line_item['SerialNumber'].blank?
+                %td= "#{line_item['SerialNumber']}"
+              - unless line_item['Notes'].blank?
+                %td{colspan: "6"}= "#{line_item['Notes']}"
+
       - else
         %tr
           %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]}:"
@@ -79,6 +93,12 @@
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']
           %td= "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'])}"
           %td= number_to_currency(@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']) 
+        - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'].blank? and @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'].blank?
+          %tr
+            - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'].blank?
+              %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber']}"
+            - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'].blank?
+              %td{colspan: "6"}= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Notes']}"
       %tr
         %td
         %td
