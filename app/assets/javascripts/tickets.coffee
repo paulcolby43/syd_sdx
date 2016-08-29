@@ -391,7 +391,7 @@ jQuery ->
         success: (data) ->
           weight = data.weight
           weight_text_field.val weight
-          $('.purchase_order_input_fields_wrap .amount-calculation-field').trigger 'keyup'
+          $('.ticket_input_fields_wrap .amount-calculation-field').trigger 'keyup'
           dashboard_icon.show()
           spinner_icon.hide()
           return
