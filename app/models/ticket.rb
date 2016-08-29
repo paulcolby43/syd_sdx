@@ -184,8 +184,9 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
+    new_id = SecureRandom.uuid
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
-#    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
+    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
         "TicketItem"=>{
@@ -195,7 +196,7 @@ class Ticket
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
           "GrossWeight" => gross,
-          "Id" => SecureRandom.uuid, 
+          "Id" => new_id, 
           "NetWeight" => net,
           "Notes" => notes, 
           "Price" => price,
@@ -208,7 +209,20 @@ class Ticket
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
-          "UnitOfMeasure" => "LB"
+          "UnitOfMeasure" => "LB",
+          "TicketItemTax" =>{
+            "Id" => taxes.first['Id'],
+            "TicketItemId" => new_id,
+            "SalesTaxId" => SecureRandom.uuid,
+            "TaxName" => taxes.first['TaxName'],
+            "TaxPercent" => taxes.first['TaxPercent'],
+            "TaxAmount" => amount * taxes.first['TaxPercent'].to_d,
+            "TaxAmountInAssignedCurrency" => amount * taxes.first['TaxPercent'].to_d,
+            "CustomerRateOverride" => false,
+            "TaxCode" => taxes.first['TaxCode'],
+            "CurrencyId" => user.user_setting.currency_id,
+            "DateApplied" => Time.now.utc
+            }
           }
         })
       

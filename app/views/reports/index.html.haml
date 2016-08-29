@@ -21,6 +21,10 @@
       - else
         = render 'commodity_summary'
     - else
-      %p No tickets to report on
+      - unless @type == 'commodity_summary'
+        %p No Customer Summary tickets to report on
+      - else
+        %p No Commodity Summary tickets to report on
+      
         
 =# render partial: "shared/footer_navbar", locals: {title: "Reports"}
