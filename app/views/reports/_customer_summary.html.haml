@@ -26,7 +26,9 @@
             %tr
               %td= ticket["DateClosed"].to_date.strftime("%m/%d/%y")
               %td= ticket["TicketNumber"]
-              %td= number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+              %td
+                = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+                = "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
               -# %td= ticket
           %tr
             %td
