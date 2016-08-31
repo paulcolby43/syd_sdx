@@ -27,6 +27,18 @@ class ReportsController < ApplicationController
     @line_items.each do |line_item|
       @line_items_total = @line_items_total + line_item["ExtendedAmount"].to_d
     end
+    # Collect cash and check tickets
+    @cash_payment_tickets = []
+    @check_payment_tickets = []
+    unless @tickets.blank?
+      @tickets.each do |ticket|
+        if AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'] == "0"
+          @cash_payment_tickets << ticket
+        elsif AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'] == "1"
+          @check_payment_tickets << ticket
+        end
+      end
+    end
   end
 
   private
