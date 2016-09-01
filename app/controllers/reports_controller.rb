@@ -32,9 +32,11 @@ class ReportsController < ApplicationController
     @check_payment_tickets = []
     unless @tickets.blank?
       @tickets.each do |ticket|
-        if AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'] == "0"
+        # Find accounts payable for this ticket and payment status of 1, then determine payment method
+        accounts_payable = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}
+        if accounts_payable['PaymentMethod'] == "0"
           @cash_payment_tickets << ticket
-        elsif AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'] == "1"
+        elsif accounts_payable['PaymentMethod'] == "1"
           @check_payment_tickets << ticket
         end
       end
