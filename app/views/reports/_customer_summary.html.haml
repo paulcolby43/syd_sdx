@@ -6,6 +6,7 @@
       %h3.panel-title
         %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
           = ticket_group
+          = "No name" if ticket_group.blank?
           #details.text-muted.pull-right
             = number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
     %div.panel-collapse.collapse{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
@@ -26,15 +27,23 @@
             %tr
               %td= ticket["DateClosed"].to_date.strftime("%m/%d/%y")
               %td= ticket["TicketNumber"]
-              %td= number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+              %td
+                = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+                =# "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
+                = "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])})"
               -# %td= ticket
           %tr
             %td
             %td
             %td
               %strong= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
-%hr
-  .pull-right
-    %p.lead
-      %strong Total
-      = number_to_currency(@line_items_total)
+.pull-right
+  %p.lead
+    Cash
+    = number_to_currency(@cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+    %br
+    Check
+    = number_to_currency(@check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+    %br
+    %strong Total
+    = number_to_currency(@line_items_total)
