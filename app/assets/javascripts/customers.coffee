@@ -189,7 +189,8 @@ jQuery ->
           zip = data.zip
           
           # Find or create vendor
-          $('#q').val firstname + ' ' + lastname
+          # $('#q').val firstname + ' ' + lastname
+          $('#q').val lastname
           $('#first_name').val firstname
           $('#last_name').val lastname
           $('#license_number').val licensenumber
