@@ -5,7 +5,7 @@ class PasswordResetsController < ApplicationController
   
   def create
     unless params[:email].blank?
-      @user = User.where(email: params[:email]).first
+      @user = User.where(email: params[:email].downcase).first
       unless @user.blank?
         @user.send_password_reset
         flash[:success] = "Email sent with password reset instructions."
