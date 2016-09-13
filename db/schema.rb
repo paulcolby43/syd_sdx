@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160729182509) do
+ActiveRecord::Schema.define(version: 20160913132924) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(version: 20160729182509) do
     t.string   "dragon_account_number"
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
+    t.string   "zip"
   end
 
 end
