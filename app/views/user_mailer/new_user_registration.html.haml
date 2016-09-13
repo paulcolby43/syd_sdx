@@ -24,7 +24,7 @@
       - unless @user.address2.blank?
         = @user.address2
       %br
-      = "#{@user.city} #{@user.state}"
+      = "#{@user.city} #{@user.state} #{@user.zip}"
     - unless @user.dragon_account_number.blank?
       %p 
         Dragon Account Number:
