@@ -15,9 +15,9 @@
             TICKETS
             %b.caret
           %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2')}"}= link_to 'Held', tickets_path(status: 2)
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1')}"}= link_to 'Closed', tickets_path(status: 1)
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3')}"}= link_to 'Paid', tickets_path(status: 3)
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1') ? 'active' : ''}"}= link_to 'Closed', tickets_path(status: 1)
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3') ? 'active' : ''}"}= link_to 'Paid', tickets_path(status: 3)
         %li.dropdown{:class => "#{(params[:controller] == 'customers') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             CUSTOMERS
