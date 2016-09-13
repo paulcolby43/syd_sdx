@@ -14,7 +14,7 @@
           = f.text_field :name, :placeholder => "Company Name", class: "form-control input-lg"
         %div{:class => "col-sm-6"}
           = f.label :dragon_api, :class => "control-label"
-          = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg"
+          = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg", readonly: true
       .row.form-group
         %div{:class => "col-sm-6"}
           = f.label :address1, "Address 1", :class => "control-label"
