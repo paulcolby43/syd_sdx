@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914201739) do
+ActiveRecord::Schema.define(version: 20160914204711) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -142,8 +142,8 @@ ActiveRecord::Schema.define(version: 20160914201739) do
   create_table "user_settings", force: true do |t|
     t.boolean  "show_thumbnails",          default: true
     t.string   "table_name",               default: "images"
-    t.boolean  "show_customer_thumbnails", default: false
-    t.boolean  "show_ticket_thumbnails",   default: false
+    t.boolean  "show_customer_thumbnails", default: true
+    t.boolean  "show_ticket_thumbnails",   default: true
     t.integer  "device_group_id"
     t.integer  "user_id"
     t.datetime "created_at"
