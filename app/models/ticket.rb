@@ -186,6 +186,7 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
     new_id = SecureRandom.uuid
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
+#    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
     taxes = Commodity.taxes_by_customer(auth_token, commodity_id, "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
@@ -210,7 +211,7 @@ class Ticket
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
           "UnitOfMeasure" => "LB",
-          "TaxCollection" =>[{
+          "TaxCollection" => [{
             "Id" => SecureRandom.uuid,
             "TicketItemId" => new_id,
             "SalesTaxId" => taxes.first['Id'],
@@ -234,13 +235,14 @@ class Ticket
   # Update line item of ticket
 #  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id)
   def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number)
+    require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
     commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
 #    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
-      payload: {
+    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
+    payload = {
         "TicketItem"=>{
           "CommodityId" => commodity_id,
           "CurrencyId" => user.user_setting.currency_id, 
@@ -261,9 +263,26 @@ class Ticket
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
-          "UnitOfMeasure" => "LB"
+          "UnitOfMeasure" => "LB",
+          "TaxCollection" =>[{
+            "Id" => SecureRandom.uuid,
+            "TicketItemId" => item_id,
+            "SalesTaxId" => taxes.first['Id'],
+            "TaxName" => taxes.first['TaxName'],
+            "TaxPercent" => taxes.first['TaxPercent'],
+            "TaxAmount" => 2.92,
+            "TaxAmountInAssignedCurrency" => 2.92,
+            "CustomerRateOverride" => false,
+            "TaxCode" => taxes.first['TaxCode'],
+            "CurrencyId" => user.user_setting.currency_id,
+            "DateApplied" => Time.now.utc
+            }]
           }
-        })
+        }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
       
       data= Hash.from_xml(response)
       return data["SaveTicketItemResponse"]["Success"]

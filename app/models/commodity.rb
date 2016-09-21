@@ -239,7 +239,8 @@ class Commodity
     
     Rails.logger.info data
 #    response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
-    if data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"].is_a? Hash # Only one tax collection result returned
+    if data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"].is_a? Hash 
+      # Only one tax collection result returned
       unless data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"]["ApiTax"].blank?
         return [data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"]["ApiTax"]]
       else
