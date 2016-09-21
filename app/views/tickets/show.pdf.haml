@@ -73,7 +73,7 @@
             %td= "#{line_item['PrintDescription']}:"
             %td= line_item['GrossWeight']
             %td= line_item['TareWeight']
-            %td= line_item['Quantity']
+            %td= line_item['NetWeight']
             %td= line_item['UnitOfMeasure']
             %td= "$#{number_with_precision(line_item['Price'], :precision => 3)}"
             %td= number_to_currency(line_item['ExtendedAmount'])
