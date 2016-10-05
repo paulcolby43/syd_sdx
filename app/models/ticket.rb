@@ -193,7 +193,7 @@ class Ticket
         "TicketItem"=>{
           "CommodityId" => commodity_id,
           "CurrencyId" => user.user_setting.currency_id, 
-          "DateCreated" => Time.now.utc, 
+          "DateCreated" => Time.now.utc.iso8601, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
           "GrossWeight" => gross,
@@ -222,7 +222,7 @@ class Ticket
             "CustomerRateOverride" => false,
             "TaxCode" => taxes.first['TaxCode'],
             "CurrencyId" => user.user_setting.currency_id,
-            "DateApplied" => Time.now.utc
+            "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
             }]
           }
         })
@@ -246,7 +246,7 @@ class Ticket
         "TicketItem"=>{
           "CommodityId" => commodity_id,
           "CurrencyId" => user.user_setting.currency_id, 
-          "DateCreated" => Time.now.utc, 
+          "DateCreated" => Time.now.utc.iso8601, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
           "GrossWeight" => gross,
@@ -275,7 +275,7 @@ class Ticket
             "CustomerRateOverride" => false,
             "TaxCode" => taxes.first['TaxCode'],
             "CurrencyId" => user.user_setting.currency_id,
-            "DateApplied" => Time.now.utc
+            "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
             }]
           }
         }
