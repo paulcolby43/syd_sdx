@@ -89,7 +89,7 @@
           %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]}:"
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']
-          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']
+          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']
           %td= "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'])}"
           %td= number_to_currency(@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']) 
