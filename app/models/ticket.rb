@@ -252,7 +252,7 @@ class Ticket
     unless taxes.blank?
       # Get line item's current taxes to zero-out
       line_item = ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Id"] == item_id}.first
-      unless line_item['TaxCollection'].blank? # This line item doesn't have any taxes
+      unless line_item.blank? or line_item['TaxCollection'].blank? # This line item doesn't have any taxes
         line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
           tax_hash = {
             "Id" => tax['Id'],
