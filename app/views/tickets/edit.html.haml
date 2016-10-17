@@ -2,6 +2,9 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    -#
+      .well
+        = @ticket
     = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
       = hidden_field_tag "ticket[ticket_number]", @ticket_number
       =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
@@ -106,13 +109,25 @@
                         %span.input-group-addon
                           %i.fa.fa-dollar.fa-lg
                         = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                      -#
-                        %br
-                        %div.input-group
-                          %span.input-group-addon
-                            %i.fa.fa-dollar.fa-lg
-                          = text_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                       = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                      - unless line_item['TaxCollection'].blank?
+                        - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                          - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_amount_1]", line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                          - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxPercent'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_percent_1]", line_item['TaxCollection']['ApiTicketItemTax']['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                        - else # Multiple line item tax results returned
+                          - line_item['TaxCollection']['ApiTicketItemTax'].each_with_index do |tax, index|
+                            - unless tax['TaxAmount'] == '0.00'
+                              = hidden_field_tag "ticket[line_items][][tax_amount_#{index+1}]", tax['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                          - line_item['TaxCollection']['ApiTicketItemTax'].each_with_index do |tax, index|
+                            - unless tax['TaxPercent'] == '0.00'
+                              = hidden_field_tag "ticket[line_items][][tax_percent_#{index+1}]", tax['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                      - else
+                        = hidden_field_tag "ticket[line_items][][tax_amount_1]", 0, :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        = hidden_field_tag "ticket[line_items][][tax_amount_2]", 0, :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        = hidden_field_tag "ticket[line_items][][tax_percent_1]", 0, :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+                        = hidden_field_tag "ticket[line_items][][tax_percent_2]", 0, :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                       %br
                       %p
                         %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
@@ -128,12 +143,23 @@
                         x
                         = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
                         = "= $#{line_item['ExtendedAmount']}"
+                        - unless line_item['TaxCollection'].blank?
+                          - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                            - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                              = "+ #{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0' ? '' : '$' + line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
+                          - else # Multiple line item tax results returned
+                            - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                              - unless tax['TaxAmount'] == '0.00'
+                                = "+ #{tax['TaxAmount'] == '0' ? '' : '$' + tax['TaxAmount']} (tax)"
                       %li.pull-right
                         %a.text-success{"aria-controls" => "collapse#{line_item['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", class: 'pull-right ticket_collapse_link' }
                           %i.fa.fa-3x.collapse_icon
         - else
           / Only one ticket line item
           %div.ticket_input_fields_wrap
+            -#
+              .well
+                = @ticket["TicketItemCollection"]["ApiTicketItem"]
             #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
               .panel.panel-default.line-item
                 %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
@@ -194,6 +220,24 @@
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                    - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
+                      - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                        - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                          = hidden_field_tag "ticket[line_items][][tax_amount_1]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxPercent'] == '0.00'
+                          = hidden_field_tag "ticket[line_items][][tax_percent_1]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                      - else # Multiple line item tax results returned
+                        - @ticket["TicketItemCollection"]["ApiTicketItem"]["TaxCollection"]["ApiTicketItemTax"].each_with_index do |tax, index|
+                          - unless tax['TaxAmount'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_amount_#{index+1}]", tax['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        - @ticket["TicketItemCollection"]["ApiTicketItem"]["TaxCollection"]["ApiTicketItemTax"].each_with_index do |tax, index|
+                          - unless tax['TaxPercent'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_percent_#{index+1}]", tax['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                    - else
+                      = hidden_field_tag "ticket[line_items][][tax_amount_1]", 0, :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                      = hidden_field_tag "ticket[line_items][][tax_amount_2]", 0, :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                      = hidden_field_tag "ticket[line_items][][tax_percent_1]", 0, :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+                      = hidden_field_tag "ticket[line_items][][tax_percent_2]", 0, :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                     %br
                     %p
                       %a{"aria-controls" => "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse"}
@@ -209,6 +253,12 @@
                       x
                       = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
+                      - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
+                        - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                          = "+ #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0' ? '' : '$' + @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
+                        - else # Multiple line item tax results returned
+                          - @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                            = "+ #{tax['TaxAmount'] == '0' ? '' : '$' + tax['TaxAmount']} (tax)"
                     %li.pull-right
                       %a.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-3x.collapse_icon
@@ -272,6 +322,11 @@
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+
+                  = hidden_field_tag "ticket[line_items][][tax_amount_1]", 0, :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                  = hidden_field_tag "ticket[line_items][][tax_amount_2]", 0, :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                  = hidden_field_tag "ticket[line_items][][tax_percent_1]", 0, :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+                  = hidden_field_tag "ticket[line_items][][tax_percent_2]", 0, :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                   %br
                   %p
                     %a{"aria-controls" => "more#{1}", "aria-expanded" => "false", "data-target" => "#more_#{1}", "data-toggle" => "collapse"}
