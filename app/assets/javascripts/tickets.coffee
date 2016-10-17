@@ -147,8 +147,16 @@ jQuery ->
   $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
-    tax_percent_1 = $(this).closest('.panel').find('#ticket_line_items__tax_percent_1').val()
-    tax_percent_2 = $(this).closest('.panel').find('#ticket_line_items__tax_percent_2').val()
+    tax_percent_1_element = $(this).closest('.panel').find('#ticket_line_items__tax_percent_1')
+    tax_percent_2_element = $(this).closest('.panel').find('#ticket_line_items__tax_percent_2')
+    if tax_percent_1_element.val()
+      tax_percent_1 = tax_percent_1_element.val()
+    else 
+      tax_percent_1 = '0.00'
+    if tax_percent_2_element.val()
+      tax_percent_2 = tax_percent_2_element.val()
+    else 
+      tax_percent_2 = '0.00'
     net = (parseFloat(gross) - parseFloat(tare)).toFixed(2)
     $(this).closest('.panel').find('#ticket_line_items__net').val net
     $(this).closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross

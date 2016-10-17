@@ -253,21 +253,40 @@ class Ticket
       # Get line item's current taxes to zero-out
       line_item = ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Id"] == item_id}.first
       unless line_item.blank? or line_item['TaxCollection'].blank? # This line item doesn't have any taxes
-        line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+        unless line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash
+          # Multiple taxes on line item
+          line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+            tax_hash = {
+              "Id" => tax['Id'],
+              "TicketItemId" => item_id,
+              "SalesTaxId" => tax['SalesTaxId'],
+              "TaxName" => tax['TaxName'],
+              "TaxPercent" => 0,
+              "TaxAmount" => 0,
+              "TaxAmountInAssignedCurrency" => 0,
+              "CustomerRateOverride" => false,
+              "TaxCode" => tax['TaxCode'],
+              "CurrencyId" => user.user_setting.currency_id,
+              "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
+            }
+            tax_collection_array << tax_hash
+          end
+        else
+          # One tax on line item
           tax_hash = {
-            "Id" => tax['Id'],
+            "Id" => line_item['TaxCollection']['ApiTicketItemTax']['Id'],
             "TicketItemId" => item_id,
-            "SalesTaxId" => tax['SalesTaxId'],
-            "TaxName" => tax['TaxName'],
+            "SalesTaxId" => line_item['TaxCollection']['ApiTicketItemTax']['SalesTaxId'],
+            "TaxName" => line_item['TaxCollection']['ApiTicketItemTax']['TaxName'],
             "TaxPercent" => 0,
             "TaxAmount" => 0,
             "TaxAmountInAssignedCurrency" => 0,
             "CustomerRateOverride" => false,
-            "TaxCode" => tax['TaxCode'],
+            "TaxCode" => line_item['TaxCollection']['ApiTicketItemTax']['TaxCode'],
             "CurrencyId" => user.user_setting.currency_id,
             "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
-          }
-          tax_collection_array << tax_hash
+            }
+            tax_collection_array << tax_hash
         end
       end
       
