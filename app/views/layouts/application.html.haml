@@ -14,7 +14,7 @@
     = csrf_meta_tags
   %body
     - if not logged_in?
-      = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"}
+      = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"} unless current_page?(signup_path)
     - else
       - unless current_yard_id.blank?
         - if current_user.admin?
