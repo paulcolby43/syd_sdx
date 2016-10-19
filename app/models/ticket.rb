@@ -251,7 +251,13 @@ class Ticket
     tax_collection_array = []
     unless taxes.blank?
       # Get line item's current taxes to zero-out
-      line_item = ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Id"] == item_id}.first
+      if ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+         # Only one line item in the ticket
+         line_item = ticket["TicketItemCollection"]["ApiTicketItem"]
+      else
+         # Multiple line items in the ticket
+        line_item = ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Id"] == item_id}.first
+      end
       unless line_item.blank? or line_item['TaxCollection'].blank? # This line item doesn't have any taxes
         unless line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash
           # Multiple taxes on line item

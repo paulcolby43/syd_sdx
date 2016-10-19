@@ -146,11 +146,11 @@
                         - unless line_item['TaxCollection'].blank?
                           - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
                             - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
-                              = "+ #{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0' ? '' : '$' + line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
+                              = "+ $#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
                           - else # Multiple line item tax results returned
                             - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
                               - unless tax['TaxAmount'] == '0.00'
-                                = "+ #{tax['TaxAmount'] == '0' ? '' : '$' + tax['TaxAmount']} (tax)"
+                                = "+ $#{tax['TaxAmount']} (tax)"
                       %li.pull-right
                         %a.text-success{"aria-controls" => "collapse#{line_item['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", class: 'pull-right ticket_collapse_link' }
                           %i.fa.fa-3x.collapse_icon
@@ -255,10 +255,12 @@
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
                       - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
                         - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
-                          = "+ #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0' ? '' : '$' + @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
+                          - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                            = "+ $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
                         - else # Multiple line item tax results returned
                           - @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].each do |tax|
-                            = "+ #{tax['TaxAmount'] == '0' ? '' : '$' + tax['TaxAmount']} (tax)"
+                            - unless tax['TaxAmount'] == '0.00'
+                              = "+ $#{tax['TaxAmount']} (tax)"
                     %li.pull-right
                       %a.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-3x.collapse_icon
