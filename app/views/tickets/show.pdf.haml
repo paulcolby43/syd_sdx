@@ -63,11 +63,14 @@
         %strong Unit
       %td  
         %strong Rate
+      %td
+        %strong Tax
       %td  
         %strong Amount
   %tbody
     - unless @ticket["TicketItemCollection"].blank?
       - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        -# Multiple line items
         - @line_items.each do |line_item|
           %tr
             %td= "#{line_item['PrintDescription']}:"
@@ -76,15 +79,28 @@
             %td= line_item['NetWeight']
             %td= line_item['UnitOfMeasure']
             %td= "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+            - unless line_item['TaxCollection'].blank? # Taxes
+              - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                  %td= "$#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
+              - else # Multiple line item tax results returned
+                %td
+                  - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                    - unless tax['TaxAmount'] == '0.00'
+                      = "$#{tax['TaxAmount']}"
+            - else # No taxes
+              %td $0
             %td= number_to_currency(line_item['ExtendedAmount'])
+          
           - unless line_item['SerialNumber'].blank? and line_item['Notes'].blank?
             %tr
               - unless line_item['SerialNumber'].blank?
                 %td= "#{line_item['SerialNumber']}"
               - unless line_item['Notes'].blank?
-                %td{colspan: "6"}= "#{line_item['Notes']}"
+                %td{colspan: "7"}= "#{line_item['Notes']}"
 
       - else
+        -# One line item
         %tr
           %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]}:"
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']
@@ -92,6 +108,18 @@
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']
           %td= "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'])}"
+          - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank? # Taxes
+            - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+              - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                %td= "$#{@ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
+            - else # Multiple line item tax results returned
+              %td
+                - @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                  - unless tax['TaxAmount'] == '0.00'
+                    = "$#{tax['TaxAmount']}"
+                    %br
+          - else # No taxes
+            %td $0
           %td= number_to_currency(@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']) 
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'].blank? and @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'].blank?
           %tr
@@ -107,10 +135,13 @@
         %td
         %td
         %td
+        %td
           - if params[:status] == '3'
             %strong= "Total: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
           - elsif params[:status] == '1'
             %strong= "Total: #{number_to_currency(@ticket['BalanceDue'])}"
+          - else
+            %strong= "Total: #{number_to_currency(Ticket.line_items_total(@ticket['TicketItemCollection']['ApiTicketItem']))}" unless @ticket['TicketItemCollection'].blank?
           
     - unless @signature_image.blank?
       %tr
