@@ -86,6 +86,9 @@ jQuery ->
     $('.amount').each ->
       sum += Number($(this).val())
       return
+    $('.tax').each ->
+      sum += Number($(this).val())
+      return
     $('#total').text '$' + sum.toFixed(2)
     $('#ticket_total').val sum.toFixed(2)
     $('#payment_amount').val sum.toFixed(2)
@@ -110,12 +113,20 @@ jQuery ->
         name = data.name
         price = parseFloat(data.price).toFixed(3)
         #console.log 'success', price
+        tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
+        tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
+        console.log 'tax percent 1:', tax_percent_1
+        console.log 'tax percent 2:', tax_percent_2
         net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
         input_select.closest('.panel').find('.calculation_details').text ''
         input_select.closest('.panel').find('.line_item_name').text name
 
         input_select.closest('.panel').find('#ticket_line_items__price:first').val price
         amount = (parseFloat(price) * parseFloat(net))
+        input_select.closest('.panel').find('#ticket_line_items__tax_percent_1:first').val parseFloat(tax_percent_1).toFixed(2)
+        input_select.closest('.panel').find('#ticket_line_items__tax_percent_2:first').val parseFloat(tax_percent_2).toFixed(2)
+        input_select.closest('.panel').find('#ticket_line_items__tax_amount_1:first').val parseFloat(tax_percent_1 * amount).toFixed(2)
+        input_select.closest('.panel').find('#ticket_line_items__tax_amount_2:first').val parseFloat(tax_percent_2 * amount).toFixed(2)
         input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
         input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
         input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
@@ -126,7 +137,8 @@ jQuery ->
         $('.amount-calculation-field').keyup()
         return
       error: ->
-        alert 'Error getting commodity price.'
+        #alert 'Error getting commodity price.'
+        console.log 'Error getting commodity price.'
         return
     return
   ### End line item changed ###
@@ -135,6 +147,14 @@ jQuery ->
   $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
+    if $(this).closest('.panel').find('#ticket_line_items__tax_percent_1').length
+      tax_percent_1 = $(this).closest('.panel').find('#ticket_line_items__tax_percent_1').val()
+    else 
+      tax_percent_1 = '0.00'
+    if $(this).closest('.panel').find('#ticket_line_items__tax_percent_2').length
+      tax_percent_2 = $(this).closest('.panel').find('#ticket_line_items__tax_percent_2').val()
+    else 
+      tax_percent_2 = '0.00'
     net = (parseFloat(gross) - parseFloat(tare)).toFixed(2)
     $(this).closest('.panel').find('#ticket_line_items__net').val net
     $(this).closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
@@ -142,12 +162,24 @@ jQuery ->
 
     #description = $(this).closest('.panel').find('#item_description').val()
     price = $(this).closest('.panel').find('#ticket_line_items__price').val()
+    tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
+    tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
+    total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
     amount = (parseFloat(price) * parseFloat(net)).toFixed(2)
     $(this).closest('.panel').find('#ticket_line_items__amount').val amount
-
-    $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + ' = ' +  '$' + amount
+    $(this).closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
+    $(this).closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
+    if total_tax_amount > 0
+      # Show tax amount
+      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
+    else
+      # Don't show tax amount
+      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + ' = ' + '$' + amount
     sum = 0;
     $('.amount').each ->
+      sum += Number($(this).val())
+      return
+    $('.tax').each ->
       sum += Number($(this).val())
       return
     $('#total').text '$' + sum.toFixed(2)

@@ -20,6 +20,9 @@
             %i.fa.fa-warning.fa-lg
             Customer Photo ID is missing or expired.
     %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Customer Info
       %div.list_group
         %div.list-group-item
           %strong= "Number:"
@@ -42,9 +45,10 @@
           .pull-right
             = "#{@customer['Phone']}"
     %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Address
       %div.panel-body
-        %strong= "Address:"
-        %br
         = "#{@customer['Address1']}"
         - unless @customer['Address2'].blank?
           %br
@@ -52,6 +56,9 @@
         %br
         = "#{@customer['City']}, #{@customer['State']} #{@customer['Zip']}" unless @customer['City'].blank? and @customer['State'].blank? and @customer['Zip'].blank?
     %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Identification
       %div.list_group
         %div.list-group-item
           %strong= "ID Number:"
@@ -68,6 +75,26 @@
               = "#{@customer['IdExpires'].to_date.strftime("%m/%d/%Y")}" 
             - else
               Not set correctly
+
+    %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Taxes
+      %div.list_group
+        - unless @customer['TaxCollection'].blank?
+          - if @customer['TaxCollection']['ApiCustomerSalesTax'].is_a? Hash # Only one tax result returned
+            %div.list-group-item
+              %strong= "#{@customer['TaxCollection']['ApiCustomerSalesTax']['TaxName']} Tax Percent:"
+              .pull-right
+                = @customer['TaxCollection']['ApiCustomerSalesTax']['TaxPercent']
+          - else # Multiple tax results returned
+            - @customer['TaxCollection']['ApiCustomerSalesTax'].each do |tax|
+              %div.list-group-item
+                %strong= "#{tax['TaxName']} Tax Percent:"
+                .pull-right
+                  = tax['TaxPercent']
+        - else
+          %div.list-group-item None
 
     %hr
     %p.lead Customer Pictures
