@@ -9,7 +9,7 @@
           = f.hidden_field :user_id, value: current_user.id
           =# f.hidden_field :location, value: current_yard_id
           = f.hidden_field :yard_id, value: current_yard_id
-          = f.hidden_field :customer_number, value: @ticket["CustomerId"]
+          =# f.hidden_field :customer_number, value: @ticket["CustomerId"]
           = f.hidden_field :customer_name, value: "#{@ticket['FirstName']} #{@ticket['LastName']}"
           = f.hidden_field :tare_seq_nbr
           = f.hidden_field :commodity_name
