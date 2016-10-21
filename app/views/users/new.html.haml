@@ -1,6 +1,7 @@
 .container
   =# image_tag('dragon_dog_logo_529x214.png', alt: 'dragon_dog_logo_529x214.png', class: 'img-responsive center-block')
   %br
+  %br
   = form_for @user do |f|
     %div.form-horizontal
       - @user.errors.each do |attr, msg|
