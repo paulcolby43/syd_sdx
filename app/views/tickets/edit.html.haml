@@ -80,7 +80,7 @@
                                 %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         %span.input-group-addon
                           %i.fa.fa-plus{style: "font-size:0.7em;"}
-                        = phone_field_tag "ticket[line_items][][gross]", line_item['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                        = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                         %span.input-group-addon
                           %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
@@ -98,7 +98,7 @@
                                 %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         %span.input-group-addon
                           %i.fa.fa-minus{style: "font-size:0.7em;"}
-                        = phone_field_tag "ticket[line_items][][tare]", line_item['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                        = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                         %span.input-group-addon
                           %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
@@ -139,9 +139,9 @@
                   .panel-footer
                     %ul{class: 'list-inline'}
                       %li.calculation_details
-                        = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['NetWeight']}#{line_item['UnitOfMeasure']}"
+                        = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{line_item['UnitOfMeasure']}"
                         x
-                        = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+                        = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}"
                         = "= $#{line_item['ExtendedAmount']}"
                         - unless line_item['TaxCollection'].blank?
                           - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -190,7 +190,7 @@
                               %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                       %span.input-group-addon
                         %i.fa.fa-plus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][gross]", @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                      = phone_field_tag "ticket[line_items][][gross]", number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                       %span.input-group-addon
                         %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
@@ -208,7 +208,7 @@
                               %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                       %span.input-group-addon
                         %i.fa.fa-minus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][tare]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                      = phone_field_tag "ticket[line_items][][tare]", number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                       %span.input-group-addon
                         %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
@@ -249,9 +249,9 @@
                 .panel-footer
                   %ul{class: 'list-inline'}
                     %li.calculation_details
-                      = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+                      = "(#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
                       x
-                      = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
+                      = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3, strip_insignificant_zeros: true)}"
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
                       - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
                         - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
