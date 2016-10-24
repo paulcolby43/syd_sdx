@@ -96,8 +96,12 @@
             %tr
               - unless line_item['SerialNumber'].blank?
                 %td= "#{line_item['SerialNumber']}"
+              - else
+                %td
               - unless line_item['Notes'].blank?
                 %td{colspan: "7"}= "#{line_item['Notes']}"
+              - else
+                %td
 
       - else
         -# One line item
@@ -125,8 +129,12 @@
           %tr
             - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'].blank?
               %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber']}"
+            - else
+              %td
             - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'].blank?
-              %td{colspan: "6"}= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Notes']}"
+              %td{colspan: "7"}= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Notes']}"
+            - else
+              %td
       %tr
         %td
         %td
