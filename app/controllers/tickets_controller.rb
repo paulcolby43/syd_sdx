@@ -61,6 +61,7 @@ class TicketsController < ApplicationController
           printer = current_user.printer_devices.last
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
+            :grayscale => false,
 #            :zoom => 1.25
             :zoom => "#{printer.PrinterWidth < 10 ? 2 : 1.25}",
             :save_to_file => Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf")
