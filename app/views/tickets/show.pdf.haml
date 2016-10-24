@@ -74,9 +74,9 @@
         - @line_items.each do |line_item|
           %tr
             %td= "#{line_item['PrintDescription']}:"
-            %td= line_item['GrossWeight']
-            %td= line_item['TareWeight']
-            %td= line_item['NetWeight']
+            %td= number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)
+            %td= number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)
+            %td= number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)
             %td= line_item['UnitOfMeasure']
             %td= "$#{number_with_precision(line_item['Price'], :precision => 3)}"
             - unless line_item['TaxCollection'].blank? # Taxes
@@ -96,16 +96,20 @@
             %tr
               - unless line_item['SerialNumber'].blank?
                 %td= "#{line_item['SerialNumber']}"
+              - else
+                %td
               - unless line_item['Notes'].blank?
                 %td{colspan: "7"}= "#{line_item['Notes']}"
+              - else
+                %td
 
       - else
         -# One line item
         %tr
           %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]}:"
-          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']
-          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']
-          %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']
+          %td= number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], precision: 2, strip_insignificant_zeros: true)
+          %td= number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], precision: 2, strip_insignificant_zeros: true)
+          %td= number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], precision: 2, strip_insignificant_zeros: true)
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']
           %td= "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'])}"
           - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank? # Taxes
@@ -125,8 +129,12 @@
           %tr
             - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'].blank?
               %td= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber']}"
+            - else
+              %td
             - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'].blank?
-              %td{colspan: "6"}= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Notes']}"
+              %td{colspan: "7"}= "#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Notes']}"
+            - else
+              %td
       %tr
         %td
         %td
