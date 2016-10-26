@@ -106,6 +106,7 @@ class UsersController < ApplicationController
     user = User.find_by_confirm_token(params[:id])
     if user
       user.email_activate
+      user.send_after_confirmation_info_email
       flash[:success] = "Welcome to Scrap Yard Dog! Your email has been confirmed.
       Please sign in to continue."
       redirect_to login_path
