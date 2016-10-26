@@ -1,4 +1,4 @@
-class NewUserRegistrationWorker
+class UserConfirmedSendEmailWorker
   include Sidekiq::Worker
   
   def perform(user_id)
