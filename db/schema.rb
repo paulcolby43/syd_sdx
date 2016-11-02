@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914204711) do
+ActiveRecord::Schema.define(version: 20161102145807) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20160914204711) do
     t.string  "state"
     t.string  "zip"
     t.string  "phone"
+    t.string  "logo"
   end
 
   create_table "cust_pic_files", force: true do |t|

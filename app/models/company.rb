@@ -3,6 +3,10 @@ class Company < ActiveRecord::Base
   
   has_many :users
   
+  mount_uploader :logo, LogoUploader
+  
+  validates_presence_of :name
+  
   ############################
   #     Instance Methods     #
   ############################
