@@ -144,7 +144,12 @@
         %td
         %td
           - if params[:status] == '3'
+            -# Paid Ticket
             %strong= "Total: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+            %p
+              = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}"
+              -# if @apcashier['PaymentMethod'] == '1'
+                =# "# #{@apcashier['CheckNumber']}"
           - elsif params[:status] == '1'
             %strong= "Total: #{number_to_currency(@ticket['BalanceDue'])}"
           - else
