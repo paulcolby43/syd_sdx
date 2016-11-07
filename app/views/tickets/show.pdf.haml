@@ -2,11 +2,10 @@
   = @ticket_number
   %br
   = DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
--#
-  - unless @current_user.company.logo_url.url.blank?
-    = image_tag ["http://", request.host_with_port, @current_user.company.logo_url.url].join(), size: '50x50'
-  - else
-    = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
+- unless @current_user.company.logo.url.blank?
+  = image_tag ["http://", request.host_with_port, @current_user.company.logo.url].join(), size: '50x50'
+- else
+  = wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 =# wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 %strong= current_user.company.name
 - unless current_user.company.full_address.blank?
@@ -145,7 +144,12 @@
         %td
         %td
           - if params[:status] == '3'
+            -# Paid Ticket
             %strong= "Total: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+            %p
+              = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}"
+              -# if @apcashier['PaymentMethod'] == '1'
+                =# "# #{@apcashier['CheckNumber']}"
           - elsif params[:status] == '1'
             %strong= "Total: #{number_to_currency(@ticket['BalanceDue'])}"
           - else

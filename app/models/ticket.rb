@@ -181,7 +181,9 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
     new_id = SecureRandom.uuid
-    commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
     taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
 #    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
     tax_collection_array = []
@@ -218,7 +220,7 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => amount,
+          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => serial_number, 
@@ -244,7 +246,9 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
-    commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
     ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
     taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
 
@@ -329,7 +333,7 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => amount,
+          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => serial_number, 
@@ -354,7 +358,9 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item/void"
-    commodity_name = Commodity.find_by_id(auth_token, yard_id, commodity_id)["PrintDescription"]
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
       payload: {
         "TicketItem"=>{
@@ -370,7 +376,7 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => amount,
+          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => "", 

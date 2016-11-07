@@ -7,6 +7,11 @@ class UserMailer < ActionMailer::Base
     mail(:to => user.email, :subject => "Confirmation instructions")
   end
   
+  def after_confirmation_info(user)
+    @user = user
+    mail(:to => user.email, :subject => "Dragon Dog Useful Tips")
+  end
+  
   def forgot_password_instructions(user)
     @user = user
     mail(:to => user.email, :subject => "Reset password")
