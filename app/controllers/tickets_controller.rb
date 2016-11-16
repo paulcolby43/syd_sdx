@@ -109,13 +109,17 @@ class TicketsController < ApplicationController
       unless ticket_params[:line_items].blank?
         ticket_params[:line_items].each do |line_item|
           if line_item[:status].blank?
-            # Create new item
-            Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
-              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            unless line_item[:commodity].blank?
+              # Create new item
+              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            end
           else
-            # Update existing item
-            Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
-              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            unless line_item[:commodity].blank?
+              # Update existing item
+              Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            end
           end
         end
       end
