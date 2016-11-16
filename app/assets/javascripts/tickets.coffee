@@ -104,42 +104,47 @@ jQuery ->
     item_id = $(this).val()
     input_select = $(this)
     current_customer_id = $('#ticket_customer_id').val()
-    $.ajax
-      url: "/commodities/" + item_id + "/price"
-      dataType: 'json'
-      data:
-        customer_id: current_customer_id
-      success: (data) ->
-        name = data.name
-        price = parseFloat(data.price).toFixed(3)
-        #console.log 'success', price
-        tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
-        tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
-        console.log 'tax percent 1:', tax_percent_1
-        console.log 'tax percent 2:', tax_percent_2
-        net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
-        input_select.closest('.panel').find('.calculation_details').text ''
-        input_select.closest('.panel').find('.line_item_name').text name
+    # Get commodity price and taxes, then update.
+    get_commodity_info_ajax = ->
+      $.ajax
+        url: "/commodities/" + item_id + "/price"
+        dataType: 'json'
+        data:
+          customer_id: current_customer_id
+        success: (data) ->
+          name = data.name
+          price = parseFloat(data.price).toFixed(3)
+          #console.log 'success', price
+          tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
+          tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
+          console.log 'tax percent 1:', tax_percent_1
+          console.log 'tax percent 2:', tax_percent_2
+          net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
+          input_select.closest('.panel').find('.calculation_details').text ''
+          input_select.closest('.panel').find('.line_item_name').text name
 
-        input_select.closest('.panel').find('#ticket_line_items__price:first').val price
-        amount = (parseFloat(price) * parseFloat(net))
-        input_select.closest('.panel').find('#ticket_line_items__tax_percent_1:first').val parseFloat(tax_percent_1).toFixed(2)
-        input_select.closest('.panel').find('#ticket_line_items__tax_percent_2:first').val parseFloat(tax_percent_2).toFixed(2)
-        input_select.closest('.panel').find('#ticket_line_items__tax_amount_1:first').val parseFloat(tax_percent_1 * amount).toFixed(2)
-        input_select.closest('.panel').find('#ticket_line_items__tax_amount_2:first').val parseFloat(tax_percent_2 * amount).toFixed(2)
-        input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
-        input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
-        input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
-        input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
-        input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
-        input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
-        input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
-        $('.amount-calculation-field').keyup()
-        return
-      error: ->
-        #alert 'Error getting commodity price.'
-        console.log 'Error getting commodity price.'
-        return
+          input_select.closest('.panel').find('#ticket_line_items__price:first').val price
+          amount = (parseFloat(price) * parseFloat(net))
+          input_select.closest('.panel').find('#ticket_line_items__tax_percent_1:first').val parseFloat(tax_percent_1).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_percent_2:first').val parseFloat(tax_percent_2).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_amount_1:first').val parseFloat(tax_percent_1 * amount).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_amount_2:first').val parseFloat(tax_percent_2 * amount).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
+          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
+          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
+          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
+          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
+          input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
+          input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
+          $('.amount-calculation-field').keyup()
+          return
+        error: ->
+          alert 'Error getting commodity price.'
+          console.log 'Error getting commodity price.'
+          return
+    if item_id != ''
+      # Only get commodity info if there is a commodity item
+      get_commodity_info_ajax()
     return
   ### End line item changed ###
 
