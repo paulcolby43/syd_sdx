@@ -18,39 +18,45 @@
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Held'}"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Held"}} 
                 %i.fa.fa-folder-open-o.fa-lg
-                = "Held" unless mobile_device?
+                %br
+                = "Held"
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Closed'}"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Closed"}} 
                 %i.fa.fa-folder.fa-lg
-                = "Closed" unless mobile_device?
+                %br
+                = "Closed"
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Paid"}} 
                 %i.fa.fa-dollar.fa-lg
-                = "Paid" unless mobile_device?
+                %br
+                = "Paid"
           %p
             .col-xs-6
               -#
                 %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
                   %i.fa.fa-image.fa-lg
                   Pictures
-              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Ticket'}"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Ticket"}} 
                 %i.fa.fa-ticket.fa-lg
-                = "Ticket" unless mobile_device?
+                %br
+                = "Ticket"
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Customers'}"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Customers"}} 
                 %i.fa.fa-users.fa-lg
-                = "Customers" unless mobile_device?
+                %br
+                = "Customers"
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Commodities'}"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Commodities"}} 
                 %i.fa.fa-list.fa-lg
-                = "Commodities" unless mobile_device?
+                %br
+                = "Commodities"
       - else
         .navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
           .container-fluid
