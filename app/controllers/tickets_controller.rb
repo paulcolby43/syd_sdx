@@ -50,6 +50,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
+    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
     respond_to do |format|
