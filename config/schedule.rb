@@ -52,6 +52,6 @@ every 1.day, :at => '4:30 am' do
   runner "CustPicFile.delete_files"
   
   ### Remove Temporary Leads Online and BWI XML Files Older than One Day ###
-  #command "find /usr/local/Ruby/syd_qbo_dev/public/leads_online/* -mtime +1 -exec rm {} \;" 
+  command "find /usr/local/Ruby/syd_sdx_uat/public/leads_online/* -mtime +1 -exec rm {} \;" 
   #command "find /usr/local/Ruby/syd_qbo_dev/public/bwi/* -mtime +1 -exec rm {} \;"
 end
