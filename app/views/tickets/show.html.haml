@@ -1,4 +1,5 @@
-= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: number_to_currency(@accounts_payable_items.first['PaidAmount'])}
+=# render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: number_to_currency(@accounts_payable_items.first['PaidAmount'])}
+= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: nil}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
