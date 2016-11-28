@@ -320,7 +320,7 @@ class User < ActiveRecord::Base
     else
      api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     end
-    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
     Rails.logger.info response
     access_token_string = JSON.parse(response)["access_token"]
     AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours)
