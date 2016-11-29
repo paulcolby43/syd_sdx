@@ -32,12 +32,12 @@
                     = f.label "Show picture search thumbnails", :class => "control-label"
                     .pull-right= f.text_field :show_thumbnails, :value => "#{@user_setting.show_thumbnails? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
               = f.hidden_field :table_name, value: "images"
-
-              %li.list-group-item
-                .row.form-group
-                  %div{:class => "col-sm-10"}
-                    = f.label "Currency", :class => "control-label"
-                    .pull-right= f.select :currency_id, options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']] }, @user_setting.currency_id), {:include_blank => false}, {:class => "form-control input-lg"}
+              - unless @currencies.blank?
+                %li.list-group-item
+                  .row.form-group
+                    %div{:class => "col-sm-10"}
+                      = f.label "Currency", :class => "control-label"
+                      .pull-right= f.select :currency_id, options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']] }, @user_setting.currency_id), {:include_blank => false}, {:class => "form-control input-lg"}
 
         .col-xs-12.col-sm-6
           - unless Yard.device_groups(current_yard_id).blank?

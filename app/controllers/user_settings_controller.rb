@@ -24,7 +24,7 @@ class UserSettingsController < ApplicationController
   # GET /user_settings/1/edit
   def edit
     @contract = Yard.contract(current_yard_id)
-    @currencies = Ticket.currencies(current_user.token)
+#    @currencies = Ticket.currencies(current_user.token)
   end
 
   # POST /user_settings
