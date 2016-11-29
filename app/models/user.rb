@@ -12,7 +12,8 @@ class User < ActiveRecord::Base
   belongs_to :company
   
   before_create :confirmation_token
-  after_commit :create_user_settings, :on => :create
+#  after_commit :create_user_settings, :on => :create
+  after_create :create_user_settings, :on => :create
   after_create :create_company, unless: :company?
   after_commit :send_registration_notice_email, :on => :create
     
