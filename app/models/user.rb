@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   
   before_create :confirmation_token
 #  after_commit :create_user_settings, :on => :create
-  after_create :create_user_settings, :on => :create
+  after_create :create_user_settings
   after_create :create_company, unless: :company?
   after_commit :send_registration_notice_email, :on => :create
     
