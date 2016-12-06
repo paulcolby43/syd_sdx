@@ -19,7 +19,9 @@ class TicketsController < ApplicationController
       results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid) if current_user.customer?
     end
     unless results.blank?
-      results = results.reverse if @status == 'held'
+#      results = results.reverse if @status == 'held'
+      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
+      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
