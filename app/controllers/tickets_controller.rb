@@ -19,7 +19,9 @@ class TicketsController < ApplicationController
       results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid) if current_user.customer?
     end
     unless results.blank?
-      results = results.reverse if @status == 'held'
+#      results = results.reverse if @status == 'held'
+      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
+      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
@@ -47,10 +49,10 @@ class TicketsController < ApplicationController
   # GET /tickets/1.json
   def show
     authorize! :show, :tickets
-#    @ticket = Ticket.find_by_id_and_ticket_number(params[:status], current_user.token, current_yard_id, params[:id], params[:ticket_number])
-    @ticket = Ticket.find_by_id(params[:status], current_user.token, current_yard_id, params[:id])
+    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
+    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
     respond_to do |format|
@@ -91,8 +93,7 @@ class TicketsController < ApplicationController
     authorize! :edit, :tickets
     @drawers = Drawer.all(current_user.token, current_yard_id)
     @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
-#    @ticket = Ticket.find_by_id(params[:status], current_user.token, current_yard_id, params[:id])
-    @ticket = Ticket.find_by_id(params[:status], current_user.token, current_yard_id, params[:id])
+    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
@@ -111,13 +112,17 @@ class TicketsController < ApplicationController
       unless ticket_params[:line_items].blank?
         ticket_params[:line_items].each do |line_item|
           if line_item[:status].blank?
-            # Create new item
-            Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
-              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number])
+            unless line_item[:commodity].blank?
+              # Create new item
+              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            end
           else
-            # Update existing item
-            Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
-              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number])
+            unless line_item[:commodity].blank?
+              # Update existing item
+              Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            end
           end
         end
       end
@@ -226,6 +231,6 @@ class TicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :status, :notes, :serial_number])
+      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :tax_amount, :status, :notes, :serial_number])
     end
 end

@@ -287,6 +287,14 @@ class User < ActiveRecord::Base
     NewUserRegistrationWorker.perform_async(self.id) # Send out admin email to notify of new user registration, in sidekiq background process
   end
   
+  def send_confirmation_instructions_email
+    UserConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new user, in sidekiq background process
+  end
+  
+  def send_after_confirmation_info_email
+    UserConfirmedSendEmailWorker.perform_async(self.id) # Send out email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+  end
+  
   #############################
   #     Class Methods         #
   #############################

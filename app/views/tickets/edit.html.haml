@@ -2,6 +2,9 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    -#
+      .well
+        = @ticket
     = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
       = hidden_field_tag "ticket[ticket_number]", @ticket_number
       =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
@@ -77,7 +80,7 @@
                                 %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         %span.input-group-addon
                           %i.fa.fa-plus{style: "font-size:0.7em;"}
-                        = phone_field_tag "ticket[line_items][][gross]", line_item['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                        = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                         %span.input-group-addon
                           %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
@@ -95,7 +98,7 @@
                                 %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         %span.input-group-addon
                           %i.fa.fa-minus{style: "font-size:0.7em;"}
-                        = phone_field_tag "ticket[line_items][][tare]", line_item['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                        = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                         %span.input-group-addon
                           %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
@@ -106,13 +109,25 @@
                         %span.input-group-addon
                           %i.fa.fa-dollar.fa-lg
                         = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                      -#
-                        %br
-                        %div.input-group
-                          %span.input-group-addon
-                            %i.fa.fa-dollar.fa-lg
-                          = text_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                       = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                      - unless line_item['TaxCollection'].blank?
+                        - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                          - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_amount_1]", line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                          - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxPercent'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_percent_1]", line_item['TaxCollection']['ApiTicketItemTax']['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                        - else # Multiple line item tax results returned
+                          - line_item['TaxCollection']['ApiTicketItemTax'].each_with_index do |tax, index|
+                            - unless tax['TaxAmount'] == '0.00'
+                              = hidden_field_tag "ticket[line_items][][tax_amount_#{index+1}]", tax['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                          - line_item['TaxCollection']['ApiTicketItemTax'].each_with_index do |tax, index|
+                            - unless tax['TaxPercent'] == '0.00'
+                              = hidden_field_tag "ticket[line_items][][tax_percent_#{index+1}]", tax['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                      - else
+                        = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        = hidden_field_tag "ticket[line_items][][tax_percent_1]", '0.00', :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+                        = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                       %br
                       %p
                         %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
@@ -124,16 +139,27 @@
                   .panel-footer
                     %ul{class: 'list-inline'}
                       %li.calculation_details
-                        = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['NetWeight']}#{line_item['UnitOfMeasure']}"
+                        = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{line_item['UnitOfMeasure']}"
                         x
-                        = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+                        = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}"
                         = "= $#{line_item['ExtendedAmount']}"
+                        - unless line_item['TaxCollection'].blank?
+                          - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                            - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                              = "+ $#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
+                          - else # Multiple line item tax results returned
+                            - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                              - unless tax['TaxAmount'] == '0.00'
+                                = "+ $#{tax['TaxAmount']} (tax)"
                       %li.pull-right
                         %a.text-success{"aria-controls" => "collapse#{line_item['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", class: 'pull-right ticket_collapse_link' }
                           %i.fa.fa-3x.collapse_icon
         - else
           / Only one ticket line item
           %div.ticket_input_fields_wrap
+            -#
+              .well
+                = @ticket["TicketItemCollection"]["ApiTicketItem"]
             #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
               .panel.panel-default.line-item
                 %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
@@ -164,7 +190,7 @@
                               %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                       %span.input-group-addon
                         %i.fa.fa-plus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][gross]", @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                      = phone_field_tag "ticket[line_items][][gross]", number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                       %span.input-group-addon
                         %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
@@ -182,7 +208,7 @@
                               %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                       %span.input-group-addon
                         %i.fa.fa-minus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][tare]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                      = phone_field_tag "ticket[line_items][][tare]", number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                       %span.input-group-addon
                         %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
@@ -194,6 +220,24 @@
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+                    - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
+                      - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                        - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                          = hidden_field_tag "ticket[line_items][][tax_amount_1]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxPercent'] == '0.00'
+                          = hidden_field_tag "ticket[line_items][][tax_percent_1]", @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                      - else # Multiple line item tax results returned
+                        - @ticket["TicketItemCollection"]["ApiTicketItem"]["TaxCollection"]["ApiTicketItemTax"].each_with_index do |tax, index|
+                          - unless tax['TaxAmount'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_amount_#{index+1}]", tax['TaxAmount'], :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                        - @ticket["TicketItemCollection"]["ApiTicketItem"]["TaxCollection"]["ApiTicketItemTax"].each_with_index do |tax, index|
+                          - unless tax['TaxPercent'] == '0.00'
+                            = hidden_field_tag "ticket[line_items][][tax_percent_#{index+1}]", tax['TaxPercent'].to_f/100, :placeholder => "Tax Percent", class: "form-control input-lg amount-calculation-field", readonly: true
+                    - else
+                      = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                      = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                      = hidden_field_tag "ticket[line_items][][tax_percent_1]", '0.00', :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+                      = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                     %br
                     %p
                       %a{"aria-controls" => "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse"}
@@ -205,10 +249,18 @@
                 .panel-footer
                   %ul{class: 'list-inline'}
                     %li.calculation_details
-                      = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+                      = "(#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
                       x
-                      = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
+                      = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3, strip_insignificant_zeros: true)}"
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
+                      - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
+                        - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                          - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                            = "+ $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
+                        - else # Multiple line item tax results returned
+                          - @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                            - unless tax['TaxAmount'] == '0.00'
+                              = "+ $#{tax['TaxAmount']} (tax)"
                     %li.pull-right
                       %a.text-success{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-3x.collapse_icon
@@ -272,6 +324,11 @@
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+
+                  = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                  = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
+                  = hidden_field_tag "ticket[line_items][][tax_percent_1]", '0.00', :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+                  = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                   %br
                   %p
                     %a{"aria-controls" => "more#{1}", "aria-expanded" => "false", "data-target" => "#more_#{1}", "data-toggle" => "collapse"}

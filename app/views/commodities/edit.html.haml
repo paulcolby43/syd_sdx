@@ -8,12 +8,14 @@
     .well
       %p.lead Customer Tax
       = @customer_taxes
-      -#
-        - @customer_tax.each do |tax|
-          = tax["ApiTax"] unless tax["ApiTax"].blank?
+    -#
+      - @customer_tax.each do |tax|
+        = tax["ApiTax"] unless tax["ApiTax"].blank?
+  -#
     .well
       %p.lead Customer Price
       = @customer_price
+  -#
     .well
       %p.lead Price
       = @price

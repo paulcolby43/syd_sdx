@@ -22,6 +22,10 @@
           %i.fa.fa-dollar.fa-lg
         = text_field_tag "ticket[line_items][][price]", nil, :placeholder => "Rate", class: "form-control input-lg amount-calculation-field", required: true
       = hidden_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+      = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+      = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount", class: "form-control input-lg amount-calculation-field tax", readonly: true
+      = hidden_field_tag "ticket[line_items][][tax_percent_1]", '0.00', :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
+      = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
       %br
       %p
         %a{"aria-controls" => "more_#{index}", "aria-expanded" => "false", "data-target" => "#more_#{index}", "data-toggle" => "collapse"}

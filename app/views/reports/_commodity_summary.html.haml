@@ -34,7 +34,7 @@
                   = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
                 - else
                   = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-              %td= "#{line_item['NetWeight'].to_d.round(2)}"
+              %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)}"
               %td= "#{number_to_currency(line_item['Price'])}"
               %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
               -#
@@ -44,7 +44,7 @@
             %td
             %td
             %td
-              %strong= "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round(2)}"
+              %strong= "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round(3)}"
             %td
             %td
               %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
