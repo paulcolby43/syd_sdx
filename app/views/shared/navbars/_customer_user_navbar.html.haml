@@ -10,16 +10,27 @@
         = image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
-        %li
-          %a{href: images_path}
-            PICTURES
+        -#
+          %li
+            %a{href: images_path}
+              PICTURES
         %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             TICKETS
             %b.caret
           %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1')}"}= link_to 'Closed', tickets_path(status: 1)
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3')}"}= link_to 'Paid', tickets_path(status: 3)
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1')}"}
+              %a{href: tickets_path(status: 1)}
+                %i.fa.fa-folder
+                Closed
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3')}"}
+              %a{href: tickets_path(status: 3)}
+                %i.fa.fa-dollar
+                Paid
+        %li
+          %a{href: reports_path(type: 'customer_summary')}
+            %i.fa.fa-file-text
+            Reports
           
       %ul.nav.navbar-nav.navbar-right
         %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}

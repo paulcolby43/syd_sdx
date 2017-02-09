@@ -94,6 +94,6 @@
             %p= image_tag("ajax-loader.gif", :id => "more_tickets_spinner", :alt => "Loading ...", style: "display:none;")
             %p= link_to 'Load more ...', tickets_path(:page => @tickets.next_page, :q => params[:q], :status => params[:status]), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
     - else
-      %p No tickets found            
+      %p.text-center No tickets found            
     
 = render partial: "shared/tickets_footer_navbar", locals: {title: "Tickets"}

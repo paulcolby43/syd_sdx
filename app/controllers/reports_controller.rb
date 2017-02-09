@@ -12,10 +12,12 @@ class ReportsController < ApplicationController
     @end_date = report_params[:end_date]
     unless @start_date.blank? and @end_date.blank?
       # Search all by date
-      @tickets = Ticket.all_by_date(3, current_user.token, current_yard_id, @start_date, @end_date) 
+      @tickets = Ticket.all_by_date(3, current_user.token, current_yard_id, @start_date, @end_date) unless current_user.customer?
+      @tickets = Customer.paid_tickets_by_days(current_user.token, current_yard_id, current_user.customer_guid, 7) if current_user.customer?
     else
       # Search all today
-      @tickets = Ticket.all_today(3, current_user.token, current_yard_id)
+      @tickets = Ticket.all_today(3, current_user.token, current_yard_id) unless current_user.customer?
+      @tickets = Customer.paid_tickets_by_days(current_user.token, current_yard_id, current_user.customer_guid, 1) if current_user.customer?
     end
     @line_items = []
     unless @tickets.blank?

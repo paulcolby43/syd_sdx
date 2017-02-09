@@ -16,17 +16,19 @@
         %strong Username
         %br
         = @user.username
-      %p
-        = link_to 'User settings', @user.user_setting
-      - if @user.admin?
+      - if current_user.admin? 
+        %p
+          = link_to 'User settings', @user.user_setting
+      - unless @user.customer?
         %p
           %strong Company
           %br
           = @user.company.name
-      %p
-        %strong Company Name
-        %br
-        = @user.company_name
+      - if @user.customer? and not @user == current_user
+        %p
+          %strong Company Name
+          %br
+          = @user.company_name
       %p
         %strong Email
         %br
@@ -40,10 +42,11 @@
           %strong Customer GUID
           %br
           = @user.customer_guid
-      %p
-        %strong Yard ID
-        %br
-        = current_yard_id
+      - if current_user.admin?
+        %p
+          %strong Yard ID
+          %br
+          = current_yard_id
 
       = link_to 'Edit', edit_user_path(@user), class: 'btn btn-default'
     
