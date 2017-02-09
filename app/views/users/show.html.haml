@@ -24,7 +24,7 @@
           %strong Company
           %br
           = @user.company.name
-      - if @user.customer? and not @user == current_user
+      - if @user.customer?
         %p
           %strong Company Name
           %br
