@@ -61,9 +61,11 @@ class User < ActiveRecord::Base
       access_token_string = JSON.parse(response)["access_token"]
       access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
       return 'success'
-    rescue => exception
-      Rails.logger.info exception.response
-      exception.response
+    rescue RestClient::ExceptionWithResponse => e
+      e.response
+#    rescue => exception
+      Rails.logger.info e.response
+      e.response
     end
   end
   

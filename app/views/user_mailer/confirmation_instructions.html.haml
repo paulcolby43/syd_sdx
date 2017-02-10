@@ -1,4 +1,8 @@
 %p
   #{@user.first_name}, welcome to Scrap Yard Dog!
-%p You can confirm your account email through the link below:
+%p 
+  You can confirm your account email through the link below.
+  %br
+  By clicking the link below, you agree to our
+  = link_to "Terms of Service", welcome_tos_url
 %p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)
