@@ -7,9 +7,11 @@
     - if current_user.admin?
       - unless @customer_user.blank?
         .alert.alert-warning
-          %i.fa.fa-compress
-          = "Customer has outside access"
-          = link_to "Edit customer login", edit_user_path(@customer_user), class: 'btn btn-default'
+          %p.lead
+            %i.fa.fa-compress
+            = "Customer Portal Open"
+          %p
+            = link_to "Edit customer's user account", edit_user_path(@customer_user), class: 'btn btn-primary'
       -#
         .alert.alert-warning
           = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
