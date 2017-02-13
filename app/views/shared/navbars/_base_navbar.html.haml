@@ -65,15 +65,16 @@
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
             %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
-          - if current_user.admin?
-            %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}
-              %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-                USERS
-                %b.caret
-              %ul.dropdown-menu
-                %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'All', users_path
-                -#
-                  %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
+          -#
+            - if current_user.admin?
+              %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}
+                %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+                  USERS
+                  %b.caret
+                %ul.dropdown-menu
+                  %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'All', users_path
+                  -#
+                    %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
           
       %ul.nav.navbar-nav.navbar-right
         -#
@@ -91,6 +92,7 @@
             -#
               %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
               %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
-            %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'Users', users_path
+            - if current_user.admin?
+              %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'Users', users_path
             %li{:class => "#{( current_page? user_settings_path) ? 'active' : ''}"}= link_to 'Settings', user_setting_path(current_user.user_setting)
         %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }
