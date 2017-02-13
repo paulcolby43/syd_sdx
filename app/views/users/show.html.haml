@@ -60,5 +60,15 @@
             = current_yard_id
     .row
       .col-sm-12.col-md-6
+        - if @user.customer? and not @portal_customers.blank?
+          %p
+            %strong Additional Portal Customers
+            %br
+            - @portal_customers.each do |portal_customer|
+              %p= Customer.find_by_id(current_user.token, current_yard_id, portal_customer.customer_guid)['Company']
+
+    
+    .row
+      .col-sm-12.col-md-6
         = link_to 'Edit', edit_user_path(@user), class: 'btn btn-primary btn-lg'
     

@@ -13,6 +13,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    @portal_customers = @user.portal_customers
   end
 
   # GET /users/new
@@ -22,6 +23,10 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    if @user.customer?
+#      @customer_user_portal_customer = @user.customer_user_portal_customers.build
+      @customers = Customer.all(current_user.token, current_yard_id)
+    end
   end
 
   # POST /users
@@ -80,6 +85,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    @customers = Customer.all(current_user.token, current_yard_id)
     respond_to do |format|
       if @user.update(user_params)
         format.html { 
@@ -145,6 +151,6 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, 
         :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state, :zip, :terms_of_service, :email_confirmed, :confirm_token, 
-        :dragon_account_number)
+        :dragon_account_number, portal_customers_attributes:[:user_id, :customer_guid, :_destroy,:id])
     end
 end
