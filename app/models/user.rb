@@ -1,15 +1,18 @@
 class User < ActiveRecord::Base
   ROLES = %w[customer admin].freeze
+  
+  has_one :access_token
+  has_one :user_setting
+  belongs_to :company
+  has_many :portal_customers # Allow customer user to view other customer tickets via their portal
+  
+  accepts_nested_attributes_for :portal_customers, allow_destroy: true
 
   attr_accessor :password
   before_save :prepare_password
 #  after_create :generate_token, if: :admin?
   before_save { |user| user.username = username.downcase }
   before_save { |user| user.email = email.downcase }
-  
-  has_one :access_token
-  has_one :user_setting
-  belongs_to :company
   
   before_create :confirmation_token
 #  after_commit :create_user_settings, :on => :create
@@ -25,10 +28,11 @@ class User < ActiveRecord::Base
   validates_presence_of :email
   validates_presence_of :phone
   validates_presence_of :username, length: { minimum: 7 }
+  validates :username, format: { without: /\s/, message: "must contain no spaces" }
   validates_presence_of :company_name
-  validates_presence_of :address1
-  validates_presence_of :city
-  validates_presence_of :state
+  validates_presence_of :address1, on: :create
+  validates_presence_of :city, on: :create
+  validates_presence_of :state, on: :create
   validates_uniqueness_of :username, scope: :dragon_account_number, case_sensitive: false
   validates_uniqueness_of :email, case_sensitive: false
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
@@ -215,6 +219,17 @@ class User < ActiveRecord::Base
   
   def customer?
     role == "customer"
+  end
+  
+  def portal_customer_ids
+    ids = []
+    if customer? and not customer_guid.blank?
+      ids << customer_guid
+      portal_customers.each do |portal_customer|
+        ids << portal_customer.customer_guid
+      end
+    end
+    return ids
   end
   
   def email_activate

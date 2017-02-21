@@ -17,6 +17,7 @@
               PICTURES
         %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            %i.fa.fa-ticket
             TICKETS
             %b.caret
           %ul.dropdown-menu
@@ -29,7 +30,7 @@
                 %i.fa.fa-dollar
                 Paid
         %li
-          %a{href: reports_path(type: 'customer_summary')}
+          %a{href: reports_path(type: 'commodity_summary')}
             %i.fa.fa-file-text
             Reports
           
