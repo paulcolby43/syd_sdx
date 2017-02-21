@@ -221,6 +221,17 @@ class User < ActiveRecord::Base
     role == "customer"
   end
   
+  def portal_customer_ids
+    ids = []
+    if customer? and not customer_guid.blank?
+      ids << customer_guid
+      portal_customers.each do |portal_customer|
+        ids << portal_customer.customer_guid
+      end
+    end
+    return ids
+  end
+  
   def email_activate
     self.email_confirmed = true
     self.confirm_token = nil

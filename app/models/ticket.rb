@@ -71,17 +71,22 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bycustomeridsbydate"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
-      payload: {
-        "CustomerIds" => customer_ids,
-        "StartDate" => start_date,
-        "EndDate" => end_date,
+    payload = {
+      "CustomerIds" => customer_ids,
+      "StartDate" => start_date,
+      "EndDate" => end_date,
 #        "SearchTerms" => "",
-        "Take" => 200, 
-        "PaymentType" => status
-        })
+      "Take" => 200, 
+      "PaymentType" => status
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info json_encoded_payload
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
+    Rails.logger.info data
     
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
