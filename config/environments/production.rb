@@ -67,7 +67,7 @@ Rails.application.configure do
   
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { host: '173.227.154.149', port: 8082 }
+  config.action_mailer.default_url_options = { host: '71.41.52.55', port: 3000 }
   
   config.action_mailer.delivery_method = :smtp
 
