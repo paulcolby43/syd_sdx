@@ -82,5 +82,11 @@
 %hr
   .pull-right
     %p.lead
+      Cash
+      = number_to_currency(@cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+      %br
+      Check
+      = number_to_currency(@check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+      %br
       %strong Total
       = number_to_currency(@line_items_total)
