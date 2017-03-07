@@ -63,7 +63,7 @@
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Disabled", nil, :class => 'control-label'
-          = text_field_tag "commodity[is_disabled]", "#{(@commodity['IsDisabled'] == 'true')} ? 'true' : 'false' ", class: 'input-lg', "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "#{(@commodity['IsDisabled'] == 'true') ? 1 : 0}"
+          = text_field_tag "commodity[is_disabled]", "#{(@commodity['IsDisabled'] == 'true')} ? 'true' : 'false' ", class: 'input-lg', "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl", :value => "#{(@commodity['IsDisabled'] == 'true') ? 1 : 0}", required: true
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
