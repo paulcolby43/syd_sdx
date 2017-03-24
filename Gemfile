@@ -61,7 +61,11 @@ gem "bcrypt", :require => "bcrypt"
 gem 'kaminari-bootstrap'
 
 # Background jobs
-gem 'sidekiq'
+#gem 'sidekiq'
+# Paid 'Pro' version
+source "https://gems.contribsys.com/" do
+  gem 'sidekiq-pro'
+end
 
 # Image processing
 gem 'rmagick', :require => false
