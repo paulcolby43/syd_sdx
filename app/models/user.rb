@@ -309,7 +309,11 @@ class User < ActiveRecord::Base
   end
   
   def send_after_confirmation_info_email
-    UserConfirmedSendEmailWorker.perform_async(self.id) # Send out email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+    if admin?
+      UserConfirmedSendEmailWorker.perform_async(self.id) # Send out email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+    elsif customer?
+      UserConfirmedSendCustomerPortalEmailWorker.perform_async(self.id) # Send out customer portal email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+    end
   end
   
   #############################

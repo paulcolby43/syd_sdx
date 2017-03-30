@@ -25,7 +25,7 @@
               = f.label :last_name, :class => "control-label"
               %br/
               = f.text_field :last_name, value: @customer['LastName'], :class => "form-control input-lg", placeholder: "Last Name", required: true
-          .row.form-group
+          .row.form-group.required
             %div{:class => "col-sm-6"}
               = f.label :company_name, :class => "control-label required"
               %br/
@@ -33,7 +33,7 @@
             %div{:class => "col-sm-6"}
               = f.label 'Mobile Phone', :class => "control-label"
               %br/
-              = f.text_field :phone, value: @customer['Phone'], :class => "form-control input-lg", placeholder: "Mobile Phone"
+              = f.text_field :phone, value: @customer['Phone'], :class => "form-control input-lg", placeholder: "Mobile Phone", required: true
           .row.form-group.required
             %div{:class => "col-sm-6"}
               = f.label :username, :class => "control-label"
