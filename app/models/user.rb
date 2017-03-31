@@ -164,7 +164,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{user.token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-#    Rails.logger.info data
+    Rails.logger.info "Resetting password: #{data}"
     return data["ResetUserPasswordResponse"]
   end
   
