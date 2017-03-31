@@ -28,6 +28,7 @@ class PasswordResetsController < ApplicationController
     else
       reset_scrap_dragon_password_response = @user.reset_scrap_dragon_password(@user.id, params[:user][:password]) unless params[:user].blank?
       if reset_scrap_dragon_password_response["Success"] == 'true'
+        @user.update_attribute(:password, params[:user][:password])
         flash[:success] = "Password has been reset."
         redirect_to login_path
       else
