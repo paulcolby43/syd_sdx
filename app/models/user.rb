@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   after_commit :send_registration_notice_email, :on => :create
     
   validates :password, confirmation: true
-  validates :password_confirmation, presence: true, on: :create
+#  validates :password_confirmation, presence: true, on: :create
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_presence_of :first_name
   validates_presence_of :last_name
