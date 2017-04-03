@@ -18,7 +18,7 @@
             .panel.panel-default.line-item
               %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                 %h4.panel-title
-                  %a.line_item_name{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
+                  .line_item_name
                     %div.text-success= line_item["PrintDescription"]
               .panel-footer
                 = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['Quantity']}#{line_item['UnitOfMeasure']}"
@@ -31,7 +31,7 @@
           .panel.panel-default.line-item
             %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
               %h4.panel-title
-                %a.line_item_name{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "button", class: "collapsed"}
+                .line_item_name
                   %div.text-success= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
             .panel-footer
               = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"

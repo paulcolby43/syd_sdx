@@ -29,10 +29,14 @@
               %a{href: tickets_path(status: 3)}
                 %i.fa.fa-dollar
                 Paid
-        %li
-          %a{href: reports_path(type: 'commodity_summary')}
+        %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             %i.fa.fa-file-text
-            Reports
+            REPORTS
+            %b.caret
+          %ul.dropdown-menu
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
           
       %ul.nav.navbar-nav.navbar-right
         %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}

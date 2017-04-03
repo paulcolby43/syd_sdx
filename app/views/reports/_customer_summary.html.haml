@@ -19,8 +19,9 @@
               %strong Ticket
             %td 
               %strong Amount
-            %td 
-              %strong Method
+            - unless @status == '1' # Don't show for closed tickets
+              %td 
+                %strong Method
             -#
               %td
                 %strong Ticket record
@@ -34,8 +35,9 @@
               %td
                 = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
                 =# "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
-              %td
-                = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}"
+              - unless @status == '1'  # Don't show for closed tickets
+                %td
+                  = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}" 
               -# %td= ticket
           -#
             %tr
