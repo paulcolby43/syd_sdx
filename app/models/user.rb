@@ -305,7 +305,11 @@ class User < ActiveRecord::Base
   end
   
   def send_confirmation_instructions_email
-    UserConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new user, in sidekiq background process
+    unless customer?
+      UserConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new user, in sidekiq background process
+    else
+      CustomerUserPortalConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new customer portal user, in sidekiq background process
+    end
   end
   
   def send_after_confirmation_info_email
