@@ -94,7 +94,7 @@ class CustPic < ActiveRecord::Base
   end
   
   def self.table_exists?
-    CustPic.connection
+    CustPic.connection.table_exists? 'CUST_PICS_data'
     rescue TinyTds::Error
       false
     else
