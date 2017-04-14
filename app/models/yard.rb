@@ -51,6 +51,8 @@ class Yard
   end
   
   def self.device_groups(yard_id)
-    DeviceGroup.where(CompanyID: yard_id)
+    if DeviceGroup.database_exists?
+      DeviceGroup.where(CompanyID: yard_id)
+    end
   end
 end
