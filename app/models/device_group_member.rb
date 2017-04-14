@@ -13,8 +13,16 @@ class DeviceGroupMember < ActiveRecord::Base
   
   
   #############################
-  #     Class Methods      #
+  #     Class Methods         #
   #############################
+  
+  def self.database_exists?
+    ActiveRecord::Base.connection
+    rescue ActiveRecord::NoDatabaseError
+      false
+    else
+      true
+  end
   
   
 end

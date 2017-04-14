@@ -531,5 +531,13 @@ class Device < ActiveRecord::Base
     client.call(:jpegger_trigger, xml: xml_string)
   end
   
+  def self.database_exists?
+    ActiveRecord::Base.connection
+    rescue ActiveRecord::NoDatabaseError
+      false
+    else
+      true
+  end
+  
 end
 
