@@ -18,7 +18,7 @@ class DeviceGroupMember < ActiveRecord::Base
   
   def self.database_exists?
     ActiveRecord::Base.connection
-    rescue ActiveRecord::NoDatabaseError
+    rescue TinyTds::Error
       false
     else
       true
