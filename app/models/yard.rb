@@ -57,11 +57,11 @@ class Yard
   end
   
   def self.device_groups_table_exists?
-  DeviceGroup.connection
-  rescue ActiveRecord::NoDatabaseError
-    false
-  else
-    true
+    DeviceGroup.connection
+    rescue TinyTds::Error
+      false
+    else
+      true
   end
   
 end
