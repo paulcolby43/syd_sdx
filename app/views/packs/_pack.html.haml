@@ -1,0 +1,13 @@
+- @packs.each do |pack|
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %div.panel.panel-primary
+        %div.list_group
+          %a{href: edit_pack_path(pack['Id'], status: @status), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack['InternalPackNumber']} #{pack['PrintDescription']} #{pack['Quantity']} #{pack['NetWeight'].to_f.round(2)} #{pack['UnitOfMeasure']}"}, class: "list-group-item pack_button"}
+            .pull-right
+              &nbsp;
+              %i.fa.fa-chevron-right.fa-lg
+            = "#{pack['InternalPackNumber']} #{pack['PrintDescription']}"
+            = "#{pack['Quantity']}"
+            = "#{pack['NetWeight'].to_f.round(2)} #{pack['UnitOfMeasure']}"
+            %p= pack

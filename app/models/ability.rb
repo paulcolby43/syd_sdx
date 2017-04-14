@@ -161,6 +161,13 @@ class Ability
       ############
       can :index, :reports
       
+      # Packs
+      ############
+      can :index, :packs
+      can :show, :packs
+      can :create, :packs
+      can :edit, :packs
+      
     # End admin user role
     
     elsif user.basic?

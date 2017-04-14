@@ -42,6 +42,23 @@
             %ul.dropdown-menu
               - Yard.all(current_user.token).each do |yard|
                 %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
+        %li.dropdown{:class => "#{(params[:controller] == 'packs') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            PACKS
+            %b.caret
+          %ul.dropdown-menu
+            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '0') ? 'active' : ''}"}
+              = link_to 'Closed', packs_path(status: 0)
+            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '1') ? 'active' : ''}"}
+              = link_to 'Void', packs_path(status: 1)
+            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '2') ? 'active' : ''}"}
+              = link_to 'Held', packs_path(status: 2)
+            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '3') ? 'active' : ''}"}
+              = link_to 'Manifest', packs_path(status: 3)
+            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '4') ? 'active' : ''}"}
+              = link_to 'Shipped', packs_path(status: 4)
+            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '5') ? 'active' : ''}"}
+              = link_to 'Transferred', packs_path(status: 5)
         %li= link_to 'PICTURES', images_path
         -#
           %li= link_to 'SHIPMENTS', shipments_path
