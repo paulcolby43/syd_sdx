@@ -531,7 +531,7 @@ class Device < ActiveRecord::Base
     client.call(:jpegger_trigger, xml: xml_string)
   end
   
-  def self.database_exists?
+  def self.table_exists?
     Device.connection
     rescue TinyTds::Error
       false
