@@ -68,7 +68,7 @@ class DeviceGroup < ActiveRecord::Base
   #############################
   
   def self.database_exists?
-    ActiveRecord::Base.connection
+    DeviceGroup.connection
     rescue ActiveRecord::NoDatabaseError
       false
     else
