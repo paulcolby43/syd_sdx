@@ -532,8 +532,8 @@ class Device < ActiveRecord::Base
   end
   
   def self.database_exists?
-    ActiveRecord::Base.connection
-    rescue ActiveRecord::NoDatabaseError
+    Device.connection
+    rescue TinyTds::Error
       false
     else
       true
