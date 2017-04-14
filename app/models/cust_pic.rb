@@ -93,4 +93,12 @@ class CustPic < ActiveRecord::Base
     return cust_pics
   end
   
+  def self.table_exists?
+    CustPic.connection
+    rescue TinyTds::Error
+      false
+    else
+      true
+  end
+  
 end
