@@ -51,8 +51,17 @@ class Yard
   end
   
   def self.device_groups(yard_id)
-    if DeviceGroup.database_exists?
+    if Yard.device_groups_table_exists?
       DeviceGroup.where(CompanyID: yard_id)
     end
   end
+  
+  def self.device_groups_table_exists?
+    DeviceGroup.connection
+    rescue ActiveRecord::NoDatabaseError
+      false
+    else
+      true
+  end
+  
 end
