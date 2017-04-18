@@ -9,3 +9,8 @@ jQuery ->
       $.rails.enableElement $(this)
       return
     return
+
+  #$('a.group').on 'click', ->
+  #  $(this).find( "#details" ).toggle 'slow', ->
+  #    return
+  #  return

@@ -2,19 +2,23 @@
   %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-block", target: '_blank'}
     %i.fa.fa-file-pdf-o
     Print
+- unless current_user.customer?
+  - if @status == '1'
+    %p
+      %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+        %i.fa.fa-dollar
+        = 'Pay'
+    = render partial: "quick_payment_modal", locals: {ticket: ticket}
 
-- if @status == '1'
-  %p
-    %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
-      %i.fa.fa-dollar
-      = 'Pay'
-  = render partial: "quick_payment_modal", locals: {ticket: ticket}
-
-- if (@status == '1' or @status == '3') and current_user.company.include_leads_online? and current_user.company.leads_online_config_settings_present?
-  %p
-    %a{href: send_to_leads_online_ticket_path(ticket['Id'], status: @status), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
-      %i.fa.fa-search
-      Send to Leads
+  - if (@status == '1' or @status == '3') and current_user.company.include_leads_online? and current_user.company.leads_online_config_settings_present?
+    %p
+      %a{href: send_to_leads_online_ticket_path(ticket['Id'], status: @status), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
+        %i.fa.fa-search
+        Send to Leads
+  - if @status == '3'
+    %a{href: create_ticket_customer_path(ticket['CustomerId']), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+      %i.fa.fa-ticket
+      Ticket
 
 -#
   - if current_company.bwi_config_settings_present?

@@ -104,26 +104,46 @@
                 = "Yard ID"
                 .pull-right
                   = "#{current_yard_id}"
-        - if current_user.company.include_leads_online? 
-          .col-xs-12.col-sm-6
-            .panel.panel-default
-              .panel-heading
-                %h5.panel-title 
-                  Leads Online Info 
-                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
-              %ul.list-group
+        -# if current_user.company.include_leads_online? 
+        .col-xs-12.col-sm-6
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                Company Info 
+                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+            %ul.list-group
+              %li.list-group-item
+                = "Name"
+                .pull-right
+                  = "#{current_user.company.name}"
+              - unless current_user.company.full_address.blank?
                 %li.list-group-item
-                  = "Leads Online Store ID"
-                  .pull-right
-                    = "#{current_user.company.leads_online_store_id}"
+                  = current_user.company.full_address.html_safe
+              %li.list-group-item
+                Phone
+                .pull-right= current_user.company.phone
+              - unless current_user.company.custom_field_1.blank? and current_user.company.custom_field_1_value.blank?
                 %li.list-group-item
-                  = "Leads Online FTP Username"
+                  = current_user.company.custom_field_1
                   .pull-right
-                    = "#{current_user.company.leads_online_ftp_username}"
+                    = "#{current_user.company.custom_field_1_value}"
+              - unless current_user.company.custom_field_2.blank? and current_user.company.custom_field_2_value.blank?
                 %li.list-group-item
-                  = "Leads Online FTP Password"
+                  = current_user.company.custom_field_2
                   .pull-right
-                    = "#{current_user.company.leads_online_ftp_password}"
+                    = "#{current_user.company.custom_field_2_value}"
+              %li.list-group-item
+                = "Leads Online Store ID"
+                .pull-right
+                  = "#{current_user.company.leads_online_store_id}"
+              %li.list-group-item
+                = "Leads Online FTP Username"
+                .pull-right
+                  = "#{current_user.company.leads_online_ftp_username}"
+              %li.list-group-item
+                = "Leads Online FTP Password"
+                .pull-right
+                  = "#{current_user.company.leads_online_ftp_password}"
 
       .row
         .col-sm-6.col-md-4.col-md-offset-4

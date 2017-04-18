@@ -12,7 +12,7 @@
           = "#{license_reader_device.DeviceName} Data Scan"
           = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
   .well.col-sm-12.col-md-12{id: 'customer_info'}
-    = form_tag customers_path, :class => "form-horizontal" do
+    = form_tag customers_path, :class => "form-horizontal", id: 'customer_form' do
       .row.form-group
         %div{:class => "col-sm-6 col-md-6"}
           = label_tag "First Name", nil, :class => 'control-label'
@@ -41,7 +41,8 @@
           = text_field_tag "customer[city]", params[:city], :placeholder => "City", class: "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "State", nil, :class => 'control-label'
-          = text_field_tag "customer[state]", params[:state], :placeholder => "State", class: "form-control input-lg"
+          =# text_field_tag "customer[state]", params[:state], :placeholder => "State", class: "form-control input-lg"
+          = select_tag "customer[state]", options_for_select(us_states), :class => "form-control input-lg"
         %div{:class => "col-sm-4 col-md-4"}
           = label_tag "Zip", nil, :class => 'control-label'
           = text_field_tag "customer[zip]", params[:zip], :placeholder => "Zip", class: "form-control input-lg"

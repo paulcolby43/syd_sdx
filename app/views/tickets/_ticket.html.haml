@@ -8,7 +8,7 @@
             = ticket["Company"]
             .pull-right
               =# number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
-              = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+              = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
               %i.fa.fa-chevron-right.fa-lg
           - if @status == '1' or @status == '3'
             %div.list-group-item

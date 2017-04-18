@@ -14,12 +14,18 @@ class TicketsController < ApplicationController
       results = Ticket.search(@status, current_user.token, current_yard_id, params[:q])
     else
       results = Ticket.all(@status, current_user.token, current_yard_id) unless current_user.customer?
-#      results = Ticket.search(3, current_user.token, current_yard_id, current_user.company_name) if current_user.customer?
-#      results = Customer.paid_tickets(current_user.token, current_yard_id, current_user.customer_guid) if current_user.customer?
-      results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid) if current_user.customer?
+      if current_user.customer?
+        results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid)
+        current_user.portal_customers.each do |portal_customer|
+          portal_customer_results = Customer.tickets(@status, current_user.token, current_yard_id, portal_customer.customer_guid)
+          results = [] if results.blank? # Create an empty array to add to if there are no results yet
+          results = results + portal_customer_results unless portal_customer_results.blank?
+        end
+      end
     end
     unless results.blank?
-      results = results.reverse if @status == 'held'
+      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
+      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
@@ -47,19 +53,34 @@ class TicketsController < ApplicationController
   # GET /tickets/1.json
   def show
     authorize! :show, :tickets
-#    @ticket = Ticket.find_by_id_and_ticket_number(params[:status], current_user.token, current_yard_id, params[:id], params[:ticket_number])
-    @ticket = Ticket.find_by_id(params[:status], current_user.token, current_yard_id, params[:id])
+    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
+    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
+    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
+  
     respond_to do |format|
       format.html{}
       format.pdf do
         @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
         @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
-        render pdf: "ticket#{@ticket_number}",
-          :layout => 'pdf.html.haml',
-          :zoom => 1.25
+        unless current_user.printer_devices.blank?
+          printer = current_user.printer_devices.last
+          render pdf: "ticket#{@ticket_number}",
+            :layout => 'pdf.html.haml',
+#            :zoom => 1.25
+            :zoom => "#{printer.PrinterWidth < 10 ? 2 : 1.25}",
+            :save_to_file => Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf")
+          printer.call_printer_for_ticket_pdf(Base64.encode64(File.binread(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))))
+          # Remove the temporary pdf file that was created above
+          FileUtils.remove(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))
+        else
+          render pdf: "ticket#{@ticket_number}",
+            :layout => 'pdf.html.haml',
+            :zoom => 1.25
+        end
       end
     end
   end
@@ -78,8 +99,7 @@ class TicketsController < ApplicationController
     authorize! :edit, :tickets
     @drawers = Drawer.all(current_user.token, current_yard_id)
     @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
-#    @ticket = Ticket.find_by_id(params[:status], current_user.token, current_yard_id, params[:id])
-    @ticket = Ticket.find_by_id(params[:status], current_user.token, current_yard_id, params[:id])
+    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
@@ -87,6 +107,7 @@ class TicketsController < ApplicationController
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
     @contract = Yard.contract(current_yard_id)
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+#    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
   end
 
   # PATCH/PUT /tickets/1
@@ -97,13 +118,17 @@ class TicketsController < ApplicationController
       unless ticket_params[:line_items].blank?
         ticket_params[:line_items].each do |line_item|
           if line_item[:status].blank?
-            # Create new item
-            Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
-              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number])
+            unless line_item[:commodity].blank?
+              # Create new item
+              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            end
           else
-            # Update existing item
-            Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
-              line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number])
+            unless line_item[:commodity].blank?
+              # Update existing item
+              Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+            end
           end
         end
       end
@@ -150,7 +175,9 @@ class TicketsController < ApplicationController
         else
           flash[:danger] = 'Error updating ticket.'
         end
-        redirect_to tickets_path(status: ticket_params[:status])
+        redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
+        # Redirect to paid tickets list so can print
+        redirect_to tickets_path(status: '3') if params[:pay_ticket] or params[:close_and_pay_ticket]
         }
     end
   end
@@ -210,6 +237,6 @@ class TicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :status, :notes, :serial_number])
+      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :tax_amount, :status, :notes, :serial_number])
     end
 end

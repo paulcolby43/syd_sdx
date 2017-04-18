@@ -161,6 +161,13 @@ class Ability
       ############
       can :index, :reports
       
+      # Packs
+      ############
+      can :index, :packs
+      can :show, :packs
+      can :create, :packs
+      can :edit, :packs
+      
     # End admin user role
     
     elsif user.basic?
@@ -244,6 +251,11 @@ class Ability
       can :manage, User do |user_record|
         user_record.id == user.id
       end
+      
+      # Reports
+      ############
+      can :index, :reports
+      
     # End customer user role
     end 
     

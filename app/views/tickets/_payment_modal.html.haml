@@ -5,6 +5,11 @@
         Pay Ticket
         = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
       .modal-body
+        -#
+          - @accounts_payable_items.each do |accounts_payable_item|
+            .well
+              = accounts_payable_item["Id"]
+              = number_to_currency(accounts_payable_item["AmountDue"])
         .input-group
           .input-group-addon
             %i.fa.fa-dollar
@@ -23,7 +28,7 @@
                 =# radio_button_tag "checking_account_payment[id]", checking_account["Id"]
                 =# hidden_field_tag "checking_account_payment[name]", checking_account["Name"]
                 %i.fa.fa-pencil
-                = checking_account["Name"]
+                = truncate(checking_account["Name"], length: 20)
         %br
         - unless @checking_accounts.blank?
           #check_number_field{style: 'display:none;'}

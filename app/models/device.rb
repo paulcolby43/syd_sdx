@@ -205,37 +205,7 @@ class Device < ActiveRecord::Base
     client.call(:jpegger_trigger, xml: xml_string)
   end
   
-  def call_printer_for_purchase_order_pdf(pdf_binary)
-    xml_string = "<?xml version='1.0' encoding='UTF-8'?>
-      <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:ns1='urn:TUDIntf' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-         <SOAP-ENV:Body xmlns:NS1='urn:TUDIntf-ITUD' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <NS1:PrintPDF>
-               <WorkstationIP xsi:type='xs:string'>#{ENV['PROXY_IP']}</WorkstationIP>
-               <WorkstationPort xsi:type='xs:int'>#{self.LocalListenPort}</WorkstationPort>
-               <PDFFile xsi:type='xsd:base64Binary'>#{pdf_binary}</PDFFile>
-            </NS1:PrintPDF>
-         </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>"
-    client = Savon.client(wsdl: ENV['TUD_WSDL_URL'])
-    client.call(:print_pdf, xml: xml_string)
-  end
-  
-  def call_printer_for_bill_pdf(pdf_binary)
-    xml_string = "<?xml version='1.0' encoding='UTF-8'?>
-      <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:ns1='urn:TUDIntf' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-         <SOAP-ENV:Body xmlns:NS1='urn:TUDIntf-ITUD' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <NS1:PrintPDF>
-               <WorkstationIP xsi:type='xs:string'>#{ENV['PROXY_IP']}</WorkstationIP>
-               <WorkstationPort xsi:type='xs:int'>#{self.LocalListenPort}</WorkstationPort>
-               <PDFFile xsi:type='xsd:base64Binary'>#{pdf_binary}</PDFFile>
-            </NS1:PrintPDF>
-         </SOAP-ENV:Body>
-      </SOAP-ENV:Envelope>"
-    client = Savon.client(wsdl: ENV['TUD_WSDL_URL'])
-    client.call(:print_pdf, xml: xml_string)
-  end
-  
-  def call_printer_for_bill_payment_pdf(pdf_binary)
+  def call_printer_for_ticket_pdf(pdf_binary)
     xml_string = "<?xml version='1.0' encoding='UTF-8'?>
       <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:ns1='urn:TUDIntf' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
          <SOAP-ENV:Body xmlns:NS1='urn:TUDIntf-ITUD' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
@@ -559,6 +529,14 @@ class Device < ActiveRecord::Base
     </SOAP-ENV:Envelope>"
     client = Savon.client(wsdl: ENV['JPEGGER_WSDL_URL'])
     client.call(:jpegger_trigger, xml: xml_string)
+  end
+  
+  def self.table_exists?
+    Device.connection
+    rescue TinyTds::Error
+      false
+    else
+      true
   end
   
 end

@@ -17,6 +17,13 @@ class Workstation < ActiveRecord::Base
   #     Class Methods      #
   #############################
   
+  def self.table_exists?
+    Workstation.connection
+    rescue TinyTds::Error
+      false
+    else
+      true
+  end
   
 end
 

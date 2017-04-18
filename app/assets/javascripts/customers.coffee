@@ -79,13 +79,25 @@ jQuery ->
     device_id = $(this).data( "device-id" )
     customer_number = $(this).data( "customer-id" )
     yard_id = $(this).data( "yard-id" )
+    customer_first_name = $(this).data( "first-name" )
+    customer_last_name = $(this).data( "last-name" )
+    if !customer_first_name #Get value from form field
+      customer_first_name = $('#customer_first_name').val()
+    if !customer_last_name #Get value from form field
+      customer_last_name = $('#customer_last_name').val()
+    camera_name = $(this).data( "camera-name" )
+    user_icon = $(this).find( ".fa-user" )
+    user_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
     save_license_scan_to_jpegger_ajax = ->
       $.ajax
         url: "/devices/" + device_id + "/drivers_license_camera_trigger"
         dataType: 'json'
         data:
-          customer_first_name: $('#customer_first_name').val()
-          customer_last_name: $('#customer_last_name').val()
+          camera_name: camera_name
+          customer_first_name: customer_first_name
+          customer_last_name: customer_last_name
           license_number: $('#customer_id_number').val()
           #dob: $('#vendor_dob').val()
           #sex: $('#vendor_sex').val()
@@ -99,11 +111,15 @@ jQuery ->
           state: $('#customer_state').val()
           zip: $('#customer_zip').val()
         success: (data) ->
-          $('.save_to_jpegger_spinner').hide()
+          #$('.save_to_jpegger_spinner').hide()
+          spinner_icon.hide()
+          user_icon.show()
           #alert 'Saved scanned image to Jpegger.'
           return
         error: ->
-          $('.save_to_jpegger_spinner').hide()
+          spinner_icon.hide()
+          user_icon.show()
+          #$('.save_to_jpegger_spinner').hide()
           #alert 'Error saving scanned image to Jpegger.'
           return
     
@@ -173,7 +189,8 @@ jQuery ->
           zip = data.zip
           
           # Find or create vendor
-          $('#q').val firstname + ' ' + lastname
+          # $('#q').val firstname + ' ' + lastname
+          $('#q').val lastname
           $('#first_name').val firstname
           $('#last_name').val lastname
           $('#license_number').val licensenumber
@@ -336,3 +353,7 @@ jQuery ->
         #alert 'Customer scanner trigger failed'
         return
   ### End Customer Scanner Trigger ###
+
+  $('#save_customer_navbar_link').click ->
+    $('#customer_form').submit()
+    return

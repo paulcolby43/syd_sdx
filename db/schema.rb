@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160614143951) do
+ActiveRecord::Schema.define(version: 20170213165010) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -62,6 +62,17 @@ ActiveRecord::Schema.define(version: 20160614143951) do
     t.string  "leads_online_ftp_password"
     t.string  "account_number"
     t.boolean "include_leads_online",      default: true
+    t.string  "custom_field_1"
+    t.string  "custom_field_1_value"
+    t.string  "custom_field_2"
+    t.string  "custom_field_2_value"
+    t.string  "address1"
+    t.string  "address2"
+    t.string  "city"
+    t.string  "state"
+    t.string  "zip"
+    t.string  "phone"
+    t.string  "logo"
   end
 
   create_table "cust_pic_files", force: true do |t|
@@ -108,6 +119,13 @@ ActiveRecord::Schema.define(version: 20160614143951) do
     t.string   "contract_verbiage"
   end
 
+  create_table "portal_customers", force: true do |t|
+    t.integer  "user_id"
+    t.string   "customer_guid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "shipment_files", force: true do |t|
     t.string   "name"
     t.string   "file"
@@ -130,10 +148,10 @@ ActiveRecord::Schema.define(version: 20160614143951) do
   end
 
   create_table "user_settings", force: true do |t|
-    t.boolean  "show_thumbnails",          default: false
+    t.boolean  "show_thumbnails",          default: true
     t.string   "table_name",               default: "images"
-    t.boolean  "show_customer_thumbnails", default: false
-    t.boolean  "show_ticket_thumbnails",   default: false
+    t.boolean  "show_customer_thumbnails", default: true
+    t.boolean  "show_ticket_thumbnails",   default: true
     t.integer  "device_group_id"
     t.integer  "user_id"
     t.datetime "created_at"
@@ -165,6 +183,7 @@ ActiveRecord::Schema.define(version: 20160614143951) do
     t.string   "dragon_account_number"
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
+    t.string   "zip"
   end
 
 end

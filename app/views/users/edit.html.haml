@@ -22,20 +22,24 @@
             %label.btn.btn-lg.btn-default{class: "#{@user.customer? ? 'active' : ''}"}
               = f.radio_button :role, 'customer', :checked => @user.customer?
               Customer User
-        .row.form-group
-          %div{:class => "col-sm-6"}
-            = f.label :first_name, :class => "control-label"
-            = f.text_field :first_name, :class => "form-control input-lg", placeholder: "First Name", :autofocus => true, required: true
-          %div{:class => "col-sm-6"}
-            = f.label :last_name, :class => "control-label"
-            = f.text_field :last_name, :class => "form-control input-lg", placeholder: "Last Name", required: true
-        .row.form-group
-          %div{:class => "col-sm-6"}
-            = f.label :company_name, :class => "control-label"
-            = f.text_field :company_name, :class => "form-control input-lg", placeholder: "Company Name", required: true
-          %div{:class => "col-sm-6"}
-            = f.label :phone, :class => "control-label"
-            = f.text_field :phone, :class => "form-control input-lg", placeholder: "Phone"
+        - if params[:customer_needs_to_change_password].blank?
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :first_name, :class => "control-label"
+              - if params[:customer_needs_to_change_password].blank?
+                = f.text_field :first_name, :class => "form-control input-lg", placeholder: "First Name", :autofocus => true, required: true
+              - else
+                = f.text_field :first_name, :class => "form-control input-lg", placeholder: "First Name", :autofocus => true, required: true
+            %div{:class => "col-sm-6"}
+              = f.label :last_name, :class => "control-label"
+              = f.text_field :last_name, :class => "form-control input-lg", placeholder: "Last Name", required: true
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :company_name, :class => "control-label"
+              = f.text_field :company_name, :class => "form-control input-lg", placeholder: "Company Name", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :phone, :class => "control-label"
+              = f.text_field :phone, :class => "form-control input-lg", placeholder: "Phone"
         .row.form-group
           %div{:class => "col-sm-6"}
             = f.label :username, :class => "control-label"
@@ -43,11 +47,16 @@
           %div{:class => "col-sm-6"}
             = f.label :email, :class => "control-label"
             = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
-        -#
+        - if current_user == @user
           .row.form-group
             %div{:class => "col-sm-6"}
               = f.label 'New password', :class => "control-label"
-              = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password"
+              - unless params[:customer_needs_to_change_password].blank?
+                %p.help-block Please update your password.
+                = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password", :autofocus => true, required: true
+              - else
+                %p.help-block Leave blank if you don't want to change.
+                = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password"
         - if current_user.admin? and @user.customer?
           .row.form-group
             %div{:class => "col-sm-6"}
@@ -56,9 +65,22 @@
             %div{:class => "col-sm-6"}
               = f.label "Yard ID", :class => "control-label"
               = f.text_field :yard_id, :class => "form-control input-lg", placeholder: "Yard ID"
-
+          .row.form-group
+            %div{:class => "col-sm-4"}
+              = f.nested_fields_for :portal_customers do |ff|
+                = ff.hidden_field :user_id, value: @user.id
+                %div.input-group
+                  = ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select portal customer"}, {:class => "form-control input-lg"}
+                  %span.input-group-btn
+                    = ff.remove_nested_fields_link "<i class='fa fa-trash-o'></i>".html_safe, class: 'btn btn-danger btn-lg', role: 'button', data: { confirm: 'Are you sure you want to remove?' }
+                %br
+          .row.form-group
+            %div{:class => "col-sm-4"}
+              = f.add_nested_fields_link :portal_customers, "<i class='fa fa-plus'></i> Add Portal Customer".html_safe, class: 'more_portal_customers_link btn btn-warning'
+          %br
         .row.form-group
-          %div{:class => "col-sm-3"}
-            = link_to 'Cancel', root_path, :class => "btn btn-lg btn-default btn-block"
+          - if params[:customer_needs_to_change_password].blank?
+            %div{:class => "col-sm-3"}
+              = link_to 'Cancel', root_path, :class => "btn btn-lg btn-default btn-block"
           %div{:class => "col-sm-3"}
             = f.submit "Save", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }

@@ -23,22 +23,22 @@
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Print Description", nil, :class => 'control-label'
-          = text_field_tag "commodity[description]", nil, :placeholder => "Description", class: "form-control input-lg"
+          = text_field_tag "commodity[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Unit of Measure", nil, :class => 'control-label'
-          = select_tag "commodity[unit_of_measure]", options_for_select(units_of_measure), prompt: 'Select unit of measure', class: "form-control input-lg"
+          = select_tag "commodity[unit_of_measure]", options_for_select(units_of_measure), prompt: 'Select unit of measure', class: "form-control input-lg", required: true
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Type", nil, :class => 'control-label'
-          = select_tag "commodity[type]", options_for_select(@commodity_types.collect {|p| [ p['ReportDescription'], p['CodeValue'] ] }), prompt: 'Select type', class: "form-control input-lg"
+          = select_tag "commodity[type]", options_for_select(@commodity_types.collect {|p| [ p['ReportDescription'], p['CodeValue'] ] }), prompt: 'Select type', class: "form-control input-lg", required: true
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Scale Price", nil, :class => 'control-label'
           %div.input-group
             %span.input-group-addon
               $
-            = text_field_tag "commodity[scale_price]", nil, :placeholder => "Scale Price", class: "form-control input-lg"
+            = text_field_tag "commodity[scale_price]", nil, :placeholder => "Scale Price", class: "form-control input-lg", required: true
       
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}

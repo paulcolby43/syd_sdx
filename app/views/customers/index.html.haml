@@ -41,6 +41,7 @@
                     - if current_user.user_setting.show_customer_thumbnails? and not Customer.default_cust_pic_id(customer['Id'], current_yard_id).blank?
                       = image_tag(Customer.default_cust_pic(customer['Id'], current_yard_id).preview_data_uri, class: 'thumbnail img-responsive')
                     %p.lead
+                      = customer["CustomerNumber"]
                       - unless customer["FirstName"].blank? and customer["LastName"].blank?
                         = "#{customer["FirstName"]} #{customer["LastName"]}"
                       - else

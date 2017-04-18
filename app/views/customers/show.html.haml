@@ -1,15 +1,17 @@
 = render partial: "shared/navbars/show_customer_navbar", locals: {title: "#{@customer['FirstName']} #{@customer['LastName']}"}
+-#
+  .well
+    %p= @customer
 .jumbotron{style: 'background-color: #FFFFFF;'}
-  -#
-    .well
-      %p= @customer
   .container
     - if current_user.admin?
       - unless @customer_user.blank?
         .alert.alert-warning
-          %i.fa.fa-compress
-          = "Customer has outside access"
-          = link_to "Edit customer login", edit_user_path(@customer_user), class: 'btn btn-default'
+          %p.lead
+            %i.fa.fa-compress
+            = "Customer Portal Open"
+          %p
+            = link_to "Edit customer's user account", edit_user_path(@customer_user), class: 'btn btn-primary'
       -#
         .alert.alert-warning
           = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
@@ -20,7 +22,14 @@
             %i.fa.fa-warning.fa-lg
             Customer Photo ID is missing or expired.
     %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Customer Info
       %div.list_group
+        %div.list-group-item
+          %strong= "Number:"
+          .pull-right
+            = "#{@customer['CustomerNumber']}"
         %div.list-group-item
           %strong= "First Name:"
           .pull-right
@@ -38,9 +47,10 @@
           .pull-right
             = "#{@customer['Phone']}"
     %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Address
       %div.panel-body
-        %strong= "Address:"
-        %br
         = "#{@customer['Address1']}"
         - unless @customer['Address2'].blank?
           %br
@@ -48,6 +58,9 @@
         %br
         = "#{@customer['City']}, #{@customer['State']} #{@customer['Zip']}" unless @customer['City'].blank? and @customer['State'].blank? and @customer['Zip'].blank?
     %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Identification
       %div.list_group
         %div.list-group-item
           %strong= "ID Number:"
@@ -65,17 +78,38 @@
             - else
               Not set correctly
 
-    %hr
-    %p.lead Customer Pictures
-    %div#cust_pics
+    %div.panel.panel-primary
+      .panel-heading
+        %h5.panel-title
+          Taxes
+      %div.list_group
+        - unless @customer['TaxCollection'].blank?
+          - if @customer['TaxCollection']['ApiCustomerSalesTax'].is_a? Hash # Only one tax result returned
+            %div.list-group-item
+              %strong= "#{@customer['TaxCollection']['ApiCustomerSalesTax']['TaxName']} Tax Percent:"
+              .pull-right
+                = @customer['TaxCollection']['ApiCustomerSalesTax']['TaxPercent']
+          - else # Multiple tax results returned
+            - @customer['TaxCollection']['ApiCustomerSalesTax'].each do |tax|
+              %div.list-group-item
+                %strong= "#{tax['TaxName']} Tax Percent:"
+                .pull-right
+                  = tax['TaxPercent']
+        - else
+          %div.list-group-item None
 
-    %div{id: 'endless_page'}
-      %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
-      %p= link_to 'More pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'load-more-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();"
-      %p= link_to 'Re-load pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'reload-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#cust_pics').empty(); $('a.load-more-cust-pics').attr('href', '<%= cust_pics_path page: @cust_pics.next_page, q: params[:q] %>');", style: "display:none;"
+    - if CustPic.table_exists?
+      %hr
+      %p.lead Customer Pictures
+      %div#cust_pics
+
+      %div{id: 'endless_page'}
+        %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+        %p= link_to 'More pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'load-more-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();"
+        %p= link_to 'Re-load pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'reload-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#cust_pics').empty(); $('a.load-more-cust-pics').attr('href', '<%= cust_pics_path page: @cust_pics.next_page, q: params[:q] %>');", style: "display:none;"
 
     %hr
-    %p.lead Paid Tickets
+    %p.lead Paid Tickets Last 120 Days
     %div#tickets
       - unless @paid_tickets.blank?
         %div{id: "tickets"}

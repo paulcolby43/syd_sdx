@@ -3,6 +3,10 @@ class Company < ActiveRecord::Base
   
   has_many :users
   
+  mount_uploader :logo, LogoUploader
+  
+  validates_presence_of :name
+  
   ############################
   #     Instance Methods     #
   ############################
@@ -17,6 +21,12 @@ class Company < ActiveRecord::Base
       return false
     else
       return true
+    end
+  end
+  
+  def full_address
+    unless (address1.blank? and city.blank? and state.blank? and zip.blank?)
+      "#{address1}<br>#{address2.blank? ? '' : address2 + '<br>'} #{city} #{state} #{zip}"
     end
   end
   

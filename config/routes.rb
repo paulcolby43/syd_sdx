@@ -93,6 +93,7 @@ Rails.application.routes.draw do
   resources :commodities do
     member do
       put 'update_price'
+      get :price
     end
   end
   
@@ -112,6 +113,8 @@ Rails.application.routes.draw do
       get :send_to_leads_online
     end
   end
+  
+  resources :packs
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

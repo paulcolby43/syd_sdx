@@ -1,4 +1,4 @@
-= form_for @company do |f|
+= form_for @company, html: { multipart: true }  do |f|
   - @company.errors.each do |attr, msg|
     .alert.alert-danger
       <button type="button" class="close" data-dismiss="alert">×</button>
@@ -14,7 +14,56 @@
           = f.text_field :name, :placeholder => "Company Name", class: "form-control input-lg"
         %div{:class => "col-sm-6"}
           = f.label :dragon_api, :class => "control-label"
-          = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg"
+          = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg", readonly: true
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :address1, "Address 1", :class => "control-label"
+          = f.text_field :address1, :placeholder => "Address 1", class: "form-control input-lg"
+        %div{:class => "col-sm-6"}
+          = f.label :address2, "Address 2", :class => "control-label"
+          = f.text_field :address2, :placeholder => "Address 2", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-4"}
+          = f.label :city, "City", :class => "control-label"
+          = f.text_field :city, :placeholder => "City", class: "form-control input-lg"
+        %div{:class => "col-sm-4"}
+          = f.label :state, "State", :class => "control-label"
+          = f.text_field :state, :placeholder => "State", class: "form-control input-lg"
+        %div{:class => "col-sm-4"}
+          = f.label :zip, "Zip", :class => "control-label"
+          = f.text_field :zip, :placeholder => "Zip", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-4"}
+          = f.label :phone, "Phone", :class => "control-label"
+          = f.text_field :phone, :placeholder => "Phone", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :logo, "Logo", :class => "control-label"
+          = f.file_field :logo
+          = f.hidden_field :logo_cache
+          - unless @company.logo.url.blank?
+            = image_tag(@company.logo.url(:thumb), class: 'img-responsive', size: '50x50')
+          = f.check_box :remove_logo
+          Remove Logo
+  .panel.panel-default
+    #headingTop.panel-heading{:role => "tab"}
+      %h4.panel-title
+        Custom Fields
+    .panel-body
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :custom_field_1, "Custom Field 1", :class => "control-label"
+          = f.text_field :custom_field_1, :placeholder => "Custom Field 1", class: "form-control input-lg"
+        %div{:class => "col-sm-6"}
+          = f.label :custom_field_1_value, "Custom Field 1 Value", :class => "control-label"
+          = f.text_field :custom_field_1_value, :placeholder => "Custom Field 1 Value", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6"}
+          = f.label :custom_field_2, "Custom Field 2", :class => "control-label"
+          = f.text_field :custom_field_2, :placeholder => "Custom Field 2", class: "form-control input-lg"
+        %div{:class => "col-sm-6"}
+          = f.label :custom_field_2_value, "Custom Field 2 Value", :class => "control-label"
+          = f.text_field :custom_field_2_value, :placeholder => "Custom Field 2 Value", class: "form-control input-lg"
   - if @company.include_leads_online?
     #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
       .panel.panel-default

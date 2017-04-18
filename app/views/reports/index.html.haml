@@ -3,9 +3,12 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+      
     %p
       = form_tag reports_path, :method => 'get', :class => "form-inline" do
-        = hidden_field_tag 'report[type]', @type
+        =# hidden_field_tag 'report[type]', @type
+        = select_tag 'report[type]', options_for_select([['Customer Summary', 'customer_summary'],['Commodity Summary', 'commodity_summary']], @type), class: "form-control input-lg"
+        = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3']], @status), class: "form-control input-lg"
         .form-group
           = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
         To
@@ -21,6 +24,10 @@
       - else
         = render 'commodity_summary'
     - else
-      %p No tickets to report on
+      - unless @type == 'commodity_summary'
+        %p No Customer Summary tickets to report on
+      - else
+        %p No Commodity Summary tickets to report on
+      
         
 =# render partial: "shared/footer_navbar", locals: {title: "Reports"}

@@ -5,7 +5,7 @@ class PasswordResetsController < ApplicationController
   
   def create
     unless params[:email].blank?
-      @user = User.where(email: params[:email]).first
+      @user = User.where(email: params[:email].downcase).first
       unless @user.blank?
         @user.send_password_reset
         flash[:success] = "Email sent with password reset instructions."
@@ -28,6 +28,7 @@ class PasswordResetsController < ApplicationController
     else
       reset_scrap_dragon_password_response = @user.reset_scrap_dragon_password(@user.id, params[:user][:password]) unless params[:user].blank?
       if reset_scrap_dragon_password_response["Success"] == 'true'
+        @user.update_attribute(:password, params[:user][:password])
         flash[:success] = "Password has been reset."
         redirect_to login_path
       else

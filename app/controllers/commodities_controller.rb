@@ -51,6 +51,10 @@ class CommoditiesController < ApplicationController
     authorize! :edit, :commodities
     @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
     @commodity_types = Commodity.types(current_user.token, current_yard_id)
+#    @price = Commodity.price(current_user.token, params[:id])
+#    @customer_price = Commodity.price_by_customer(current_user.token, params[:id], "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
+#    @customer_taxes = Commodity.taxes_by_customer(current_user.token, params[:id], "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
+#    @customer_price = Commodity.price_by_customer(current_user.token, params[:id], "45aa5872-77f1-48fe-8688-22ed04aa1100")
   end
 
   # POST /commodities
@@ -103,6 +107,23 @@ class CommoditiesController < ApplicationController
 #          render json: {}, :status => :ok
 #        else
 #          render json: {error: 'Commodity price was successfully updated.'}, :status => :bad_request
+    end
+  end
+  
+  # GET /commodities/1/get_price
+  # GET /commodities/1/get_price.json
+  def price
+    authorize! :show, :commodities
+    @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
+    price = Commodity.price_by_customer(current_user.token, params[:id], params[:customer_id]) unless params[:customer_id].blank?
+    taxes_by_customer = Commodity.taxes_by_customer(current_user.token, params[:id], params[:customer_id]) unless params[:customer_id].blank?
+#    tax_percent = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
+    tax_percent_1 = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
+    tax_percent_2 = taxes_by_customer.last['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 1
+    respond_to do |format|
+      format.html {}
+      format.json {render json: {"name" => @commodity['PrintDescription'], "price" => "#{price.blank? ? @commodity['ScalePrice'] : price}", 
+          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100} } 
     end
   end
 

@@ -1,4 +1,5 @@
-= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: number_to_currency(@accounts_payable_items.first['PaidAmount'])}
+=# render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: number_to_currency(@accounts_payable_items.first['PaidAmount'])}
+= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket['TicketNumber'], total: nil, paid_amount: nil}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -17,7 +18,7 @@
             .panel.panel-default.line-item
               %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                 %h4.panel-title
-                  %a.line_item_name{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
+                  .line_item_name
                     %div.text-success= line_item["PrintDescription"]
               .panel-footer
                 = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['Quantity']}#{line_item['UnitOfMeasure']}"
@@ -30,7 +31,7 @@
           .panel.panel-default.line-item
             %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
               %h4.panel-title
-                %a.line_item_name{"aria-controls" => "collapse#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "button", class: "collapsed"}
+                .line_item_name
                   %div.text-success= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
             .panel-footer
               = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
@@ -60,13 +61,30 @@
         %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
         %p= @ticket
     %hr
-    %div#images
+    - @images.each_slice(4) do |images|
+      .row
+        - images.each do |image|
+          .col-xs-12.col-sm-3
+            - unless image.pdf?
+              = link_to image_tag(image.jpeg_image_data_uri, alt: image.id, class: 'img-responsive center-block'), "#image_#{image.id}_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+            - else
+              %p.lead.text-center
+                %a{href: send_pdf_data_image_path(image)}
+                  %i.fa.fa-file-pdf-o.fa-lg
+                  Download PDF
+          %div{:id => "image_#{image.id}_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+            .modal-dialog.modal-lg
+              .modal-content
+                .modal-body
+                  = image_tag(image.jpeg_image_data_uri, alt: image.id, class: 'img-responsive')
+    -#
+      %div#images
 
-    %div{id: 'endless_page'}
-      %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
-      - unless current_user.customer?
-        %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
-      - else
-        %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id, cust_nbr_eq: current_user.customer_guid}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
+      %div{id: 'endless_page'}
+        %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+        - unless current_user.customer?
+          %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
+        - else
+          %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id, cust_nbr_eq: current_user.customer_guid}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
 
 = render partial: "shared/show_ticket_footer_navbar", locals: {title: "Ticket"}

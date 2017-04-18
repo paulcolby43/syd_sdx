@@ -16,7 +16,7 @@
             = truncate(title, length: 8)
         .col-xs-4.col-sm-4
           - if current_user.admin?
-            %a{href: edit_customer_path(@customer['Id'])}
+            %a{href: edit_customer_path(@customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i>"}, class: 'customer_button'}
               - unless mobile_device?
                 = "Edit"
               - else

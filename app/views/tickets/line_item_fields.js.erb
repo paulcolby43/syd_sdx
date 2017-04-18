@@ -10,7 +10,7 @@ $('#items_accordion').append("<%= j render(:partial => 'line_item_fields', local
 $('.category_select:last').append(category_options).find("option:first").attr('selected','selected');
 if (category_options.size() == 0) {$('.category_select:last').hide();}
 $('.category_select:last').val(selected_category);
-$('.item_select:last').append(options).find("option:first").attr('selected','selected');
+$('.item_select:last').append(options).val('');
 
 first_gross_input_group_clone = $(".gross_input_group:first").clone();
 first_tare_input_group_clone = $(".tare_input_group:first").clone();
