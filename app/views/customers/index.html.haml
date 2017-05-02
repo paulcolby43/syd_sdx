@@ -45,7 +45,7 @@
                       - unless customer["FirstName"].blank? and customer["LastName"].blank?
                         = "#{customer["FirstName"]} #{customer["LastName"]}"
                       - else
-                        No Name
+                        = "#{customer["CompanyName"]}"
                   %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer Details"}, class: "list-group-item customer_button"}
                     .pull-right
                       &nbsp;
