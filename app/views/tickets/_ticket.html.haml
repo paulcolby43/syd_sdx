@@ -3,9 +3,12 @@
     .col-xs-12.col-sm-12.col-md-12
       %div.panel.panel-primary
         %div.list_group
-          %a{href: edit_ticket_path(ticket['Id'], status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']} #{ticket['Company']}"}}
+          %a{href: edit_ticket_path(ticket['Id'], status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
             = ticket["TicketNumber"]
-            = ticket["Company"]
+            - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
+              = "#{ticket['FirstName']} #{ticket['LastName']}"
+            - else
+              = ticket["Company"]
             .pull-right
               =# number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
               = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
