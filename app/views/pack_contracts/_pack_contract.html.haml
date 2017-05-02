@@ -1,0 +1,10 @@
+- @pack_contracts.each do |pack_contract|
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %div.panel.panel-primary
+        %div.list_group
+          %a{href: pack_contract_path(pack_contract['Id'], contract_number: pack_contract['ContractNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_contract['BillToCompany']} - #{pack_contract['ContractDescription']}"}, class: "list-group-item pack_contract_button"}
+            .pull-right
+              &nbsp;
+              %i.fa.fa-chevron-right.fa-lg
+            = "#{pack_contract['ContractNumber']} #{pack_contract['BillToCompany']} - #{pack_contract['ContractDescription']}"

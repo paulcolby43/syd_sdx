@@ -1,4 +1,4 @@
-class Pack
+class PackList
   
   ############################
   #     Instance Methods     #
@@ -8,29 +8,28 @@ class Pack
   #     Class Methods         #
   #############################
   
-  # Get all packs
-  def self.all(auth_token, yard_id, status)
+  # Get all packs_lists by contract ID
+  def self.all(auth_token, yard_id, contract_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/Packs"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/PackLists"
     
     payload = {
-      "BeginningDate" => Time.now.last_year.utc,
-      "PackStatus" => status
+      "ContractId" => contract_id
       }
     json_encoded_payload = JSON.generate(payload)
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json'}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Packs response: #{data}"
+    Rails.logger.info "Pack Lists response: #{data}"
     
-    unless data["MobilePackListInformation"]["Packs"]["PackListInformation"].blank?
-      if data["MobilePackListInformation"]["Packs"]["PackListInformation"].is_a? Hash # Only one result returned, so put it into an array
-        return [data["MobilePackListInformation"]["Packs"]["PackListInformation"]]
+    unless data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"].blank?
+      if data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"]]
       else # Array of results returned
-        return data["MobilePackListInformation"]["Packs"]["PackListInformation"]
+        return data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"]
       end
-    else # No packs found
+    else # No pack lists found
       return []
     end
   end

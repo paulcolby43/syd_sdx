@@ -1,4 +1,4 @@
-class Pack
+class PackContract
   
   ############################
   #     Instance Methods     #
@@ -8,38 +8,41 @@ class Pack
   #     Class Methods         #
   #############################
   
-  # Get all packs
-  def self.all(auth_token, yard_id, status)
+  # Get all pack_contracts by search string (Customer First Name, Last Name, CustomerNumber, ContractNumber or Company)
+  def self.all(auth_token, yard_id, search)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/Packs"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/Contracts"
     
     payload = {
-      "BeginningDate" => Time.now.last_year.utc,
-      "PackStatus" => status
+      "SearchText" => search
       }
     json_encoded_payload = JSON.generate(payload)
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json'}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Packs response: #{data}"
+    Rails.logger.info "Pack Contracts response: #{data}"
     
-    unless data["MobilePackListInformation"]["Packs"]["PackListInformation"].blank?
-      if data["MobilePackListInformation"]["Packs"]["PackListInformation"].is_a? Hash # Only one result returned, so put it into an array
-        return [data["MobilePackListInformation"]["Packs"]["PackListInformation"]]
+    unless data["GetMobileContractsResponse"]["Contracts"]["ContractListInformation"].blank?
+      if data["GetMobileContractsResponse"]["Contracts"]["ContractListInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["GetMobileContractsResponse"]["Contracts"]["ContractListInformation"]]
       else # Array of results returned
-        return data["MobilePackListInformation"]["Packs"]["PackListInformation"]
+        return data["GetMobileContractsResponse"]["Contracts"]["ContractListInformation"]
       end
-    else # No packs found
+    else # No pack contracts found
       return []
     end
   end
   
-  def self.find_by_id(auth_token, yard_id, status, pack_id)
-    packs = Pack.all(auth_token, yard_id, status)
-    # Find pack list within array of hashes
-    pack = packs.find {|pl| pl['Id'] == pack_id}
-    return pack
+  def self.find_by_id(auth_token, yard_id, pack_contract_id)
+    pack_contracts = PackContract.all(auth_token, yard_id, pack_contract_id)
+    # Find pack contract within array of hashes
+    pack_contract = pack_contracts.find {|pc| pc['Id'] == pack_contract_id}
+    return pack_contract_id
+  end
+  
+  def self.find_by_contract_number(auth_token, yard_id, contract_number)
+    PackContract.all(auth_token, yard_id, contract_number).first
   end
   
   def self.update(auth_token, yard_id, pack_params)

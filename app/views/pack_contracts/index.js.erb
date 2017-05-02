@@ -1,0 +1,11 @@
+$('#pack_contracts').append('<%= j render "pack_contract" %>');
+$('#more_pack_contracts_spinner').hide();
+
+<% if @pack_contracts.next_page %>
+  $('a.load-more-pack-contracts').show();
+  $('a.load-more-pack-contracts').attr('href', '<%= pack_contracts_path page: @pack_contracts.next_page, q: params[:q] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-pack-contracts').attr('href', '#');
+  $('a.reload-pack-contracts').show();
+<% end %>
