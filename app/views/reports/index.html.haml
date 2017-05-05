@@ -3,9 +3,12 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+      
     %p
       = form_tag reports_path, :method => 'get', :class => "form-inline" do
-        = hidden_field_tag 'report[type]', @type
+        =# hidden_field_tag 'report[type]', @type
+        = select_tag 'report[type]', options_for_select([['Customer Summary', 'customer_summary'],['Commodity Summary', 'commodity_summary']], @type), class: "form-control input-lg"
+        = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3']], @status), class: "form-control input-lg"
         .form-group
           = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
         To

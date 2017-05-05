@@ -9,7 +9,12 @@
             = text_field_tag :username, nil, :placeholder => "Username", :class => "form-control input-lg", autofocus: true
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
-            = password_field_tag :password, nil, :placeholder => "Password", :class => "form-control input-lg"
+            - unless params[:customer_guid].blank?
+              =# password_field_tag :password, params[:customer_guid], :placeholder => "Password", :class => "form-control input-lg"
+              = hidden_field_tag :password, params[:customer_guid]
+              = hidden_field_tag :customer_needs_to_change_password, true
+            - else
+              = password_field_tag :password, nil, :placeholder => "Password", :class => "form-control input-lg"
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             = text_field_tag :dragon_account_number, cookies[:dragon_account_number], :placeholder => "Scrap Dragon Account Number", :class => "form-control input-lg"

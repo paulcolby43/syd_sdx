@@ -4,6 +4,7 @@ class Customer
   #     Instance Methods     #
   ############################
   
+  
   #############################
   #     Class Methods         #
   #############################
@@ -213,7 +214,7 @@ class Customer
   def self.tickets(status, auth_token, yard_id, customer_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/#{status}?d=30&t=50"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/#{status}?d=120&t=50"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
@@ -228,7 +229,37 @@ class Customer
   def self.paid_tickets(auth_token, yard_id, customer_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/3?d=30&t=50"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/3?d=120&t=50"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+  end
+  
+  def self.paid_tickets_by_days(auth_token, yard_id, customer_id, days)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/3?d=#{days}&t=50"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+  end
+  
+  def self.paid_tickets_by_date(auth_token, yard_id, customer_id, start_date, end_date)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer/#{customer_id}/tickets/3/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=50"
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)

@@ -13,6 +13,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    @portal_customers = @user.portal_customers
   end
 
   # GET /users/new
@@ -22,6 +23,10 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    if @user.customer?
+#      @customer_user_portal_customer = @user.customer_user_portal_customers.build
+      @customers = Customer.all(current_user.token, current_yard_id)
+    end
   end
 
   # POST /users
@@ -80,16 +85,36 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    @customers = Customer.all(current_user.token, current_yard_id)
     respond_to do |format|
-      if @user.update(user_params)
-        format.html { 
-          flash[:success] = "User was successfully updated."
+      if user_params[:password].blank? # No update to password
+        if @user.update(user_params)
+          format.html { 
+            flash[:success] = "User was successfully updated."
+            redirect_to @user
+          }
+          format.json { render :show, status: :ok, location: @user }
+        else
+          format.html { render :edit }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
+      else # Creating new password
+        reset_scrap_dragon_password_response = @user.reset_scrap_dragon_password(@user.id, user_params[:password])
+        if reset_scrap_dragon_password_response["Success"] == 'true'
+          if @user.update(user_params)
+            format.html { 
+              flash[:success] = "User was successfully updated."
+              redirect_to @user
+            }
+            format.json { render :show, status: :ok, location: @user }
+          else
+            format.html { render :edit }
+            format.json { render json: @user.errors, status: :unprocessable_entity }
+          end
+        else
+          flash[:danger] = "There was a problem resetting your password: #{reset_scrap_dragon_password_response["FailureInformation"]}"
           redirect_to @user
-        }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -111,7 +136,11 @@ class UsersController < ApplicationController
       user.send_after_confirmation_info_email
       flash[:success] = "Welcome to Scrap Yard Dog! Your email has been confirmed.
       Please sign in to continue."
-      redirect_to login_path
+      if user.customer?
+        redirect_to login_path(customer_guid: user.customer_guid)
+      else
+        redirect_to login_path
+      end
     else
       flash[:danger] = "Sorry. User does not exist"
       redirect_to root_url
@@ -145,6 +174,6 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, 
         :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state, :zip, :terms_of_service, :email_confirmed, :confirm_token, 
-        :dragon_account_number)
+        :dragon_account_number, portal_customers_attributes:[:user_id, :customer_guid, :_destroy,:id])
     end
 end

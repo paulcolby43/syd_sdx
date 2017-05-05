@@ -10,7 +10,7 @@ jQuery ->
       return
     return
 
-  $('a.group').on 'click', ->
-    $(this).find( "#details" ).toggle 'slow', ->
-      return
-    return
+  #$('a.group').on 'click', ->
+  #  $(this).find( "#details" ).toggle 'slow', ->
+  #    return
+  #  return

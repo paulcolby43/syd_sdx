@@ -1,15 +1,18 @@
 class User < ActiveRecord::Base
   ROLES = %w[customer admin].freeze
+  
+  has_one :access_token
+  has_one :user_setting
+  belongs_to :company
+  has_many :portal_customers # Allow customer user to view other customer tickets via their portal
+  
+  accepts_nested_attributes_for :portal_customers, allow_destroy: true
 
   attr_accessor :password
   before_save :prepare_password
 #  after_create :generate_token, if: :admin?
   before_save { |user| user.username = username.downcase }
   before_save { |user| user.email = email.downcase }
-  
-  has_one :access_token
-  has_one :user_setting
-  belongs_to :company
   
   before_create :confirmation_token
 #  after_commit :create_user_settings, :on => :create
@@ -18,17 +21,18 @@ class User < ActiveRecord::Base
   after_commit :send_registration_notice_email, :on => :create
     
   validates :password, confirmation: true
-  validates :password_confirmation, presence: true, on: :create
+#  validates :password_confirmation, presence: true, on: :create
   validates_presence_of :role, :message => 'Please select type of user.'
   validates_presence_of :first_name
   validates_presence_of :last_name
   validates_presence_of :email
   validates_presence_of :phone
   validates_presence_of :username, length: { minimum: 7 }
+  validates :username, format: { without: /\s/, message: "must contain no spaces" }
   validates_presence_of :company_name
-  validates_presence_of :address1
-  validates_presence_of :city
-  validates_presence_of :state
+  validates_presence_of :address1, on: :create
+  validates_presence_of :city, on: :create
+  validates_presence_of :state, on: :create
   validates_uniqueness_of :username, scope: :dragon_account_number, case_sensitive: false
   validates_uniqueness_of :email, case_sensitive: false
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
@@ -61,9 +65,11 @@ class User < ActiveRecord::Base
       access_token_string = JSON.parse(response)["access_token"]
       access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
       return 'success'
-    rescue => exception
-      Rails.logger.info exception.response
-      exception.response
+    rescue RestClient::ExceptionWithResponse => e
+      e.response
+#    rescue => exception
+      Rails.logger.info e.response
+      e.response
     end
   end
   
@@ -158,7 +164,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{user.token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-#    Rails.logger.info data
+    Rails.logger.info "Resetting password: #{data}"
     return data["ResetUserPasswordResponse"]
   end
   
@@ -213,6 +219,17 @@ class User < ActiveRecord::Base
   
   def customer?
     role == "customer"
+  end
+  
+  def portal_customer_ids
+    ids = []
+    if customer? and not customer_guid.blank?
+      ids << customer_guid
+      portal_customers.each do |portal_customer|
+        ids << portal_customer.customer_guid
+      end
+    end
+    return ids
   end
   
   def email_activate
@@ -288,11 +305,19 @@ class User < ActiveRecord::Base
   end
   
   def send_confirmation_instructions_email
-    UserConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new user, in sidekiq background process
+    unless customer?
+      UserConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new user, in sidekiq background process
+    else
+      CustomerUserPortalConfirmationInstructionsSendEmailWorker.perform_async(self.id) # Send out confirmation instructions email to new customer portal user, in sidekiq background process
+    end
   end
   
   def send_after_confirmation_info_email
-    UserConfirmedSendEmailWorker.perform_async(self.id) # Send out email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+    if admin?
+      UserConfirmedSendEmailWorker.perform_async(self.id) # Send out email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+    elsif customer?
+      UserConfirmedSendCustomerPortalEmailWorker.perform_async(self.id) # Send out customer portal email with additional Dragon Dog information after user email is confirmed, in sidekiq background process
+    end
   end
   
   #############################

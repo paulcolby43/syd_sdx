@@ -244,6 +244,11 @@ class Ability
       can :manage, User do |user_record|
         user_record.id == user.id
       end
+      
+      # Reports
+      ############
+      can :index, :reports
+      
     # End customer user role
     end 
     

@@ -14,12 +14,16 @@ class TicketsController < ApplicationController
       results = Ticket.search(@status, current_user.token, current_yard_id, params[:q])
     else
       results = Ticket.all(@status, current_user.token, current_yard_id) unless current_user.customer?
-#      results = Ticket.search(3, current_user.token, current_yard_id, current_user.company_name) if current_user.customer?
-#      results = Customer.paid_tickets(current_user.token, current_yard_id, current_user.customer_guid) if current_user.customer?
-      results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid) if current_user.customer?
+      if current_user.customer?
+        results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid)
+        current_user.portal_customers.each do |portal_customer|
+          portal_customer_results = Customer.tickets(@status, current_user.token, current_yard_id, portal_customer.customer_guid)
+          results = [] if results.blank? # Create an empty array to add to if there are no results yet
+          results = results + portal_customer_results unless portal_customer_results.blank?
+        end
+      end
     end
     unless results.blank?
-#      results = results.reverse if @status == 'held'
       results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
       results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
@@ -55,6 +59,8 @@ class TicketsController < ApplicationController
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
+    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
+  
     respond_to do |format|
       format.html{}
       format.pdf do
