@@ -121,13 +121,15 @@ class TicketsController < ApplicationController
             unless line_item[:commodity].blank?
               # Create new item
               Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
-                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
+                ticket_params[:customer_id], line_item[:unit_of_measure])
             end
           else
             unless line_item[:commodity].blank?
               # Update existing item
               Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
-                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number], ticket_params[:customer_id])
+                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
+                ticket_params[:customer_id], line_item[:unit_of_measure])
             end
           end
         end
@@ -237,6 +239,7 @@ class TicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
-      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, :amount, :tax_amount, :status, :notes, :serial_number])
+      params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, line_items: [:id, :commodity, :gross, :tare, :net, :price, 
+          :amount, :tax_amount, :status, :notes, :serial_number, :unit_of_measure])
     end
 end

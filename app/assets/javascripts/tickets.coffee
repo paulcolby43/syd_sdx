@@ -104,7 +104,7 @@ jQuery ->
     item_id = $(this).val()
     input_select = $(this)
     current_customer_id = $('#ticket_customer_id').val()
-    # Get commodity price and taxes, then update.
+    # Get commodity price, unit of measure, and taxes, then update.
     get_commodity_info_ajax = ->
       $.ajax
         url: "/commodities/" + item_id + "/price"
@@ -114,16 +114,19 @@ jQuery ->
         success: (data) ->
           name = data.name
           price = parseFloat(data.price).toFixed(3)
+          unit_of_measure = data.unit_of_measure
           #console.log 'success', price
           tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
           tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
-          console.log 'tax percent 1:', tax_percent_1
-          console.log 'tax percent 2:', tax_percent_2
+          #console.log 'tax percent 1:', tax_percent_1
+          #console.log 'tax percent 2:', tax_percent_2
+          #console.log 'unit of measure:', unit_of_measure
           net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
           input_select.closest('.panel').find('.calculation_details').text ''
           input_select.closest('.panel').find('.line_item_name').text name
 
           input_select.closest('.panel').find('#ticket_line_items__price:first').val price
+          input_select.closest('.panel').find('#ticket_line_items__unit_of_measure:first').val unit_of_measure
           amount = (parseFloat(price) * parseFloat(net))
           input_select.closest('.panel').find('#ticket_line_items__tax_percent_1:first').val parseFloat(tax_percent_1).toFixed(2)
           input_select.closest('.panel').find('#ticket_line_items__tax_percent_2:first').val parseFloat(tax_percent_2).toFixed(2)
@@ -167,6 +170,7 @@ jQuery ->
 
     #description = $(this).closest('.panel').find('#item_description').val()
     price = $(this).closest('.panel').find('#ticket_line_items__price').val()
+    unit_of_measure = $(this).closest('.panel').find('#ticket_line_items__unit_of_measure').val()
     tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
@@ -176,10 +180,10 @@ jQuery ->
     $(this).closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
     if total_tax_amount > 0
       # Show tax amount
-      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
+      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
     else
       # Don't show tax amount
-      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + ' = ' + '$' + amount
+      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount
     sum = 0;
     $('.amount').each ->
       sum += Number($(this).val())
