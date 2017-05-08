@@ -305,7 +305,7 @@ class Commodity
     data= Hash.from_xml(response)
     Rails.logger.info "unit_of_measure_conversion call response:#{data}"
 #    return data
-#    return data["BaseResponse"]["Success"]
+    return data["GetConversionFactorResponse"]["ConvertedValue"]
   end
   
 end
