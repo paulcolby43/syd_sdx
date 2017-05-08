@@ -26,7 +26,7 @@ class CustomersController < ApplicationController
 #        render json: @customers.map{|c| c['Id']}
 #        @customers = results.map {|customer| ["#{customer['FirstName']} #{customer['LastName']}", customer['Id']]}
         unless search.blank?
-          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']} #{customer['CompanyName']}"} }
+          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']} #{customer['Company']}"} }
         else
           @customers = nil
         end

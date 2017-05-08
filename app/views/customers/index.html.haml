@@ -43,9 +43,9 @@
                     %p.lead
                       = customer["CustomerNumber"]
                       - unless customer["FirstName"].blank? and customer["LastName"].blank?
-                        = "#{customer["FirstName"]} #{customer["LastName"]}"
+                        = "#{customer['FirstName']} #{customer['LastName']}"
                       - else
-                        = "#{customer["CompanyName"]}"
+                        = "#{customer['Company']}"
                   %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer Details"}, class: "list-group-item customer_button"}
                     .pull-right
                       &nbsp;
