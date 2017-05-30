@@ -14,7 +14,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info data
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
@@ -29,7 +29,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=1&t=100"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
@@ -43,7 +43,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=7&t=100"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
@@ -57,7 +57,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
@@ -82,7 +82,7 @@ class Ticket
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info json_encoded_payload
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
@@ -99,7 +99,7 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}"
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
   end
@@ -110,7 +110,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
 #    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
@@ -125,7 +125,7 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/nextnumber"
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
     data["ApiItemResponseOfApiUniqueNumbermHEMxW_SG"]["Item"]["Value"]
@@ -136,7 +136,7 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/uom"
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
     data["ApiItemsResponseOfApiUnitOfMeasureia6G0PzH"]["Items"]["ApiUnitOfMeasure"]
@@ -149,11 +149,11 @@ class Ticket
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     ticket_number = Ticket.next_available_number(auth_token, yard_id)
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
-#        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
         "TicketHead" => {
           "Id" => guid,
+          "Description" => "",
           "YardId" => yard_id,
           "CustomerId" => customer_id,
           "FirstName" => customer['FirstName'],
@@ -163,26 +163,26 @@ class Ticket
           "TicketNumber" => ticket_number,
           "Status" => 2,
           "CurrencyId" => user.user_setting.currency_id,
-  #        "DateClosed" => "2016-02-18T22:01:30.217",
           "DateCreated" => Time.now.utc
           }
         })
       
-#      Rails.logger.info response
+      Rails.logger.info "Ticket.create response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
   
   # Update an existing ticket
-  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status)
+  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status, description)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
         "TicketHead" => {
           "Id" => guid,
+          "Description" => description,
           "YardId" => yard_id,
           "CustomerId" => customer_id,
           "FirstName" => customer.blank? ? "" : customer['FirstName'],
@@ -198,13 +198,13 @@ class Ticket
           }
         })
       
-#      Rails.logger.info response
+      Rails.logger.info "Ticket update response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
   
   # Add a line item to a ticket
-  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id)
+  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -256,13 +256,13 @@ class Ticket
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
-          "UnitOfMeasure" => "LB",
+          "UnitOfMeasure" => unit_of_measure,
           "TaxCollection" => tax_collection_array
           }
         }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
@@ -270,7 +270,7 @@ class Ticket
   end 
    
   # Update line item of ticket
-  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id)
+  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -369,13 +369,13 @@ class Ticket
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
-          "UnitOfMeasure" => "LB",
+          "UnitOfMeasure" => unit_of_measure,
           "TaxCollection" => tax_collection_array 
           }
         }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
       
       data= Hash.from_xml(response)
@@ -390,7 +390,7 @@ class Ticket
     commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
     commodity_name = commodity["PrintDescription"]
     commodity_unit_of_measure = commodity["UnitOfMeasure"]
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
         "TicketItem"=>{
           "CommodityId" => commodity_id,
@@ -425,7 +425,7 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}/aplineitem"
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info "********************#{data}****************"
     if data["ApiItemsResponseOfApiAccountsPayableLineItem0UdNujZ0"]["Items"]["ApiAccountsPayableLineItem"].is_a? Hash # Only one result returned, so put it into an array
@@ -453,7 +453,7 @@ class Ticket
       }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info json_encoded_payload
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
@@ -496,7 +496,7 @@ class Ticket
       }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info json_encoded_payload
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
@@ -591,7 +591,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/currency"
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}"})
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
 #    Rails.logger.info data
     

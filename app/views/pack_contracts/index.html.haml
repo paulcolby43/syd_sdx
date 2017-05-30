@@ -1,0 +1,34 @@
+=# render partial: "shared/navbars/pack_contracts_navbar", locals: {title: pack_contract_status_string(@status)}
+- @title="Pack Contracts"
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p
+      = form_tag pack_contracts_path, id: 'pack_contract_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        .input-group
+          = search_field_tag :q, params[:q], :placeholder => "Search pack contracts", class: "form-control input-lg"
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+    %h3.text-center= "Pack Contracts"
+    - unless @pack_contracts.blank?
+      %div{id: "pack_contracts"}
+        - @pack_contracts.each do |pack_contract|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: pack_contract_path(pack_contract['Id'], contract_number: pack_contract['ContractNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_contract['BillToCompany']} - #{pack_contract['ContractDescription']}"}, class: "list-group-item pack_contract_button"}
+                    .pull-right
+                      &nbsp;
+                      %i.fa.fa-chevron-right.fa-lg
+                    = "#{pack_contract['ContractNumber']} #{pack_contract['BillToCompany']} - #{pack_contract['ContractDescription']}"
+                    =# pack_contract
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_pack_contracts_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', pack_contracts_path(:page => @pack_contracts.next_page, :q => params[:q]), :class => 'load-more-pack-contracts btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_contracts_spinner').show();" if @pack_contracts.next_page
+    - else
+      %p No pack contracts found
+
+=# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}

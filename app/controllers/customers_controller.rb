@@ -26,7 +26,7 @@ class CustomersController < ApplicationController
 #        render json: @customers.map{|c| c['Id']}
 #        @customers = results.map {|customer| ["#{customer['FirstName']} #{customer['LastName']}", customer['Id']]}
         unless search.blank?
-          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']}"} }
+          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']} #{customer['Company']}"} }
         else
           @customers = nil
         end
@@ -51,7 +51,7 @@ class CustomersController < ApplicationController
     authorize! :show, :customers
     
     @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
-    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id)
+    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id) if CustPic.table_exists?
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])

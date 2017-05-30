@@ -1,0 +1,11 @@
+=# render partial: "shared/navbars/show_pack_navbar", locals: {title: "#{@pack['InventoryCode']}"}
+- @title="#{@pack['InventoryCode']}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p.lead= "#{@pack['InternalPackNumber']} #{@pack['PrintDescription']}"
+    %p.lead= @pack['Quantity']
+    %p.lead= "#{@pack['NetWeight'].to_f.round(2)}#{@pack['UnitOfMeasure']}"
+
+
+=# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}

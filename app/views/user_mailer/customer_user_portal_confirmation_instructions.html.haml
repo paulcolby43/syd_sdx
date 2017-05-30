@@ -2,26 +2,21 @@
   Hey #{@user.first_name},
 
 %p 
-  You now have access to see tickets, payments, and reports for your transactions with
-  = "#{@user.company.name}."
-
-%p 
-  But first, please confirm your account email through the link below. Then, enter your email address to sign in.
+  Please confirm your account through the link below.
   %br
-  By clicking the link below, you agree to our
-  = link_to "Terms of Service", welcome_tos_url
+  Simply enter your email address and create a password.
+
+- unless @user.dragon_account_number.blank?
+  %p
+    Dragon Account Number:
+    = @user.dragon_account_number
+
 %p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)
 
-%p 
-  Feel free to watch 
-  = link_to 'this brief video', "https://youtu.be/WZ5WYWGjEE4"
-  explaining how to get the most out of the Scrap Dragon Customer Portal.
-
-%p 
-  Additional information can be found on 
-  = link_to 'here', 'https://scrapyarddog.com'
-  or by calling your representative at
-  = "#{@user.company.name}."
+%p
+  Please call your representative at
+  = "#{@user.company.name}"
+  for additional information.
 
 %p Welcome to the Tranact - Scrap Dragon Family!
 
@@ -31,4 +26,38 @@
   = link_to 'Facebook', 'https://www.facebook.com/TranAct.ScrapDragonSoftware'
   •
   = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'
+
+%p By setting up an account at Scrap Yard Dog you are agreeing to our Terms of Service
+
+-#
+  %p 
+    You now have access to see tickets, payments, and reports for your transactions with
+    = "#{@user.company.name}."
+
+  %p 
+    But first, please confirm your account email through the link below. Then, enter your email address to sign in.
+    %br
+    By clicking the link below, you agree to our
+    = link_to "Terms of Service", welcome_tos_url
+  %p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)
+
+  %p 
+    Feel free to watch 
+    = link_to 'this brief video', "https://youtu.be/WZ5WYWGjEE4"
+    explaining how to get the most out of the Scrap Dragon Customer Portal.
+
+  %p 
+    Additional information can be found on 
+    = link_to 'here', 'https://scrapyarddog.com'
+    or by calling your representative at
+    = "#{@user.company.name}."
+
+  %p Welcome to the Tranact - Scrap Dragon Family!
+
+  %p
+    = link_to 'TranAct', 'http://tranact.com'
+    •
+    = link_to 'Facebook', 'https://www.facebook.com/TranAct.ScrapDragonSoftware'
+    •
+    = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'
 

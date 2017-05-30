@@ -64,8 +64,16 @@ class DeviceGroup < ActiveRecord::Base
   end
   
   #############################
-  #     Class Methods      #
+  #     Class Methods         #
   #############################
+  
+  def self.table_exists?
+    DeviceGroup.connection
+    rescue TinyTds::Error
+      false
+    else
+      true
+  end
   
   
 end

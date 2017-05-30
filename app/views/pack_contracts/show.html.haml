@@ -1,0 +1,34 @@
+=# render partial: "shared/navbars/show_pack_contract_navbar", locals: {title: "#{@pack_contract['InventoryCode']}"}
+- @title="#{@pack_contract['BillToCompany']} - #{@pack_contract['ContractDescription']}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p.lead= "#{@pack_contract['BillToCompany']} - #{@pack_contract['ContractDescription']}"
+    %p.lead= "#{@pack_contract}"
+    %p
+      %strong Materials
+      %br
+      - unless @pack_contract['Materials']['string'].blank?
+        - @pack_contract['Materials']['string'].each do |material|
+          = material
+          %br
+      - else
+        None
+    %p
+      %strong Pack Lists
+      %br
+      =# @pack_lists['Items']['PackListItemInformation']
+      -#
+      - unless @pack_lists.blank?
+        - @pack_lists.each do |pack_list|
+          - unless pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank?
+            - pack_list['Items']['PackListItemInformation'].each do |pack_list_item|
+              = pack_list_item
+              %br
+          %br
+      - else
+        None
+
+
+
+=# render partial: "shared/pack_contract_footer_navbar", locals: {title: "Pack List"}

@@ -93,4 +93,8 @@ class CustPic < ActiveRecord::Base
     return cust_pics
   end
   
+  def self.table_exists?
+    CustPic.connection.table_exists? 'CUST_PICS_data'
+  end
+  
 end

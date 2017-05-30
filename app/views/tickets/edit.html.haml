@@ -31,6 +31,9 @@
         
       #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         .panel.panel-default
+          -#
+          .well
+            = @ticket
           %div.panel-heading{:role => "tab", id: "vendor_heading"}
             %h4.panel-title
               %a.text-success{"aria-controls" => "collapseVendor", "aria-expanded" => "true", "data-parent" => "#vendor_accordion", "data-toggle" => "collapse", :href => "#collapseVendor", :role => "button" }
@@ -42,6 +45,7 @@
           %div{id: "collapseVendor", "aria-labelledby" => "headingOne", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
             .panel-body
               = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
+              = hidden_field_tag "ticket[description]", "#{@ticket['Description'].blank? ? "" : @ticket['Description']}"
       - unless @ticket["TicketItemCollection"].blank?
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
           / Multiple ticket line items
@@ -109,6 +113,7 @@
                         %span.input-group-addon
                           %i.fa.fa-dollar.fa-lg
                         = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                      = hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                       = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                       - unless line_item['TaxCollection'].blank?
                         - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -139,9 +144,9 @@
                   .panel-footer
                     %ul{class: 'list-inline'}
                       %li.calculation_details
-                        = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{line_item['UnitOfMeasure']}"
+                        = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
                         x
-                        = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}"
+                        = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
                         = "= $#{line_item['ExtendedAmount']}"
                         - unless line_item['TaxCollection'].blank?
                           - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -219,6 +224,7 @@
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                    = hidden_field_tag "ticket[line_items][][unit_of_measure]", @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                     - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
                       - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -249,9 +255,9 @@
                 .panel-footer
                   %ul{class: 'list-inline'}
                     %li.calculation_details
-                      = "(#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+                      = "(#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
                       x
-                      = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3, strip_insignificant_zeros: true)}"
+                      = "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{@ticket['TicketItemCollection']['ApiTicketItem']['UnitOfMeasure']}"
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
                       - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
                         - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -323,8 +329,8 @@
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                  = hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
-
                   = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_percent_1]", '0.00', :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
