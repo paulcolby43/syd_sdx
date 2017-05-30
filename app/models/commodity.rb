@@ -286,7 +286,7 @@ class Commodity
     end
   end
   
-  def self.unit_of_measure_conversion(auth_token, to_unit, weight)
+  def self.unit_of_measure_weight_conversion(auth_token, to_unit, weight)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record

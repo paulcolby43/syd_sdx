@@ -94,6 +94,7 @@ Rails.application.routes.draw do
     member do
       put 'update_price'
       get :price
+      get :unit_of_measure_weight_conversion
     end
   end
   

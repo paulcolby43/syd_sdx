@@ -9,7 +9,7 @@ class UserMailer < ActionMailer::Base
   
   def customer_user_portal_confirmation_instructions(user)
     @user = user
-    mail(:to => user.email, :subject => "Welcome to the Scrap Dragon Customer Portal!")
+    mail(:to => user.email, :subject => "Confirm Account for the Scrap Dragon Portal")
   end
   
   def after_confirmation_info(user)

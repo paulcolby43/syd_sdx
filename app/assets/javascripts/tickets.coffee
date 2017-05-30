@@ -101,6 +101,7 @@ jQuery ->
 
   ### Line item changed ###
   $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
+    console.log '.item_select changed', 'yes'
     item_id = $(this).val()
     input_select = $(this)
     current_customer_id = $('#ticket_customer_id').val()
@@ -115,7 +116,7 @@ jQuery ->
           name = data.name
           price = parseFloat(data.price).toFixed(3)
           unit_of_measure = data.unit_of_measure
-          #console.log 'success', price
+          console.log 'price', price
           tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
           tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
           #console.log 'tax percent 1:', tax_percent_1
@@ -139,7 +140,7 @@ jQuery ->
           input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
           input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
           input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
-          $('.amount-calculation-field').keyup()
+          input_select.closest('.panel').find('.amount-calculation-field:first').keyup() # Invoke 'keyup' so go through calculations again
           return
         error: ->
           alert 'Error getting commodity price.'
@@ -153,47 +154,73 @@ jQuery ->
 
   ### Line item calculation field value changed ###
   $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
+    console.log '.amount-calculation-field changed', 'yes'
+    changed_field = $(this)
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
-    if $(this).closest('.panel').find('#ticket_line_items__tax_percent_1').length
-      tax_percent_1 = $(this).closest('.panel').find('#ticket_line_items__tax_percent_1').val()
+    if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').length
+      tax_percent_1 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').val()
     else 
       tax_percent_1 = '0.00'
-    if $(this).closest('.panel').find('#ticket_line_items__tax_percent_2').length
-      tax_percent_2 = $(this).closest('.panel').find('#ticket_line_items__tax_percent_2').val()
+    if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_2').length
+      tax_percent_2 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_2').val()
     else 
       tax_percent_2 = '0.00'
     net = (parseFloat(gross) - parseFloat(tare)).toFixed(2)
-    $(this).closest('.panel').find('#ticket_line_items__net').val net
-    $(this).closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
-    $(this).closest('.panel').find('#tare_picture_button:first').attr 'data-weight', tare
+    changed_field.closest('.panel').find('#ticket_line_items__net').val net
+    changed_field.closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
+    changed_field.closest('.panel').find('#tare_picture_button:first').attr 'data-weight', tare
 
     #description = $(this).closest('.panel').find('#item_description').val()
-    price = $(this).closest('.panel').find('#ticket_line_items__price').val()
-    unit_of_measure = $(this).closest('.panel').find('#ticket_line_items__unit_of_measure').val()
+    price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
+    unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
     tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
-    amount = (parseFloat(price) * parseFloat(net)).toFixed(2)
-    $(this).closest('.panel').find('#ticket_line_items__amount').val amount
-    $(this).closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
-    $(this).closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
-    if total_tax_amount > 0
-      # Show tax amount
-      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
-    else
-      # Don't show tax amount
-      $(this).closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount
-    sum = 0;
-    $('.amount').each ->
-      sum += Number($(this).val())
-      return
-    $('.tax').each ->
-      sum += Number($(this).val())
-      return
-    $('#total').text '$' + sum.toFixed(2)
-    $('#ticket_total').val sum.toFixed(2)
-    $('#payment_amount').val sum.toFixed(2)
+    changed_field.closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
+    changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
+
+    # Get unit of measure weight conversion for commodity item
+    item_id = changed_field.closest('.panel').find('#ticket_line_items__commodity').val()
+    get_commodity_unit_of_measure_weight_conversion_ajax = ->
+      $.ajax
+        url: "/commodities/" + item_id + "/unit_of_measure_weight_conversion"
+        dataType: 'json'
+        #delay: 500 # Wait so that net can be re-calculated
+        data:
+          net: net
+        success: (data) ->
+          new_weight = data.new_weight
+          console.log 'new_weight', data
+          amount = (parseFloat(price) * parseFloat(new_weight)).toFixed(2)
+          console.log 'amount:', amount
+          changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
+          
+          if total_tax_amount > 0
+            # Show tax amount
+            changed_field.closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
+          else
+            # Don't show tax amount
+            changed_field.closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount
+          sum = 0;
+          $('.amount').each ->
+            sum += Number($(this).val())
+            return
+          $('.tax').each ->
+            sum += Number($(this).val())
+            return
+          $('#total').text '$' + sum.toFixed(2)
+          $('#ticket_total').val sum.toFixed(2)
+          $('#payment_amount').val sum.toFixed(2)
+          return
+        error: ->
+          alert 'Error getting commodity unit of measure conversion.'
+          console.log 'Error getting commodity unit of measure conversion.'
+          return
+    get_commodity_unit_of_measure_weight_conversion_ajax()
+
+    #amount = (parseFloat(price) * parseFloat(net)).toFixed(2)
+
     return
   ### End line item calculation field value changed ###
 

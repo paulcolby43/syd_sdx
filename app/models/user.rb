@@ -320,6 +320,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def currency_id
+    user_setting.currency_id
+  end
+  
   #############################
   #     Class Methods         #
   #############################

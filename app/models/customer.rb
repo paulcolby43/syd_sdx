@@ -177,6 +177,7 @@ class Customer
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
+    Rails.logger.info "Customer.update response: #{response}"
     data= Hash.from_xml(response)
     Rails.logger.info data
 #    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Success"]

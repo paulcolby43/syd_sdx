@@ -151,9 +151,9 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
-#        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
         "TicketHead" => {
           "Id" => guid,
+          "Description" => "",
           "YardId" => yard_id,
           "CustomerId" => customer_id,
           "FirstName" => customer['FirstName'],
@@ -163,18 +163,17 @@ class Ticket
           "TicketNumber" => ticket_number,
           "Status" => 2,
           "CurrencyId" => user.user_setting.currency_id,
-  #        "DateClosed" => "2016-02-18T22:01:30.217",
           "DateCreated" => Time.now.utc
           }
         })
       
-#      Rails.logger.info response
+      Rails.logger.info "Ticket.create response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
   
   # Update an existing ticket
-  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status)
+  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status, description)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
@@ -183,6 +182,7 @@ class Ticket
       payload: {
         "TicketHead" => {
           "Id" => guid,
+          "Description" => description,
           "YardId" => yard_id,
           "CustomerId" => customer_id,
           "FirstName" => customer.blank? ? "" : customer['FirstName'],
@@ -198,7 +198,7 @@ class Ticket
           }
         })
       
-#      Rails.logger.info response
+      Rails.logger.info "Ticket update response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
