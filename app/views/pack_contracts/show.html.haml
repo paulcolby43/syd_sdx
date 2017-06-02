@@ -21,11 +21,17 @@
       -#
       - unless @pack_lists.blank?
         - @pack_lists.each do |pack_list|
-          - unless pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank?
-            - pack_list['Items']['PackListItemInformation'].each do |pack_list_item|
-              = pack_list_item
-              %br
-          %br
+          %div.panel.panel-primary
+            %div.list_group
+              %a{href: pack_list_path(pack_list['Id'], contract_id: @pack_contract['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item pack_list_button"}
+                .pull-right
+                  &nbsp;
+                  %i.fa.fa-chevron-right.fa-lg
+                = pack_list
+                -#
+                  - unless pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank?
+                    - pack_list['Items']['PackListItemInformation'].each do |pack_list_item|
+                      = pack_list_item
       - else
         None
 

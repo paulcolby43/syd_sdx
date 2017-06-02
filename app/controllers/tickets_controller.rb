@@ -7,8 +7,8 @@ class TicketsController < ApplicationController
   def index
     authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
-    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
-    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
+#    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
+#    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
     unless params[:q].blank?
       results = Ticket.search(@status, current_user.token, current_yard_id, params[:q])

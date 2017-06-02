@@ -34,11 +34,11 @@ class PackList
     end
   end
   
-  def self.find_by_id(auth_token, yard_id, status, pack_id)
-    packs = Pack.all(auth_token, yard_id, status)
+  def self.find_by_id(auth_token, yard_id, contract_id, pack_list_id)
+    pack_lists = PackList.all(auth_token, yard_id, contract_id)
     # Find pack list within array of hashes
-    pack = packs.find {|pl| pl['Id'] == pack_id}
-    return pack
+    pack_list = pack_lists.find {|pl| pl['Id'] == pack_list_id}
+    return pack_list
   end
   
   def self.update(auth_token, yard_id, pack_params)

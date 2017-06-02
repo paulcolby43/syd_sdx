@@ -168,6 +168,13 @@ class Ability
       can :create, :packs
       can :edit, :packs
       
+      # PackLists
+      ############
+      can :index, :pack_lists
+      can :show, :pack_lists
+      can :create, :pack_lists
+      can :edit, :pack_lists
+      
       # PackContracts
       ############
       can :index, :pack_contracts

@@ -38,7 +38,7 @@ class Pack
   def self.find_by_id(auth_token, yard_id, status, pack_id)
     packs = Pack.all(auth_token, yard_id, status)
     # Find pack list within array of hashes
-    pack = packs.find {|pl| pl['Id'] == pack_id}
+    pack = packs.find {|pack| pack['Id'] == pack_id}
     return pack
   end
   

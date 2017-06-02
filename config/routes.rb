@@ -116,6 +116,7 @@ Rails.application.routes.draw do
   end
   
   resources :packs
+  resources :pack_lists
   resources :pack_contracts
   
   # The priority is based upon order of creation: first created -> highest priority.

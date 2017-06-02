@@ -18,7 +18,7 @@ class PackContract
       "SearchText" => search
       }
     json_encoded_payload = JSON.generate(payload)
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", 
         :content_type => 'application/json'}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
     Rails.logger.info "Pack Contracts response: #{data}"
