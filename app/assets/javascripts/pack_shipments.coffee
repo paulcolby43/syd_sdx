@@ -119,13 +119,15 @@ jQuery ->
         success: (data) ->
           console.log 'Pack added to pack list'
           add_pack_to_pack_list_html_ajax()
+          $('.shipment_pack_select').select2('open');
 
           return
         error: (xhr) ->
           error = $.parseJSON(xhr.responseText).error
           adding_pack_spinner_icon.hide()
           alert error
-          console.log 'Error adding pack to pack list.'
+          $('.shipment_pack_select').select2('open');
+          console.log error
           return
     add_pack_to_pack_list_html_ajax = ->
       pack_description = pack_select.closest('#pack_details').find('#pack_description:first').val()
@@ -139,7 +141,6 @@ jQuery ->
           pack_shipment_id: pack_shipment_id
         success: (data) ->
           adding_pack_spinner_icon.hide()
-          pack_select.val([])
 
     if pack_id != ''
       # Only get pack info if there is a pack
