@@ -1,10 +1,14 @@
 =# render partial: "shared/navbars/show_pack_contract_navbar", locals: {title: "#{@pack_contract['InventoryCode']}"}
-- @title="#{@pack_contract['BillToCompany']} - #{@pack_contract['ContractDescription']}"
+- @title="Contract: #{@pack_contract['BillToCompany']} - #{@pack_contract['ContractDescription']}"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %p.lead= "#{@pack_contract['BillToCompany']} - #{@pack_contract['ContractDescription']}"
-    %p.lead= "#{@pack_contract}"
+    %p.lead
+      = "#{@pack_contract['BillToCompany']} - #{@pack_contract['ContractDescription']}"
+      %br
+      = "Contract ##{@pack_contract['ContractNumber']}"
+    -#
+    .well= @pack_contract
     %p
       %strong Materials
       %br
@@ -18,16 +22,46 @@
       %strong Pack Lists
       %br
       =# @pack_lists['Items']['PackListItemInformation']
-      -#
       - unless @pack_lists.blank?
         - @pack_lists.each do |pack_list|
-          %div.panel.panel-primary
-            %div.list_group
-              %a{href: pack_list_path(pack_list['Id'], contract_id: @pack_contract['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item pack_list_button"}
-                .pull-right
-                  &nbsp;
-                  %i.fa.fa-chevron-right.fa-lg
-                = pack_list
+          -#
+            = pack_list
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: edit_pack_list_path(pack_list['Id'], contract_id: @pack_contract['Id'], contract_number: @pack_contract['ContractNumber']), class: "list-group-item pack_list_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{pack_list['PackListNumber']}"}}
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+                    = pack_list['PackListNumber']
+                    %br
+                    %small
+                      .text-muted
+                        = "(#{pack_list['Units']})"
+                        = pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight']
+          -#
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: edit_pack_list_path(pack_list['Id'], contract_id: @pack_contract['Id'], contract_number: @pack_contract['ContractNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item pack_list_button"}
+                  .table-responsive
+                    %table.table.table-striped
+                      %thead
+                        %tr
+                          %td #
+                          %td Shipment
+                          %td Units
+                          %td Gross
+                          %td Tare
+                          %td Net
+                      %tbody
+                        %tr
+                          %td= pack_list['PackListNumber']
+                          %td= pack_list['ShipmentNumber'] unless pack_list['ShipmentNumber'] == {"i:nil"=>"true"}
+                          %td= pack_list['Units']
+                          %td= pack_list['Items']['PackListItemInformation']['PackInfo']['GrossWeight']
+                          %td= pack_list['Items']['PackListItemInformation']['PackInfo']['TareWeight']
+                          %td= pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight']
+                        
                 -#
                   - unless pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank?
                     - pack_list['Items']['PackListItemInformation'].each do |pack_list_item|

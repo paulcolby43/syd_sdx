@@ -182,6 +182,11 @@ class Ability
       can :create, :pack_contracts
       can :edit, :pack_contracts
       
+      # PackShipments
+      ############
+      can :index, :pack_shipments
+      can :show, :pack_shipments
+      
     # End admin user role
     
     elsif user.basic?

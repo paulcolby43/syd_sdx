@@ -116,8 +116,19 @@ Rails.application.routes.draw do
   end
   
   resources :packs
-  resources :pack_lists
+  
+  resources :pack_lists do
+    collection do
+      get :pack_fields
+    end
+    member do
+      get :add_pack
+      get :remove_pack
+    end
+  end
+  
   resources :pack_contracts
+  resources :pack_shipments
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

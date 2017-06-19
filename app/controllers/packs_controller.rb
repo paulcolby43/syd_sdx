@@ -5,11 +5,28 @@ class PacksController < ApplicationController
   # GET /packs.json
   def index
     authorize! :index, :packs
-#    @packs = current_user.packs
-#    @packs = Yard.packs(current_yard_id)
-     @status = "#{params[:status].blank? ? '0' : params[:status]}"
-#     @packs = Kaminari.paginate_array(Pack.test_array).page(params[:page]).per(10)
-    @packs = Kaminari.paginate_array(Pack.all(current_user.token, current_yard_id, @status)).page(params[:page]).per(10)
+    @status = "#{params[:status].blank? ? '0' : params[:status]}"
+    
+    respond_to do |format|
+      format.html {
+        search = Pack.all(current_user.token, current_yard_id, @status)
+        @packs = Kaminari.paginate_array(search).page(params[:page]).per(30)
+      }
+      format.json {
+        unless params[:q].blank?
+          search = Pack.find_all_by_tag_number(current_user.token, current_yard_id, @status, params[:q])
+        else
+          search = []
+        end
+        unless search.blank?
+          @packs = search.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }
+        else
+          @packs = nil
+        end
+        Rails.logger.info "results: {#{@packs}}"
+        render json: {results: @packs}
+      } 
+    end
   end
 
   # GET /packs/1
@@ -21,7 +38,13 @@ class PacksController < ApplicationController
 #    @pack = {"Customer"=>nil, "CustomerId"=>{"i:nil"=>"true"}, "DateClosed"=>"2015-12-08T18:56:03.177", "DateCreated"=>"2015-12-08T18:56:03", "Id"=>"07043fd5-525e-4568-b54a-0c3d17c5ca99", "InternalPackNumber"=>"OY624", "InventoryCode"=>"SSteel", "Location"=>nil, "NetWeight"=>"200.0000", "PrintDescription"=>"304 Stainless", "Quantity"=>"0.00", "Row"=>nil, "TagNumber"=>"624", "UnitOfMeasure"=>"LB", "VoidDate"=>{"i:nil"=>"true"}, "Yard"=>"Main Yard"}
     respond_to do |format|
       format.html {}
-      format.json {render json: {"name" => @pack['PrintDescription']} } 
+      format.json {render json: {"name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], "net" => @pack['NetWeight']} } 
+      format.js {
+        @pack_id = params[:id]
+        @pack_description = params[:pack_description]
+        @pack_shipment_id = params[:pack_shipment_id]
+        @pack_list_id = params[:pack_list_id]
+        }
     end
   end
 

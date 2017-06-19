@@ -1,0 +1,108 @@
+= render partial: "shared/navbars/edit_pack_list_navbar", locals: {title: @pack_list['PackListNumber'], total: 0}
+-@title="Pack List"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %ul.nav.nav-tabs
+      %li.active
+        %a{:href => "#pack_details", :data => {:toggle => "tab"}}
+          Pack Details
+      %li
+        %a{:href => "#contract_items", :data => {:toggle => "tab"}}
+          Contract Items
+    .tab-content
+      .tab-pane.active{:id => "pack_details"}
+        %br
+        -#
+          .well= @pack_list
+        = form_tag pack_list_path, method: 'put', id: 'edit_pack_list_form', :class => "form-horizontal" do
+          =# hidden_field_tag "pack_list[contract_number]", @contract_number
+          =# hidden_field_tag "pack_list[contract_id]", @contract_id
+          - unless @packs.blank?
+            %div.pack_list_pack_fields_wrap
+              #packs_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+                - @packs.each do |pack|
+                  .panel.panel-default.pack
+                    %div.panel-heading{:role => "tab", id: "heading#{pack['Id']}"}
+                      %h4.panel-title
+                        %ul{class: 'list-inline'}
+                          %li
+                            %a.pack_name.text-success{"aria-controls" => "collapse#{pack['Id']}", "aria-expanded" => false, "data-parent" => "#packs_accordion", "data-toggle" => "collapse", :href => "#collapse_#{pack['Id']}", :role => "button", class: "collapsed"}
+                              = "#{pack['PackListItemInformation']['InventoryDescription']}"
+                          %li.pull-right
+                            %a{href: '#', class: 'void_pack remove_field'}
+                              %i.fa.fa-trash.fa-lg.text-danger
+                              %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                          -#
+                            %li.pull-right
+                              %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
+                                %i.fa.fa-trash.fa-lg.text-danger
+                                %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                    %div{id: "collapse_#{pack['Id']}", "aria-labelledby" => "heading#{pack['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
+                      .panel-body
+                        = hidden_field_tag "pack_list[packs][][internal_pack_number]", nil
+                        = select_tag "pack_list[packs][][pack_id]", options_for_select([ ["#{pack['PackListItemInformation']['InventoryDescription']}", pack['PackListItemInformation']['PackId']] ], pack['PackListItemInformation']['PackId']), prompt: 'Choose a pack', class: "input-lg pack_select", required: true
+                        %br
+                        %div.input-group.tag_number_input_group
+                          %span.input-group-addon
+                            = "#"
+                          = phone_field_tag "pack_list[packs][][tag_number]", number_with_precision(pack['PackListItemInformation']['PackInfo']['TagNumber'], precision: 0, strip_insignificant_zeros: true), :placeholder => "Tag Number", class: "form-control input-lg", required: true
+                        %br
+                        = text_field_tag "pack_list[packs][][print_description]", pack['PackListItemInformation']['PackInfo']['PrintDescription'], :placeholder => "Print Description", class: "form-control input-lg", required: true, readonly: true
+                        %br
+                        = select_tag "pack_list[packs][][type]", options_for_select(["BALE", "BOX", "PALLET"], pack['PackListItemInformation']['PackInfo']['PackType']), class: "form-control input-lg pack_type_select", required: true, readonly: true
+                        %br
+                        %div.input-group.quantity_input_group
+                          %span.input-group-addon
+                            Q
+                          = phone_field_tag "pack_list[packs][][quantity]", number_with_precision(pack['PackListItemInformation']['PackInfo']['Quantity'], precision: 0, strip_insignificant_zeros: true), :placeholder => "Quantity", class: "form-control input-lg amount-calculation-field", required: true
+                        %br
+                        %div.input-group.gross_input_group
+                          %span.input-group-addon
+                            G
+                          = phone_field_tag "pack_list[packs][][gross]", number_with_precision(pack['PackListItemInformation']['PackInfo']['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
+                        %br
+                        %div.input-group.tare_input_group
+                          %span.input-group-addon
+                            T
+                          = phone_field_tag "pack_list[packs][][tare]", number_with_precision(pack['PackListItemInformation']['PackInfo']['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field", required: true
+                        %br
+                        %div.input-group.net_input_group
+                          %span.input-group-addon
+                            N
+                          = phone_field_tag "pack_list[packs][][net]", number_with_precision(pack['PackListItemInformation']['PackInfo']['NetWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Net", class: "form-control input-lg amount-calculation-field net", required: true
+          - else
+            %p.lead Empty
+
+          .row.form-group
+            %div.col-xs-6.col-sm-3
+              = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
+              %a{ href: pack_fields_pack_lists_path(pack_list_id: @pack_list['Id']), 'data-remote' => true, id: "add_pack_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+                %i.fa.fa-plus
+                = 'Pack'
+            -#
+              %div.col-xs-6.col-sm-3
+                -#
+                  = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
+                = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+                  %i.fa.fa-check.fa-lg
+                  = 'Save'
+
+      .tab-pane{:id => "contract_items"}
+        %p
+        %strong Materials
+        -#
+          %br
+          - unless @pack_contract['Materials']['string'].blank?
+            - @pack_contract['Materials']['string'].each do |material|
+              = material
+              %br
+          - else
+            None
+    -#
+      %p.lead= "#{@pack_list['InternalPackNumber']} #{@pack_list['PrintDescription']}"
+      %p.lead= @pack_list['Quantity']
+      %p.lead= "#{@pack_list['NetWeight'].to_f.round(2)}#{@pack_list['UnitOfMeasure']}"
+
+
+=# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}

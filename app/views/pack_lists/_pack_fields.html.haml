@@ -1,0 +1,61 @@
+.panel.panel-default.pack
+  %div.panel-heading{:role => "tab", id: "heading#{index}"}
+    %h4.panel-title
+      %ul{class: 'list-inline'}
+        %li
+          %a.pack_name.text-success{"aria-controls" => "collapse#{index}", "aria-expanded" => true, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
+            Choose pack*
+        %li.pull-right
+          %a{href: '#', class: 'void_item remove_field'}
+            %i.fa.fa-trash.fa-lg.text-danger
+            %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+        -#
+          %li.pull-right
+            %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
+              %i.fa.fa-trash.fa-lg.text-danger
+              %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+  %div{id: "collapse_#{index}", "aria-labelledby" => "headingitem", :role => "tabpanel", class: "panel-collapse collapse in" }
+    .panel-body
+      = hidden_field_tag "pack_list[packs][][internal_pack_number]", nil
+      = select_tag "pack_list[packs][][pack_id]", nil, prompt: 'Choose pack by tag number', class: "pack_list_packs_pack_id pack_select", style: 'width: 100%', required: true, autofocus: true
+      %br
+      %div.input-group.tag_number_input_group
+        %span.input-group-addon
+          = "#"
+        = phone_field_tag "pack_list[packs][][tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+      %br
+      = text_field_tag "pack_list[packs][][print_description]", nil, :placeholder => "Print Description", class: "form-control input-lg", required: true
+      %br
+      = select_tag "pack_list[packs][][type]", options_for_select(["BALE", "BOX", "PALLET"]), class: "form-control input-lg pack_type_select", required: true
+      %br
+      %div.input-group.quantity_input_group
+        %span.input-group-addon
+          Q
+        = phone_field_tag "pack_list[packs][][quantity]", 0, :placeholder => "Quantity", class: "form-control input-lg amount-calculation-field", required: true
+      %br
+      %div.input-group.gross_input_group
+        %span.input-group-addon
+          G
+        = phone_field_tag "pack_list[packs][][gross]", nil, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
+      %br
+      %div.input-group.tare_input_group
+        %span.input-group-addon
+          T
+        = phone_field_tag "pack_list[packs][][tare]", nil, :placeholder => "Tare", class: "form-control input-lg amount-calculation-field", required: true
+      %br
+      %div.input-group.net_input_group
+        %span.input-group-addon
+          N
+        = phone_field_tag "pack_list[packs][][net]", nil, :placeholder => "Net", class: "form-control input-lg amount-calculation-field net", required: true
+
+  :javascript
+    $('.pack_list_packs_pack_id').select2({
+      theme: 'bootstrap',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/packs?status=0',
+        dataType: 'json',
+        delay: 250
+      }
+    });
+

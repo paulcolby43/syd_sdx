@@ -17,8 +17,17 @@ class PackListsController < ApplicationController
   def show
     authorize! :show, :pack_lists
     @contract_id = params[:contract_id]
-    @pack_list = PackList.find_by_id(current_user.token, current_yard_id, @contract_id, params[:id])
-#    @pack_list = {"Customer"=>nil, "CustomerId"=>{"i:nil"=>"true"}, "DateClosed"=>"2015-12-08T18:56:03.177", "DateCreated"=>"2015-12-08T18:56:03", "Id"=>"07043fd5-525e-4568-b54a-0c3d17c5ca99", "InternalPackListNumber"=>"OY624", "InventoryCode"=>"SSteel", "Location"=>nil, "NetWeight"=>"200.0000", "PrintDescription"=>"304 Stainless", "Quantity"=>"0.00", "Row"=>nil, "TagNumber"=>"624", "UnitOfMeasure"=>"LB", "VoidDate"=>{"i:nil"=>"true"}, "Yard"=>"Main Yard"}
+    @contract_number = params[:contract_number]
+    @pack_contract = PackContract.find_by_contract_number(current_user.token, current_yard_id, @contract_number)
+#    @pack_list = PackList.find_by_id(current_user.token, current_yard_id, @contract_id, params[:id])
+    @pack_list = PackList.find(current_user.token, current_yard_id, params[:id])
+    unless @pack_list['Items'].is_a? Hash
+      # Multiple material items
+      @packs = @pack_list['Items']['PackListItemInformation']
+    else
+      # One material item
+      @packs = [@pack_list['Items']]
+    end
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @pack_list['PrintDescription']} } 
@@ -32,8 +41,23 @@ class PackListsController < ApplicationController
   # GET /pack_lists/1/edit
   def edit
     authorize! :edit, :pack_lists
-    @status = "#{params[:status].blank? ? '0' : params[:status]}"
-    @pack_list = PackList.find_by_id(current_user.token, current_yard_id, @status, params[:id])
+#    @contract_id = params[:contract_id]
+#    @contract_number = params[:contract_number]
+#    @pack_contract = PackContract.find_by_contract_number(current_user.token, current_yard_id, @contract_number)
+#    @pack_list = PackList.find_by_id(current_user.token, current_yard_id, @contract_id, params[:id])
+    @pack_list = PackList.find(current_user.token, current_yard_id, params[:id])
+#    @packs = PackList.pack_items(current_user.token, current_yard_id, params[:id])
+    unless @pack_list['Items'].blank?
+      unless @pack_list['Items'].is_a? Hash
+        # Multiple material items
+        @packs = @pack_list['Items']['PackListItemInformation']
+      else
+        # One material item
+        @packs = [@pack_list['Items']]
+      end
+    else
+      @packs = []
+    end
   end
 
   # POST /pack_lists
@@ -67,7 +91,7 @@ class PackListsController < ApplicationController
         else
           flash[:danger] = 'Error updating PackList.'
         end
-        redirect_to pack_lists_path
+        redirect_to pack_contract_path(pack_list_params[:contract_id], contract_number: pack_list_params[:contract_number])
       }
     end
   end
@@ -81,6 +105,59 @@ class PackListsController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  def pack_fields
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  def add_pack
+    respond_to do |format|
+      format.html {
+        @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:internal_pack_number], params[:tag_number])
+        if @add_pack_response["Success"] == 'true'
+          flash[:success] = 'Pack added to pack list successfully.'
+          redirect_to pack_shipment_path(params[:pack_shipment_id])
+        else
+          flash[:danger] = @add_pack_response["FailureInformation"]
+          redirect_to pack_shipment_path(params[:pack_shipment_id])
+        end
+      }
+      format.json {
+        @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:internal_pack_number], params[:tag_number])
+#        @add_pack_response = {"Success" => "true"}
+        if @add_pack_response["Success"] == 'true'
+          render json: {}, :status => :ok
+        else
+          render json: {error: @add_pack_response["FailureInformation"]}, status: :unprocessable_entity
+        end
+      }
+    end
+  end
+  
+  def remove_pack
+    respond_to do |format|
+      format.html {
+        @remove_pack_response = PackList.remove_pack(current_user.token, current_yard_id, params[:id], params[:pack_id])
+        if @remove_pack_response["Success"] == 'true'
+          flash[:success] = 'Pack removed from pack list.'
+          redirect_to pack_shipment_path(params[:pack_shipment_id])
+        else
+          flash[:danger] = @remove_pack_response["FailureInformation"]
+          redirect_to pack_shipment_path(params[:pack_shipment_id])
+        end
+      }
+      format.json {
+        @remove_pack_response = PackList.remove_pack(current_user.token, current_yard_id, params[:id], params[:pack_id])
+        if @remove_pack_response["Success"] == 'true'
+          render json: {}, :status => :ok
+        else
+          render json: {error: @remove_pack_response["FailureInformation"]}, status: :unprocessable_entity
+        end
+      }
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -90,6 +167,6 @@ class PackListsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def pack_list_params
-      params.require(:pack_list).permit(:id, :description, :quantity, :net)
+      params.require(:pack_list).permit(:id, :description, :quantity, :net, :contract_number, :contract_id, packs: [:id, :description, :gross, :tare, :net, :quantity])
     end
 end

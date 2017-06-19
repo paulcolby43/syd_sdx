@@ -42,6 +42,20 @@ class Pack
     return pack
   end
   
+  def self.find_by_tag_number(auth_token, yard_id, status, tag_number)
+    packs = Pack.all(auth_token, yard_id, status)
+    # Find pack list within array of hashes
+    pack = packs.find {|pack| pack['TagNumber'] == tag_number}
+    return pack
+  end
+  
+  def self.find_all_by_tag_number(auth_token, yard_id, status, tag_number)
+    packs = Pack.all(auth_token, yard_id, status)
+    # Find pack list within array of hashes
+    packs = packs.select {|pack| pack['TagNumber'] == tag_number}
+    return packs
+  end
+  
   def self.update(auth_token, yard_id, pack_params)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record

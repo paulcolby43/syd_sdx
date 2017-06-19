@@ -1,0 +1,22 @@
+=# render partial: "shared/navbars/pack_contracts_navbar", locals: {title: pack_contract_status_string(@status)}
+- @title="Pack Shipments"
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %h3.text-center= "Pack Shipments"
+    - unless @pack_shipments.blank?
+      %div{id: "pack_shipments"}
+        - @pack_shipments.each do |pack_shipment|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']}"}, class: "list-group-item pack_shipment_button"}
+                    .pull-right
+                      &nbsp;
+                      %i.fa.fa-chevron-right.fa-lg
+                    = "#{pack_shipment['ShipmentNumber']}"
+                    = pack_shipment
+    - else
+      %p No pack shipments found
+
+=# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}

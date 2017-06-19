@@ -1,0 +1,108 @@
+=# render partial: "shared/navbars/show_pack_contract_navbar", locals: {title: "#{@pack_contract['InventoryCode']}"}
+- @title="Shipment: #{@pack_shipment['ShipmentNumber']}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %ul.nav.nav-tabs
+      %li.active
+        %a{:href => "#pack_details", :data => {:toggle => "tab"}}
+          Pack Details
+      %li
+        %a{:href => "#contract_items", :data => {:toggle => "tab"}}
+          Contract Items
+    .tab-content
+      .tab-pane.active{:id => "pack_details"}
+        %br
+        %div.row
+          .col-xs-12.col-sm-6.col-md-4
+            %p
+              = form_tag pack_shipment_path(@pack_shipment['Id']), id: 'pack_shipment_available_packs_search_form', method: 'get', :class => "form-horizontal", role: 'search' do |f|
+                -#
+                = select_tag :pack_id, nil, prompt: '--Pack tag number--', "data-pack-list-id" => @pack_list['Id'], "data-pack-shipment-id" => @pack_shipment['Id'], class: "form_control input-lg shipment_pack_select", style: "width: 100%;"
+                = hidden_field_tag :internal_pack_number
+                = hidden_field_tag :tag_number
+                = hidden_field_tag :pack_description
+                -#
+                  .input-group
+                    = search_field_tag :pack_tag_number, params[:pack_tag_number], :placeholder => "Pack tag number", class: "form-control input-lg"
+                    %span.input-group-btn
+                      %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+                        %i.fa.fa-search
+        %p
+          %i.fa.fa-lg.fa-spinner.fa-spin.adding_pack_spinner{style: 'display: none'}
+        - unless @available_packs.blank?
+          - @available_packs.each do |available_pack|
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-warning
+                  %a{href: add_pack_pack_list_path(@pack_list['Id'], pack_shipment_id: @pack_shipment['Id'], internal_pack_number: available_pack['InternalPackNumber'], tag_number: available_pack['TagNumber']), class: "list-group-item pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{available_pack['PrintDescription']}"}}
+                    %i.fa.fa-plus-circle.text-warning
+                    = available_pack['PrintDescription']
+        - else
+          - unless params[:pack_tag_number].blank?
+            %p.lead No packs founds
+        %div#current_packs
+          - unless @current_packs.blank?
+            - @current_packs.each do |pack|
+              %div.row
+                .col-xs-12.col-sm-12.col-md-12
+                  %div.panel.panel-primary.pack
+                    %div.list-group-item
+                      .pull-right
+                        %a{href: remove_pack_pack_list_path(@pack_list['Id'], pack_id: pack['Id'], pack_shipment_id: @pack_shipment['Id']), class: "remove_pack pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                      = "#{pack['InventoryDescription']}"
+                      =# pack
+        -#
+          %p
+            %strong Pack List
+          .well= @pack_list
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: edit_pack_list_path(@pack_list['Id']), class: "list-group-item pack_list_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{@pack_list['PackListNumber']}"}}
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+                    = @pack_list['PackListNumber']
+
+      
+      .tab-pane{:id => "contract_items"}
+        %br
+        -#
+          .well= @pack_shipment
+        %p.lead
+          %strong Materials
+        - unless @contract_items.blank?
+          - @contract_items.each do |contract_item|
+            -#
+              .well= contract_item
+            %p.lead= contract_item['Description']
+        - else
+          %p.lead None
+      
+    -#
+      %p
+        %strong Pack Lists
+        %br
+        =# @pack_lists['Items']['PackListItemInformation']
+        - unless @pack_lists.blank?
+          - @pack_lists.each do |pack_list|
+            -#
+              = pack_list
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list_group
+                    %a{href: edit_pack_list_path(pack_list['Id'], contract_id: @pack_contract['Id'], contract_number: @pack_contract['ContractNumber']), class: "list-group-item pack_list_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{pack_list['PackListNumber']}"}}
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+                      = pack_list['PackListNumber']
+                      %br
+                      %small
+                        .text-muted
+                          = "(#{pack_list['Units']})"
+                          = pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight']
+
+
+=# render partial: "shared/pack_contract_footer_navbar", locals: {title: "Pack List"}
