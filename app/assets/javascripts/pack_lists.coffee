@@ -8,12 +8,12 @@ jQuery ->
   $('.pack_list_pack_fields_wrap').on 'click', '.remove_field', (e) ->
     #user click on pack trash button
     if $('.pack').length > 1
-      confirm1 = confirm('Are you sure you want to delete this?')
+      confirm1 = confirm('Are you sure you want to remove this pack?')
       if confirm1
         e.preventDefault()
         trash_icon = $(this).find( ".fa-trash" )
         trash_icon.closest('.panel').remove()
-        calculate_net_total()
+        #calculate_net_total()
         return
 
           #ticket_id = $(this).data( "ticket-id" )

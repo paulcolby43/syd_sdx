@@ -6,53 +6,36 @@ jQuery ->
 
   ### Remove pack from pack list ###
   $('#current_packs').on 'click', '.remove_pack', (e) ->
+    pack_list_id = $(this).data( "pack-list-id" )
+    pack_id = $(this).data( "pack-id" )
+    remove_pack_from_pack_list_ajax = ->
+      $.ajax
+        url: "/pack_lists/" + pack_list_id + "/remove_pack"
+        dataType: 'json'
+        data:
+          pack_id: pack_id
+        success: (data) ->
+          console.log 'Pack removed from pack list'
+
+          return
+        error: (xhr) ->
+          error = $.parseJSON(xhr.responseText).error
+          alert error
+          console.log error
+          return
+
     #user click on pack trash button
     if $('.pack').length > 1
-      confirm1 = confirm('Are you sure you want to delete this?')
+      confirm1 = confirm('Are you sure you want to remove this pack?')
       if confirm1
         e.preventDefault()
-        trash_icon = $(this).find( ".fa-trash" )
-        trash_icon.closest('.panel').remove()
+        remove_pack_from_pack_list_ajax()
+        
+        #trash_icon = $(this).find( ".fa-trash" )
+        #trash_icon.closest('.panel').remove()
         #calculate_net_total()
         return
 
-          #ticket_id = $(this).data( "ticket-id" )
-          #item_id = $(this).data( "item-id" )
-          #commodity_id = $(this).data( "commodity-id" )
-          #gross = $(this).data( "gross" )
-          #tare = $(this).data( "tare" )
-          #net = $(this).data( "net" )
-          #price = $(this).data( "price" )
-          #amount = $(this).data( "amount" )
-          #trash_icon = $(this).find( ".fa-trash" )
-          #trash_icon.hide()
-          #spinner_icon = $(this).find('.fa-spinner')
-          #spinner_icon.show()
-          #$.ajax
-          #  url: "/tickets/void_item?ticket_id=" + ticket_id + "&item_id=" + item_id + "&commodity_id=" + commodity_id + "&gross=" + gross + "&tare=" + tare + "&net=" + net + "&price=" + price + "&amount=" + amount
-          #  dataType: 'json'
-          #  success: ->
-          #    trash_icon.closest('.panel').remove()
-          #    sum = 0;
-          #    $('.amount').each ->
-          #      sum += Number($(this).val())
-          #      return
-          #    $('#total').text '$' + sum.toFixed(2)
-          #    $('#payment_amount').val sum.toFixed(2)
-          #  error: ->
-          #    spinner_icon.hide()
-          #    trash_icon.show()
-          #    alert 'Error voiding item.'
-          #    return
-        #else
-        #  $(this).closest('.panel').remove()
-        #  sum = 0;
-        #  $('.amount').each ->
-        #    sum += Number($(this).val())
-        #    return
-        #  $('#total').text '$' + sum.toFixed(2)
-        #  $('#payment_amount').val sum.toFixed(2)
-        #return
       else
         e.preventDefault()
         return
