@@ -4,6 +4,10 @@
 
 jQuery ->
 
+  $(document).on 'ready page:load', ->
+    # Open pack tag number search by default on page load
+    $('.shipment_pack_select').select2('open')
+
   ### Remove pack from pack list ###
   $('#current_packs').on 'click', '.remove_pack', (e) ->
     pack_list_id = $(this).data( "pack-list-id" )
@@ -54,13 +58,17 @@ jQuery ->
     return
 
   # Dropdown select for shipment's pack list packs
-  $('.shipment_pack_select').select2
+  #$('.shipment_pack_select').select2
+  #  theme: 'bootstrap'
+  #  minimumInputLength: 3
+  #  ajax:
+  #    url: '/packs?status=0'
+  #    dataType: 'json'
+  #    delay: 250
+
+  $('.shipment_pack_select').select2 
     theme: 'bootstrap'
-    minimumInputLength: 3
-    ajax:
-      url: '/packs?status=0'
-      dataType: 'json'
-      delay: 250
+    placeholder: "Tag Number",
 
   ### pack selected ###
   $('#pack_details').on 'change', '.shipment_pack_select', ->
@@ -102,14 +110,14 @@ jQuery ->
         success: (data) ->
           console.log 'Pack added to pack list'
           add_pack_to_pack_list_html_ajax()
-          $('.shipment_pack_select').select2('open');
+          $('.shipment_pack_select').select2('open')
 
           return
         error: (xhr) ->
           error = $.parseJSON(xhr.responseText).error
           adding_pack_spinner_icon.hide()
           alert error
-          $('.shipment_pack_select').select2('open');
+          $('.shipment_pack_select').select2('open')
           console.log error
           return
     add_pack_to_pack_list_html_ajax = ->
@@ -127,7 +135,8 @@ jQuery ->
 
     if pack_id != ''
       # Only get pack info if there is a pack
-      get_pack_info_ajax()
+      #get_pack_info_ajax()
+      add_pack_to_pack_list_ajax()
       
     return
   ### End pack selected ###

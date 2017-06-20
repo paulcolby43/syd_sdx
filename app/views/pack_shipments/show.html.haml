@@ -3,6 +3,8 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    %p.lead= "#{@pack_shipment['ShipmentNumber']} #{@pack_shipment['CustomerName']}"
+    .text-muted= "#{@pack_shipment['ContractDescription']}"
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#pack_details", :data => {:toggle => "tab"}}
@@ -24,7 +26,7 @@
             %p
               = form_tag pack_shipment_path(@pack_shipment['Id']), id: 'pack_shipment_available_packs_search_form', method: 'get', :class => "form-horizontal", role: 'search' do |f|
                 -#
-                = select_tag :pack_id, nil, prompt: '--Pack tag number--', "data-pack-list-id" => @pack_list['Id'], "data-pack-shipment-id" => @pack_shipment['Id'], class: "form_control input-lg shipment_pack_select", style: "width: 100%;"
+                = select_tag :pack_id, options_for_select(Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }), prompt: '--Pack tag number--', "data-pack-list-id" => @pack_list['Id'], "data-pack-shipment-id" => @pack_shipment['Id'], class: "form_control input-lg shipment_pack_select", style: "width: 100%;", autofocus: true
                 = hidden_field_tag :internal_pack_number
                 = hidden_field_tag :tag_number
                 = hidden_field_tag :pack_description
