@@ -25,7 +25,7 @@ jQuery ->
           return
 
     #user click on pack trash button
-    if $('.pack').length > 1
+    if $('.pack').length > 0
       confirm1 = confirm('Are you sure you want to remove this pack?')
       if confirm1
         e.preventDefault()
