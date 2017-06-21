@@ -114,6 +114,8 @@ class PackList
       
     json_encoded_payload = JSON.generate(payload)
     
+    Rails.logger.info "json_encoded_payload: #{json_encoded_payload}"
+    
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     

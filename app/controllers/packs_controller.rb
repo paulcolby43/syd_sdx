@@ -10,7 +10,7 @@ class PacksController < ApplicationController
     respond_to do |format|
       format.html {
         search = Pack.all(current_user.token, current_yard_id, @status)
-        @packs = Kaminari.paginate_array(search).page(params[:page]).per(30)
+        @packs = Kaminari.paginate_array(search).page(params[:page]).per(100)
       }
       format.json {
         unless params[:q].blank?

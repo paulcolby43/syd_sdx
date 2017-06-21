@@ -135,8 +135,8 @@ jQuery ->
 
     if pack_id != ''
       # Only get pack info if there is a pack
-      #get_pack_info_ajax()
-      add_pack_to_pack_list_ajax()
+      get_pack_info_ajax()
+      #add_pack_to_pack_list_ajax()
       
     return
   ### End pack selected ###

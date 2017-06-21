@@ -3,8 +3,9 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %p.lead= "#{@pack_shipment['ShipmentNumber']} #{@pack_shipment['CustomerName']}"
-    .text-muted= "#{@pack_shipment['ContractDescription']}"
+    %h3
+      = "#{@pack_shipment['ShipmentNumber']} #{@pack_shipment['CustomerName']}"
+      %small= "#{@pack_shipment['ContractDescription']}"
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#pack_details", :data => {:toggle => "tab"}}
