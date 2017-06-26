@@ -12,6 +12,7 @@ jQuery ->
   $('#current_packs').on 'click', '.remove_pack', (e) ->
     pack_list_id = $(this).data( "pack-list-id" )
     pack_id = $(this).data( "pack-id" )
+    pack_panel = $(this).closest('.panel')
 
     remove_pack_from_pack_list_ajax = ->
       $.ajax
@@ -20,7 +21,7 @@ jQuery ->
         data:
           pack_id: pack_id
         success: (data) ->
-          $(this).closest('.panel').remove()
+          pack_panel.remove()
           console.log 'Pack removed from pack list'
           return
         error: (xhr) ->
