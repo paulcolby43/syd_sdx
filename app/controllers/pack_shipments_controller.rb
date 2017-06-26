@@ -17,9 +17,10 @@ class PackShipmentsController < ApplicationController
     @pack_list = PackShipment.pack_list(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
     @contract_items = PackShipment.contract_items(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
-    unless params[:pack_tag_number].blank?
-      @available_packs = Pack.find_all_by_tag_number(current_user.token, current_yard_id, 0, params[:pack_tag_number])
-    end
+    @available_packs_array = Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }
+#    unless params[:pack_tag_number].blank?
+#      @available_packs = Pack.find_all_by_tag_number(current_user.token, current_yard_id, 0, params[:pack_tag_number])
+#    end
 #    @pack_list = PackList.all(current_user.token, current_yard_id, @pack_shipment['Id'])
     respond_to do |format|
       format.html {}

@@ -99,7 +99,7 @@ class PackList
     end
   end
   
-  def self.add_pack(auth_token, yard_id, pack_list_id, internal_pack_number, tag_number)
+  def self.add_pack(auth_token, yard_id, pack_list_id, pack_id)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -107,14 +107,15 @@ class PackList
     
     payload = {
       "PackListId" => pack_list_id,
-      "InternalPackNumber" => internal_pack_number,
-      "TagNumber" => tag_number,
+      "PackId" => pack_id,
+      #"InternalPackNumber" => internal_pack_number,
+      #"TagNumber" => tag_number,
       "AddNewContractItem" => false
       }
       
     json_encoded_payload = JSON.generate(payload)
     
-    Rails.logger.info "json_encoded_payload: #{json_encoded_payload}"
+    Rails.logger.info "Add Pack json_encoded_payload: #{json_encoded_payload}"
     
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)

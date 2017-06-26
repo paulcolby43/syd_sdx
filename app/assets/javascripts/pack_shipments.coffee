@@ -12,6 +12,7 @@ jQuery ->
   $('#current_packs').on 'click', '.remove_pack', (e) ->
     pack_list_id = $(this).data( "pack-list-id" )
     pack_id = $(this).data( "pack-id" )
+
     remove_pack_from_pack_list_ajax = ->
       $.ajax
         url: "/pack_lists/" + pack_list_id + "/remove_pack"
@@ -19,8 +20,8 @@ jQuery ->
         data:
           pack_id: pack_id
         success: (data) ->
+          $(this).closest('.panel').remove()
           console.log 'Pack removed from pack list'
-
           return
         error: (xhr) ->
           error = $.parseJSON(xhr.responseText).error
@@ -29,22 +30,17 @@ jQuery ->
           return
 
     #user click on pack trash button
-    if $('.pack').length > 0
-      confirm1 = confirm('Are you sure you want to remove this pack?')
-      if confirm1
-        e.preventDefault()
-        remove_pack_from_pack_list_ajax()
-        
-        #trash_icon = $(this).find( ".fa-trash" )
-        #trash_icon.closest('.panel').remove()
-        #calculate_net_total()
-        return
+    confirm1 = confirm('Are you sure you want to remove this pack?')
+    if confirm1
+      e.preventDefault()
+      remove_pack_from_pack_list_ajax()
 
-      else
-        e.preventDefault()
-        return
+      #trash_icon = $(this).find( ".fa-trash" )
+      #trash_icon.closest('.panel').remove()
+      #calculate_net_total()
+      return
+
     else
-      alert 'You cannot delete this because you must have at least one pack.'
       e.preventDefault()
       return
 
@@ -105,8 +101,9 @@ jQuery ->
         url: "/pack_lists/" + pack_list_id + "/add_pack"
         dataType: 'json'
         data:
-          internal_pack_number: pack_select.closest('#pack_details').find('#internal_pack_number:first').val()
-          tag_number: pack_select.closest('#pack_details').find('#tag_number:first').val()
+          #internal_pack_number: pack_select.closest('#pack_details').find('#internal_pack_number:first').val()
+          #tag_number: pack_select.closest('#pack_details').find('#tag_number:first').val()
+          pack_id: pack_id
         success: (data) ->
           console.log 'Pack added to pack list'
           add_pack_to_pack_list_html_ajax()
@@ -135,8 +132,8 @@ jQuery ->
 
     if pack_id != ''
       # Only get pack info if there is a pack
-      get_pack_info_ajax()
-      #add_pack_to_pack_list_ajax()
+      #get_pack_info_ajax()
+      add_pack_to_pack_list_ajax()
       
     return
   ### End pack selected ###

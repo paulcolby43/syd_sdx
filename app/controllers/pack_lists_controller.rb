@@ -115,7 +115,7 @@ class PackListsController < ApplicationController
   def add_pack
     respond_to do |format|
       format.html {
-        @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:internal_pack_number], params[:tag_number])
+        @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:pack_id])
         if @add_pack_response["Success"] == 'true'
           flash[:success] = 'Pack added to pack list successfully.'
           redirect_to pack_shipment_path(params[:pack_shipment_id])
@@ -125,7 +125,7 @@ class PackListsController < ApplicationController
         end
       }
       format.json {
-        @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:internal_pack_number], params[:tag_number])
+        @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:pack_id])
 #        @add_pack_response = {"Success" => "true"}
         if @add_pack_response["Success"] == 'true'
           render json: {}, :status => :ok
