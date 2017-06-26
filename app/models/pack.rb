@@ -39,6 +39,7 @@ class Pack
     packs = Pack.all(auth_token, yard_id, status)
     # Find pack list within array of hashes
     pack = packs.find {|pack| pack['Id'] == pack_id}
+    Rails.logger.info "Pack.find_by_id response: #{pack}"
     return pack
   end
   
