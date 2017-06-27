@@ -140,4 +140,29 @@ class PackList
     return data["RemovePackFromPackListResponse"]
   end
   
+  def self.add_pack_to_contract_item(auth_token, yard_id, pack_list_id, pack_id, contract_item_id)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/AddPackToContractItem"
+    
+    payload = {
+      "PackListId" => pack_list_id,
+      "PackId" => pack_id,
+      "ContractItemId" => contract_item_id
+      }
+      
+    json_encoded_payload = JSON.generate(payload)
+    
+    Rails.logger.info "Add pack to contract item json_encoded_payload: #{json_encoded_payload}"
+    
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "PackList.add_pack_to_contract_item response: #{data}"
+    
+    return data["AddPackToContractItemResponse"]
+  end
+  
 end

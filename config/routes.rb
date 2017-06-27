@@ -124,6 +124,7 @@ Rails.application.routes.draw do
     member do
       get :add_pack
       get :remove_pack
+      get :add_pack_to_contract_item
     end
   end
   

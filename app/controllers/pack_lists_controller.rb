@@ -117,8 +117,13 @@ class PackListsController < ApplicationController
       format.html {
         @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:pack_id])
         if @add_pack_response["Success"] == 'true'
-          flash[:success] = 'Pack added to pack list successfully.'
-          redirect_to pack_shipment_path(params[:pack_shipment_id])
+          if @add_pack_response["AvailableContractItems"]["ContractItemInformation"].blank?
+            flash[:success] = 'Pack added to pack list successfully.'
+            redirect_to pack_shipment_path(params[:pack_shipment_id])
+          else
+            flash[:danger] = 'More than one contract item.'
+            redirect_to pack_shipment_path(params[:pack_shipment_id])
+          end
         else
           flash[:danger] = @add_pack_response["FailureInformation"]
           redirect_to pack_shipment_path(params[:pack_shipment_id])
@@ -128,7 +133,11 @@ class PackListsController < ApplicationController
         @add_pack_response = PackList.add_pack(current_user.token, current_yard_id, params[:id], params[:pack_id])
 #        @add_pack_response = {"Success" => "true"}
         if @add_pack_response["Success"] == 'true'
-          render json: {}, :status => :ok
+          if @add_pack_response["AvailableContractItems"]["ContractItemInformation"].blank?
+            render json: {}, :status => :ok
+          else
+            render json: {message: "More than one contract item.", contract_items: @add_pack_response["AvailableContractItems"]["ContractItemInformation"]}, status: :ok
+          end
         else
           render json: {error: @add_pack_response["FailureInformation"]}, status: :unprocessable_entity
         end
@@ -154,6 +163,29 @@ class PackListsController < ApplicationController
           render json: {}, :status => :ok
         else
           render json: {error: @remove_pack_response["FailureInformation"]}, status: :unprocessable_entity
+        end
+      }
+    end
+  end
+  
+  def add_pack_to_contract_item
+    respond_to do |format|
+      format.html {
+        @add_pack_to_contract_item_response = PackList.add_pack_to_contract_item(current_user.token, current_yard_id, params[:id], params[:pack_id], params[:contract_item_id])
+        if @add_pack_to_contract_item_response["Success"] == 'true'
+          flash[:success] = 'Pack added to contract item successfully.'
+          redirect_to pack_shipment_path(params[:pack_shipment_id])
+        else
+          flash[:danger] = @add_pack_to_contract_item_response["FailureInformation"]
+          redirect_to pack_shipment_path(params[:pack_shipment_id])
+        end
+      }
+      format.json {
+        @add_pack_to_contract_item_response = PackList.add_pack_to_contract_item(current_user.token, current_yard_id, params[:id], params[:pack_id], params[:contract_item_id])
+        if @add_pack_to_contract_item_response["Success"] == 'true'
+          render json: {}, :status => :ok
+        else
+          render json: {error: @add_pack_to_contract_item_response["FailureInformation"]}, status: :unprocessable_entity
         end
       }
     end

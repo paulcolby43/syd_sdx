@@ -106,10 +106,32 @@ jQuery ->
           #tag_number: pack_select.closest('#pack_details').find('#tag_number:first').val()
           pack_id: pack_id
         success: (data) ->
-          console.log 'Pack added to pack list'
           add_pack_to_pack_list_html_ajax()
-          $('.shipment_pack_select').select2('open')
-
+          message = data.message
+          console.log message
+          if message == "More than one contract item."
+            adding_pack_spinner_icon.hide()
+            $('#pack_shipment_available_packs_search_form').hide()
+            alert 'More than one contract item. Please select item.'
+            contract_items = data.contract_items
+            console.log contract_items
+            $.each contract_items, (index, value) ->
+              #alert index + ': ' + value['Description']
+              link = $('<a/>').attr(
+                href: '#'
+                id: value['Id']
+                class: 'add_pack_to_contract_item btn btn-default'
+                'data-pack-id': pack_id
+                'data-pack-list-id': pack_list_id)
+              plus_sign = "<i class='fa fa-plus'></i> "
+              link.html plus_sign + value['Description']
+              $('#add_contract_items').append link
+              $('#add_contract_items').append '</br></br>'
+              return
+          else
+            add_pack_to_pack_list_html_ajax()
+            console.log 'Pack added to pack list'
+            $('.shipment_pack_select').select2('open')
           return
         error: (xhr) ->
           error = $.parseJSON(xhr.responseText).error
@@ -138,3 +160,25 @@ jQuery ->
       
     return
   ### End pack selected ###
+
+  ### pack contract_item selected ###
+  $('#pack_details').on 'click', '.add_pack_to_contract_item', ->
+    adding_pack_spinner_icon = $(this).closest('#pack_details').find('.adding_pack_spinner:first')
+    adding_pack_spinner_icon.show()
+    pack_list_id = $(this).data( "pack-list-id" )
+    pack_id = $(this).data( "pack-id" )
+    contract_item_id = $(this).attr('id')
+
+    add_pack_to_contract_item_ajax = ->
+      $.ajax
+        url: "/pack_lists/" + pack_list_id + "/add_pack_to_contract_item"
+        dataType: 'json'
+        data:
+          pack_id: pack_id
+          contract_item_id: contract_item_id
+        success: (data) ->
+          adding_pack_spinner_icon.hide()
+          $('#add_contract_items').empty()
+          $('#pack_shipment_available_packs_search_form').show()
+
+    add_pack_to_contract_item_ajax()

@@ -23,6 +23,7 @@
             %strong Pack List
             = @pack_list
         %br
+        %div#add_contract_items
         %div.row
           .col-xs-12.col-sm-6.col-md-4
             %p
@@ -51,6 +52,7 @@
         - else
           - unless params[:pack_tag_number].blank?
             %p.lead No packs founds
+        
         %div#current_packs
           - unless @current_packs.blank?
             - @current_packs.each do |pack|
