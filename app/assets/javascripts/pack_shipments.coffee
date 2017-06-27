@@ -36,9 +36,6 @@ jQuery ->
       e.preventDefault()
       remove_pack_from_pack_list_ajax()
 
-      #trash_icon = $(this).find( ".fa-trash" )
-      #trash_icon.closest('.panel').remove()
-      #calculate_net_total()
       return
 
     else
@@ -162,7 +159,8 @@ jQuery ->
   ### End pack selected ###
 
   ### pack contract_item selected ###
-  $('#pack_details').on 'click', '.add_pack_to_contract_item', ->
+  $('#pack_details').on 'click', '.add_pack_to_contract_item', (e) ->
+    e.preventDefault()
     adding_pack_spinner_icon = $(this).closest('#pack_details').find('.adding_pack_spinner:first')
     adding_pack_spinner_icon.show()
     pack_list_id = $(this).data( "pack-list-id" )
