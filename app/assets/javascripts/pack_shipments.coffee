@@ -103,9 +103,8 @@ jQuery ->
           #tag_number: pack_select.closest('#pack_details').find('#tag_number:first').val()
           pack_id: pack_id
         success: (data) ->
-          add_pack_to_pack_list_html_ajax()
           message = data.message
-          console.log message
+          console.log 'Message', message
           if message == "More than one contract item."
             adding_pack_spinner_icon.hide()
             $('#pack_shipment_available_packs_search_form').hide()
