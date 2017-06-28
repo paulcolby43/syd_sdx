@@ -28,8 +28,8 @@
           .col-xs-12.col-sm-6.col-md-4
             %p
               = form_tag pack_shipment_path(@pack_shipment['Id']), id: 'pack_shipment_available_packs_search_form', method: 'get', :class => "form-horizontal", role: 'search' do |f|
-                -#
-                = select_tag :pack_id, options_for_select(@available_packs_array), prompt: '--Pack tag number--', "data-pack-list-id" => @pack_list['Id'], "data-pack-shipment-id" => @pack_shipment['Id'], class: "form_control input-lg shipment_pack_select", style: "width: 100%;", autofocus: true
+                =# select_tag :pack_id, options_for_select(@available_packs_array), prompt: 'Tag Number', "data-pack-list-id" => @pack_list['Id'], "data-pack-shipment-id" => @pack_shipment['Id'], class: "form_control input-lg shipment_pack_select", style: "width: 100%;", autofocus: true
+                = select_tag :pack_id, nil, "data-pack-list-id" => @pack_list['Id'], "data-pack-shipment-id" => @pack_shipment['Id'], class: "form_control input-lg shipment_pack_select", style: "width: 100%;", autofocus: true
                 = hidden_field_tag :internal_pack_number
                 = hidden_field_tag :tag_number
                 = hidden_field_tag :pack_description
@@ -63,7 +63,7 @@
                       .pull-right
                         %a{href: remove_pack_pack_list_path(@pack_list['Id'], pack_id: pack['PackId'], pack_shipment_id: @pack_shipment['Id']), "data-pack-list-id" => @pack_list['Id'], "data-pack-id" => pack['PackId'], class: "remove_pack pack_shipment_button"}
                           %i.fa.fa-trash.fa-lg.text-danger
-                      = "#{pack['InventoryDescription']}"
+                      = "#{pack['PackInfo']['TagNumber']} #{pack['InventoryDescription']}"
                       =# pack
         -#
           %p

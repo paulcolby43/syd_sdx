@@ -21,7 +21,7 @@ class PacksController < ApplicationController
         unless search.blank?
           @packs = search.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }
         else
-          @packs = nil
+          @packs = []
         end
         Rails.logger.info "results: {#{@packs}}"
         render json: {results: @packs}
