@@ -33,14 +33,18 @@ class PacksController < ApplicationController
   # GET /packs/1.json
   def show
     authorize! :show, :packs
-    @status = "#{params[:status].blank? ? '0' : params[:status]}"
-    @pack = Pack.find_by_id(current_user.token, current_yard_id, @status, params[:id])
 #    @pack = {"Customer"=>nil, "CustomerId"=>{"i:nil"=>"true"}, "DateClosed"=>"2015-12-08T18:56:03.177", "DateCreated"=>"2015-12-08T18:56:03", "Id"=>"07043fd5-525e-4568-b54a-0c3d17c5ca99", "InternalPackNumber"=>"OY624", "InventoryCode"=>"SSteel", "Location"=>nil, "NetWeight"=>"200.0000", "PrintDescription"=>"304 Stainless", "Quantity"=>"0.00", "Row"=>nil, "TagNumber"=>"624", "UnitOfMeasure"=>"LB", "VoidDate"=>{"i:nil"=>"true"}, "Yard"=>"Main Yard"}
     respond_to do |format|
       format.html {}
-      format.json {render json: {"name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], "net" => @pack['NetWeight']} } 
+      format.json {
+        @status = "#{params[:status].blank? ? '0' : params[:status]}"
+        @pack = Pack.find_by_id(current_user.token, current_yard_id, @status, params[:id])
+        render json: {"name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], "net" => @pack['NetWeight']} 
+        } 
       format.js {
         @pack_id = params[:id]
+        @pack_tag_number = params[:pack_tag_number]
+        @pack_net_weight = params[:pack_net_weight]
         @pack_description = params[:pack_description]
         @pack_shipment_id = params[:pack_shipment_id]
         @pack_list_id = params[:pack_list_id]

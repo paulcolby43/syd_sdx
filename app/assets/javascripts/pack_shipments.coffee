@@ -22,6 +22,7 @@ jQuery ->
           pack_id: pack_id
         success: (data) ->
           pack_panel.remove()
+          calculate_net_total()
           console.log 'Pack removed from pack list'
           return
         error: (xhr) ->
@@ -81,10 +82,12 @@ jQuery ->
           name = data.name
           internal_pack_number = data.internal_pack_number
           tag_number = data.tag_number
+          net_weight = data.net
 
           pack_select.closest('#pack_details').find('#internal_pack_number:first').val internal_pack_number
           pack_select.closest('#pack_details').find('#tag_number:first').val tag_number
           pack_select.closest('#pack_details').find('#pack_description:first').val name
+          pack_select.closest('#pack_details').find('#pack_net_weight:first').val net_weight
 
           console.log 'Name', name
           console.log 'Internal Pack Number', internal_pack_number
@@ -96,6 +99,8 @@ jQuery ->
           console.log 'Error getting pack information.'
           return
     add_pack_to_pack_list_ajax = ->
+      pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
+      pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
       $.ajax
         url: "/pack_lists/" + pack_list_id + "/add_pack"
         dataType: 'json'
@@ -107,6 +112,7 @@ jQuery ->
           message = data.message
           console.log 'Message', message
           if message == "More than one contract item."
+            ## User must choose which contract item to associate pack with ##
             adding_pack_spinner_icon.hide()
             $('#pack_shipment_available_packs_search_form').hide()
             #alert 'More than one contract item. Please select item.'
@@ -119,6 +125,8 @@ jQuery ->
                 id: value['Id']
                 class: 'add_pack_to_contract_item btn btn-default'
                 'data-pack-id': pack_id
+                'data-pack-tag-number': pack_tag_number
+                'data-pack-net-weight': pack_net_weight
                 'data-pack-list-id': pack_list_id
                 'data-pack-shipment-id': pack_shipment_id
                 'data-contract-item-description': value['Description'])
@@ -141,6 +149,8 @@ jQuery ->
           return
     add_pack_to_pack_list_html_ajax = ->
       pack_description = pack_select.closest('#pack_details').find('#pack_description:first').val()
+      pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
+      pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
       console.log 'pack description', pack_description
       $.ajax
         url: "/packs/" + pack_id
@@ -149,8 +159,11 @@ jQuery ->
           pack_list_id: pack_list_id
           pack_description: pack_description
           pack_shipment_id: pack_shipment_id
+          pack_tag_number: pack_tag_number
+          pack_net_weight: pack_net_weight
         success: (data) ->
           adding_pack_spinner_icon.hide()
+          calculate_net_total()
 
     if pack_id != ''
       # Only get pack info if there is a pack
@@ -167,6 +180,8 @@ jQuery ->
     adding_pack_spinner_icon.show()
     pack_list_id = $(this).data( "pack-list-id" )
     pack_id = $(this).data( "pack-id" )
+    pack_tag_number = $(this).data( "pack-tag-number" )
+    pack_net_weight = $(this).data( "pack-net-weight" )
     pack_shipment_id = $(this).data( "pack-shipment-id" )
     contract_item_id = $(this).attr('id')
     contract_item_description = $(this).data( "contract-item-description" )
@@ -179,8 +194,11 @@ jQuery ->
           pack_list_id: pack_list_id
           pack_description: contract_item_description
           pack_shipment_id: pack_shipment_id
+          pack_tag_number: pack_tag_number
+          pack_net_weight: pack_net_weight
         success: (data) ->
           adding_pack_spinner_icon.hide()
+          calculate_net_total()
 
     add_pack_to_contract_item_ajax = ->
       $.ajax
@@ -197,3 +215,15 @@ jQuery ->
           $('.shipment_pack_select').select2('open')
 
     add_pack_to_contract_item_ajax()
+
+  calculate_net_total = ->
+    sum = 0
+    $('.net_weight').each ->
+      sum += Number($(this).html())
+      return
+    $('#net_total').text sum.toFixed(2)
+    return
+
+  ### Sum all pack net weights right away ###
+  $(document).on 'ready page:load', ->
+    calculate_net_total()

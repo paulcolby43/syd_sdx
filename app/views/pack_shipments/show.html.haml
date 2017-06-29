@@ -1,10 +1,10 @@
-=# render partial: "shared/navbars/show_pack_contract_navbar", locals: {title: "#{@pack_contract['InventoryCode']}"}
+= render partial: "shared/navbars/show_shipment_navbar", locals: {title: @pack_shipment['ShipmentNumber'], total: 0}
 - @title="Shipment: #{@pack_shipment['ShipmentNumber']}"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h3
-      = "#{@pack_shipment['ShipmentNumber']} #{@pack_shipment['CustomerName']}"
+      = "#{@pack_shipment['CustomerName']}"
       %small= "#{@pack_shipment['ContractDescription']}"
     %ul.nav.nav-tabs
       %li.active
@@ -33,6 +33,7 @@
                 = hidden_field_tag :internal_pack_number
                 = hidden_field_tag :tag_number
                 = hidden_field_tag :pack_description
+                = hidden_field_tag :pack_net_weight
                 -#
                   .input-group
                     = search_field_tag :pack_tag_number, params[:pack_tag_number], :placeholder => "Pack tag number", class: "form-control input-lg"
@@ -64,6 +65,8 @@
                         %a{href: remove_pack_pack_list_path(@pack_list['Id'], pack_id: pack['PackId'], pack_shipment_id: @pack_shipment['Id']), "data-pack-list-id" => @pack_list['Id'], "data-pack-id" => pack['PackId'], class: "remove_pack pack_shipment_button"}
                           %i.fa.fa-trash.fa-lg.text-danger
                       = "#{pack['PackInfo']['TagNumber']} #{pack['InventoryDescription']}"
+                      %small
+                        .text-muted.net_weight= "#{pack['PackInfo']['NetWeight']}"
                       =# pack
         -#
           %p

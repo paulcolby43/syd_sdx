@@ -8,4 +8,7 @@
           -#
             %a{href: '#', class: "pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}}
               %i.fa.fa-trash.fa-lg.text-danger
+        = @pack_tag_number
         = @pack_description
+        %small
+          .text-muted.net_weight= "#{@pack_net_weight}"
