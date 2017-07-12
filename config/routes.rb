@@ -131,6 +131,13 @@ Rails.application.routes.draw do
   resources :pack_contracts
   resources :pack_shipments
   
+  resources :inventories do
+    member do
+      get :add_scanned_pack
+      get :remove_scanned_pack
+    end
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

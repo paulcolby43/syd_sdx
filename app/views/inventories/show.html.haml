@@ -1,0 +1,44 @@
+=# render partial: "shared/navbars/show_inventory_navbar", locals: {title: @inventory.created_at}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %div.row{:id => "pack_details"}
+      .col-xs-12.col-sm-6.col-md-4
+        %p
+          = form_tag inventory_path(@inventory), id: 'add_closed_packs_search_form', method: 'get', :class => "form-horizontal", role: 'search' do |f|
+            = select_tag :pack_id, nil, "data-inventory-id" => @inventory.id, class: "form_control input-lg inventory_pack_select", style: "width: 100%;", autofocus: true
+            = hidden_field_tag :internal_pack_number
+            = hidden_field_tag :tag_number
+            = hidden_field_tag :pack_description
+            = hidden_field_tag :pack_net_weight
+    %div.row
+      %div.col-sm-6
+        .panel.panel-primary
+          .panel-heading
+            %h4.panel-title
+              Scanned Packs
+          %div#add_scanned_packs
+            %div
+              %div.list_group{id: "scanned_packs"}
+                - unless @inventory.scanned_packs.blank?
+                  - @inventory.scanned_packs.each do |pack|
+                    .list-group-item
+                      = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+
+
+      %div.col-sm-6
+        .panel.panel-default
+          .panel-heading
+            %h4.panel-title
+              Closed Packs
+          - unless @inventory.closed_packs.blank?
+            %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
+              %div.list_group
+                - @inventory.closed_packs.each do |pack|
+                  .list-group-item
+                    = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+          - else
+            .panel-body
+              %p.lead None
+       
+=# render partial: "shared/footer_navbar", locals: {title: "Inventory"}

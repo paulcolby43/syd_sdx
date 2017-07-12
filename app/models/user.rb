@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_one :user_setting
   belongs_to :company
   has_many :portal_customers # Allow customer user to view other customer tickets via their portal
+  has_many :inventories
   
   accepts_nested_attributes_for :portal_customers, allow_destroy: true
 

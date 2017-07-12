@@ -3,6 +3,7 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h3.text-center= "#{pack_status_string(@status)} Packs"
+    .well= @packs
     - unless @packs.blank?
       %div{id: "packs"}
         - @packs.each do |pack|

@@ -187,6 +187,16 @@ class Ability
       can :index, :pack_shipments
       can :show, :pack_shipments
       
+      # Inventories
+      ############
+      can :manage, Inventory do |inventory|
+        inventory.user_id == user.id
+      end
+      can :index, :inventories
+      can :show, :inventories
+      can :create, :inventories
+      can :edit, :inventories
+      
     # End admin user role
     
     elsif user.basic?

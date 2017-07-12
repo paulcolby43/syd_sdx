@@ -1,0 +1,20 @@
+= render partial: "shared/navbars/inventories_navbar", locals: {title: "Inventories"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @inventories.blank?
+      %div{id: "inventories"}
+        - @inventories.each do |inventory|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: inventory_path(inventory.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{inventory.created_at}"}, class: "list-group-item inventory_button"}
+                    .pull-right
+                      &nbsp;
+                      %i.fa.fa-chevron-right.fa-lg
+                    = inventory.created_at
+    - else
+      %p.lead None
+       
+=# render partial: "shared/footer_navbar", locals: {title: "Inventories"}

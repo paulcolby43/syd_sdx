@@ -19,11 +19,11 @@ class PackShipment
     data= Hash.from_xml(xml_content)
     Rails.logger.info "PackShipment.all response: #{data}"
     
-    unless data["GetShipmentsByStatusResponse"].blank? or data["GetShipmentsByStatusResponse"]["Shipments"].blank? or data["GetShipmentsByStatusResponse"]["Shipments"]["ShipmentListInformation"].blank?
-      if data["GetShipmentsByStatusResponse"]["Shipments"]["ShipmentListInformation"].is_a? Hash # Only one result returned, so put it into an array
-        return [data["GetShipmentsByStatusResponse"]["Shipments"]["ShipmentListInformation"]]
+    unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
+      if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]]
       else # Array of results returned
-        return data["GetShipmentsByStatusResponse"]["Shipments"]["ShipmentListInformation"]
+        return data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]
       end
     else # No shipments found
       return []
