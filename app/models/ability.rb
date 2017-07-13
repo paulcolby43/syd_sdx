@@ -167,6 +167,8 @@ class Ability
       can :show, :packs
       can :create, :packs
       can :edit, :packs
+      can :search_by_tag_number, :packs
+      can :show_information, :packs
       
       # PackLists
       ############

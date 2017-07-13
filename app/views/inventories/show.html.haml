@@ -1,7 +1,11 @@
-=# render partial: "shared/navbars/show_inventory_navbar", locals: {title: @inventory.created_at}
+= render partial: "shared/navbars/show_inventory_navbar", locals: {title: @inventory.created_at.strftime('%-m/%-d/%y')}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    #inventory_title
+      %p.lead
+        %a{href: nil, class: 'inventory_name', "data-pk" => @inventory.id, "data-url" => "/inventories/#{@inventory.id}"}
+          = @inventory.title
     %div.row{:id => "pack_details"}
       .col-xs-12.col-sm-6.col-md-4
         %p
@@ -14,7 +18,7 @@
         %p
           %i.fa.fa-lg.fa-spinner.fa-spin.text-primary.adding_pack_spinner{style: 'display: none'}
     %div.row
-      %div.col-sm-6
+      %div.col-sm-12
         .panel.panel-primary
           .panel-heading
             %h4.panel-title
@@ -25,22 +29,22 @@
                 - unless @inventory.scanned_packs.blank?
                   - @inventory.scanned_packs.each do |pack|
                     .list-group-item
-                      =# "#{pack['TagNumber']} #{pack['PrintDescription']}"
-                      = pack['TagNumber']
-
-      %div.col-sm-6
-        .panel.panel-default
-          .panel-heading
-            %h4.panel-title
-              Closed Packs
-          - unless @inventory.closed_packs.blank?
-            %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
-              %div.list_group
-                - @inventory.closed_packs.each do |pack|
-                  .list-group-item
-                    = "#{pack['TagNumber']} #{pack['PrintDescription']}"
-          - else
-            .panel-body
-              %p.lead None
+                      = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+                      =# pack['TagNumber']
+      -#
+        %div.col-sm-6
+          .panel.panel-default
+            .panel-heading
+              %h4.panel-title
+                Closed Packs
+            - unless @inventory.closed_packs.blank?
+              %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
+                %div.list_group
+                  - @inventory.closed_packs.each do |pack|
+                    .list-group-item
+                      = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+            - else
+              .panel-body
+                %p.lead None
        
 =# render partial: "shared/footer_navbar", locals: {title: "Inventory"}

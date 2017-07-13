@@ -50,6 +50,23 @@ class Pack
     return pack
   end
   
+  def self.search_by_tag(auth_token, yard_id, tag_number)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/PackByTag?tagNumber=#{tag_number}"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json'})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "Pack.search_by_tag response: #{data}"
+    
+    unless data["GetPackResponse"]["Pack"].blank? or data["GetPackResponse"]["Success"] == "false"
+      return [data["GetPackResponse"]["Pack"]]
+    else # No pack found
+      return []
+    end
+  end
+  
   def self.find_all_by_tag_number(auth_token, yard_id, status, tag_number)
     packs = Pack.all(auth_token, yard_id, status)
     # Find pack list within array of hashes

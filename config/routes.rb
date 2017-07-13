@@ -115,7 +115,12 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :packs
+  resources :packs do
+    collection do
+      get :search_by_tag_number
+      get :show_information
+    end
+  end
   
   resources :pack_lists do
     collection do

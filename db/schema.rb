@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 20170710165403) do
 
   create_table "inventories", force: true do |t|
     t.integer  "user_id"
+    t.string   "title",         default: "Untitled"
     t.text     "closed_packs"
     t.text     "scanned_packs"
     t.datetime "created_at"

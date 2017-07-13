@@ -59,22 +59,20 @@ class InventoriesController < ApplicationController
   # PATCH/PUT /inventories/1.json
   def update
     respond_to do |format|
-      if @inventory.update(inventory_params)
         format.html { 
-          flash[:success] = 'Inventory was successfully updated.'
-          redirect_to @inventory
+          if @inventory.update(inventory_params)
+            flash[:success] = 'Inventory was successfully updated.'
+            redirect_to @inventory
+          else
+            flash[:danger] = 'Error updating inventory.'
+            redirect_to @inventory
+          end
           }
   #        format.html { redirect_to @user_setting, notice: 'User setting was successfully updated.' }
-        format.json { render :show, status: :ok, location: @inventory }
-  #        format.js { render js: "alert('User setting was successfully updated.')" }
-      else
-        format.html { 
-          flash[:danger] = 'Error updating inventory.'
-          redirect_to @inventory
-          }
-        format.json { render json: @inventory.errors, status: :unprocessable_entity }
-  #        format.js { render js: "alert('User setting update failed.')" }
-      end
+        format.json { 
+          @inventory.update_attribute(:title, params[:value])
+          render json: {}, status: :ok
+        }
     end
   end
   
@@ -85,15 +83,21 @@ class InventoriesController < ApplicationController
         redirect_to @inventory
         }
       format.json { 
-        pack = Pack.find_by_id(current_user.token, current_yard_id, 0, params[:pack_id])
+#        pack = Pack.find_by_id(current_user.token, current_yard_id, 0, params[:pack_id])
+        search = Pack.search_by_tag(current_user.token, current_yard_id, params[:tag_number])
+        pack = search.first unless search.blank?
         unless pack.blank?
-          unless @inventory.scanned_packs.include?(pack)
+          if @inventory.scanned_packs.include?(pack)
+            # Pack is already in scanned pack array
+            render json: {message: "Pack already scanned"}, status: :ok
+          else
             @inventory.scanned_packs << pack 
             @inventory.save
-            render json: {}, status: :ok 
-#            render json: @inventory, status: :ok
-          else
-            render json: {message: "Pack already scanned"}, status: :ok
+            if @inventory.closed_packs.include?(pack)
+              render json: {}, status: :ok 
+            else
+              render json: {message: "Pack is not in closed pack list"}, status: :ok
+            end
           end
         else
           render json: {error: 'No pack found'}, status: :unprocessable_entity
