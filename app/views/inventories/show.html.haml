@@ -11,6 +11,8 @@
             = hidden_field_tag :tag_number
             = hidden_field_tag :pack_description
             = hidden_field_tag :pack_net_weight
+        %p
+          %i.fa.fa-lg.fa-spinner.fa-spin.text-primary.adding_pack_spinner{style: 'display: none'}
     %div.row
       %div.col-sm-6
         .panel.panel-primary
@@ -23,8 +25,8 @@
                 - unless @inventory.scanned_packs.blank?
                   - @inventory.scanned_packs.each do |pack|
                     .list-group-item
-                      = "#{pack['TagNumber']} #{pack['PrintDescription']}"
-
+                      =# "#{pack['TagNumber']} #{pack['PrintDescription']}"
+                      = pack['TagNumber']
 
       %div.col-sm-6
         .panel.panel-default

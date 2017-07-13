@@ -39,7 +39,12 @@ class PacksController < ApplicationController
       format.json {
         @status = "#{params[:status].blank? ? '0' : params[:status]}"
         @pack = Pack.find_by_id(current_user.token, current_yard_id, @status, params[:id])
-        render json: {"name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], "net" => @pack['NetWeight']} 
+        unless @pack.blank?
+          render json: {"name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], "net" => @pack['NetWeight']} 
+        else
+          render json: {message: "No pack found"}, status: :ok
+#          render json: {error: 'No pack found'}, status: :unprocessable_entity
+        end
         } 
       format.js {
         @pack_id = params[:id]

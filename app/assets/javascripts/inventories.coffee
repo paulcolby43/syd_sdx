@@ -29,18 +29,27 @@ jQuery ->
     theme: 'bootstrap'
     minimumInputLength: 3
     placeholder: "Tag Number"
+    language: noResults: ->
+      '<a href=\'http://google.com\' class=\'btn btn-primary\'>Add</a>'
+    escapeMarkup: (markup) ->
+      markup
+
     #tags: true
+    #insertTag: (data, tag) ->
+    #  tag.text = 'Add: \'' + tag.text + '\''
+    #  data.push tag
+
     ajax:
       url: '/packs?status=0'
       dataType: 'json'
 
   ### scanned pack selected ###
   $('#pack_details').on 'change', '.inventory_pack_select', ->
-    pack_id = $(this).val()
-    pack_list_id = $(this).data( "pack-list-id" )
-    pack_shipment_id = $(this).data( "pack-shipment-id" )
-    inventory_id = $(this).data( "inventory-id" )
     pack_select = $(this)
+    pack_id = $(this).val()
+    inventory_id = $(this).data( "inventory-id" )
+    #pack_list_id = $(this).data( "pack-list-id" )
+    #pack_shipment_id = $(this).data( "pack-shipment-id" )
     adding_pack_spinner_icon = pack_select.closest('#pack_details').find('.adding_pack_spinner:first')
     adding_pack_spinner_icon.show()
 
@@ -50,19 +59,24 @@ jQuery ->
         url: "/packs/" + pack_id
         dataType: 'json'
         success: (data) ->
-          name = data.name
-          internal_pack_number = data.internal_pack_number
-          tag_number = data.tag_number
-          net_weight = data.net
+          message = data.message
+          if message == "No pack found"
+            alert message
+            console.log 'No pack found'
+          else
+            name = data.name
+            internal_pack_number = data.internal_pack_number
+            tag_number = data.tag_number
+            net_weight = data.net
 
-          pack_select.closest('#pack_details').find('#internal_pack_number:first').val internal_pack_number
-          pack_select.closest('#pack_details').find('#tag_number:first').val tag_number
-          pack_select.closest('#pack_details').find('#pack_description:first').val name
-          pack_select.closest('#pack_details').find('#pack_net_weight:first').val net_weight
+            pack_select.closest('#pack_details').find('#internal_pack_number:first').val internal_pack_number
+            pack_select.closest('#pack_details').find('#tag_number:first').val tag_number
+            pack_select.closest('#pack_details').find('#pack_description:first').val name
+            pack_select.closest('#pack_details').find('#pack_net_weight:first').val net_weight
 
-          console.log 'Name', name
-          console.log 'Internal Pack Number', internal_pack_number
-          add_scanned_pack_to_inventory_ajax()
+            console.log 'Name', name
+            console.log 'Internal Pack Number', internal_pack_number
+            add_scanned_pack_to_inventory_ajax()
           return
         error: ->
           adding_pack_spinner_icon.hide()
@@ -82,6 +96,7 @@ jQuery ->
           #tag_number: pack_select.closest('#pack_details').find('#tag_number:first').val()
           pack_id: pack_id
         success: (data) ->
+          adding_pack_spinner_icon.hide()
           message = data.message
           console.log 'Message', message
           if message == "Pack already scanned" 
@@ -103,7 +118,7 @@ jQuery ->
       pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
       #pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
       console.log 'pack description', pack_description
-      $('#scanned_packs').prepend("<div class='list-group-item'>" + pack_tag_number + ' ' + pack_description + "</div>")
+      $('#scanned_packs').prepend("<div class='list-group-item'>" + pack_tag_number + "</div>")
 
 
     get_pack_info_ajax()
