@@ -60,8 +60,8 @@ class Pack
     data= Hash.from_xml(xml_content)
     Rails.logger.info "Pack.search_by_tag response: #{data}"
     
-    unless data["GetPackResponse"]["Pack"].blank? or data["GetPackResponse"]["Success"] == "false"
-      return [data["GetPackResponse"]["Pack"]]
+    unless data["GetMobilePackByTagResponse"]["Pack"].blank? or data["GetMobilePackByTagResponse"]["Success"] == "false"
+      return [data["GetMobilePackByTagResponse"]["Pack"]]
     else # No pack found
       return []
     end
