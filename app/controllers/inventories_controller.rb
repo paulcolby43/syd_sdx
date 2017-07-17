@@ -85,7 +85,10 @@ class InventoriesController < ApplicationController
       format.json { 
 #        pack = Pack.find_by_id(current_user.token, current_yard_id, 0, params[:pack_id])
         search = Pack.search_by_tag(current_user.token, current_yard_id, params[:tag_number])
-        pack = search.first unless search.blank?
+        unless search.blank?
+          pack = search.first 
+          pack.delete("xmlns:d2p1") # Remove first hash element so can make a clean comparison with closed packs list
+        end
         unless pack.blank?
           if @inventory.scanned_packs.include?(pack)
             # Pack is already in scanned pack array
