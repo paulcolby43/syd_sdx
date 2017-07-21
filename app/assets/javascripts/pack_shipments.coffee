@@ -4,6 +4,19 @@
 
 jQuery ->
 
+  ### Start endless page stuff ###
+  loading_pack_shipments = false
+  $('a.load-more-pack-shipments').on 'inview', (e, visible) ->
+    return if loading_pack_shipments or not visible
+    loading_pack_shipments = true
+    if not $('a.load-more-pack-shipments').is(':hidden')
+      $('#more_pack_shipments_spinner').show()
+    $('a.load-more-pack-shipments').hide()
+
+    $.getScript $(this).attr('href'), ->
+      loading_pack_shipments = false
+  ### End endless page stuff ###
+
   $(document).on 'ready page:load', ->
     # Open pack tag number search by default on page load
     $('.shipment_pack_select').select2('open')

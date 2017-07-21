@@ -6,7 +6,7 @@ class PackShipmentsController < ApplicationController
   def index
     authorize! :index, :pack_shipments
 #    @query_string = params[:q].blank? ? '' : "%#{params[:q]}%"
-    @pack_shipments = Kaminari.paginate_array(PackShipment.all(current_user.token, current_yard_id)).page(params[:page]).per(100)
+    @pack_shipments = Kaminari.paginate_array(PackShipment.all(current_user.token, current_yard_id)).page(params[:page]).per(10)
   end
 
   # GET /pack_shipments/1
@@ -18,6 +18,7 @@ class PackShipmentsController < ApplicationController
     @contract_items = PackShipment.contract_items(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
     @available_packs_array = Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }
+    @shipment_images = Shipment.where(container_nbr: @pack_shipment["ContainerNumber"], yardid: current_yard_id)
 #    unless params[:pack_tag_number].blank?
 #      @available_packs = Pack.find_all_by_tag_number(current_user.token, current_yard_id, 0, params[:pack_tag_number])
 #    end

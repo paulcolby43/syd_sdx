@@ -1,8 +1,8 @@
-=# render partial: "shared/navbars/pack_contracts_navbar", locals: {title: pack_contract_status_string(@status)}
-- @title="Pack Shipments"
+= render partial: "shared/navbars/pack_shipments_navbar", locals: {title: "Shipments"}
+
+- @title="Shipments"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %h3.text-center= "Held Shipments"
     - unless @pack_shipments.blank?
       %div{id: "pack_shipments"}
         - @pack_shipments.each do |pack_shipment|
@@ -18,7 +18,12 @@
                     %small
                       .text-muted= "#{pack_shipment['ContractDescription']}"
                     =# pack_shipment
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_pack_shipments_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', pack_shipments_path(:page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
     - else
-      %p.lead No pack shipments found
+      %p.text-center No pack shipments found
 
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}

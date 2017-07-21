@@ -9,16 +9,23 @@
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#pack_details", :data => {:toggle => "tab"}}
-          Pack Details
+          %i.fa.fa-dropbox.fa-lg
+          = "Pack Details" unless mobile_device?
       %li
         %a{:href => "#contract_items", :data => {:toggle => "tab"}}
-          Contract Items
+          %i.fa.fa-list-alt.fa-lg
+          = "Contract Items" unless mobile_device?
+      %li
+        %a{:href => "#shipment_pictures", :data => {:toggle => "tab"}}
+          %i.fa.fa-photo.fa-lg
+          = "Pictures" unless mobile_device?
     .tab-content
       .tab-pane.active{:id => "pack_details"}
         -#
           .well
             %strong Pack Shipment
             = @pack_shipment
+        -#
           .well
             %strong Pack List
             = @pack_list
@@ -95,6 +102,20 @@
             %p.lead= contract_item['Description']
         - else
           %p.lead None
+
+      .tab-pane{:id => "shipment_pictures"}
+        %br
+        %div#shipment_images
+          .row
+            - unless @shipment_images.blank?
+              - @shipment_images.each do |shipment_image|
+                .col-xs-12.col-sm-2.col-md-2
+                  %a{href: shipment_path(shipment_image)}
+                    = image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'thumbnail img-responsive')
+                    -#
+                      - unless shipment_image.hidden? or not current_user.show_thumbnails?
+                        = image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'thumbnail img-responsive')
+                    =# shipment_image.ticket_nbr
       
     -#
       %p
@@ -120,4 +141,4 @@
                           = pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight']
 
 
-=# render partial: "shared/pack_contract_footer_navbar", locals: {title: "Pack List"}
+= render partial: "shared/shipment_footer_navbar", locals: {title: "Shipment"}
