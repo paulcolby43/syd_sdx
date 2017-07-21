@@ -8,8 +8,7 @@
         .modal-body
           = f.hidden_field :user_id, value: current_user.id
           = f.hidden_field :yard_id, value: current_yard_id
-          =# f.hidden_field :ticket_number, value: @ticket_number
-          = f.hidden_field :container_number, value: @pack_shipment['ContainerNumber']
+          = f.hidden_field :ticket_number, value: @pack_shipment['ShipmentNumber']
           .form-group{:id => "event_code"}
             = f.label "Event Code", :class => 'control-label'
             = f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
