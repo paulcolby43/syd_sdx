@@ -110,6 +110,7 @@ jQuery ->
             $('.inventory_pack_select').select2('open')
           else
             add_scanned_pack_to_inventory_html_ajax()
+            remove_scanned_pack_from_remaining_packs_list_html_ajax()
             console.log 'Pack added to inventory'
             $('.inventory_pack_select').select2('open')
           return
@@ -126,6 +127,11 @@ jQuery ->
       #pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
       console.log 'pack description', pack_description
       $('#scanned_packs').prepend("<div class='list-group-item'>" + pack_tag_number + ' ' + pack_description + "</div>")
+
+    ### Remove pack from remaining packs list ###
+    remove_scanned_pack_from_remaining_packs_list_html_ajax = ->
+      pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
+      $( "#remaining_pack_" +  pack_tag_number).remove()
 
 
     get_pack_info_ajax()

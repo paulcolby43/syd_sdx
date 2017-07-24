@@ -11,6 +11,24 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/shipment_files_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/shipments_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/shipment_files/create.js.erb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/pack_shipments_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/shipment_files/_upload_modal.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/assets/javascripts/pack_shipments.coffee</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/tickets_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/pack_shipments/_pack_shipment.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/tickets/edit.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/shared/_shipment_footer_navbar.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/pack_shipments/index.js.erb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/image_files/_upload_modal.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/images_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/pack_shipments/index.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/pack_shipments/show.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/models/shipment_file.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/assets/javascripts/shipments.coffee</file>
+        </group>
     </open-files>
 </project-private>

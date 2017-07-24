@@ -13,6 +13,7 @@ class InventoriesController < ApplicationController
   # GET /inventories/1.json
   def show
     authorize! :show, :inventories
+    @remaining_packs = @inventory.closed_packs - @inventory.scanned_packs
   end
 
   # GET /inventories/new
