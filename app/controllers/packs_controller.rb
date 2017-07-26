@@ -64,7 +64,9 @@ class PacksController < ApplicationController
         search = Pack.search_by_tag(current_user.token, current_yard_id, params[:tag_number])
         @pack = search.first unless search.blank?
         unless @pack.blank?
-          render json: {"id" => @pack['Id'], "name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], "net" => @pack['NetWeight']} 
+          render json: {"id" => @pack['Id'], "name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], 
+            "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], 
+            "net" => @pack['NetWeight'], "status" => @pack['Status']} 
         else
           render json: {message: "No pack found"}, status: :ok
         end
