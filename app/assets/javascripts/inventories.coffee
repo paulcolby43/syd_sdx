@@ -17,6 +17,10 @@ jQuery ->
       loading_inventories = false
   ### End endless page stuff ###
 
+  $(document).on 'ready page:load', ->
+    # Open pack tag number search by default on page load
+    $('.inventory_pack_select').select2('open')
+
   ### Re-enable disabled_with buttons for back button ###
   $(document).on 'page:change', ->
     $('.inventory_button').each ->
