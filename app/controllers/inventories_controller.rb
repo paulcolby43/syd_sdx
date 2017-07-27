@@ -6,7 +6,7 @@ class InventoriesController < ApplicationController
   # GET /inventories.json
   def index
     authorize! :index, :inventories
-    @inventories = current_user.company.inventories
+    @inventories = current_user.company.inventories.sort_by(&:created_at).reverse
   end
 
   # GET /inventories/1

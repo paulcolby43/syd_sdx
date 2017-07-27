@@ -16,7 +16,9 @@
                       %i.fa.fa-chevron-right.fa-lg
                     = "#{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"
                     %small
-                      .text-muted= "#{pack_shipment['ContractDescription']}"
+                      .text-muted
+                        = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
+                        = "#{pack_shipment['ContractDescription']}"
                     =# pack_shipment
       .row
         .text-center

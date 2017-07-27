@@ -21,11 +21,11 @@ module ApplicationHelper
   end
   
   def ticket_event_codes
-    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer"]
+    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer", "Other"]
   end
   
   def shipment_event_codes
-    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up"]
+    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up", "Other"]
   end
   
   def cust_pic_event_codes

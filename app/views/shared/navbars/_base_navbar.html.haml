@@ -12,7 +12,7 @@
       %ul.nav.navbar-nav
         %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            TICKETS
+            PURCHASES
             %b.caret
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
@@ -64,7 +64,7 @@
           %li{:class => "#{(params[:controller] == 'pack_contracts') ? 'active' : ''}"}= link_to 'CONTRACTS', pack_contracts_path
         %li{:class => "#{(params[:controller] == 'inventories') ? 'active' : ''}"}= link_to 'INVENTORIES', inventories_path
         %li{:class => "#{(params[:controller] == 'pack_shipments') ? 'active' : ''}"}= link_to 'SHIPMENTS', pack_shipments_path
-        %li= link_to 'PICTURES', images_path
+        -# %li= link_to 'PICTURES', images_path
         -#
           %li= link_to 'SHIPMENTS', shipments_path
         -#

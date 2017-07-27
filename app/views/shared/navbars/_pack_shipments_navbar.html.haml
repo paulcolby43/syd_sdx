@@ -4,7 +4,8 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           = link_to root_path do
-            Home
+            = "Home"
         .col-xs-4.col-sm-4
-          = title
+          %i.fa.fa-truck.fa-lg
+          = title unless mobile_device?
         .col-xs-4.col-sm-4

@@ -9,12 +9,13 @@
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
                 %div.list_group
-                  %a{href: inventory_path(inventory.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{inventory.created_at.strftime("%m/%d/%Y")} #{inventory.title}"}, class: "list-group-item inventory_button"}
+                  %a{href: inventory_path(inventory.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{inventory.title}"}, class: "list-group-item inventory_button"}
                     .pull-right
                       &nbsp;
                       %i.fa.fa-chevron-right.fa-lg
-                    = inventory.created_at.strftime("%m/%d/%Y")
                     = inventory.title
+                    %small
+                      .text-muted= inventory.created_at.strftime("%m/%d/%Y")
     - else
       %p.lead None
        

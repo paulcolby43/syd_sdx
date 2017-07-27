@@ -41,11 +41,11 @@
                 %div
                   %div.list_group{id: "scanned_packs"}
                     - unless @inventory.scanned_packs.blank?
-                      - @inventory.scanned_packs.each do |pack|
+                      - @inventory.scanned_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
                         .list-group-item{class: "#{pack['Status'] != '0' ? 'list-group-item-warning' : ''}"}
                           = "#{pack['TagNumber']} #{pack['PrintDescription']}"
                           =# pack['TagNumber']
-                          =# pack
+                          = pack
       .tab-pane{:id => "remaining"}
         %br
         %div.row
@@ -57,7 +57,7 @@
               - unless @remaining_packs.blank?
                 %div{id: "remaining_packs", "data-remaining-packs-array" => @remaining_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
                   %div.list_group
-                    - @remaining_packs.each do |pack|
+                    - @remaining_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
                       .list-group-item{id: "remaining_pack_#{pack['TagNumber']}"}
                         = "#{pack['TagNumber']} #{pack['PrintDescription']}"
               - else
@@ -74,7 +74,7 @@
               - unless @inventory.closed_packs.blank?
                 %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
                   %div.list_group
-                    - @inventory.closed_packs.each do |pack|
+                    - @inventory.closed_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
                       .list-group-item
                         = "#{pack['TagNumber']} #{pack['PrintDescription']}"
                         =# pack
