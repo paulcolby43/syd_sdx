@@ -4,13 +4,14 @@
 .container
   %br
   %br
-  %ul{class: 'list-inline'}
-    - current_user.license_reader_devices.each do |license_reader_device|
-      %li
-        %a{href: '#', id: 'drivers_license_scan', 'data-device-id' => license_reader_device.id, onclick: "$(this).find('.data_scan_spinner:first').show();", class: 'drivers_license_scan btn btn-default'}
-          %i.fa.fa-list-alt
-          = "#{license_reader_device.DeviceName} Data Scan"
-          = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
+  -#
+    %ul{class: 'list-inline'}
+      - current_user.license_reader_devices.each do |license_reader_device|
+        %li
+          %a{href: '#', id: 'drivers_license_scan', 'data-device-id' => license_reader_device.id, onclick: "$(this).find('.data_scan_spinner:first').show();", class: 'drivers_license_scan btn btn-default'}
+            %i.fa.fa-list-alt
+            = "#{license_reader_device.DeviceName} Data Scan"
+            = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
   .well.col-sm-12.col-md-12{id: 'customer_info'}
     = form_tag customers_path, :class => "form-horizontal", id: 'customer_form' do
       .row.form-group

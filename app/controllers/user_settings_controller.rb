@@ -1,7 +1,7 @@
 class UserSettingsController < ApplicationController
   before_filter :login_required
 #  load_and_authorize_resource
-  before_action :set_user_setting, only: [:show, :edit, :update, :set_device_group]
+  before_action :set_user_setting, only: [:show, :edit, :update]
 
   # GET /user_settings
   # GET /user_settings.json
