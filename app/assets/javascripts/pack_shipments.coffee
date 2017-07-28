@@ -108,7 +108,7 @@ jQuery ->
           return
         error: ->
           adding_pack_spinner_icon.hide()
-          alert 'Error getting pack information.'
+          #alert 'Error getting pack information.'
           console.log 'Error getting pack information.'
           return
     add_pack_to_pack_list_ajax = ->

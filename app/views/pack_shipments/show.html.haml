@@ -112,7 +112,8 @@
                 .col-xs-12.col-sm-2.col-md-2
                   .thumbnail
                     %a{href: shipment_path(shipment_image), class: 'thumbnail'}
-                      = image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'img-responsive')
+                      =# image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'img-responsive')
+                      = image_tag("http://#{ENV['JPEGGER_HOST']}:3333/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{shipment_image.capture_seq_nbr}", alt: shipment_image.id, class: 'img-responsive')
                       -#
                         - unless shipment_image.hidden? or not current_user.show_thumbnails?
                           = image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'thumbnail img-responsive')

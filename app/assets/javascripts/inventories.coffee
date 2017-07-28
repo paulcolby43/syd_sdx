@@ -66,7 +66,7 @@ jQuery ->
           message = data.message
           if message == "No pack found"
             adding_pack_spinner_icon.hide()
-            alert message
+            #alert message
             console.log 'No pack found'
           else
             name = data.name
@@ -88,7 +88,7 @@ jQuery ->
           return
         error: ->
           adding_pack_spinner_icon.hide()
-          alert 'Error getting pack information.'
+          #alert 'Error getting pack information.'
           console.log 'Error getting pack information.'
           return
 
@@ -108,9 +108,9 @@ jQuery ->
           message = data.message
           console.log 'Message', message
           if message == "Pack already scanned" 
-            alert message
+            #alert message
           else if message == "Pack is not in closed pack list" 
-            alert message
+            #alert message
             add_scanned_pack_to_inventory_html_ajax()
             console.log 'Pack added to inventory'
             $('.inventory_pack_select').select2('open')
@@ -122,7 +122,7 @@ jQuery ->
           return
         error: ->
           adding_pack_spinner_icon.hide()
-          alert 'Error adding scanned pack to inventory.'
+          #alert 'Error adding scanned pack to inventory.'
           console.log 'Error adding scanned pack to inventory.'
           return
 
