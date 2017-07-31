@@ -29,7 +29,7 @@ jQuery ->
     return
 
   # Dropdown select for inventories packs
-  $('.inventory_pack_select').select2
+  $('.inventory_pack_select_bak').select2
     theme: 'bootstrap'
     minimumInputLength: 3
     placeholder: "Tag Number"
@@ -42,6 +42,21 @@ jQuery ->
       #url: '/packs?status=0'
       url: '/packs/search_by_tag_number'
       dataType: 'json'
+
+  $('.inventory_pack_select').select2 
+    ajax:
+      url: '/packs/search_by_tag_number'
+      dataType: 'json'
+      #data: (params) ->
+      #  { term: params.term }
+      processResults: (data) ->
+        searchTerm = $('.inventory_pack_select').data('select2').$dropdown.find('input').val()
+        if data.results.length == 1 #and data.results[0].text == searchTerm
+          $('.inventory_pack_select').append($('<option />').attr('value', data.results[0].id).html(data.results[0].text)).val(data.results[0].id).trigger('change').select2 'close'
+        data
+    theme: 'bootstrap'
+    minimumInputLength: 3
+    cache: true
 
   ### scanned pack selected ###
   $('#pack_details').on 'change', '.inventory_pack_select', ->
