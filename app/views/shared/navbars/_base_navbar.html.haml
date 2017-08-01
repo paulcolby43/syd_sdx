@@ -67,18 +67,17 @@
         -# %li= link_to 'PICTURES', images_path
         -#
           %li= link_to 'SHIPMENTS', shipments_path
-        -#
-          - unless Yard.device_groups(current_yard_id).blank?
-            %li.dropdown
-              %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-                DEVICE GROUPS
-                %b.caret
-              %ul.dropdown-menu
-                %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
-                - Yard.device_groups(current_yard_id).each do |device_group|
-                  -#
-                    %li= link_to device_group.DeviceGroupName, '#'
-                  %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
+        - unless Yard.device_groups(current_yard_id).blank?
+          %li.dropdown
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              DEVICE GROUPS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
+              - Yard.device_groups(current_yard_id).each do |device_group|
+                -#
+                  %li= link_to device_group.DeviceGroupName, '#'
+                %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
         -#
         %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
