@@ -1,5 +1,6 @@
 class PacksController < ApplicationController
   before_filter :login_required  
+  include ApplicationHelper
 
   # GET /packs
   # GET /packs.json
@@ -66,7 +67,7 @@ class PacksController < ApplicationController
         unless @pack.blank?
           render json: {"id" => @pack['Id'], "name" => @pack['PrintDescription'], "internal_pack_number" => @pack['InternalPackNumber'], 
             "tag_number" => @pack['TagNumber'], "gross" => @pack['GrossWeight'], "tare" => @pack['TareWeight'], 
-            "net" => @pack['NetWeight'], "status" => @pack['Status']} 
+            "net" => @pack['NetWeight'], "status" => @pack['Status'], "status_description" => pack_status_description(@pack['Status'])} 
         else
           render json: {message: "No pack found"}, status: :ok
         end

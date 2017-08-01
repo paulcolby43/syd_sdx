@@ -90,12 +90,14 @@ jQuery ->
             #tag_number = data.tag_number
             net_weight = data.net
             status = data.status
+            status_description = data.status_description
 
             pack_select.closest('#pack_details').find('#internal_pack_number:first').val internal_pack_number
             pack_select.closest('#pack_details').find('#tag_number:first').val tag_number
             pack_select.closest('#pack_details').find('#pack_description:first').val name
             pack_select.closest('#pack_details').find('#pack_net_weight:first').val net_weight
             pack_select.closest('#pack_details').find('#pack_status:first').val status
+            pack_select.closest('#pack_details').find('#pack_status_description:first').val status_description
 
             console.log 'Name', name
             console.log 'Internal Pack Number', internal_pack_number
@@ -147,11 +149,12 @@ jQuery ->
       pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
       #pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
       pack_status = pack_select.closest('#pack_details').find('#pack_status:first').val()
+      pack_status_description = pack_select.closest('#pack_details').find('#pack_status_description:first').val()
       console.log 'pack description', pack_description
       if pack_status == '0' # Closed pack
-        $('#scanned_packs').prepend("<div class='list-group-item'>" + pack_tag_number + ' ' + pack_description + "</div>")
+        $('#scanned_packs').prepend("<div class='list-group-item'>" + pack_tag_number + ' ' + pack_description + "<br>" + "<small class='text-muted'>" + pack_status_description + "</small>" + "</div>")
       else # Not a closed pack, so highlight
-        $('#scanned_packs').prepend("<div class='list-group-item list-group-item-warning'>" + pack_tag_number + ' ' + pack_description + "</div>")
+        $('#scanned_packs').prepend("<div class='list-group-item list-group-item-warning'>" + pack_tag_number + ' ' + pack_description + "<br>" + "<small class='text-muted'>" + pack_status_description + "</small>" + "</div>")
 
     ### Remove pack from remaining packs list ###
     remove_scanned_pack_from_remaining_packs_list_html_ajax = ->

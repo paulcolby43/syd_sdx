@@ -29,6 +29,7 @@
                 = hidden_field_tag :pack_description
                 = hidden_field_tag :pack_net_weight
                 = hidden_field_tag :pack_status
+                = hidden_field_tag :pack_status_description
             %p
               %i.fa.fa-lg.fa-spinner.fa-spin.text-primary.adding_pack_spinner{style: 'display: none'}
         %div.row
@@ -46,6 +47,8 @@
                           = "#{pack['TagNumber']} #{pack['PrintDescription']}"
                           =# pack['TagNumber']
                           =# pack
+                          %br/
+                          %small.text-muted= "#{pack_status_description(pack['Status'])}"
       .tab-pane{:id => "remaining"}
         %br
         %div.row
