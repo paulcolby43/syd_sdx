@@ -12,5 +12,5 @@
           = form_for Inventory.new  do |f|
             = f.hidden_field :user_id, value: current_user.id
             %a{href: nil, onclick: "document.getElementById('new_inventory').submit()", style: "cursor: pointer", class: 'inventory_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' New'}"}}
-              = "New" unless mobile_device?
+              = "New"
             
