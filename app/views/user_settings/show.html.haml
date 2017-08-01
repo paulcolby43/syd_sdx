@@ -29,7 +29,7 @@
                 %li.list-group-item
                   = "Currency:"
                   .pull-right
-                    = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
+                    =# "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
       -#
       .col-xs-12.col-sm-6  
         - unless Yard.device_groups(current_yard_id).blank?
