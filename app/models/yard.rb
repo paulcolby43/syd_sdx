@@ -58,7 +58,7 @@ class Yard
   
   def self.device_groups_table_exists?
     DeviceGroup.connection
-    rescue TinyTds::Error
+    rescue "TinyTds::Error: Unable to connect: Adaptive Server is unavailable or does not exist"
       false
     else
       true
