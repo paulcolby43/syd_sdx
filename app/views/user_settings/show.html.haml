@@ -31,61 +31,61 @@
                   .pull-right
                     = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
       -#
-        .col-xs-12.col-sm-6  
-          - unless Yard.device_groups(current_yard_id).blank?
-            #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-              .panel.panel-default
-                .panel-heading
-                  %h5.panel-title 
-                    - unless current_user.device_group.blank?
-                      %a{"aria-controls" => "devices", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#devices", :role => "button"}
-                        = "#{current_user.device_group.DeviceGroupName} Device Group"
-                    - else
-                      No Device Group for this User
-                #devices.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-                  %ul.list-group
-                    - unless current_user.device_group.blank?
-                      - unless current_user.device_group.CustomerCamera.blank?
-                        %li.list-group-item
-                          = current_user.device_group.CustomerCamera
-                          %br
-                          Device Type:
-                          %i.fa.fa-camera.fa-lg
-                          Customer Camera
-                      - current_user.device_group.devices.each do |device|
-                        %li.list-group-item
-                          = device.DeviceName
-                          %br
-                          = "Workstation:"
-                          = device.workstation.WorkstationName
-                          %br
-                          = "Workstation IP:"
-                          = device.workstation.Host
-                          %br
-                          %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
-                            = "Device Type:"
-                            = device.device_type_icon.html_safe
-                            - if device.scale_camera_only?
-                              Scale camera only - no indicator
-                            - else
-                              = device.type
-                            - if device.printer?
-                              %small= "(Printer Width: #{device.PrinterWidth})"
-                          %br
-                          = "Device Order:"
-                          = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
-                          - unless device.CameraGroup.blank?
-                            %br
-                            = "Camera Group:"
-                            = device.CameraGroup
-                          %br
-                          = "Listen Port:"
-                          = device.LocalListenPort
-          - else
+      .col-xs-12.col-sm-6  
+        - unless Yard.device_groups(current_yard_id).blank?
+          #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default
               .panel-heading
                 %h5.panel-title 
-                  No Device Groups
+                  - unless current_user.device_group.blank?
+                    %a{"aria-controls" => "devices", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#devices", :role => "button"}
+                      = "#{current_user.device_group.DeviceGroupName} Device Group"
+                  - else
+                    No Device Group for this User
+              #devices.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  - unless current_user.device_group.blank?
+                    - unless current_user.device_group.CustomerCamera.blank?
+                      %li.list-group-item
+                        = current_user.device_group.CustomerCamera
+                        %br
+                        Device Type:
+                        %i.fa.fa-camera.fa-lg
+                        Customer Camera
+                    - current_user.device_group.devices.each do |device|
+                      %li.list-group-item
+                        = device.DeviceName
+                        %br
+                        = "Workstation:"
+                        = device.workstation.WorkstationName
+                        %br
+                        = "Workstation IP:"
+                        = device.workstation.Host
+                        %br
+                        %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
+                          = "Device Type:"
+                          = device.device_type_icon.html_safe
+                          - if device.scale_camera_only?
+                            Scale camera only - no indicator
+                          - else
+                            = device.type
+                          - if device.printer?
+                            %small= "(Printer Width: #{device.PrinterWidth})"
+                        %br
+                        = "Device Order:"
+                        = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
+                        - unless device.CameraGroup.blank?
+                          %br
+                          = "Camera Group:"
+                          = device.CameraGroup
+                        %br
+                        = "Listen Port:"
+                        = device.LocalListenPort
+        - else
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                No Device Groups
     .row
       .col-xs-12.col-sm-6
         - unless @contract.blank?

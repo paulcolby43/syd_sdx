@@ -41,20 +41,20 @@
 
         .col-xs-12.col-sm-6
           -#
-            - unless Yard.device_groups(current_yard_id).blank?
-              %div.panel.panel-default
-                %div.panel-heading
-                  %h5.panel-title Device Group
-                %ul.list-group
-                  %li.list-group-item
-                    .row.form-group
-                      %div{:class => "col-sm-10"}
-                        = f.select :device_group_id, options_from_collection_for_select(Yard.device_groups(current_yard_id), :id, :DeviceGroupName, @user_setting.device_group_id), {:include_blank => 'None'}, {:class => "form-control input-lg"}
-            - else
-              .panel.panel-default
-                .panel-heading
-                  %h5.panel-title
-                    No Device Groups
+          - unless Yard.device_groups(current_yard_id).blank?
+            %div.panel.panel-default
+              %div.panel-heading
+                %h5.panel-title Device Group
+              %ul.list-group
+                %li.list-group-item
+                  .row.form-group
+                    %div{:class => "col-sm-10"}
+                      = f.select :device_group_id, options_from_collection_for_select(Yard.device_groups(current_yard_id), :id, :DeviceGroupName, @user_setting.device_group_id), {:include_blank => 'None'}, {:class => "form-control input-lg"}
+          - else
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title
+                  No Device Groups
       .row
         .col-xs-12.col-sm-6
           - unless @contract.blank?
