@@ -109,4 +109,60 @@ class Shipment < ActiveRecord::Base
 #    end
 #  end
 
+  def self.api_find_all_by_shipment_number(shipment_number)
+    require 'socket'
+    host = ENV['JPEGGER_SERVICE']
+    port = 3333
+#    command = "fetch table=<shipments> ticket_nbr=<#{shipment_number}> rows=<100>!"
+#    command = "fetch sql=<select * from shipments where ticket_nbr='#{shipment_number}'>rows=<100>!"
+    command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    socket = TCPSocket.open(host,port) # Connect to server
+    socket.send(command, 0)
+    response = socket.recvfrom(port)
+    socket.close
+    
+    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["RESULT"]["ROW"]]
+      else
+        return data["RESULT"]["ROW"]
+      end
+    else
+      return [] # No shipments found
+    end
+    
+#    unless response.blank?
+#      response_array = response.first.split(/\r\n/)
+#      response_array -= ["EOF!"] # Remove EOF element from array
+#      return response_array.collect {|e| e.scan( /<([^>]*)>/).first.first} # Return just an array of capture sequence numbers
+#    else
+#      return nil
+#    end
+    
+  end
+  
+  def self.api_find_by_capture_sequence_number(capture_sequence_number)
+    require 'socket'
+    host = ENV['JPEGGER_SERVICE']
+    port = 3333
+    command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    socket = TCPSocket.open(host,port) # Connect to server
+    socket.send(command, 0)
+    response = socket.recvfrom(port)
+    socket.close
+    
+    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      return data["RESULT"]["ROW"]
+    else
+      return nil # No shipment found
+    end
+
+  end
+
 end

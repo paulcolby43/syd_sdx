@@ -101,6 +101,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
+    @images_array = Image.api_find_all_by_ticket_number(@ticket_number) # Ticket images
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_user.token, current_yard_id)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)

@@ -107,17 +107,27 @@
         %br
         %div#shipment_images
           .row
-            - unless @shipment_images.blank?
-              - @shipment_images.each do |shipment_image|
-                .col-xs-12.col-sm-2.col-md-2
-                  .thumbnail
-                    %a{href: shipment_path(shipment_image), class: 'thumbnail'}
-                      =# image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'img-responsive')
-                      = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{shipment_image.capture_seq_nbr}", alt: shipment_image.id, class: 'img-responsive')
-                      -#
-                        - unless shipment_image.hidden? or not current_user.show_thumbnails?
-                          = image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'thumbnail img-responsive')
+            - @images_array.each do |image|
+              .col-xs-12.col-sm-2.col-md-2
+                .thumbnail
+                  %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  -#
                     .text-center= shipment_image.event_code
+                  .text-center
+                    %small.text-muted= image['EVENT_CODE']
+            -#
+              - unless @shipment_images.blank?
+                - @shipment_images.each do |shipment_image|
+                  .col-xs-12.col-sm-2.col-md-2
+                    .thumbnail
+                      %a{href: shipment_path(shipment_image), class: 'thumbnail'}
+                        =# image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'img-responsive')
+                        = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{shipment_image.capture_seq_nbr}", alt: shipment_image.id, class: 'img-responsive')
+                        -#
+                          - unless shipment_image.hidden? or not current_user.show_thumbnails?
+                            = image_tag(shipment_image.preview_data_uri, alt: shipment_image.id, class: 'thumbnail img-responsive')
+                      .text-center= shipment_image.event_code
       
     -#
       %p

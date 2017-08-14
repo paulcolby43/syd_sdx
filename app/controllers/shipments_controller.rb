@@ -1,6 +1,6 @@
 class ShipmentsController < ApplicationController
   before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
-  before_action :set_shipment, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
+#  before_action :set_shipment, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
   load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
 
@@ -49,7 +49,8 @@ class ShipmentsController < ApplicationController
 
   def show
     @ticket_number = @shipment.ticket_nbr
-    respond_with(@shipment)
+    @shipment = Shipment.api_find_by_capture_sequence_number(params[:id])
+#    respond_with(@shipment)
   end
 
   def new
