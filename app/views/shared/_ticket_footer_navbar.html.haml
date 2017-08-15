@@ -24,10 +24,6 @@
               %i.fa.fa-pencil.fa-lg
               = "Sign" unless mobile_device?
 
-          %a{href: "#signature_form", "data-toggle" => "modal", :alt => "new_signature_form"}
-            %i.fa.fa-pencil.fa-lg
-            = "Sign" unless mobile_device?
-
 = render partial: "image_files/upload_modal"
 =# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
 = render partial: "#{current_user.user_setting.table_name.singularize}_files/signature_modal"
