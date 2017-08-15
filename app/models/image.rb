@@ -98,9 +98,22 @@ class Image < ActiveRecord::Base
     
     socket = TCPSocket.open(host,port) # Connect to server
     socket.send(command, 0)
-    response = socket.recvfrom(port)
+    
+    sleep 1 # Give socket a little time to send, then receive
+    
+#    while line = socket.gets # Read lines from socket
+#      puts line         # and print them
+#    end
+    
+#    socket.each_line do |line|
+#      puts line
+#    end
+
+    response = socket.recvfrom(200000)
+    
     socket.close
     
+#    Rails.logger.debug "***********response: #{response}"
     data= Hash.from_xml(response.first) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
