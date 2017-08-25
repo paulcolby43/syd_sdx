@@ -240,3 +240,7 @@ jQuery ->
   ### Sum all pack net weights right away ###
   $(document).on 'ready page:load', ->
     calculate_net_total()
+
+  ### Pack shipment picture event code chosen ###
+  $(".event_code_radio").on 'click', ->
+    $('#upload_button').show()

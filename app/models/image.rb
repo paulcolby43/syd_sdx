@@ -99,7 +99,7 @@ class Image < ActiveRecord::Base
     socket = TCPSocket.open(host,port) # Connect to server
     socket.send(command, 0)
     
-    sleep 1 # Give socket a little time to send, then receive
+    sleep 2 # Give socket a little time to send, then receive
     
 #    while line = socket.gets # Read lines from socket
 #      puts line         # and print them
