@@ -2,6 +2,7 @@ class Company < ActiveRecord::Base
   before_save :default_dragon_api
   
   has_many :users
+  has_many :inventories, through: :users
   
   mount_uploader :logo, LogoUploader
   

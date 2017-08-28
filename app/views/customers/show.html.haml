@@ -98,11 +98,19 @@
         - else
           %div.list-group-item None
 
-    - if CustPic.table_exists?
-      %hr
-      %p.lead Customer Pictures
-      %div#cust_pics
-
+    %hr
+    %p.lead Customer Pictures
+    %div#cust_pics
+    - @cust_pics_array.each_slice(6) do |cust_pics|
+      .row
+        - cust_pics.each do |cust_pic|
+          .col-xs-12.col-sm-2.col-md-2
+            .thumbnail
+              %a{href: cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{cust_pic['CAPTURE_SEQ_NBR']}", alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+              .text-center
+                %small.text-muted= cust_pic['EVENT_CODE']
+    -#
       %div{id: 'endless_page'}
         %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
         %p= link_to 'More pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'load-more-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();"

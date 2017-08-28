@@ -4,7 +4,7 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
         .col-xs-4.col-sm-4
-          - unless @ticket_number.blank?
+          - unless @pack_shipment.blank?
             %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
               %i.fa.fa-camera.fa-lg
               = "Picture" unless mobile_device?

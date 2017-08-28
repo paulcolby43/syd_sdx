@@ -9,4 +9,7 @@ jQuery ->
     $('.contract_button').each ->
       $.rails.enableElement $(this)
       return
+    $('.pack_list_button').each ->
+      $.rails.enableElement $(this)
+      return
     return

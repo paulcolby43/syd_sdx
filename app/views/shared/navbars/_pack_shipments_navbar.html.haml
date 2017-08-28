@@ -1,0 +1,11 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          = link_to root_path do
+            = "Home"
+        .col-xs-4.col-sm-4
+          %i.fa.fa-truck.fa-lg
+          = title unless mobile_device?
+        .col-xs-4.col-sm-4

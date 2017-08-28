@@ -38,8 +38,40 @@ class Pack
   def self.find_by_id(auth_token, yard_id, status, pack_id)
     packs = Pack.all(auth_token, yard_id, status)
     # Find pack list within array of hashes
-    pack = packs.find {|pl| pl['Id'] == pack_id}
+    pack = packs.find {|pack| pack['Id'] == pack_id}
+    Rails.logger.info "Pack.find_by_id response: #{pack}"
     return pack
+  end
+  
+  def self.find_by_tag_number(auth_token, yard_id, status, tag_number)
+    packs = Pack.all(auth_token, yard_id, status)
+    # Find pack list within array of hashes
+    pack = packs.find {|pack| pack['TagNumber'] == tag_number}
+    return pack
+  end
+  
+  def self.search_by_tag(auth_token, yard_id, tag_number)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/PackByTag?tagNumber=#{tag_number}"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json'})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "Pack.search_by_tag response: #{data}"
+    
+    unless data["GetMobilePackByTagResponse"]["Pack"].blank? or data["GetMobilePackByTagResponse"]["Success"] == "false"
+      return [data["GetMobilePackByTagResponse"]["Pack"]]
+    else # No pack found
+      return []
+    end
+  end
+  
+  def self.find_all_by_tag_number(auth_token, yard_id, status, tag_number)
+    packs = Pack.all(auth_token, yard_id, status)
+    # Find pack list within array of hashes
+    packs = packs.select {|pack| pack['TagNumber'] == tag_number}
+    return packs
   end
   
   def self.update(auth_token, yard_id, pack_params)

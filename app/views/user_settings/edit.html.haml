@@ -40,6 +40,7 @@
                     .pull-right= f.select :currency_id, options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']] }, @user_setting.currency_id), {:include_blank => false}, {:class => "form-control input-lg"}
 
         .col-xs-12.col-sm-6
+          -#
           - unless Yard.device_groups(current_yard_id).blank?
             %div.panel.panel-default
               %div.panel-heading

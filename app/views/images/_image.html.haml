@@ -3,8 +3,9 @@
     %div.list_group
       - unless @today == true or params[:q].blank? or (@ticket_number.blank? and params[:one_image_per_ticket] != '0' and params[:action]=='index')
         %a{href: image_path(image), class: "list-group-item"}
-          - unless image.hidden? or not current_user.show_thumbnails?
-            = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+          - unless image.hidden? or not current_user.show_ticket_thumbnails?
+            =# image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+            = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=images&capture_seq_nbr=#{image.capture_seq_nbr}", alt: image.id, class: 'thumbnail img-responsive')
           = image.ticket_nbr
           .pull-right
             %i.fa.fa-chevron-right
@@ -18,8 +19,9 @@
           %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
       - else
         %a{href: images_path("q[ticket_nbr_eq]" => image.ticket_nbr, "q[yardid_eq]" => current_yard_id), class: "list-group-item"}
-          - unless image.hidden? or not current_user.show_thumbnails?
-            = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+          - unless image.hidden? or not current_user.show_ticket_thumbnails?
+            =# image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+            = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=images&capture_seq_nbr=#{image.capture_seq_nbr}", alt: image.id, class: 'thumbnail img-responsive')
           = image.ticket_nbr
           .pull-right
             %i.fa.fa-chevron-right

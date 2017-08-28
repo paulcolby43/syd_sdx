@@ -7,8 +7,8 @@ class TicketsController < ApplicationController
   def index
     authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
-    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
-    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
+#    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
+#    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
     unless params[:q].blank?
       results = Ticket.search(@status, current_user.token, current_yard_id, params[:q])
@@ -70,7 +70,6 @@ class TicketsController < ApplicationController
           printer = current_user.printer_devices.last
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
-#            :zoom => 1.25
             :zoom => "#{printer.PrinterWidth < 10 ? 2 : 1.25}",
             :save_to_file => Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf")
           printer.call_printer_for_ticket_pdf(Base64.encode64(File.binread(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))))
@@ -102,6 +101,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
+    @images_array = Image.api_find_all_by_ticket_number(@ticket_number) # Ticket images
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_user.token, current_yard_id)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)

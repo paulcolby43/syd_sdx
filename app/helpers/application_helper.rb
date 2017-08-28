@@ -21,11 +21,11 @@ module ApplicationHelper
   end
   
   def ticket_event_codes
-    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer"]
+    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer", "Other"]
   end
   
   def shipment_event_codes
-    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up"]
+    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up", "Other"]
   end
   
   def cust_pic_event_codes
@@ -181,6 +181,22 @@ end
     ]
 end
 
-  
+  def pack_status_description(status)
+    if status == '0'
+      return "Closed"
+    elsif status == '1'
+      return "Void"
+    elsif status == '2'
+      return "Held"
+    elsif status == '3'
+      return "Manifest"
+    elsif status == '4'
+      return "Shipped"
+    elsif status == '5'
+      return "Transferred"
+    else
+      return "Unknown Status"
+    end
+  end
 
 end

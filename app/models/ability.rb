@@ -167,6 +167,15 @@ class Ability
       can :show, :packs
       can :create, :packs
       can :edit, :packs
+      can :search_by_tag_number, :packs
+      can :show_information, :packs
+      
+      # PackLists
+      ############
+      can :index, :pack_lists
+      can :show, :pack_lists
+      can :create, :pack_lists
+      can :edit, :pack_lists
       
       # PackContracts
       ############
@@ -174,6 +183,21 @@ class Ability
       can :show, :pack_contracts
       can :create, :pack_contracts
       can :edit, :pack_contracts
+      
+      # PackShipments
+      ############
+      can :index, :pack_shipments
+      can :show, :pack_shipments
+      
+      # Inventories
+      ############
+      can :manage, Inventory do |inventory|
+        inventory.user_id == user.id
+      end
+      can :index, :inventories
+      can :show, :inventories
+      can :create, :inventories
+      can :edit, :inventories
       
     # End admin user role
     

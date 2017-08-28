@@ -1,6 +1,6 @@
 class ImagesController < ApplicationController
   before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
-  before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
+#  before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
   load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
 
@@ -54,7 +54,8 @@ class ImagesController < ApplicationController
 
   def show
     @ticket_number = @image.ticket_nbr
-    respond_with(@image)
+    @image = Image.api_find_by_capture_sequence_number(params[:id])
+#    respond_with(@image)
   end
 
   def new

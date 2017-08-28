@@ -1,0 +1,17 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          - unless @packs.blank?
+            = link_to 'javascript:history.back()' do
+              Cancel
+          - else
+            -#
+              %a{href: '', :onclick => "$('#edit_ticket_form').submit()"}
+                Void
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4
+          - unless total.blank?
+            #net_total= total

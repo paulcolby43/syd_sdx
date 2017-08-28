@@ -1,15 +1,16 @@
-= render partial: "shared/search_navbar", locals: {title: "#{@shipment.ticket_nbr}"}
+= render partial: "shared/search_navbar", locals: {title: "#{@shipment['TICKET_NBR']}"}
 .jumbotron{style: 'background-color: white;'}
   .container
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'thumbnail img-responsive')
-        = link_to image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
+        = link_to image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?image=y&table=shipments&capture_seq_nbr=#{@shipment['CAPTURE_SEQ_NBR']}", alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
     %div{:id => "shipment_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
       .modal-dialog.modal-lg
         .modal-content
           .modal-body
-            = image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive')
+            =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive')
+            = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?image=y&table=shipments&capture_seq_nbr=#{@shipment['CAPTURE_SEQ_NBR']}", alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive')
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         %div.panel.panel-primary
@@ -18,41 +19,42 @@
               %div.list-group-item
                 %strong= "Ticket:"
                 .pull-right
-                  = "#{@shipment.ticket_nbr}"
-            - unless @shipment.event_code.blank?
+                  = "#{@shipment['TICKET_NBR']}"
+            - unless @shipment['EVENT_CODE'].blank?
               %div.list-group-item
                 %strong= "Event:"
                 .pull-right
-                  = "#{@shipment.event_code}"
-            - unless @shipment.cust_name.blank?
-              %div.list-group-item
-                %strong= "Customer:"
-                .pull-right
-                  = "#{@shipment.cust_name}"
-            - unless @shipment.container_nbr.blank?
-              %div.list-group-item
-                %strong= "Container:"
-                .pull-right
-                  = "#{@shipment.container_nbr}"
-            - unless @shipment.booking_nbr.blank?
-              %div.list-group-item
-                %strong= "Booking:"
-                .pull-right
-                  = "#{@shipment.booking_nbr}"
-            - unless @shipment.contr_nbr.blank?
-              %div.list-group-item
-                %strong= "Contract:"
-                .pull-right
-                  = "#{@shipment.contr_nbr}"
-            - unless @shipment.camera_name.blank?
+                  = "#{@shipment['EVENT_CODE']}"
+            -#
+              - unless @shipment.cust_name.blank?
+                %div.list-group-item
+                  %strong= "Customer:"
+                  .pull-right
+                    = "#{@shipment['CUST_NAME']}"
+              - unless @shipment.container_nbr.blank?
+                %div.list-group-item
+                  %strong= "Container:"
+                  .pull-right
+                    = "#{@shipment.container_nbr}"
+              - unless @shipment.booking_nbr.blank?
+                %div.list-group-item
+                  %strong= "Booking:"
+                  .pull-right
+                    = "#{@shipment.booking_nbr}"
+              - unless @shipment.contr_nbr.blank?
+                %div.list-group-item
+                  %strong= "Contract:"
+                  .pull-right
+                    = "#{@shipment.contr_nbr}"
+            - unless @shipment['CAMERA_NAME'].blank?
               %div.list-group-item
                 %strong= "Camera:"
                 .pull-right
-                  = "#{@shipment.camera_name}"
+                  = "#{@shipment['CAMERA_NAME']}"
             %div.list-group-item
               %strong= "Date/Time:"
               .pull-right
-                = "#{@shipment.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")}"
+                = "#{@shipment['SYS_DATE_TIME']}"
     -#        
       %div.row
         .text-center

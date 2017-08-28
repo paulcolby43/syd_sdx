@@ -12,7 +12,7 @@
       %ul.nav.navbar-nav
         %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            TICKETS
+            PURCHASES
             %b.caret
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
@@ -42,39 +42,42 @@
             %ul.dropdown-menu
               - Yard.all(current_user.token).each do |yard|
                 %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
-        %li.dropdown{:class => "#{(params[:controller] == 'packs') ? 'active' : ''}"}
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            PACKS
-            %b.caret
-          %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '0') ? 'active' : ''}"}
-              = link_to 'Closed', packs_path(status: 0)
-            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '1') ? 'active' : ''}"}
-              = link_to 'Void', packs_path(status: 1)
-            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '2') ? 'active' : ''}"}
-              = link_to 'Held', packs_path(status: 2)
-            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '3') ? 'active' : ''}"}
-              = link_to 'Manifest', packs_path(status: 3)
-            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '4') ? 'active' : ''}"}
-              = link_to 'Shipped', packs_path(status: 4)
-            %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '5') ? 'active' : ''}"}
-              = link_to 'Transferred', packs_path(status: 5)
-        %li{:class => "#{(params[:controller] == 'pack_contracts') ? 'active' : ''}"}= link_to 'CONTRACTS', pack_contracts_path
-        %li= link_to 'PICTURES', images_path
+        -#
+          %li.dropdown{:class => "#{(params[:controller] == 'packs') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              PACKS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '0') ? 'active' : ''}"}
+                = link_to 'Closed', packs_path(status: 0)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '1') ? 'active' : ''}"}
+                = link_to 'Void', packs_path(status: 1)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '2') ? 'active' : ''}"}
+                = link_to 'Held', packs_path(status: 2)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '3') ? 'active' : ''}"}
+                = link_to 'Manifest', packs_path(status: 3)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '4') ? 'active' : ''}"}
+                = link_to 'Shipped', packs_path(status: 4)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '5') ? 'active' : ''}"}
+                = link_to 'Transferred', packs_path(status: 5)
+        -#
+          %li{:class => "#{(params[:controller] == 'pack_contracts') ? 'active' : ''}"}= link_to 'CONTRACTS', pack_contracts_path
+        %li{:class => "#{(params[:controller] == 'inventories') ? 'active' : ''}"}= link_to 'INVENTORIES', inventories_path
+        %li{:class => "#{(params[:controller] == 'pack_shipments') ? 'active' : ''}"}= link_to 'SHIPMENTS', pack_shipments_path
+        -# %li= link_to 'PICTURES', images_path
         -#
           %li= link_to 'SHIPMENTS', shipments_path
-        -#
-          - unless Yard.device_groups(current_yard_id).blank?
-            %li.dropdown
-              %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-                DEVICE GROUPS
-                %b.caret
-              %ul.dropdown-menu
-                %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
-                - Yard.device_groups(current_yard_id).each do |device_group|
-                  -#
-                    %li= link_to device_group.DeviceGroupName, '#'
-                  %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
+        - unless Yard.device_groups(current_yard_id).blank?
+          %li.dropdown
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              DEVICE GROUPS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
+              - Yard.device_groups(current_yard_id).each do |device_group|
+                -#
+                  %li= link_to device_group.DeviceGroupName, '#'
+                %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
         -#
         %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}

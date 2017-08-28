@@ -745,3 +745,7 @@ jQuery ->
     input_select.closest('.panel').find('#vendor_name').text name
     $('.item_select').trigger 'change' # Re-select line items in case new pricing needs to be applied
   ### End Customer ID changed ###
+
+  ### Ticket picture event code chosen ###
+  $(".event_code_radio").on 'click', ->
+    $('#upload_button').show()

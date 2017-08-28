@@ -1,7 +1,7 @@
 class UserSettingsController < ApplicationController
   before_filter :login_required
 #  load_and_authorize_resource
-  before_action :set_user_setting, only: [:show, :edit, :update, :set_device_group]
+  before_action :set_user_setting, only: [:show, :edit, :update]
 
   # GET /user_settings
   # GET /user_settings.json
@@ -68,17 +68,17 @@ class UserSettingsController < ApplicationController
     end
   end
   
-#  def set_device_group
-#    respond_to do |format|
-#      if @user_setting.update(user_setting_params)
-#        format.html { redirect_to @user_setting, notice: 'User setting was successfully updated.' }
-#        format.json { render :show, status: :ok, location: @user_setting }
-#      else
-#        format.html { render :edit }
-#        format.json { render json: @user_setting.errors, status: :unprocessable_entity }
-#      end
-#    end
-#  end
+  def set_device_group
+    respond_to do |format|
+      if @user_setting.update(user_setting_params)
+        format.html { redirect_to @user_setting, notice: 'User setting was successfully updated.' }
+        format.json { render :show, status: :ok, location: @user_setting }
+      else
+        format.html { render :edit }
+        format.json { render json: @user_setting.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
   # DELETE /user_settings/1
   # DELETE /user_settings/1.json

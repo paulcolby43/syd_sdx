@@ -1,0 +1,48 @@
+= form_for @inventory  do |f|
+  - @inventory.errors.each do |attr, msg|
+    .alert.alert-danger
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      = "#{attr} #{msg}" if @inventory.errors[attr].first == msg
+
+  %div.col-sm-6
+    .panel.panel-primary
+      .panel-heading
+        %h4.panel-title
+          Scanned Packs
+      .panel-body
+
+        .row.form-group
+          -#
+            - @closed_packs.each do |closed_pack|
+              = f.hidden_field :closed_packs, name: "inventory[closed_packs][]", value: closed_pack
+          =# f.hidden_field :closed_packs, name: "inventory[closed_packs][]"
+          -#
+            %div
+              = f.label :closed_packs, :class => "control-label"
+              = f.text_area :closed_packs, :placeholder => "Closed Packs", class: "form-control input-lg"
+          -#
+            %div{:class => "col-sm-6"}
+              = f.label :name, :class => "control-label"
+              = f.text_field :name, :placeholder => "Company Name", class: "form-control input-lg"
+            %div{:class => "col-sm-6"}
+              = f.label :dragon_api, :class => "control-label"
+              = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg", readonly: true
+  %div.col-sm-6
+    .panel.panel-default
+      .panel-heading
+        %h4.panel-title
+          Closed Packs
+      - unless @inventory.closed_packs.blank?
+        %div{id: "closed_packs"}
+          %div.list_group
+            - @inventory.closed_packs.each do |pack|
+              .list-group-item
+                = "#{pack['InternalPackNumber']} #{pack['PrintDescription']}"
+      - else
+        .panel-body
+          %p.lead None
+      
+  .row
+    .col-sm-6.col-md-4.col-md-offset-4
+      = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}, autocomplete: "off") do
+        Save

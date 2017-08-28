@@ -1,0 +1,88 @@
+= render partial: "shared/navbars/show_inventory_navbar", locals: {title: @inventory.created_at.strftime('%-m/%-d/%y')}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    #inventory_title
+      %p.lead
+        %a{href: nil, class: 'inventory_name', "data-pk" => @inventory.id, "data-url" => "/inventories/#{@inventory.id}"}
+          = @inventory.title
+
+    %ul.nav.nav-tabs
+      %li.active
+        %a{:href => "#scanned", :data => {:toggle => "tab"}}
+          = "Scanned"
+      %li
+        %a{:href => "#remaining", :data => {:toggle => "tab"}}
+          = "Remaining"
+      %li
+        %a{:href => "#closed", :data => {:toggle => "tab"}}
+          = "Closed"
+    .tab-content
+      .tab-pane.active{:id => "scanned"}
+        %div.row{:id => "pack_details"}
+          .col-xs-12.col-sm-6.col-md-4
+            %p
+              = form_tag inventory_path(@inventory), id: 'add_closed_packs_search_form', method: 'get', :class => "form-horizontal", role: 'search' do |f|
+                = select_tag :pack_id, nil, "data-inventory-id" => @inventory.id, class: "form_control input-lg inventory_pack_select", style: "width: 100%;", autofocus: true
+                = hidden_field_tag :internal_pack_number
+                = hidden_field_tag :tag_number
+                = hidden_field_tag :pack_description
+                = hidden_field_tag :pack_net_weight
+                = hidden_field_tag :pack_status
+                = hidden_field_tag :pack_status_description
+            %p
+              %i.fa.fa-lg.fa-spinner.fa-spin.text-primary.adding_pack_spinner{style: 'display: none'}
+        %div.row
+          %div.col-sm-12
+            .panel.panel-primary
+              .panel-heading
+                %h4.panel-title
+                  Scanned Packs
+              %div#add_scanned_packs
+                %div
+                  %div.list_group{id: "scanned_packs"}
+                    - unless @inventory.scanned_packs.blank?
+                      - @inventory.scanned_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
+                        .list-group-item{class: "#{pack['Status'] != '0' ? 'list-group-item-warning' : ''}"}
+                          = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+                          =# pack['TagNumber']
+                          =# pack
+                          %br/
+                          %small.text-muted= "#{pack_status_description(pack['Status'])}"
+      .tab-pane{:id => "remaining"}
+        %br
+        %div.row
+          %div.col-sm-12
+            .panel.panel-success
+              .panel-heading
+                %h4.panel-title
+                  Remaining Packs
+              - unless @remaining_packs.blank?
+                %div{id: "remaining_packs", "data-remaining-packs-array" => @remaining_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
+                  %div.list_group
+                    - @remaining_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
+                      .list-group-item{id: "remaining_pack_#{pack['TagNumber']}"}
+                        = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+              - else
+                .panel-body
+                  %p.lead None
+      .tab-pane{:id => "closed"}
+        %br
+        %div.row
+          %div.col-sm-12
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title
+                  Closed Packs
+              - unless @inventory.closed_packs.blank?
+                %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
+                  %div.list_group
+                    - @inventory.closed_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
+                      .list-group-item
+                        = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+                        =# pack
+              - else
+                .panel-body
+                  %p.lead None
+       
+=# render partial: "shared/footer_navbar", locals: {title: "Inventory"}
