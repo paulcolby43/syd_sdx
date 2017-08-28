@@ -381,16 +381,17 @@
     %hr
       
     %div#images
-    .row
-      - @images_array.each do |image|
-        .col-xs-12.col-sm-2.col-md-2
-          .thumbnail
-            %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-              = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-            -#
-              .text-center= image.event_code
-            .text-center
-              %small.text-muted= image['EVENT_CODE']
+    - @images_array.each_slice(6) do |images|
+      .row
+        - images.each do |image|
+          .col-xs-12.col-sm-2.col-md-2
+            .thumbnail
+              %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+              -#
+                .text-center= image.event_code
+              .text-center
+                %small.text-muted= image['EVENT_CODE']
         -#
           .col-xs-12.col-sm-2.col-md-2
             %div.panel.panel-primary

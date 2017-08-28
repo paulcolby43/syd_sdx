@@ -106,8 +106,9 @@
       .tab-pane{:id => "shipment_pictures"}
         %br
         %div#shipment_images
+        - @images_array.each_slice(6) do |images|
           .row
-            - @images_array.each do |image|
+            - images.each do |image|
               .col-xs-12.col-sm-2.col-md-2
                 .thumbnail
                   %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}

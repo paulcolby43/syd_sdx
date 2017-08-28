@@ -4,32 +4,35 @@
   .container
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
-        =# link_to image_tag(show_jpeg_image_cust_pic_path(@cust_pic), alt: @cust_pic.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
-        - unless @cust_pic.pdf?
-          = link_to image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
-        - else
-          %p.lead.text-center
-            %a{href: send_pdf_data_cust_pic_path(@cust_pic)}
-              %i.fa.fa-file-pdf-o.fa-lg
-              Download PDF
+        = link_to image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{@cust_pic['CAPTURE_SEQ_NBR']}", alt: @cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+        -#
+          - unless @cust_pic.pdf?
+            = link_to image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+          - else
+            %p.lead.text-center
+              %a{href: send_pdf_data_cust_pic_path(@cust_pic)}
+                %i.fa.fa-file-pdf-o.fa-lg
+                Download PDF
     %div{:id => "image_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
       .modal-dialog.modal-lg
         .modal-content
           .modal-body
             =# image_tag(show_jpeg_image_cust_pic_path(@cust_pic), alt: @cust_pic.id, class: 'img-responsive')
-            = image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive')
+            =# image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive')
+            = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{@cust_pic['CAPTURE_SEQ_NBR']}", alt: @cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         %div.panel.panel-primary
           %div.list_group
-            - unless @cust_pic.event_code.blank?
+            - unless @cust_pic['EVENT_CODE'].blank?
               %div.list-group-item
                 %strong= "Event:"
                 .pull-right
-                  = "#{@cust_pic.event_code}"
+                  = "#{@cust_pic['EVENT_CODE']}"
             %div.list-group-item
               %strong= "Date/Time:"
               .pull-right
-                = "#{@cust_pic.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")}"
+                =# "#{@cust_pic.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")}"
+                = "#{@cust_pic['SYS_DATE_TIME']}"
 
 = render partial: "shared/footer_navbar", locals: {title: "Cust Pics"}
