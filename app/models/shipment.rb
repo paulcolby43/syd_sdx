@@ -119,7 +119,11 @@ class Shipment < ActiveRecord::Base
     
     socket = TCPSocket.open(host,port) # Connect to server
     socket.send(command, 0)
-    response = socket.recvfrom(port)
+    
+    sleep 2 # Give socket a little time to send, then receive
+    
+#    response = socket.recvfrom(port)
+    response = socket.recvfrom(200000)
     socket.close
     
     data= Hash.from_xml(response.first) # Convert xml response to a hash
