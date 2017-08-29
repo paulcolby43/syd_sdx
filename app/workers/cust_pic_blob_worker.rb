@@ -16,8 +16,10 @@ class CustPicBlobWorker
     end
     
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = image_file.user.company.jpegger_service_ip
+    port = image_file.user.company.jpegger_service_port
+#    host = ENV['JPEGGER_SERVICE']
+#    port = 3333
     command = "<APPEND>
                 <TABLE>cust_pics</TABLE>
                 <BLOB>#{Base64.encode64(large_image_blob_data)}</BLOB>

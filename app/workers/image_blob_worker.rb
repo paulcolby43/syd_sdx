@@ -21,8 +21,10 @@ class ImageBlobWorker
 #    blob = Blob.create(:preview => thumbnail_image_blob_data, :jpeg_image => large_image_blob_data, :sys_date_time => image_file.created_at)
 
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = image_file.user.company.jpegger_service_ip
+    port = image_file.user.company.jpegger_service_port
+#    host = ENV['JPEGGER_SERVICE']
+#    port = 3333
     command = "<APPEND>
                 <TABLE>images</TABLE>
                 <BLOB>#{Base64.encode64(large_image_blob_data)}</BLOB>
