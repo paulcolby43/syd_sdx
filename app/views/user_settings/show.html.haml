@@ -137,6 +137,22 @@
                   = "Yard ID"
                   .pull-right
                     = "#{current_yard_id}"
+        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#jpegger_service", :role => "button"}
+                  Jpegger Service
+            #jpegger_service.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "IP Address"
+                  .pull-right
+                    = "#{current_user.company.jpegger_service_ip}"
+                %li.list-group-item
+                  = "Port"
+                  .pull-right
+                    = "#{current_user.company.jpegger_service_port}"
 
       -# if current_user.company.include_leads_online? 
       .col-xs-12.col-sm-6

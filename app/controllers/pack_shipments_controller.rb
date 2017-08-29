@@ -19,7 +19,7 @@ class PackShipmentsController < ApplicationController
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
     @available_packs_array = Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }
 #    @shipment_images = Shipment.where(ticket_nbr: @pack_shipment["ShipmentNumber"], yardid: current_yard_id)
-    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"]) # Shipment images
+    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company) # Shipment images
 #    unless params[:pack_tag_number].blank?
 #      @available_packs = Pack.find_all_by_tag_number(current_user.token, current_yard_id, 0, params[:pack_tag_number])
 #    end

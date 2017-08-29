@@ -38,7 +38,7 @@ class CustPicsController < ApplicationController
 
   def show
 #    respond_with(@cust_pic)
-    @cust_pic = CustPic.api_find_by_capture_sequence_number(params[:id])
+    @cust_pic = CustPic.api_find_by_capture_sequence_number(params[:id], current_user.company)
   end
 
   def new

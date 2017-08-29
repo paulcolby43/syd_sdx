@@ -109,10 +109,12 @@ class Shipment < ActiveRecord::Base
 #    end
 #  end
 
-  def self.api_find_all_by_shipment_number(shipment_number)
+  def self.api_find_all_by_shipment_number(shipment_number, company)
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+#    host = ENV['JPEGGER_SERVICE']
+#    port = 3333
 #    command = "fetch table=<shipments> ticket_nbr=<#{shipment_number}> rows=<100>!"
 #    command = "fetch sql=<select * from shipments where ticket_nbr='#{shipment_number}'>rows=<100>!"
     command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}'</SQL><ROWS>100</ROWS></FETCH>"
@@ -148,15 +150,17 @@ class Shipment < ActiveRecord::Base
     
   end
   
-  def self.api_find_by_capture_sequence_number(capture_sequence_number)
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+#    host = ENV['JPEGGER_SERVICE']
+#    port = 3333
     command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
     socket = TCPSocket.open(host,port) # Connect to server
     socket.send(command, 0)
-    response = socket.recvfrom(port)
+    response = socket.recvfrom(200000)
     socket.close
     
     data= Hash.from_xml(response.first) # Convert xml response to a hash
