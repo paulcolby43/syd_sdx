@@ -105,6 +105,20 @@
                 = "Yard ID"
                 .pull-right
                   = "#{current_yard_id}"
+          %div.panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                Jpegger Service
+                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+            %ul.list-group
+              %li.list-group-item
+                = "IP Address"
+                .pull-right
+                  = "#{current_user.company.jpegger_service_ip}"
+              %li.list-group-item
+                = "Port"
+                .pull-right
+                  = "#{current_user.company.jpegger_service_port}"
         -# if current_user.company.include_leads_online? 
         .col-xs-12.col-sm-6
           .panel.panel-default
