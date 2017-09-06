@@ -8,15 +8,15 @@ class Blob < ActiveRecord::Base
 
   has_one :image
   
-  def self.api_find_by_id(blob_id)
+  def self.api_find_by_id(blob_id, company)
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
     command = "<FETCH><SQL>select * from blobs where blob_id='#{blob_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     socket = TCPSocket.open(host,port) # Connect to server
     socket.send(command, 0)
-    response = socket.recvfrom(port)
+    response = socket.recvfrom(200000)
     socket.close
     
     data= Hash.from_xml(response.first) # Convert xml response to a hash

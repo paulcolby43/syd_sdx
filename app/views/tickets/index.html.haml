@@ -64,8 +64,9 @@
                         =# number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
                         = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
                         %i.fa.fa-chevron-right.fa-lg
-                      - if current_user.user_setting.show_ticket_thumbnails? and Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").count > 0
-                        = image_tag(Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").last.preview_data_uri, class: 'thumbnail img-responsive')
+                      -#
+                        - if current_user.user_setting.show_ticket_thumbnails? and Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").count > 0
+                          = image_tag(Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").last.preview_data_uri, class: 'thumbnail img-responsive')
                       = ticket["TicketNumber"]
                       - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                         = "#{ticket['FirstName']} #{ticket['LastName']}"
@@ -76,8 +77,9 @@
                       .pull-right
                         = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
                         %i.fa.fa-chevron-right.fa-lg
-                      - if current_user.user_setting.show_ticket_thumbnails? and Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").count > 0
-                        = image_tag(Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").last.preview_data_uri, class: 'thumbnail img-responsive')
+                      -#
+                        - if current_user.user_setting.show_ticket_thumbnails? and Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").count > 0
+                          = image_tag(Image.where(ticket_nbr: ticket["TicketNumber"], yardid: current_yard_id, event_code: "Gross").last.preview_data_uri, class: 'thumbnail img-responsive')
                       = ticket["TicketNumber"]
                       - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                         = "#{ticket['FirstName']} #{ticket['LastName']}"

@@ -17,6 +17,13 @@
           = f.text_field :dragon_api, :placeholder => "Dragon API Location", class: "form-control input-lg", readonly: true
       .row.form-group
         %div{:class => "col-sm-6"}
+          = f.label :jpegger_service_ip, :class => "control-label"
+          = f.text_field :jpegger_service_ip, :placeholder => "Jpegger Service IP", class: "form-control input-lg"
+        %div{:class => "col-sm-6"}
+          = f.label :jpegger_service_port, :class => "control-label"
+          = f.text_field :jpegger_service_port, :placeholder => "Jpegger Service Port", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6"}
           = f.label :address1, "Address 1", :class => "control-label"
           = f.text_field :address1, :placeholder => "Address 1", class: "form-control input-lg"
         %div{:class => "col-sm-6"}

@@ -49,7 +49,7 @@ class ShipmentsController < ApplicationController
 
   def show
     @ticket_number = @shipment.ticket_nbr
-    @shipment = Shipment.api_find_by_capture_sequence_number(params[:id])
+    @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company)
 #    respond_with(@shipment)
   end
 

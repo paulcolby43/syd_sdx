@@ -1,5 +1,7 @@
 class Company < ActiveRecord::Base
   before_save :default_dragon_api
+  before_save :default_jpegger_service_ip
+  before_save :default_jpegger_service_port
   
   has_many :users
   has_many :inventories, through: :users
@@ -15,6 +17,16 @@ class Company < ActiveRecord::Base
   # Set the default dragon_api IP and port to what's set in environment variable
   def default_dragon_api
     self.dragon_api ||= "#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}"
+  end
+  
+  # Set the default Jpegger service IP to what's set in environment variable
+  def default_jpegger_service_ip
+    self.jpegger_service_ip ||= "#{ENV['JPEGGER_SERVICE']}"
+  end
+  
+  # Set the default Jpegger service port to 3333
+  def default_jpegger_service_port
+    self.jpegger_service_port ||= "3333"
   end
   
   def leads_online_config_settings_present?

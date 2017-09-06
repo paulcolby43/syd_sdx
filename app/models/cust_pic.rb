@@ -97,10 +97,12 @@ class CustPic < ActiveRecord::Base
     CustPic.connection.table_exists? 'CUST_PICS_data'
   end
   
-  def self.api_find_all_by_customer_number(customer_number)
+  def self.api_find_all_by_customer_number(customer_number, company)
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+#    host = ENV['JPEGGER_SERVICE']
+#    port = 3333
     command = "<FETCH><SQL>select * from cust_pics where cust_nbr='#{customer_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
     socket = TCPSocket.open(host,port) # Connect to server
@@ -126,15 +128,17 @@ class CustPic < ActiveRecord::Base
     
   end
   
-  def self.api_find_by_capture_sequence_number(capture_sequence_number)
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
     require 'socket'
-    host = ENV['JPEGGER_SERVICE']
-    port = 3333
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+#    host = ENV['JPEGGER_SERVICE']
+#    port = 3333
     command = "<FETCH><SQL>select * from cust_pics where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
     socket = TCPSocket.open(host,port) # Connect to server
     socket.send(command, 0)
-    response = socket.recvfrom(port)
+    response = socket.recvfrom(200000)
     socket.close
     
     data= Hash.from_xml(response.first) # Convert xml response to a hash

@@ -387,7 +387,7 @@
           .col-xs-12.col-sm-2.col-md-2
             .thumbnail
               %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
               -#
                 .text-center= image.event_code
               .text-center

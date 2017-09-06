@@ -54,7 +54,7 @@ class ImagesController < ApplicationController
 
   def show
     @ticket_number = @image.ticket_nbr
-    @image = Image.api_find_by_capture_sequence_number(params[:id])
+    @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company)
 #    respond_with(@image)
   end
 
