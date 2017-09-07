@@ -46,6 +46,9 @@
             %p
               = "Balance Due:"
               = "#{number_to_currency(@ticket['BalanceDue'])}"
+    %a{href: ticket_path(@ticket['Id'], status: @ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-lg", target: '_blank'}
+      %i.fa.fa-file-pdf-o.fa-lg
+      Print
     -#
       - if @ticket['Status'] == '3'
         %p.pull-right

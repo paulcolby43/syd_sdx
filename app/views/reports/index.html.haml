@@ -3,7 +3,9 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-      
+    %h2.text-center
+      = link_to "Scrap Dragon Xtreme", 'http://www.scrapdragon.com', target: '_blank'
+      Customer Portal
     %p
       = form_tag reports_path, :method => 'get', :class => "form-inline" do
         =# hidden_field_tag 'report[type]', @type
@@ -18,7 +20,7 @@
           %i.fa.fa-search
 
     - unless @tickets.blank?
-      .text-muted= "#{@tickets.count} tickets found"
+      .text-muted= "#{pluralize(@tickets.count, "ticket")} found"
       - unless @type == 'commodity_summary'
         = render 'customer_summary'
       - else

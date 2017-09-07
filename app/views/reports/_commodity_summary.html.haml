@@ -28,7 +28,7 @@
           - line_items.each do |line_item|
             %tr
               %td= line_item["DateCreated"].to_date.strftime("%m/%d/%y")
-              %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
+              %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'])
               %td
                 - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
                   = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]

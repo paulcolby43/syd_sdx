@@ -13,15 +13,15 @@
       %table.table.table-striped.table-responsive
         %thead
           %tr
-            %td 
-              %strong Date
-            %td 
-              %strong Ticket
-            %td 
-              %strong Amount
+            %th
+              Date
+            %th
+              Ticket
+            %th
+              Amount
             - unless @status == '1' # Don't show for closed tickets
-              %td 
-                %strong Method
+              %th
+                Method
             -#
               %td
                 %strong Ticket record
