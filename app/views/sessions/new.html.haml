@@ -17,7 +17,7 @@
               = password_field_tag :password, nil, :placeholder => "Password", :class => "form-control input-lg"
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
-            = text_field_tag :dragon_account_number, cookies[:dragon_account_number], :placeholder => "Account # (leave blank if unknown)", :class => "form-control input-lg"
+            = text_field_tag :dragon_account_number, cookies[:dragon_account_number], :placeholder => "Account# (leave blank if unknown)", :class => "form-control input-lg"
         .row
           %div{:class => "col-sm-12 col-md-12"}
             - unless params[:customer_guid].blank?
