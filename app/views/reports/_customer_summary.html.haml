@@ -10,7 +10,7 @@
           #details.text-muted.pull-right
             = number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
     %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
-      %table.table.table-striped.table-responsive
+      %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
         %thead
           %tr
             %th

@@ -9,7 +9,7 @@
             = "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
             = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
     %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
-      %table.table.table-striped.table-responsive
+      %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
         %thead
           %tr
             %td 
