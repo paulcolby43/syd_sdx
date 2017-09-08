@@ -7,6 +7,11 @@
       = link_to "Scrap Dragon Xtreme", 'http://www.scrapdragon.com', target: '_blank'
       Customer Portal
     %p
+      .pull-right
+        %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-lg btn-default'}
+          %i.fa.fa-download
+          CSV Report
+    %p
       = form_tag reports_path, :method => 'get', :class => "form-inline" do
         =# hidden_field_tag 'report[type]', @type
         = select_tag 'report[type]', options_for_select([['Customer Summary', 'customer_summary'],['Commodity Summary', 'commodity_summary']], @type), class: "form-control input-lg"

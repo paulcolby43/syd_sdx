@@ -46,6 +46,19 @@ class ReportsController < ApplicationController
         end
       end
     end
+    
+    respond_to do |format|
+      format.html {
+      }
+      format.csv { 
+        if @type == "customer_summary"
+          send_data Ticket.customer_summary_to_csv(@tickets), filename: "customer-summary-report-#{@start_date}-#{@end_date}.csv" 
+        else
+          send_data Ticket.commodity_summary_to_csv(@line_items), filename: "commodity-summary-report-#{@start_date}-#{@end_date}.csv"
+        end
+      }
+    end
+    
   end
 
   private

@@ -741,4 +741,30 @@ class Ticket
     
   end
   
+  def self.customer_summary_to_csv(tickets_array)
+    require 'csv'
+    headers = ['DateCreated', 'TicketNumber', 'BalanceDue', 'Company', 'FirstName', 'LastName']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      tickets_array.each do |ticket|
+        csv << headers.map{ |attr| ticket[attr] }
+      end
+    end
+  end
+  
+  def self.commodity_summary_to_csv(line_items_array)
+    require 'csv'
+    headers = ['DateCreated', 'PrintDescription', 'NetWeight', 'Price', 'ExtendedAmount']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      line_items_array.each do |line_item|
+        csv << headers.map{ |attr| line_item[attr] }
+      end
+    end
+  end
+  
 end
