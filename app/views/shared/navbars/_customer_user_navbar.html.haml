@@ -6,8 +6,8 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      %a{class: 'navbar-brand', :href => root_path}
-        = current_user.company.name
+      %a{class: 'navbar-brand', :href => reports_path}
+        Home
         =# image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
@@ -15,28 +15,29 @@
           %li
             %a{href: images_path}
               PICTURES
-        %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            %i.fa.fa-ticket
-            TICKETS
-            %b.caret
-          %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1')}"}
-              %a{href: tickets_path(status: 1)}
-                %i.fa.fa-folder
-                Closed
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3')}"}
-              %a{href: tickets_path(status: 3)}
-                %i.fa.fa-dollar
-                Paid
+        -#
+          %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              %i.fa.fa-ticket
+              TICKETS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1')}"}
+                %a{href: tickets_path(status: 1)}
+                  %i.fa.fa-folder
+                  Closed
+              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3')}"}
+                %a{href: tickets_path(status: 3)}
+                  %i.fa.fa-dollar
+                  Paid
         %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             %i.fa.fa-file-text
             REPORTS
             %b.caret
           %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
-            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
+            %li{:class => "#{(params[:controller] == 'reports') and (@type == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
+            %li{:class => "#{(params[:controller] == 'reports') and (@type == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
           
       %ul.nav.navbar-nav.navbar-right
         %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}
