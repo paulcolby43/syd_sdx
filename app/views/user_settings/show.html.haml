@@ -10,7 +10,7 @@
               %h5.panel-title 
                 %a{"aria-controls" => "defaults", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#defaults", :role => "button"}
                   Defaults
-            #defaults.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+            #defaults.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
               %ul.list-group
                 %li.list-group-item
                   = "Show customer thumbnails:"
@@ -42,7 +42,7 @@
                       = "#{current_user.device_group.DeviceGroupName} Device Group"
                   - else
                     No Device Group for this User
-              #devices.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              #devices.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
                 %ul.list-group
                   - unless current_user.device_group.blank?
                     - unless current_user.device_group.CustomerCamera.blank?
@@ -95,7 +95,7 @@
                 %h5.panel-title 
                   %a{"aria-controls" => "contract", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#contract", :role => "button"}
                     Contract
-              #contract.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              #contract.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
                 %ul.list-group
                   %li.list-group-item
                     %strong= @contract.contract_name
@@ -114,7 +114,7 @@
               %h5.panel-title
                 %a{"aria-controls" => "yards", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#yards", :role => "button"}
                   Yards
-            #yards.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+            #yards.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
               %ul.list-group
                 - Yard.all(current_user.token).each do |yard|
                   %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= yard["Name"]
@@ -127,7 +127,7 @@
               %h5.panel-title
                 %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#dragon_api", :role => "button"}
                   Scrap Dragon API
-            #dragon_api.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+            #dragon_api.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
               %ul.list-group
                 %li.list-group-item
                   = "Location"
@@ -143,7 +143,7 @@
               %h5.panel-title
                 %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#jpegger_service", :role => "button"}
                   Jpegger Service
-            #jpegger_service.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+            #jpegger_service.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
               %ul.list-group
                 %li.list-group-item
                   = "IP Address"
@@ -162,7 +162,7 @@
               %h5.panel-title
                 %a{"aria-controls" => "leads", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#leads", :role => "button"}
                   Company Info
-            #leads.panel-collapse.collapse{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+            #leads.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
               %ul.list-group
                 %li.list-group-item
                   = "Name"
