@@ -401,7 +401,7 @@
               %div.list_group
                 %a{href: image_path(capture_sequence_number), class: "list-group-item"}
                   - if current_user.show_ticket_thumbnails?
-                    = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}", alt: capture_sequence_number, class: 'thumbnail img-responsive')
+                    = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}", alt: capture_sequence_number, class: 'thumbnail img-responsive')
                   .pull-right
                     %i.fa.fa-chevron-right
                   %br

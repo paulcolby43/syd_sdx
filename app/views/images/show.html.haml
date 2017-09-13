@@ -8,7 +8,7 @@
             = current_company.jpegger_contract.verbiage.html_safe
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
-        = link_to image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?image=y&table=images&capture_seq_nbr=#{@image['CAPTURE_SEQ_NBR']}", alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+        = link_to image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{@image['CAPTURE_SEQ_NBR']}", alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
         -#
           - unless @image.pdf?
             = link_to image_tag(@image.jpeg_image_data_uri, alt: @image.id, class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
@@ -22,7 +22,7 @@
         .modal-content
           .modal-body
             =# image_tag(@image.jpeg_image_data_uri, alt: @image.id, class: 'img-responsive')
-            = image_tag("http://#{ENV['JPEGGER_SERVICE']}:3333/sdcgi?image=y&table=images&capture_seq_nbr=#{@image['CAPTURE_SEQ_NBR']}", alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+            = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{@image['CAPTURE_SEQ_NBR']}", alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         %div.panel.panel-primary
