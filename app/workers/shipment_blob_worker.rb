@@ -18,8 +18,8 @@ class ShipmentBlobWorker
 #    blob = Blob.create(:preview => thumbnail_image_blob_data, :jpeg_image => large_image_blob_data, :sys_date_time => shipment_file.created_at)
     
     require 'socket'
-    host = image_file.user.company.jpegger_service_ip
-    port = image_file.user.company.jpegger_service_port
+    host = shipment_file.user.company.jpegger_service_ip
+    port = shipment_file.user.company.jpegger_service_port
 #    host = ENV['JPEGGER_SERVICE']
 #    port = 3333
     command = "<APPEND>
