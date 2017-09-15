@@ -217,7 +217,8 @@ jQuery ->
           alert 'Error getting commodity unit of measure conversion.'
           console.log 'Error getting commodity unit of measure conversion.'
           return
-    get_commodity_unit_of_measure_weight_conversion_ajax()
+    if typeof item_id !== 'undefined'
+      get_commodity_unit_of_measure_weight_conversion_ajax()
 
     #amount = (parseFloat(price) * parseFloat(net)).toFixed(2)
 
