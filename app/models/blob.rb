@@ -14,12 +14,23 @@ class Blob < ActiveRecord::Base
     port = company.jpegger_service_port
     command = "<FETCH><SQL>select * from blobs where blob_id='#{blob_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    response = socket.recvfrom(200000)
-    socket.close
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
     
-    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    ssl_client.puts command
+    response = ssl_client.sysread(200000)
+    
+    ssl_client.close
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    response = socket.recvfrom(200000)
+#    socket.close
+    
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]

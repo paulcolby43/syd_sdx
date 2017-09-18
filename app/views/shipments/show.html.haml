@@ -4,13 +4,13 @@
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'thumbnail img-responsive')
-        = link_to image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{@shipment['CAPTURE_SEQ_NBR']}", alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
+        = link_to image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{@shipment['CAPTURE_SEQ_NBR']}", alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
     %div{:id => "shipment_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
       .modal-dialog.modal-lg
         .modal-content
           .modal-body
             =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive')
-            = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{@shipment['CAPTURE_SEQ_NBR']}", alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+            = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{@shipment['CAPTURE_SEQ_NBR']}", alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive')
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         %div.panel.panel-primary

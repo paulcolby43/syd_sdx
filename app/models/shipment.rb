@@ -113,22 +113,28 @@ class Shipment < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-#    host = ENV['JPEGGER_SERVICE']
-#    port = 3333
-#    command = "fetch table=<shipments> ticket_nbr=<#{shipment_number}> rows=<100>!"
-#    command = "fetch sql=<select * from shipments where ticket_nbr='#{shipment_number}'>rows=<100>!"
     command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+
+    ssl_client.puts command
+    response = ssl_client.sysread(200000)
     
-    sleep 2 # Give socket a little time to send, then receive
+    ssl_client.close
     
-#    response = socket.recvfrom(port)
-    response = socket.recvfrom(200000)
-    socket.close
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    
+#    sleep 2 # Give socket a little time to send, then receive
+#    
+#    response = socket.recvfrom(200000)
+#    socket.close
     
-    data= Hash.from_xml(response.first) # Convert xml response to a hash
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
@@ -154,16 +160,25 @@ class Shipment < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-#    host = ENV['JPEGGER_SERVICE']
-#    port = 3333
     command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    response = socket.recvfrom(200000)
-    socket.close
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+
+    ssl_client.puts command
+    response = ssl_client.sysread(200000)
     
-    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    ssl_client.close
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    response = socket.recvfrom(200000)
+#    socket.close
+    
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]

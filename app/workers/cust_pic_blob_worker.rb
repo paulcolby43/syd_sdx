@@ -32,9 +32,16 @@ class CustPicBlobWorker
                 <TAGNBR>#{cust_pic_file.tag_number}</TAGNBR>
               </APPEND>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    socket.close
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    ssl_client.close
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    socket.close
     
 #    blob = Blob.create(:preview => thumbnail_image_blob_data, :jpeg_image => large_image_blob_data, :sys_date_time => cust_pic_file.created_at)
 #

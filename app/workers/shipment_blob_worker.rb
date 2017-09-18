@@ -39,9 +39,16 @@ class ShipmentBlobWorker
                 <CUST_NAME>#{shipment_file.customer_name}</CUST_NAME>
               </APPEND>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    socket.close
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    ssl_client.close
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    socket.close
 
     # Create shipment
 #    time_stamp = shipment_file.created_at.in_time_zone("Eastern Time (US & Canada)")
