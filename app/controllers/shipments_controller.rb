@@ -2,7 +2,7 @@ class ShipmentsController < ApplicationController
   before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
 #  before_action :set_shipment, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
-  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
+#  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
 
   respond_to :html, :js
 
@@ -48,8 +48,12 @@ class ShipmentsController < ApplicationController
   end
 
   def show
-    @ticket_number = @shipment.ticket_nbr
     @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company)
+    @ticket_number = @shipment.ticket_nbr
+    if @shipment['YARDID'] != current_yard_id
+      flash[:danger] = "You don't have access to that page."
+      redirect_to root_path
+    end
 #    respond_with(@shipment)
   end
 
