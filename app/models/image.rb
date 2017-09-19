@@ -92,31 +92,32 @@ class Image < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-#    host = ENV['JPEGGER_SERVICE']
-#    port = 3333
-#    command = "fetch table=<images> ticket_nbr=<#{ticket_number}> rows=<100>!"
-#    command = "fetch sql=<select * from images where ticket_nbr='#{ticket_number}'>rows=<100>!"
+    
     command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    
-    sleep 2 # Give socket a little time to send, then receive
-    
-#    while line = socket.gets # Read lines from socket
-#      puts line         # and print them
-#    end
-    
-#    socket.each_line do |line|
-#      puts line
-#    end
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
 
-    response = socket.recvfrom(200000)
+    ssl_client.puts command
+    response = ssl_client.sysread(200000)
     
-    socket.close
+    ssl_client.close
+    
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    
+#    sleep 2 # Give socket a little time to send, then receive
+#    
+#    response = socket.recvfrom(200000)
+#    
+#    socket.close
     
 #    Rails.logger.debug "***********response: #{response}"
-    data= Hash.from_xml(response.first) # Convert xml response to a hash
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
@@ -142,16 +143,26 @@ class Image < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-#    host = ENV['JPEGGER_SERVICE']
-#    port = 3333
     command = "<FETCH><SQL>select * from images where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    response = socket.recvfrom(200000)
-    socket.close
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+
+    ssl_client.puts command
+    response = ssl_client.sysread(200000)
     
-    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    ssl_client.close
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    response = socket.recvfrom(200000)
+#    socket.close
+    
+#    Rails.logger.debug "***********response: #{response}"
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]

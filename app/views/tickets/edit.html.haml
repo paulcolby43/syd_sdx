@@ -390,7 +390,7 @@
           .col-xs-12.col-sm-2.col-md-2
             .thumbnail
               %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
               -#
                 .text-center= image.event_code
               .text-center
@@ -401,7 +401,7 @@
               %div.list_group
                 %a{href: image_path(capture_sequence_number), class: "list-group-item"}
                   - if current_user.show_ticket_thumbnails?
-                    = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}", alt: capture_sequence_number, class: 'thumbnail img-responsive')
+                    = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}", alt: capture_sequence_number, class: 'thumbnail img-responsive')
                   .pull-right
                     %i.fa.fa-chevron-right
                   %br

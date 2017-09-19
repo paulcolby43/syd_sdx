@@ -48,9 +48,16 @@ class ImageBlobWorker
                 <TAGNBR>#{image_file.tag_number}</TAGNBR>
               </APPEND>"
     
-    socket = TCPSocket.open(host,port) # Connect to server
-    socket.send(command, 0)
-    socket.close
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    ssl_client.close
+    
+#    socket = TCPSocket.open(host,port) # Connect to server
+#    socket.send(command, 0)
+#    socket.close
 
     # Create image
 #    time_stamp = image_file.created_at.in_time_zone("Eastern Time (US & Canada)")

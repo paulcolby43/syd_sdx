@@ -107,7 +107,7 @@
           .col-xs-12.col-sm-2.col-md-2
             .thumbnail
               %a{href: cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                = image_tag("http://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{cust_pic['CAPTURE_SEQ_NBR']}", alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{cust_pic['CAPTURE_SEQ_NBR']}", alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
               .text-center
                 %small.text-muted= cust_pic['EVENT_CODE']
     -#
