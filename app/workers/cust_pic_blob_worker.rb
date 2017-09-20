@@ -16,8 +16,8 @@ class CustPicBlobWorker
     end
     
     require 'socket'
-    host = image_file.user.company.jpegger_service_ip
-    port = image_file.user.company.jpegger_service_port
+    host = cust_pic_file.user.company.jpegger_service_ip
+    port = cust_pic_file.user.company.jpegger_service_port
 #    host = ENV['JPEGGER_SERVICE']
 #    port = 3333
     command = "<APPEND>
