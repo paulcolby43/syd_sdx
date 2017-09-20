@@ -81,11 +81,13 @@ class ImagesController < ApplicationController
   end
   
   def show_jpeg_image
-    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Image.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
-    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Image.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def send_pdf_data

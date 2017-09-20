@@ -49,7 +49,7 @@ class ShipmentsController < ApplicationController
 
   def show
     @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company)
-    @ticket_number = @shipment.ticket_nbr
+    @ticket_number = @shipment['TICKET_NBR']
     if @shipment['YARDID'] != current_yard_id
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
@@ -76,11 +76,13 @@ class ShipmentsController < ApplicationController
   end
   
   def show_jpeg_image
-    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Shipment.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
-    send_data @shipment.preview, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @shipment.preview, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Shipment.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def destroy

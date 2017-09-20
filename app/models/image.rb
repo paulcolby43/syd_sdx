@@ -26,6 +26,10 @@ class Image < ActiveRecord::Base
     blob.preview
   end
   
+  def jpeg_image(company)
+    blob.jpeg_image
+  end
+  
   def jpeg_image_data_uri
     unless jpeg_image.blank?
       "data:image/jpg;base64, #{Base64.encode64(jpeg_image)}"
@@ -77,6 +81,20 @@ class Image < ActiveRecord::Base
   #############################
   #     Class Methods         #
   #############################
+  
+  def Image.preview(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
+  def Image.jpeg_image(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
   
   def self.proper_yardid(current_yard_id)
     where(yardid: current_yard_id)

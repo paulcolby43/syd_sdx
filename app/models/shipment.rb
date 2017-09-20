@@ -9,45 +9,10 @@ class Shipment < ActiveRecord::Base
   self.table_name = 'shipments_data'
   
   belongs_to :blob
-
-   ### SEARCH WITH RANSACK ###
-  def self.ransack_search(query, sort, direction)
-    search = Shipment.ransack(query)
-    search.sorts = "#{sort} #{direction}"
-    shipments = search.result
-
-    # Search through the mounted archives if any exists and current database doesn't return anything
-#    if not MountedArchive.empty? and shipments.empty?
-#      Shipment.search_mounted_archives(query)
-#    end
-
-    return shipments
-  end
-
-  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
-#  def self.ransack_search_external_user(query, sort, direction, customer_name)
-#    search = Shipment.ransack(query)
-#    search.sorts = "#{sort} #{direction}"
-#    shipments = search.result
-#
-#    return shipments
-#
-#  end
-
-  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
-  def self.ransack_search_external_user(query, sort, direction, customer_name)
-    search = Shipment.ransack(query)
-    search.sorts = "#{sort} #{direction}"
-    shipments = []
-    search.result.each do |shipment|
-      if shipment.is_customer_shipment(customer_name)
-        shipments << shipment
-      end
-    end
-
-    return shipments
-  end
-
+  
+  #############################
+  #     Instance Methods      #
+  ############################
 
   def jpeg_image
     blob.jpeg_image
@@ -109,6 +74,24 @@ class Shipment < ActiveRecord::Base
 #    end
 #  end
 
+  #############################
+  #     Class Methods         #
+  #############################
+  
+  def Shipment.preview(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
+  def Shipment.jpeg_image(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+
   def self.api_find_all_by_shipment_number(shipment_number, company)
     require 'socket'
     host = company.jpegger_service_ip
@@ -125,14 +108,6 @@ class Shipment < ActiveRecord::Base
     
     ssl_client.close
     
-#    socket = TCPSocket.open(host,port) # Connect to server
-#    socket.send(command, 0)
-#    
-#    sleep 2 # Give socket a little time to send, then receive
-#    
-#    response = socket.recvfrom(200000)
-#    socket.close
-    
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
     data= Hash.from_xml(response) # Convert xml response to a hash
     
@@ -145,14 +120,6 @@ class Shipment < ActiveRecord::Base
     else
       return [] # No shipments found
     end
-    
-#    unless response.blank?
-#      response_array = response.first.split(/\r\n/)
-#      response_array -= ["EOF!"] # Remove EOF element from array
-#      return response_array.collect {|e| e.scan( /<([^>]*)>/).first.first} # Return just an array of capture sequence numbers
-#    else
-#      return nil
-#    end
     
   end
   
@@ -172,11 +139,6 @@ class Shipment < ActiveRecord::Base
     
     ssl_client.close
     
-#    socket = TCPSocket.open(host,port) # Connect to server
-#    socket.send(command, 0)
-#    response = socket.recvfrom(200000)
-#    socket.close
-    
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
     data= Hash.from_xml(response) # Convert xml response to a hash
     
@@ -186,6 +148,44 @@ class Shipment < ActiveRecord::Base
       return nil # No shipment found
     end
 
+  end
+  
+  ### SEARCH WITH RANSACK ###
+  def self.ransack_search(query, sort, direction)
+    search = Shipment.ransack(query)
+    search.sorts = "#{sort} #{direction}"
+    shipments = search.result
+
+    # Search through the mounted archives if any exists and current database doesn't return anything
+#    if not MountedArchive.empty? and shipments.empty?
+#      Shipment.search_mounted_archives(query)
+#    end
+
+    return shipments
+  end
+
+  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
+#  def self.ransack_search_external_user(query, sort, direction, customer_name)
+#    search = Shipment.ransack(query)
+#    search.sorts = "#{sort} #{direction}"
+#    shipments = search.result
+#
+#    return shipments
+#
+#  end
+
+  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
+  def self.ransack_search_external_user(query, sort, direction, customer_name)
+    search = Shipment.ransack(query)
+    search.sorts = "#{sort} #{direction}"
+    shipments = []
+    search.result.each do |shipment|
+      if shipment.is_customer_shipment(customer_name)
+        shipments << shipment
+      end
+    end
+
+    return shipments
   end
 
 end
