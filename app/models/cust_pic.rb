@@ -83,6 +83,20 @@ class CustPic < ActiveRecord::Base
   #############################
   #     Class Methods         #
   #############################
+  
+  def CustPic.preview(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
+  def CustPic.jpeg_image(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
 
   ### SEARCH WITH RANSACK ###
   def self.ransack_search(query, sort, direction)

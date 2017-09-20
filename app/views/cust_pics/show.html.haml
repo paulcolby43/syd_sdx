@@ -4,7 +4,7 @@
   .container
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
-        = link_to image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{@cust_pic['CAPTURE_SEQ_NBR']}", alt: @cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+        = link_to image_tag(show_jpeg_image_cust_pic_path(@cust_pic['CAPTURE_SEQ_NBR']), alt: @cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
         -#
           - unless @cust_pic.pdf?
             = link_to image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
@@ -19,7 +19,7 @@
           .modal-body
             =# image_tag(show_jpeg_image_cust_pic_path(@cust_pic), alt: @cust_pic.id, class: 'img-responsive')
             =# image_tag(@cust_pic.jpeg_image_data_uri, alt: @cust_pic.id, class: 'img-responsive')
-            = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{@cust_pic['CAPTURE_SEQ_NBR']}", alt: @cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+            = image_tag(show_jpeg_image_cust_pic_path(@cust_pic['CAPTURE_SEQ_NBR']), alt: @cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         %div.panel.panel-primary

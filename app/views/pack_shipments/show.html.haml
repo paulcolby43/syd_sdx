@@ -112,7 +112,7 @@
               .col-xs-12.col-sm-2.col-md-2
                 .thumbnail
                   %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                    = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}", alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                    = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                   -#
                     .text-center= shipment_image.event_code
                   .text-center
