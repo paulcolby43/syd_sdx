@@ -128,7 +128,7 @@ class CustPic < ActiveRecord::Base
     ssl_client.connect
     ssl_client.sync_close = true
     ssl_client.puts command
-    response = ssl_client.sysread(200000)
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
     # Non-SSL TCP socket communication with jpegger
@@ -167,7 +167,7 @@ class CustPic < ActiveRecord::Base
     ssl_client.connect
     ssl_client.sync_close = true
     ssl_client.puts command
-    response = ssl_client.sysread(200000)
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
     # Non-SSL TCP socket communication with jpegger
