@@ -84,6 +84,7 @@ class CustPic < ActiveRecord::Base
   #     Class Methods         #
   #############################
   
+  # Open and read jpegger cust_pic preview page, over ssl
   def CustPic.preview(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}"
@@ -91,6 +92,7 @@ class CustPic < ActiveRecord::Base
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
   
+  # Open and read jpegger cust_pic jpeg_image page, over ssl
   def CustPic.jpeg_image(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}"
@@ -111,27 +113,28 @@ class CustPic < ActiveRecord::Base
     CustPic.connection.table_exists? 'CUST_PICS_data'
   end
   
+  # Get all jpegger cust_pics for this company with this customer number
   def self.api_find_all_by_customer_number(customer_number, company)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from cust_pics where cust_nbr='#{customer_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
+    # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
     ssl_client.connect
     ssl_client.sync_close = true
-
     ssl_client.puts command
     response = ssl_client.sysread(200000)
-    
     ssl_client.close
     
+    # Non-SSL TCP socket communication with jpegger
 #    socket = TCPSocket.open(host,port) # Connect to server
 #    socket.send(command, 0)
-#    
 #    sleep 2 # Give socket a little time to send, then receive
-#    
 #    response = socket.recvfrom(200000)
 #    socket.close
     
@@ -154,18 +157,20 @@ class CustPic < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from cust_pics where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
+    # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
     ssl_client.connect
     ssl_client.sync_close = true
-
     ssl_client.puts command
     response = ssl_client.sysread(200000)
-    
     ssl_client.close
     
+    # Non-SSL TCP socket communication with jpegger
 #    socket = TCPSocket.open(host,port) # Connect to server
 #    socket.send(command, 0)
 #    response = socket.recvfrom(200000)
