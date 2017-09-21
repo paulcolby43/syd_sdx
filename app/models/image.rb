@@ -82,6 +82,7 @@ class Image < ActiveRecord::Base
   #     Class Methods         #
   #############################
   
+  # Open and read jpegger image preview page, over ssl
   def Image.preview(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}"
@@ -89,6 +90,7 @@ class Image < ActiveRecord::Base
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
   
+  # Open and read jpegger image jpeg_image page, over ssl
   def Image.jpeg_image(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}"
@@ -106,31 +108,29 @@ class Image < ActiveRecord::Base
     ["proper_yardid"]
   end
   
+  # Get all jpegger images for this company with this ticket number
   def self.api_find_all_by_ticket_number(ticket_number, company)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
+    # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
+    # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
     ssl_client.connect
     ssl_client.sync_close = true
-
     ssl_client.puts command
-    response = ssl_client.sysread(200000)
-    
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    
+    # Non-SSL TCP socket communication with jpegger
 #    socket = TCPSocket.open(host,port) # Connect to server
 #    socket.send(command, 0)
-#    
 #    sleep 2 # Give socket a little time to send, then receive
-#    
 #    response = socket.recvfrom(200000)
-#    
 #    socket.close
     
 #    Rails.logger.debug "***********response: #{response}"
@@ -144,7 +144,7 @@ class Image < ActiveRecord::Base
         return data["RESULT"]["ROW"]
       end
     else
-      return [] # No tickets found
+      return [] # No images found
     end
     
 #    unless response.blank?
@@ -157,33 +157,36 @@ class Image < ActiveRecord::Base
     
   end
   
+  # Get all the data for the image with this capture sequence number
   def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from images where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
+    # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
     ssl_client.connect
     ssl_client.sync_close = true
-
     ssl_client.puts command
-    response = ssl_client.sysread(200000)
-    
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
+    # Non-SSL TCP socket communication with jpegger
 #    socket = TCPSocket.open(host,port) # Connect to server
 #    socket.send(command, 0)
 #    response = socket.recvfrom(200000)
 #    socket.close
     
 #    Rails.logger.debug "***********response: #{response}"
-#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+#    data= Hash.from_xml(response.first) # Get first element of array response and convert xml response to a hash
     data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
-      return data["RESULT"]["ROW"]
+      return data["RESULT"]["ROW"] # SQL response comes back in <RESULT><ROW>
     else
       return nil # No image found
     end

@@ -78,6 +78,7 @@ class Shipment < ActiveRecord::Base
   #     Class Methods         #
   #############################
   
+  # Open and read jpegger shipment preview page, over ssl
   def Shipment.preview(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
@@ -85,6 +86,7 @@ class Shipment < ActiveRecord::Base
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
   
+  # Open and read jpegger shipment jpeg_image page, over ssl
   def Shipment.jpeg_image(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
@@ -96,16 +98,17 @@ class Shipment < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
+    # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
     ssl_client.connect
     ssl_client.sync_close = true
-
     ssl_client.puts command
     response = ssl_client.sysread(200000)
-    
     ssl_client.close
     
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
@@ -127,16 +130,17 @@ class Shipment < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
+    # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
     ssl_client.connect
     ssl_client.sync_close = true
-
     ssl_client.puts command
     response = ssl_client.sysread(200000)
-    
     ssl_client.close
     
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
