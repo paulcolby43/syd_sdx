@@ -39,6 +39,7 @@
                 %h5.panel-title
                   %a{"aria-controls" => "event_codes", "aria-expanded" => "false", "data-parent" => "#event_codes_accordion", "data-toggle" => "collapse", :href => "#event_codes", :role => "button"}
                     Event Codes
+                  .pull-right= link_to 'New', new_event_code_path
               #event_codes.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
                 %ul.list-group
                   - @event_codes.each do |event_code|
