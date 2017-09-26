@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829131937) do
+ActiveRecord::Schema.define(version: 20170925171053) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -94,6 +94,19 @@ ActiveRecord::Schema.define(version: 20170829131937) do
     t.string   "yard_id"
   end
 
+  create_table "event_codes", force: true do |t|
+    t.string   "name"
+    t.string   "camera_class"
+    t.string   "camera_position"
+    t.integer  "user_id"
+    t.integer  "company_id"
+    t.boolean  "include_in_fetch_lists", default: false
+    t.boolean  "include_in_shipments",   default: true
+    t.boolean  "include_in_images",      default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "image_files", force: true do |t|
     t.string   "name"
     t.string   "file"
@@ -119,6 +132,7 @@ ActiveRecord::Schema.define(version: 20170829131937) do
     t.datetime "updated_at"
     t.string   "yard_id"
     t.string   "contract_verbiage"
+    t.integer  "event_code_id"
   end
 
   create_table "inventories", force: true do |t|
@@ -156,6 +170,7 @@ ActiveRecord::Schema.define(version: 20170829131937) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "customer_name"
+    t.integer  "event_code_id"
   end
 
   create_table "user_settings", force: true do |t|

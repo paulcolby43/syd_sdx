@@ -3,9 +3,11 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          %a{href: 'javascript:history.back()'}
-            Back
+          = link_to 'javascript:history.back()' do
+            Cancel
         .col-xs-4.col-sm-4
-          = title
+          - unless mobile_device?
+            = title
+          - else
+            = truncate(title, length: 8)
         .col-xs-4.col-sm-4
-          

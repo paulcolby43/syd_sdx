@@ -199,6 +199,13 @@ class Ability
       can :create, :inventories
       can :edit, :inventories
       
+      # EventCodes
+      ############
+      can :manage, EventCode do |event_code|
+        event_code.user_id == user.id
+      end
+      can :create, EventCode
+      
     # End admin user role
     
     elsif user.basic?

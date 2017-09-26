@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  resources :event_codes
+  
   resources :password_resets
 
   resources :devices do

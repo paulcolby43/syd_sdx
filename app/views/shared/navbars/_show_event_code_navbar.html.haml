@@ -3,9 +3,8 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          %a{href: commodities_path}
-            Commodities
-          =# link_to 'Commodities', commodities_path
+          %a{href: event_codes_path}
+            Event Codes
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title
@@ -13,7 +12,5 @@
             = truncate(title, length: 8)
         .col-xs-4.col-sm-4
           - if current_user.admin?
-            %a{href: edit_commodity_path(@commodity["Id"]), class: 'commodity_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
-              -#
-                %i.fa.fa-edit.fa-lg
+            %a{href: edit_event_code_path(@event_code), class: 'event_code_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
               = "Edit"

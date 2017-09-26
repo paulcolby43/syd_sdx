@@ -14,10 +14,15 @@
           .form-group{:id => "event_code"}
             =# f.label "Event Code", :class => 'control-label'
             .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
-              - shipment_event_codes.each do |event_code, index|
+              - current_user.company.event_codes.each do |event_code|
                 %label.btn.btn-lg.btn-default.btn-block.event_code_radio
-                  = f.radio_button :event_code, event_code, required: true, onClick: "alert('hi TRUE!');"
-                  = event_code
+                  = f.radio_button :event_code_id, event_code.id, required: true
+                  = event_code.name
+              -#
+                - shipment_event_codes.each do |event_code, index|
+                  %label.btn.btn-lg.btn-default.btn-block.event_code_radio
+                    = f.radio_button :event_code, event_code, required: true, onClick: "alert('hi TRUE!');"
+                    = event_code
             =# f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
           -#
             .form-group

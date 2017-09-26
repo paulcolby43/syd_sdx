@@ -1,0 +1,42 @@
+.container
+  .well.col-sm-6.col-md-4.col-md-offset-4
+    = form_for @event_code, :class => "form-inline" do |f|
+      - if @event_code.errors.any?
+        #error_explanation
+          %h2= "#{pluralize(@event_code.errors.count, "error")} prohibited this event code from being saved:"
+          %ul
+            - @event_code.errors.full_messages.each do |msg|
+              %li= msg
+      = f.hidden_field :user_id, value: current_user.id
+      = f.hidden_field :company_id, value: current_user.company_id
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.label "Name*", :class => "control-label"
+          %br/
+          = f.text_field :name, placeholder: "Name", :class => "form-control input-lg", required: true
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.label :camera_class, :class => "control-label"
+          %br/
+          =# f.text_field :camera_class, placeholder: "Camera class", :class => "form-control input-lg"
+          = f.select :camera_class, options_for_select(camera_classes), {prompt: "Select camera class"}, {:class => "form-control input-lg"}
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.label :camera_position, :class => "control-label"
+          %br/
+          =# f.text_field :camera_position, placeholder: "Camera position", :class => "form-control input-lg"
+          = f.select :camera_position, options_for_select(camera_positions), {prompt: "Select camera position"}, {:class => "form-control input-lg"}
+      .row.form-group
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "Fetches", nil, :class => 'control-label'
+          = f.text_field :include_in_fetch_lists, :value => "#{@event_code.include_in_fetch_lists? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "Purchases", nil, :class => 'control-label'
+          = f.text_field :include_in_images, :value => "#{@event_code.include_in_images? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "Shipments", nil, :class => 'control-label'
+          = f.text_field :include_in_shipments, :value => "#{@event_code.include_in_shipments? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
+      
+      .row.form-group
+        %div{:class => "col-sm-12"}
+          = f.submit "Save", :class => "btn btn-lg btn-primary btn-block"
