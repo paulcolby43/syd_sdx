@@ -4,11 +4,11 @@
   .container
     .row
       .col-xs-12.col-sm-6
-        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        #defaults_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           .panel.panel-default
             .panel-heading
               %h5.panel-title 
-                %a{"aria-controls" => "defaults", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#defaults", :role => "button"}
+                %a{"aria-controls" => "defaults", "aria-expanded" => "false", "data-parent" => "#defaults_accordion", "data-toggle" => "collapse", :href => "#defaults", :role => "button"}
                   Defaults
             #defaults.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
               %ul.list-group
@@ -30,15 +30,154 @@
                   = "Currency:"
                   .pull-right
                     = "#{@user_setting.currency_id.blank? ? 'None' : @currencies.find {|currency| currency['Id'] == @user_setting.currency_id}['Description']}"
-      -#
+      
+      .col-xs-12.col-sm-6  
+        - unless @event_codes.blank?
+          #event_codes_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title
+                  %a{"aria-controls" => "event_codes", "aria-expanded" => "false", "data-parent" => "#event_codes_accordion", "data-toggle" => "collapse", :href => "#event_codes", :role => "button"}
+                    Event Codes
+              #event_codes.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  - @event_codes.each do |event_code|
+                    %li.list-group-item
+                      = event_code.name
+                  -#
+                    - unless current_user.device_group.blank?
+                      - unless current_user.device_group.CustomerCamera.blank?
+                        %li.list-group-item
+                          = current_user.device_group.CustomerCamera
+                          %br
+                          Device Type:
+                          %i.fa.fa-camera.fa-lg
+                          Customer Camera
+        - else
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                No Event Codes
+    .row
+      .col-xs-12.col-sm-6
+        - unless @contract.blank?
+          #contracts_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default
+              .panel-heading
+                %h5.panel-title 
+                  %a{"aria-controls" => "contract", "aria-expanded" => "false", "data-parent" => "#contracts_accordion", "data-toggle" => "collapse", :href => "#contract", :role => "button"}
+                    Contract
+              #contract.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  %li.list-group-item
+                    %strong= @contract.contract_name
+                    %br
+                    = @contract.verbiage.html_safe
+        - else
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                No Contracts
+
+      .col-xs-12.col-sm-6
+        #yards_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{"aria-controls" => "yards", "aria-expanded" => "false", "data-parent" => "#yards_accordion", "data-toggle" => "collapse", :href => "#yards", :role => "button"}
+                  Yards
+            #yards.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                - Yard.all(current_user.token).each do |yard|
+                  %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= yard["Name"]
+
+    .row
+      .col-xs-12.col-sm-6
+        #dragon_api_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#dragon_api_accordion", "data-toggle" => "collapse", :href => "#dragon_api", :role => "button"}
+                  Scrap Dragon API
+            #dragon_api.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "Location"
+                  .pull-right
+                    = "#{current_user.company.dragon_api}"
+                %li.list-group-item
+                  = "Yard ID"
+                  .pull-right
+                    = "#{current_yard_id}"
+        #jpegger_service_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#jpegger_service_accordion", "data-toggle" => "collapse", :href => "#jpegger_service", :role => "button"}
+                  Jpegger Service
+            #jpegger_service.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "IP Address"
+                  .pull-right
+                    = "#{current_user.company.jpegger_service_ip}"
+                %li.list-group-item
+                  = "Port"
+                  .pull-right
+                    = "#{current_user.company.jpegger_service_port}"
+
+      -# if current_user.company.include_leads_online? 
+      .col-xs-12.col-sm-6
+        #company_info_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{"aria-controls" => "leads", "aria-expanded" => "false", "data-parent" => "#company_info_accordion", "data-toggle" => "collapse", :href => "#leads", :role => "button"}
+                  Company Info
+            #leads.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "Name"
+                  .pull-right
+                    = "#{current_user.company.name}"
+                - unless current_user.company.full_address.blank?
+                  %li.list-group-item
+                    = current_user.company.full_address.html_safe
+                %li.list-group-item
+                  Phone
+                  .pull-right= current_user.company.phone
+                - unless current_user.company.custom_field_1.blank? and current_user.company.custom_field_1_value.blank?
+                  %li.list-group-item
+                    = current_user.company.custom_field_1
+                    .pull-right
+                      = "#{current_user.company.custom_field_1_value}"
+                - unless current_user.company.custom_field_2.blank? and current_user.company.custom_field_2_value.blank?
+                  %li.list-group-item
+                    = current_user.company.custom_field_2
+                    .pull-right
+                      = "#{current_user.company.custom_field_2_value}"
+                %li.list-group-item
+                  = "Leads Online Store ID"
+                  .pull-right
+                    = "#{current_user.company.leads_online_store_id}"
+                %li.list-group-item
+                  = "Leads Online FTP Username"
+                  .pull-right
+                    = "#{current_user.company.leads_online_ftp_username}"
+                %li.list-group-item
+                  = "Leads Online FTP Password"
+                  .pull-right
+                    = "#{current_user.company.leads_online_ftp_password}"
+
+    .row
       .col-xs-12.col-sm-6  
         - unless Yard.device_groups(current_yard_id).blank?
-          #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          #device_groups_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default
               .panel-heading
                 %h5.panel-title 
                   - unless current_user.device_group.blank?
-                    %a{"aria-controls" => "devices", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#devices", :role => "button"}
+                    %a{"aria-controls" => "devices", "aria-expanded" => "false", "data-parent" => "#device_groups_accordion", "data-toggle" => "collapse", :href => "#devices", :role => "button"}
                       = "#{current_user.device_group.DeviceGroupName} Device Group"
                   - else
                     No Device Group for this User
@@ -86,115 +225,5 @@
             .panel-heading
               %h5.panel-title 
                 No Device Groups
-    .row
-      .col-xs-12.col-sm-6
-        - unless @contract.blank?
-          #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-            .panel.panel-default
-              .panel-heading
-                %h5.panel-title 
-                  %a{"aria-controls" => "contract", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#contract", :role => "button"}
-                    Contract
-              #contract.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-                %ul.list-group
-                  %li.list-group-item
-                    %strong= @contract.contract_name
-                    %br
-                    = @contract.verbiage.html_safe
-        - else
-          .panel.panel-default
-            .panel-heading
-              %h5.panel-title 
-                No Contracts
-
-      .col-xs-12.col-sm-6
-        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-          .panel.panel-default
-            .panel-heading
-              %h5.panel-title
-                %a{"aria-controls" => "yards", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#yards", :role => "button"}
-                  Yards
-            #yards.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-              %ul.list-group
-                - Yard.all(current_user.token).each do |yard|
-                  %li.list-group-item{:class => (yard['Id'] == current_yard_id) ? "list-group-item-warning" : ""}= yard["Name"]
-
-    .row
-      .col-xs-12.col-sm-6
-        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-          .panel.panel-default
-            .panel-heading
-              %h5.panel-title
-                %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#dragon_api", :role => "button"}
-                  Scrap Dragon API
-            #dragon_api.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-              %ul.list-group
-                %li.list-group-item
-                  = "Location"
-                  .pull-right
-                    = "#{current_user.company.dragon_api}"
-                %li.list-group-item
-                  = "Yard ID"
-                  .pull-right
-                    = "#{current_yard_id}"
-        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-          .panel.panel-default
-            .panel-heading
-              %h5.panel-title
-                %a{"aria-controls" => "dragon_api", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#jpegger_service", :role => "button"}
-                  Jpegger Service
-            #jpegger_service.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-              %ul.list-group
-                %li.list-group-item
-                  = "IP Address"
-                  .pull-right
-                    = "#{current_user.company.jpegger_service_ip}"
-                %li.list-group-item
-                  = "Port"
-                  .pull-right
-                    = "#{current_user.company.jpegger_service_port}"
-
-      -# if current_user.company.include_leads_online? 
-      .col-xs-12.col-sm-6
-        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-          .panel.panel-default
-            .panel-heading
-              %h5.panel-title
-                %a{"aria-controls" => "leads", "aria-expanded" => "false", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#leads", :role => "button"}
-                  Company Info
-            #leads.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-              %ul.list-group
-                %li.list-group-item
-                  = "Name"
-                  .pull-right
-                    = "#{current_user.company.name}"
-                - unless current_user.company.full_address.blank?
-                  %li.list-group-item
-                    = current_user.company.full_address.html_safe
-                %li.list-group-item
-                  Phone
-                  .pull-right= current_user.company.phone
-                - unless current_user.company.custom_field_1.blank? and current_user.company.custom_field_1_value.blank?
-                  %li.list-group-item
-                    = current_user.company.custom_field_1
-                    .pull-right
-                      = "#{current_user.company.custom_field_1_value}"
-                - unless current_user.company.custom_field_2.blank? and current_user.company.custom_field_2_value.blank?
-                  %li.list-group-item
-                    = current_user.company.custom_field_2
-                    .pull-right
-                      = "#{current_user.company.custom_field_2_value}"
-                %li.list-group-item
-                  = "Leads Online Store ID"
-                  .pull-right
-                    = "#{current_user.company.leads_online_store_id}"
-                %li.list-group-item
-                  = "Leads Online FTP Username"
-                  .pull-right
-                    = "#{current_user.company.leads_online_ftp_username}"
-                %li.list-group-item
-                  = "Leads Online FTP Password"
-                  .pull-right
-                    = "#{current_user.company.leads_online_ftp_password}"
 
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}

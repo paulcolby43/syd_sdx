@@ -15,6 +15,7 @@ class UserSettingsController < ApplicationController
   def show
     @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
+    @event_codes = current_user.company.event_codes
   end
 
   # GET /user_settings/new
@@ -25,6 +26,7 @@ class UserSettingsController < ApplicationController
   def edit
     @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
+    @event_codes = current_user.company.event_codes
   end
 
   # POST /user_settings
