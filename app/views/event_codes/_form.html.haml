@@ -27,13 +27,13 @@
           =# f.text_field :camera_position, placeholder: "Camera position", :class => "form-control input-lg"
           = f.select :camera_position, options_for_select(camera_positions), {prompt: "Select camera position"}, {:class => "form-control input-lg"}
       .row.form-group
-        %div{:class => "col-sm-4 col-md-4"}
+        %div{:class => "col-sm-12 col-md-4"}
           = label_tag "Fetches", nil, :class => 'control-label'
           = f.text_field :include_in_fetch_lists, :value => "#{@event_code.include_in_fetch_lists? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
-        %div{:class => "col-sm-4 col-md-4"}
+        %div{:class => "col-sm-12 col-md-4"}
           = label_tag "Purchases", nil, :class => 'control-label'
           = f.text_field :include_in_images, :value => "#{@event_code.include_in_images? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
-        %div{:class => "col-sm-4 col-md-4"}
+        %div{:class => "col-sm-12 col-md-4"}
           = label_tag "Shipments", nil, :class => 'control-label'
           = f.text_field :include_in_shipments, :value => "#{@event_code.include_in_shipments? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
       

@@ -136,7 +136,12 @@ Rails.application.routes.draw do
   end
   
   resources :pack_contracts
-  resources :pack_shipments
+  
+  resources :pack_shipments do
+    member do
+      get :fetches
+    end
+  end
   
   resources :inventories do
     member do

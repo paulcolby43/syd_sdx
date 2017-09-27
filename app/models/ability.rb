@@ -188,6 +188,7 @@ class Ability
       ############
       can :index, :pack_shipments
       can :show, :pack_shipments
+      can :fetches, :pack_shipments
       
       # Inventories
       ############

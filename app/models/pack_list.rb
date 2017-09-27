@@ -79,7 +79,28 @@ class PackList
     data= Hash.from_xml(response)
     Rails.logger.info data
 #    return data
-    return data["SavePackResponse"]["Success"]
+    return data["SaveMobilePackListResponse"]["Success"]
+  end
+  
+  def self.set_shipment_id(auth_token, yard_id, pack_list_id, shipment_id, contract_id)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/PackList"
+    payload = {
+      "Id" => pack_list_id,
+      "ShipmentHeadId" => shipment_id,
+      "ContractHeadId" => contract_id
+      }
+      
+    json_encoded_payload = JSON.generate(payload)
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info "*******************PackList.set_shipment_id: #{data}"
+#    return data
+    return data["SaveMobilePackListResponse"]["Success"]
   end
   
   def self.pack_items(auth_token, yard_id, pack_list_id)

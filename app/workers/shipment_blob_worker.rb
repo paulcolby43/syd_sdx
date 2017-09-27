@@ -62,5 +62,6 @@ class ShipmentBlobWorker
 #    shipment_file.blob_id = blob.id
 #
 #    shipment_file.save
+
   end
 end
