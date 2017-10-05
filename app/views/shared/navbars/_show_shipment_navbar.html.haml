@@ -9,4 +9,6 @@
           = title
         .col-xs-4.col-sm-4
           - unless total.blank?
-            #net_total= total
+            #net_total{style: "display: inline;"}
+              = total
+            %span{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']
