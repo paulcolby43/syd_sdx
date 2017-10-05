@@ -1,0 +1,25 @@
+- @title="Event Codes"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container  
+    - unless @event_codes.blank?
+      - @event_codes.each do |event_code|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: event_code_path(event_code), class: "list-group-item event_code_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{event_code.name}"}}
+                  = event_code.name
+                  .pull-right
+                    %i.fa.fa-chevron-right
+                  %br/
+                  - unless event_code.camera_class.blank? and event_code.camera_position.blank?
+                    %small
+                      = camera_class_string(event_code.camera_class) unless event_code.camera_class.blank?
+                      - unless event_code.camera_position.blank?
+                        %br
+                        = camera_position_string(event_code.camera_position) 
+    - else
+      %p.lead No Event Codes
+    
+    %p= link_to 'New Event Code', new_event_code_path, class: 'btn btn-lg btn-primary'

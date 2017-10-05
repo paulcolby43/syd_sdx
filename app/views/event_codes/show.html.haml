@@ -1,0 +1,36 @@
+= render partial: "shared/navbars/show_event_code_navbar", locals: {title: "#{@event_code.name}"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %div.row
+      .col-xs-12.col-sm-6.col-md-offset-3
+        %div.panel.panel-default
+          %div.panel-heading
+            Event Code
+          %div.list_group
+            %div.list-group-item
+              %strong= "Name:"
+              .pull-right
+                = "#{@event_code.name}"
+            %div.list-group-item
+              %strong= "Camera Class:"
+              .pull-right
+                = camera_class_string(@event_code.camera_class) unless @event_code.camera_class.blank?
+            %div.list-group-item
+              %strong= "Camera Position:"
+              .pull-right
+                = camera_position_string(@event_code.camera_position) unless @event_code.camera_position.blank?
+            %div.list-group-item
+              %strong= "Include in Fetches?"
+              .pull-right
+                = @event_code.include_in_fetch_lists? ? 'Yes' : 'No'
+            %div.list-group-item
+              %strong= "Include in Purchases?"
+              .pull-right
+                = @event_code.include_in_images? ? 'Yes' : 'No'
+            %div.list-group-item
+              %strong= "Include in Shipments?"
+              .pull-right
+                = @event_code.include_in_shipments? ? 'Yes' : 'No'
+
+= render partial: "shared/event_code_footer_navbar", locals: {title: "Event Code"}

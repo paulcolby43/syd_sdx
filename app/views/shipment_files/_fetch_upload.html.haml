@@ -1,0 +1,24 @@
+= form_for ShipmentFile.new, :html => {:id => "event_code_#{event_code.id}_upload_form", :multipart => true, :class => 'form-horizontal'} do |f|
+  = f.hidden_field :user_id, value: current_user.id
+  = f.hidden_field :yard_id, value: current_yard_id
+  = f.hidden_field :ticket_number, value: @pack_shipment['ShipmentNumber']
+  = f.hidden_field :customer_name, value: @pack_shipment['CustomerName']
+  = f.hidden_field :event_code_id, value: event_code.id
+  %div{:id => 'uploads', :style => 'display:block;'}
+    %p{id: "upload_button", style: "display:block;"}
+      = f.file_field :file, name: "shipment_file[file]", :type => 'file', "data-event-code-id" => event_code.id, :class => 'new_shipment_file btn-primary btn-block btn-lg', title: "<i class='fa fa-camera'/> #{event_code.name}".html_safe
+
+  .picture_loading_spinner{:style => "display:none;", :id => "shipment_file_spinner"}
+    = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+    Uploading ...
+  %div{id: "event_code_#{event_code.id}_pictures"}
+
+  .clear
+  %script{:id => "template-upload", :type => "text/x-tmpl"}
+    .upload
+      {%=o.name%}
+      .progress.progress-striped
+        .progress-bar{:style => "width: 0%"}
+  %script{:id => "template-download", :type => "text/x-tmpl"}
+    .download
+      {%=o.name%}

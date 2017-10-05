@@ -188,6 +188,7 @@ class Ability
       ############
       can :index, :pack_shipments
       can :show, :pack_shipments
+      can :fetches, :pack_shipments
       
       # Inventories
       ############
@@ -198,6 +199,13 @@ class Ability
       can :show, :inventories
       can :create, :inventories
       can :edit, :inventories
+      
+      # EventCodes
+      ############
+      can :manage, EventCode do |event_code|
+        event_code.user_id == user.id
+      end
+      can :create, EventCode
       
     # End admin user role
     

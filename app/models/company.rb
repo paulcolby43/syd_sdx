@@ -5,6 +5,7 @@ class Company < ActiveRecord::Base
   
   has_many :users
   has_many :inventories, through: :users
+  has_many :event_codes
   
   mount_uploader :logo, LogoUploader
   
@@ -41,6 +42,18 @@ class Company < ActiveRecord::Base
     unless (address1.blank? and city.blank? and state.blank? and zip.blank?)
       "#{address1}<br>#{address2.blank? ? '' : address2 + '<br>'} #{city} #{state} #{zip}"
     end
+  end
+  
+  def image_event_codes
+    event_codes.where(include_in_images: true)
+  end
+  
+  def shipment_event_codes
+    event_codes.where(include_in_shipments: true)
+  end
+  
+  def fetch_event_codes
+    event_codes.where(include_in_fetch_lists: true)
   end
   
   #############################

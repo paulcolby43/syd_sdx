@@ -5,6 +5,7 @@ class ShipmentBlobWorker
     shipment_file = ShipmentFile.find(shipment_file_id)
     shipment_file.update_attribute(:process, true)
     shipment_file.file.recreate_versions!
+    event_code = shipment_file.event_code
 
     # Create blob
     if shipment_file.file.content_type.start_with? 'image'
@@ -26,7 +27,7 @@ class ShipmentBlobWorker
                 <TABLE>shipments</TABLE>
                 <BLOB>#{Base64.encode64(large_image_blob_data)}</BLOB>
                 <TICKET_NBR>#{shipment_file.ticket_number}</TICKET_NBR>
-                <EVENT_CODE>#{shipment_file.event_code}</EVENT_CODE>
+                <EVENT_CODE>#{event_code.name}</EVENT_CODE>
                 <FILE_NAME>#{File.basename(shipment_file.file_url)}</FILE_NAME>
                 <BRANCH_CODE>#{shipment_file.branch_code}</BRANCH_CODE>
                 <YARDID>#{shipment_file.yard_id}</YARDID>
@@ -61,5 +62,6 @@ class ShipmentBlobWorker
 #    shipment_file.blob_id = blob.id
 #
 #    shipment_file.save
+
   end
 end

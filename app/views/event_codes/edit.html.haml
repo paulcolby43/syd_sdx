@@ -1,0 +1,6 @@
+= render partial: "shared/navbars/new_and_edit_event_code_navbar", locals: {title: "#{@event_code.name}"}
+- @title="Edit #{@event_code.name} event code"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    = render 'form'

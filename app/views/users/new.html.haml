@@ -31,8 +31,8 @@
           = f.label :company_name, :class => "control-label"
           = f.text_field :company_name, value: "#{current_user.blank? ? '' : current_user.company.name}", :class => "form-control input-lg", placeholder: "Company Name", required: true
         %div{:class => "col-sm-6"}
-          = f.label 'Email - used to confirm your account', :class => "control-label"
-          = f.text_field :email, :class => "form-control input-lg", placeholder: "Email - used to confirm your account", required: true
+          = f.label 'Email', :class => "control-label"
+          = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
       .row.form-group.required
         %div{:class => "col-sm-4"}
           = f.label :username, :class => "control-label"
@@ -78,7 +78,7 @@
                 = link_to 'Terms of Service', welcome_tos_path, target: '_blank'
                 and 
                 = link_to 'Privacy Policy', welcome_privacy_path, target: '_blank'
-            %p.lead A confirmation link will be sent to your email address in order to activate your live account.
+            %p.lead For new accounts, a confirmation link will be sent to your email address in order to activate your live account.
             = f.submit "Sign up", id: 'sign_up_button', :class => "btn btn-lg btn-primary", data: { disable_with: "Please wait ..." }#, disabled: true
             = link_to 'Cancel', :back, :class => "btn btn-lg btn-default"
             %br
@@ -92,6 +92,6 @@
                 = link_to 'Terms of Service', welcome_tos_path, target: '_blank'
                 and 
                 = link_to 'Privacy Policy', welcome_privacy_path, target: '_blank'
-            %p.lead A confirmation link will be sent to the email address in order to activate the live account.
+            %p.lead For new accounts, a confirmation link will be sent to the email address in order to activate the live account.
             = f.submit "Create user", :class => "btn btn-lg btn-primary", data: { disable_with: "Please wait ..." }
             = link_to 'Cancel', :back, :class => "btn btn-lg btn-default"

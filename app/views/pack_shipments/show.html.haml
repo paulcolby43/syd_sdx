@@ -10,15 +10,24 @@
       %li.active
         %a{:href => "#pack_details", :data => {:toggle => "tab"}}
           %i.fa.fa-dropbox.fa-lg
-          = "Pack Details" unless mobile_device?
+          - unless mobile_device?
+            = "Pack Details"
+          - else
+            %small Details
       %li
         %a{:href => "#contract_items", :data => {:toggle => "tab"}}
           %i.fa.fa-list-alt.fa-lg
-          = "Contract Items" unless mobile_device?
+          - unless mobile_device?
+            = "Contract Items" 
+          - else
+            %small Items
       %li
         %a{:href => "#shipment_pictures", :data => {:toggle => "tab"}}
           %i.fa.fa-photo.fa-lg
-          = "Pictures" unless mobile_device?
+          - unless mobile_device?
+            = "Pictures"
+          - else
+            %small Pictures
     .tab-content
       .tab-pane.active{:id => "pack_details"}
         -#

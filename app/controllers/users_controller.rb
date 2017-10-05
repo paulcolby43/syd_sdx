@@ -60,10 +60,9 @@ class UsersController < ApplicationController
           end
         else
           if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists.'
+            @user.email_confirmed = true # Automatically confirm email address since already in Dragon
             if @user.save
               User.generate_scrap_dragon_token(user_params, @user.id)
-#              UserMailer.confirmation_instructions(@user).deliver
-              @user.send_confirmation_instructions_email
               flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
               redirect_to login_path if current_user.blank?
               redirect_to users_path unless current_user.blank?
