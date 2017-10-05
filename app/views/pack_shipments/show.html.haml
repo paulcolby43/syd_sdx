@@ -5,7 +5,12 @@
   .container
     %h3
       = "#{@pack_shipment['CustomerName']}"
-      %small= "#{@pack_shipment['ContractDescription']}"
+      %p  
+        %small
+          = "Pack List #{@pack_list['PackListNumber']}"
+          %br
+          = "#{@pack_shipment['ContractDescription']}"
+          
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#pack_details", :data => {:toggle => "tab"}}
