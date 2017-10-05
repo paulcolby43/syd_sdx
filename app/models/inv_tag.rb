@@ -5,11 +5,11 @@ class InvTag < ActiveRecord::Base
   self.primary_key = 'capture_seq_nbr'
   self.table_name = 'INVTAGS_data'
   
-  def self.api_find_by_id(inv_tag_id, company)
+  def self.api_find_by_ticket_number(tag_number, company)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-    command = "<FETCH><SQL>select * from INVTAGS where id='#{inv_tag_id}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from INVTAGS where ticket_nbr='#{tag_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
