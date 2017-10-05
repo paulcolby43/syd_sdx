@@ -20,7 +20,7 @@
                         = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
                         = "#{pack_shipment['ContractDescription']}"
                     =# pack_shipment
-                  %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch List"}, class: "list-group-item pack_shipment_button"}
+                  %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
                     .pull-right
                       &nbsp;
                       %i.fa.fa-chevron-right.fa-lg
