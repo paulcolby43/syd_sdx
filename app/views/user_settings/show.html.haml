@@ -59,6 +59,7 @@
             .panel-heading
               %h5.panel-title 
                 No Event Codes
+                .pull-right= link_to 'New', new_event_code_path
     .row
       .col-xs-12.col-sm-6
         - unless @contract.blank?
