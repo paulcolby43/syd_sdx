@@ -133,7 +133,7 @@ class Image < ActiveRecord::Base
 #    response = socket.recvfrom(200000)
 #    socket.close
     
-#    Rails.logger.debug "***********response: #{response}"
+#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{response}"
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
     data= Hash.from_xml(response) # Convert xml response to a hash
     
