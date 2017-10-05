@@ -76,7 +76,7 @@
               %div.row
                 .col-xs-12.col-sm-12.col-md-12
                   .well
-                    = InvTag.where(ticket_nbr: pack['PackInfo']['TagNumber']).first
+                    = InvTag.api_find_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company)
                   %div.panel.panel-primary.pack
                     %div.list-group-item
                       .pull-right
