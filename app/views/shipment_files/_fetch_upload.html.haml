@@ -6,9 +6,9 @@
   = f.hidden_field :event_code_id, value: event_code.id
   %div{:id => 'uploads', :style => 'display:block;'}
     %p{id: "upload_button", style: "display:block;"}
-      = f.file_field :file, name: "shipment_file[file]", :type => 'file', "data-event-code-id" => event_code.id, :class => 'new_shipment_file btn-primary btn-block btn-lg', title: "<i class='fa fa-camera'/> #{event_code.name}".html_safe
+      = f.file_field :file, name: "shipment_file[file]", :type => 'file', "data-event-code-id" => event_code.id, :class => 'new_fetch_shipment_file btn-primary btn-block btn-lg', title: "<i class='fa fa-camera'/> #{event_code.name}".html_safe
 
-  .picture_loading_spinner{:style => "display:none;", :id => "shipment_file_spinner"}
+  .picture_loading_spinner{:style => "display:none;", :id => "event_code_#{event_code.id}_shipment_file_spinner"}
     = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
     Uploading ...
   %div{id: "event_code_#{event_code.id}_pictures"}
