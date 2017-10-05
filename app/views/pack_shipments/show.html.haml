@@ -75,14 +75,14 @@
             - @current_packs.each do |pack|
               %div.row
                 .col-xs-12.col-sm-12.col-md-12
-                  .well
-                    = InvTag.api_find_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company)
                   %div.panel.panel-primary.pack
                     %div.list-group-item
                       .pull-right
                         %a{href: remove_pack_pack_list_path(@pack_list['Id'], pack_id: pack['PackId'], pack_shipment_id: @pack_shipment['Id']), "data-pack-list-id" => @pack_list['Id'], "data-pack-id" => pack['PackId'], class: "remove_pack pack_shipment_button"}
                           %i.fa.fa-trash.fa-lg.text-danger
                       = "#{pack['PackInfo']['TagNumber']} #{pack['InventoryDescription']}"
+                      - InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company).each do |inv_tag|
+                        = inv_tag['EVENT_CODE']
                       %small
                         .text-muted.net_weight= "#{pack['PackInfo']['NetWeight']}"
                       =# pack

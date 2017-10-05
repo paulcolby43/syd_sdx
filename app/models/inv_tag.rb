@@ -5,7 +5,7 @@ class InvTag < ActiveRecord::Base
   self.primary_key = 'capture_seq_nbr'
   self.table_name = 'INVTAGS_data'
   
-  def self.api_find_by_ticket_number(tag_number, company)
+  def self.api_find_all_by_ticket_number(tag_number, company)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
@@ -26,7 +26,7 @@ class InvTag < ActiveRecord::Base
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]
     else
-      return nil # No inv_tag found
+      return [] # No inv_tag found
     end
 
   end
@@ -54,7 +54,7 @@ class InvTag < ActiveRecord::Base
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]
     else
-      return nil # No inv_tag found
+      return [] # No inv_tag found
     end
 
   end
