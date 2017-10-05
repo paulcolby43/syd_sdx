@@ -2,7 +2,7 @@ class InvTag < ActiveRecord::Base
   
   establish_connection :jpegger
 
-#  self.primary_key = 'capture_seq_nbr'
+  self.primary_key = 'capture_seq_nbr'
   self.table_name = 'INVTAGS_data'
   
   def self.api_find_by_id(inv_tag_id, company)
