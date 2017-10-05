@@ -9,7 +9,7 @@ class InvTag < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-    command = "<FETCH><SQL>select * from INVTAGS where ticket_nbr='#{tag_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from INVTAGS_data where ticket_nbr='#{tag_number}'</SQL><ROWS>100</ROWS></FETCH>"
     
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
