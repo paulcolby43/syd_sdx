@@ -5,7 +5,12 @@
   .container
     %h3
       = "#{@pack_shipment['CustomerName']}"
-      %small= "#{@pack_shipment['ContractDescription']}"
+      %p  
+        %small
+          = "Pack List #{@pack_list['PackListNumber']}"
+          %br
+          = "#{@pack_shipment['ContractDescription']}"
+          
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#pack_details", :data => {:toggle => "tab"}}
@@ -81,6 +86,8 @@
                         %a{href: remove_pack_pack_list_path(@pack_list['Id'], pack_id: pack['PackId'], pack_shipment_id: @pack_shipment['Id']), "data-pack-list-id" => @pack_list['Id'], "data-pack-id" => pack['PackId'], class: "remove_pack pack_shipment_button"}
                           %i.fa.fa-trash.fa-lg.text-danger
                       = "#{pack['PackInfo']['TagNumber']} #{pack['InventoryDescription']}"
+                      %br
+                      Inventory tags:
                       - InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company).each do |inv_tag|
                         = inv_tag['EVENT_CODE']
                       %small
