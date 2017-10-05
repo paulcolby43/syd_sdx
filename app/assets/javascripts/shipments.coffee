@@ -50,7 +50,7 @@ jQuery ->
   ### End file upload ###
 
   ### File upload ###
-  $(".new_shipment_file").fileupload
+  $(".new_fetch_shipment_file").fileupload
     dataType: "script"
     disableImageResize: false
     imageMaxWidth: 1024
@@ -73,7 +73,7 @@ jQuery ->
           data.submit()
         event_code_id = $(this).data( "event-code-id" )
         $('#event_code_' + event_code_id + '_pictures').prepend('<div class="row"><div class="col-xs-12"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
-        $(".picture_loading_spinner").show()
+        $('#event_code_' + event_code_id + '_shipment_file_spinner').show()
       else
         alert "" + file.name + " is not a gif, jpeg, or png picture file"
 
