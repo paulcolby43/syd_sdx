@@ -269,12 +269,13 @@ jQuery ->
 
   ### Gross/Tare Picture Uploads ###
   $('.ticket_input_fields_wrap').on 'click', '.gross_or_tare_picture_button', ->
-    event_code = $(this).data( "event-code" )
+    #event_code = $(this).data( "event-code" )
+    event_code_id = $(this).data( "event-code-id" )
     item_id = $(this).data( "item-id" )
     item_name = $(this).data( "item-name" )
     weight = $(this).data( "weight" )
-
-    $('#image_file_event_code').val event_code
+    $('#image_file_event_code_id_' + event_code_id).prop 'checked', true
+    #$('#image_file_event_code').val event_code
     $('#image_file_tare_seq_nbr').val item_id
     $('#image_file_commodity_name').val item_name
     $('#image_file_weight').val weight
@@ -285,7 +286,7 @@ jQuery ->
 
   ### Clear the commodity picture upload fields for generic picture uploads ###
   $(document).on 'click', '#picture_upload_modal_link', ->
-    $('#image_file_event_code').val ''
+    $('#image_file_event_code_id').val ''
     $('#image_file_tare_seq_nbr').val ''
     $('#image_file_commodity_name').val ''
     $('#image_file_weight').val ''
@@ -394,6 +395,14 @@ jQuery ->
       $('#image_file_vin_number').val ''
     return
   ### End event code changed - clear data; check if License Plate or VIN or Vehicle ###
+
+  ### Event code clicked - clear data ###
+  $('#event_code').on 'click', (e) ->
+    $('#image_file_tare_seq_nbr').val ''
+    $('#image_file_commodity_name').val ''
+    $('#image_file_weight').val ''
+    return
+  ### End event code changed - clear data ###
 
   ### Scale camera trigger ###
   $('#items_accordion').on 'click', '.scale_camera_trigger', (e) ->
