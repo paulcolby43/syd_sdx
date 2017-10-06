@@ -3,6 +3,8 @@ class Company < ActiveRecord::Base
   before_save :default_jpegger_service_ip
   before_save :default_jpegger_service_port
   
+  after_create :create_gross_and_tare_event_codes
+  
   has_many :users
   has_many :inventories, through: :users
   has_many :event_codes
@@ -54,6 +56,11 @@ class Company < ActiveRecord::Base
   
   def fetch_event_codes
     event_codes.where(include_in_fetch_lists: true)
+  end
+  
+  def create_gross_and_tare_event_codes
+    EventCode.create(company_id: self.id, name: 'Gross', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Tare', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
   end
   
   #############################
