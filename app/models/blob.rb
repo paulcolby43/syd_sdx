@@ -24,12 +24,8 @@ class Blob < ActiveRecord::Base
     
     ssl_client.close
     
-#    socket = TCPSocket.open(host,port) # Connect to server
-#    socket.send(command, 0)
-#    response = socket.recvfrom(200000)
-#    socket.close
+    Rails.logger.debug "***********Blob.api_find_by_id response: #{response}"
     
-#    data= Hash.from_xml(response.first) # Convert xml response to a hash
     data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
