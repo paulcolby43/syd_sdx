@@ -68,6 +68,13 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :blobs do
+    member do
+      get 'show_jpeg_image'
+      get 'show_preview_image'
+    end
+  end
+  
   ### Start sidekiq stuff ###
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
