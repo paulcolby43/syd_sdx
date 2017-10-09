@@ -147,6 +147,7 @@ Rails.application.routes.draw do
   resources :pack_shipments do
     member do
       get :fetches
+      get :show_pictures
     end
   end
   
