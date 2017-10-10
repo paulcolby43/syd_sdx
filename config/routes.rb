@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   
-  resources :inventory_tags do
+  resources :inv_tags do
     member do
       get 'show_jpeg_image'
       get 'show_preview_image'
