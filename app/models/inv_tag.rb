@@ -5,6 +5,26 @@ class InvTag < ActiveRecord::Base
   self.primary_key = 'capture_seq_nbr'
   self.table_name = 'INVTAGS_data'
   
+  #############################
+  #     Class Methods         #
+  #############################
+  
+  # Open and read jpegger INVTAG image preview page, over ssl
+  def InvTag.preview(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
+  # Open and read jpegger INVTAG jpeg_image page, over ssl
+  def InvTag.jpeg_image(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
   def self.api_find_all_by_ticket_number(tag_number, company)
     require 'socket'
     host = company.jpegger_service_ip
