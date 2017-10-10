@@ -29,12 +29,6 @@
     .tab-content
       .tab-pane.active{:id => "shipment_pictures"}
         %br
-        %p
-          Inventory Tags:
-          = @inventory_tags_array
-          -#
-            - @inventory_tags_array.each do |inv_tag|
-              = inv_tag['EVENT_CODE']
         %div#shipment_images
         - @images_array.each_slice(6) do |images|
           .row
@@ -45,5 +39,15 @@
                     = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                   .text-center
                     %small.text-muted= image['EVENT_CODE']
+        - @inventory_tags_array.each_slice(6) do |inventory_tags|
+          .row
+            - inventory_tags.each do |inv_tag|
+              .col-xs-12.col-sm-2.col-md-2
+                .thumbnail
+                  -#
+                    %a{href: inventory_tag_path(inv_tag['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                      = image_tag(show_preview_image_inventory_tag_path(image['CAPTURE_SEQ_NBR']), alt: inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  .text-center
+                    %small.text-muted= inv_tag['EVENT_CODE']
       
 = render partial: "shared/shipment_footer_navbar", locals: {title: "Shipment"}
