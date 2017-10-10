@@ -10,7 +10,7 @@ class InvTag < ActiveRecord::Base
   #############################
   
   # Open and read jpegger INVTAG image preview page, over ssl
-  def InvTag.preview(company, capture_sequence_number)
+  def self.preview(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}"
     
@@ -18,7 +18,7 @@ class InvTag < ActiveRecord::Base
   end
   
   # Open and read jpegger INVTAG jpeg_image page, over ssl
-  def InvTag.jpeg_image(company, capture_sequence_number)
+  def self.jpeg_image(company, capture_sequence_number)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}"
     
