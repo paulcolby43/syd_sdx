@@ -113,6 +113,7 @@ class PackShipmentsController < ApplicationController
     @current_packs.each do |pack|
       @inventory_tags_array << InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company) 
     end
+    @inventory_tags_array = @inventory_tags_array.flatten # Need to flatten array since may end up with array filled with arrays, and we only want a one dimensional array
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @pack_shipment['ShipmentNumber']} } 
