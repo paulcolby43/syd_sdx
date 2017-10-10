@@ -45,7 +45,7 @@
               .col-xs-12.col-sm-2.col-md-2
                 .thumbnail
                   %a{href: inventory_tag_path(inv_tag['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                    = image_tag(show_preview_image_inventory_tag_path(image['CAPTURE_SEQ_NBR']), alt: inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                    = image_tag(show_preview_image_inventory_tag_path(inv_tag['CAPTURE_SEQ_NBR']), alt: inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                   .text-center
                     %small.text-muted= inv_tag['EVENT_CODE']
       
