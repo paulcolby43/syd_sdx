@@ -1,0 +1,37 @@
+.col-xs-12.col-sm-2.col-md-2
+  %div.panel.panel-primary
+    %div.list_group
+      - unless @today == true or params[:q].blank? or @ticket_number.blank?
+        %a{href: shipment_path(shipment), class: "list-group-item"}
+          - unless shipment.hidden? or not current_user.show_thumbnails?
+            = image_tag(show_preview_image_shipment_path(shipment), alt: shipment.id, class: 'thumbnail img-responsive')
+          = shipment.ticket_nbr
+          .pull-right
+            %i.fa.fa-chevron-right
+          - unless shipment.event_code.blank?
+            %br/
+            %small= shipment.event_code
+          - unless shipment.container_nbr.blank?
+            %br
+            = "#{shipment.container_nbr}"
+          - unless shipment.camera_name.blank?
+            %br/
+            %small= shipment.camera_name
+          %br/
+          %small.text-muted= shipment.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
+      - else
+        %a{href: shipments_path("q[ticket_nbr_eq]" => shipment.ticket_nbr, "q[location_eq]" => current_user.location), class: "list-group-item"}
+          - unless shipment.hidden? or not current_user.show_thumbnails?
+            = image_tag(show_preview_image_shipment_path(shipment), alt: shipment.id, class: 'thumbnail img-responsive')
+          = shipment.ticket_nbr
+          .pull-right
+            %i.fa.fa-chevron-right
+          -#
+            - unless shipment.event_code.blank?
+              %br/
+              %small= shipment.event_code
+            - unless shipment.camera_name.blank?
+              %br/
+              %small= shipment.camera_name
+          %br/
+          %small.text-muted= shipment.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
