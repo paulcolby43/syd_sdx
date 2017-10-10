@@ -79,4 +79,32 @@ class InvTag < ActiveRecord::Base
 
   end
   
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>select * from INVTAGS where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+    ssl_client.close
+    
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      return data["RESULT"]["ROW"]
+    else
+      return nil # No inv_tag found
+    end
+
+  end
+  
 end
