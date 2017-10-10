@@ -31,8 +31,10 @@
         %br
         %p
           Inventory Tags:
-          - @inventory_tags_array.each do |inv_tag|
-            = inv_tag['EVENT_CODE']
+          = @inventory_tags_array
+          -#
+            - @inventory_tags_array.each do |inv_tag|
+              = inv_tag['EVENT_CODE']
         %div#shipment_images
         - @images_array.each_slice(6) do |images|
           .row
