@@ -104,7 +104,7 @@ class PackShipmentsController < ApplicationController
   # GET /pack_shipments/1/show_pictures
   # GET /pack_shipments/1/show_pictures.json
   def show_pictures
-    authorize! :show, :pack_shipments
+    authorize! :pictures, :pack_shipments
     @pack_shipment = PackShipment.find(current_user.token, current_yard_id, params[:id])
     @pack_list = PackShipment.pack_list(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])

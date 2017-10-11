@@ -4,7 +4,7 @@
     %p= @customer
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    - if current_user.admin?
+    - if current_user.admin? and current_user.company.include_external_users?
       - unless @customer_user.blank?
         .alert.alert-warning
           %p.lead

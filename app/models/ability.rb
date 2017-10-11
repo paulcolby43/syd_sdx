@@ -186,19 +186,24 @@ class Ability
       
       # PackShipments
       ############
-      can :index, :pack_shipments
-      can :show, :pack_shipments
-      can :fetches, :pack_shipments
+      if user.company.include_shipments?
+        can :index, :pack_shipments
+        can :show, :pack_shipments
+        can :fetches, :pack_shipments
+        can :pictures, :pack_shipments
+      end
       
       # Inventories
       ############
-      can :manage, Inventory do |inventory|
-        inventory.user_id == user.id
+      if user.company.include_inventories?
+        can :manage, Inventory do |inventory|
+          inventory.user_id == user.id
+        end
+        can :index, :inventories
+        can :show, :inventories
+        can :create, :inventories
+        can :edit, :inventories
       end
-      can :index, :inventories
-      can :show, :inventories
-      can :create, :inventories
-      can :edit, :inventories
       
       # EventCodes
       ############

@@ -228,4 +228,22 @@
               %h5.panel-title 
                 No Device Groups
 
+      .col-xs-12.col-sm-6  
+        #additional_features_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title 
+                Additional Features
+            #additional_features.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+              %ul.list-group
+                %li.list-group-item
+                  = "Include Shipments?"
+                  .pull-right= "#{current_user.company.include_shipments? ? 'Yes' : 'No'}"
+                %li.list-group-item
+                  = "Include Inventories?"
+                  .pull-right= "#{current_user.company.include_inventories? ? 'Yes' : 'No'}"
+                %li.list-group-item
+                  = "Include External Users?"
+                  .pull-right= "#{current_user.company.include_external_users? ? 'Yes' : 'No'}"
+
 = render partial: "shared/footer_navbar", locals: {title: "Settings"}
