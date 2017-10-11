@@ -72,25 +72,22 @@
           = f.label :custom_field_2_value, "Custom Field 2 Value", :class => "control-label"
           = f.text_field :custom_field_2_value, :placeholder => "Custom Field 2 Value", class: "form-control input-lg"
   - if @company.include_leads_online?
-    #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-      .panel.panel-default
-        #headingOne.panel-heading{:role => "tab"}
-          %h4.panel-title
-            %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :role => "button"}
-              Leads Online Info
-        #collapseOne.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
-          .panel-body
-            .row.form-group
-              %div{:class => "col-sm-6"}
-                = f.label :leads_online_store_id, "Leads Online Store ID", :class => "control-label"
-                = f.text_field :leads_online_store_id, :placeholder => "Leads Online Store ID", class: "form-control input-lg"
-            .row.form-group
-              %div{:class => "col-sm-6"}
-                = f.label :leads_online_store_id, "Leads Online FTP Username", :class => "control-label"
-                = f.text_field :leads_online_ftp_username, :placeholder => "Leads Online FTP Username", class: "form-control input-lg"
-              %div{:class => "col-sm-6"}
-                = f.label :leads_online_store_id, "Leads Online FTP Password", :class => "control-label"
-                = f.text_field :leads_online_ftp_password, :placeholder => "Leads Online FTP Password", class: "form-control input-lg"
+    .panel.panel-default
+      #headingOne.panel-heading{:role => "tab"}
+        %h4.panel-title
+          Leads Online Info
+      .panel-body
+        .row.form-group
+          %div{:class => "col-sm-6"}
+            = f.label :leads_online_store_id, "Leads Online Store ID", :class => "control-label"
+            = f.text_field :leads_online_store_id, :placeholder => "Leads Online Store ID", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-6"}
+            = f.label :leads_online_store_id, "Leads Online FTP Username", :class => "control-label"
+            = f.text_field :leads_online_ftp_username, :placeholder => "Leads Online FTP Username", class: "form-control input-lg"
+          %div{:class => "col-sm-6"}
+            = f.label :leads_online_store_id, "Leads Online FTP Password", :class => "control-label"
+            = f.text_field :leads_online_ftp_password, :placeholder => "Leads Online FTP Password", class: "form-control input-lg"
     -#
       .panel.panel-default
         #headingTwo.panel-heading{:role => "tab"}
@@ -117,6 +114,23 @@
               %div{:class => "col-sm-6"}
                 = f.label :bwi_upload_url, "BWI Upload URL", :class => "control-label"
                 = f.text_field :bwi_upload_url, :placeholder => "BWI Upload URL", class: "form-control input-lg"
+    
+    .panel.panel-default
+      #headingOne.panel-heading{:role => "tab"}
+        %h4.panel-title
+          Additional Features
+      .panel-body
+        .row.form-group
+          %div{:class => "col-sm-4"}
+            = f.label :include_shipments, "Include Shipments?", :class => "control-label"
+            = "#{@company.include_shipments? ? 'Yes' : 'No'}"
+          %div{:class => "col-sm-4"}
+            = f.label :include_inventories, "Include Inventories?", :class => "control-label"
+            = "#{@company.include_inventories? ? 'Yes' : 'No'}"
+          %div{:class => "col-sm-4"}
+            = f.label :include_external_users, "Include External Users?", :class => "control-label"
+            = "#{@company.include_external_users? ? 'Yes' : 'No'}"
+
   .row
     .col-sm-6.col-md-4.col-md-offset-4
       = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}, autocomplete: "off") do

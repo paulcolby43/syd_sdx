@@ -21,9 +21,13 @@
 
   - if current_user.admin?
     - if @customer_user.blank?
-      .alert.alert-warning
-        = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
-      = render partial: 'users/new_modal'
+      - if current_user.company.include_external_users?
+        .alert.alert-warning
+          = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
+        = render partial: 'users/new_modal'
+      - else
+        .alert.alert-warning
+          = link_to "Create customer login", "#", "data-toggle" => "modal", class: 'btn btn-default disabled'
         
   .well.col-sm-12.col-md-12{id: 'customer_info'}
     = form_tag customer_path(@customer["Id"]), method: 'put', :class => "form-horizontal", id: 'customer_form' do
