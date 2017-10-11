@@ -11,4 +11,4 @@
           - unless total.blank?
             #net_total{style: "display: inline;"}
               = total
-            %span{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']
+            #pack_list_unit_of_measure{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']

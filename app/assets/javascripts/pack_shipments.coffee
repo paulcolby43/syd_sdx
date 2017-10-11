@@ -164,7 +164,9 @@ jQuery ->
       pack_description = pack_select.closest('#pack_details').find('#pack_description:first').val()
       pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
       pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
+      pack_list_unit_of_measure = $('#pack_list_unit_of_measure').text()
       console.log 'pack description', pack_description
+      console.log 'pack list unit of measure', pack_list_unit_of_measure
       $.ajax
         url: "/packs/" + pack_id
         dataType: 'script'
@@ -174,6 +176,7 @@ jQuery ->
           pack_shipment_id: pack_shipment_id
           pack_tag_number: pack_tag_number
           pack_net_weight: pack_net_weight
+          pack_list_unit_of_measure: pack_list_unit_of_measure
         success: (data) ->
           adding_pack_spinner_icon.hide()
           calculate_net_total()

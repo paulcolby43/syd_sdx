@@ -51,6 +51,7 @@ class PacksController < ApplicationController
         @pack_id = params[:id]
         @pack_tag_number = params[:pack_tag_number]
         @pack_net_weight = params[:pack_net_weight]
+        @pack_list_unit_of_measure = params[:pack_list_unit_of_measure]
         @pack_description = params[:pack_description]
         @pack_shipment_id = params[:pack_shipment_id]
         @pack_list_id = params[:pack_list_id]
