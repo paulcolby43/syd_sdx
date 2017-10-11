@@ -63,7 +63,7 @@
               %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '5') ? 'active' : ''}"}
                 = link_to 'Transferred', packs_path(status: 5)
         %li{:class => "#{(params[:controller] == 'inventories') ? 'active' : ''} #{current_user.company.include_inventories? ? '' : 'disabled'} "}
-          %a{href: "#{current_user.company.include_shipments? ? inventories_path : '#'}"} INVENTORIES
+          %a{href: "#{current_user.company.include_shipments? ? inventories_path : '#'}"} INVENTORY
         %li{:class => "#{(params[:controller] == 'pack_shipments') ? 'active' : ''} #{current_user.company.include_shipments? ? '' : 'disabled'} "}
           %a{href: "#{current_user.company.include_shipments? ? pack_shipments_path : '#'}", disabled: current_user.company.include_shipments? ? false:true} SHIPMENTS
         -#
