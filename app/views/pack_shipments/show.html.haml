@@ -94,7 +94,9 @@
                         - InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company).each do |inv_tag|
                           = inv_tag['EVENT_CODE']
                       %small
-                        .text-muted.net_weight= "#{pack['PackInfo']['NetWeight']}"
+                        .text-muted
+                          .net_weight{style: "display: inline;"}= pack['PackInfo']['NetWeight']
+                          %span{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']
                       =# pack
       
       .tab-pane{:id => "contract_items"}

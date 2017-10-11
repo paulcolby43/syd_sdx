@@ -11,4 +11,6 @@
         = @pack_tag_number
         = @pack_description
         %small
-          .text-muted.net_weight= "#{@pack_net_weight}"
+          .text-muted
+            .net_weight{style: "display: inline;"}= @pack_net_weight
+            %span{style: "display: inline;"}= @pack_list_unit_of_measure
