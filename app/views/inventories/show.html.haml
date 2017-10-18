@@ -68,7 +68,7 @@
                 %div{id: "remaining_packs", "data-remaining-packs-array" => @inventory.remaining_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
                   %div.list_group
                     - @inventory.remaining_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
-                      .list-group-item{id: "remaining_pack_#{pack['TagNumber']}", class: "remaining_pack #{pack['PrintDescription'].underscore}", style: 'display: none;'}
+                      .list-group-item{id: "remaining_pack_#{pack['TagNumber']}", class: "remaining_pack #{pack['PrintDescription'].parameterize.underscore}", style: 'display: none;'}
                         = "#{pack['TagNumber']} #{pack['PrintDescription']}"
               - else
                 .panel-body
