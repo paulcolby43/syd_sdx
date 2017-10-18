@@ -6,7 +6,6 @@
       CSV
 
 =# @pack_lists
-
 - @pack_lists.group_by{ |pl| pl['Items']['PackListItemInformation']['InventoryDescription'] }.each_with_index do |(pack_list_group, pack_lists), index|
   %div.panel.panel-default
     %div.panel-heading
