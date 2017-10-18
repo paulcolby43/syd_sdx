@@ -15,7 +15,7 @@ class Inventory < ActiveRecord::Base
   end
   
   def distinct_pack_descriptions
-    remaining_packs.map { |pack| [pack['PrintDescription'], pack['PrintDescription'].underscore] }.uniq
+    remaining_packs.map { |pack| [pack['PrintDescription'], pack['PrintDescription'].parameterize.underscore] }.uniq
   end
   
   #############################
