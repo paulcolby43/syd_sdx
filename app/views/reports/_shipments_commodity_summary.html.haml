@@ -1,0 +1,166 @@
+%p.lead 
+  Shipments Commodity Summary Report
+  - unless @pack_lists.blank? 
+    %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+      %i.fa.fa-download
+      CSV
+
+=# @pack_lists
+
+- @pack_lists.group_by{ |pl| pl['Items']['PackListItemInformation']['InventoryDescription'] }.each_with_index do |(pack_list_group, pack_lists), index|
+  %div.panel.panel-default
+    %div.panel-heading
+      %h3.panel-title
+        %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
+          = pack_list_group
+    %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
+      %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
+        %thead
+          %tr
+            %td 
+              %strong Date
+            %td 
+              %strong Shipment
+            %td 
+              %strong Tag
+            %td 
+              %strong Net
+        %tbody
+          - pack_lists.each do |pack_list|
+            %tr
+              %td= pack_list['DateCreated'].to_date.strftime("%m/%d/%y")
+              %td= link_to @pack_shipments.find {|pack_shipment| pack_shipment['PackListHeadId'] == pack_list['Id']}['ShipmentNumber'], pack_shipment_path(@pack_shipments.find {|pack_shipment| pack_shipment['PackListHeadId'] == pack_list['Id']}['Id'])
+              %td= pack_list['Items']['PackListItemInformation']['PackInfo']['TagNumber']
+              %td= "#{pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight'].to_d.round(3)} #{pack_list['Items']['PackListItemInformation']['PackInfo']['UnitOfMeasure']}"
+          %tr
+            %td
+            %td
+            %td
+            %td
+              %strong= "#{pack_lists.map { |pl| pl['Items']['PackListItemInformation']['PackInfo']['NetWeight'].to_d }.sum.round(3)}"
+              
+
+-#
+  - @pack_shipments.group_by{ |ps| "#{ps['CustomerName']}"}.each_with_index do |(pack_shipment_group, pack_shipments), index|
+    %div.panel.panel-default
+      %div.panel-heading
+        %h3.panel-title
+          %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
+            = pack_shipment_group
+            = "No name" if pack_shipment_group.blank?
+            #details.text-muted.pull-right
+              =# number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+      %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
+        %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
+          %thead
+            %tr
+              %th Date
+              %th Shipment
+              %th Description
+              %th Net
+              -#
+              %th Details
+          %tbody
+            - pack_shipments.sort_by{|pack_shipment| pack_shipment['DateShipped']}.reverse.each do |pack_shipment|
+              %tr
+                %td= pack_shipment['DateShipped'].to_date.strftime("%m/%d/%y")
+                %td= pack_shipment['ShipmentNumber']
+                %td= pack_shipment['ContractDescription']
+                %td= "#{pack_shipment['NetWeight']} #{pack_shipment['UnitOfMeasure']}"
+                %td= pack_shipment
+-#
+  - unless @packs.blank?
+    - @packs.group_by{ |p| p['InventoryDescription'] }.each_with_index do |(pack_group, packs), index|
+      %div.panel.panel-default
+        %div.panel-heading
+          %h3.panel-title
+            %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
+              = pack_group
+              #details.text-muted.pull-right
+                =# "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
+                =# number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+        %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
+          %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
+            %thead
+              %tr
+                %td Date
+                %td Shipment
+                %td Tag
+                %td Net
+                %td Details
+            %tbody
+              - packs.each do |pack|
+                %tr
+                  %td= pack["PackInfo"]["DateClosed"].to_date.strftime("%m/%d/%y")
+                  %td=# @pack_shipments.find {|pack_shipment| pack_shipment['Id'] == pack["TicketHeadId"]}["TicketNumber"]
+                  %td= pack["PackInfo"]["TagNumber"]
+                  %td= "#{pack["PackInfo"]["NetWeight"]} #{pack["PackInfo"]["UnitOfMeasure"]}"
+                  %td= pack
+                  -#
+                    %td= link_to @pack_shipments.find {|pack_shipment| pack_shipment['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'])
+  - else
+    %p No packs found
+
+-#
+  - @line_items.group_by{ |i| i['PrintDescription'] }.each_with_index do |(line_item_group, line_items), index|
+    %div.panel.panel-default
+      %div.panel-heading
+        %h3.panel-title
+          %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
+            = line_item_group
+            #details.text-muted.pull-right
+              = "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
+              = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+      %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
+        %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
+          %thead
+            %tr
+              %td 
+                %strong Date
+              %td 
+                %strong Ticket
+              %td 
+                %strong Customer
+              %td
+                %strong Net (LB)
+              %td
+                %strong Price
+              %td 
+                %strong Amount
+          %tbody
+            - line_items.each do |line_item|
+              %tr
+                %td= line_item["DateCreated"].to_date.strftime("%m/%d/%y")
+                %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'])
+                %td
+                  - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
+                    = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+                  - else
+                    = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
+                %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)}"
+                %td= "#{number_to_currency(line_item['Price'])}"
+                %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
+                -#
+                  %td= line_item
+            %tr
+              %td
+              %td
+              %td
+              %td
+                %strong= "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round(3)}"
+              %td
+              %td
+                %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+
+
+  %hr
+    .pull-right
+      %p.lead
+        Cash
+        = number_to_currency(@cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+        %br
+        Check
+        = number_to_currency(@check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+        %br
+        %strong Total
+        = number_to_currency(@line_items_total)

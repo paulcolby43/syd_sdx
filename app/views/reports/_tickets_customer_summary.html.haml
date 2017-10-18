@@ -1,4 +1,11 @@
-%p.lead Customer Summary Report
+%p.lead 
+  Tickets Customer Summary Report
+  - unless @tickets.blank? 
+    %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+      %i.fa.fa-download
+      CSV
+
+
 -# @tickets.group_by{ |t| t['Company']}.each_with_index do |(ticket_group, tickets), index|
 - @tickets.group_by{ |t| "#{t['FirstName']} #{t['LastName']}"}.each_with_index do |(ticket_group, tickets), index|
   %div.panel.panel-default

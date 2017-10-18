@@ -6,7 +6,10 @@
       %p.lead
         %a{href: nil, class: 'inventory_name', "data-pk" => @inventory.id, "data-url" => "/inventories/#{@inventory.id}"}
           = @inventory.title
-
+        - unless @inventory.scanned_packs.blank? and @inventory.remaining_packs.blank?
+          %a{href: inventory_path(@inventory, format: "csv"), class: 'btn btn-default'}
+            %i.fa.fa-download
+            CSV 
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#scanned", :data => {:toggle => "tab"}}
@@ -14,9 +17,10 @@
       %li
         %a{:href => "#remaining", :data => {:toggle => "tab"}}
           = "Remaining"
-      %li
-        %a{:href => "#closed", :data => {:toggle => "tab"}}
-          = "Closed"
+      -#
+        %li
+          %a{:href => "#closed", :data => {:toggle => "tab"}}
+            = "Closed"
     .tab-content
       .tab-pane.active{:id => "scanned"}
         %div.row{:id => "pack_details"}
@@ -51,38 +55,42 @@
                           %small.text-muted= "#{pack_status_description(pack['Status'])}"
       .tab-pane{:id => "remaining"}
         %br
+        %div.row{id: 'pack_description_selection'}
+          .col-xs-12.col-sm-6.col-md-4
+            %p= select_tag :print_description, options_for_select(@inventory.distinct_pack_descriptions), prompt: 'Select pack type', class: "form-control input-lg"
         %div.row
           %div.col-sm-12
-            .panel.panel-success
+            .panel.panel-success{id: "remaining_packs_panel", style: 'display: none;'}
               .panel-heading
                 %h4.panel-title
                   Remaining Packs
-              - unless @remaining_packs.blank?
-                %div{id: "remaining_packs", "data-remaining-packs-array" => @remaining_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
+              - unless @inventory.remaining_packs.blank?
+                %div{id: "remaining_packs", "data-remaining-packs-array" => @inventory.remaining_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
                   %div.list_group
-                    - @remaining_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
-                      .list-group-item{id: "remaining_pack_#{pack['TagNumber']}"}
+                    - @inventory.remaining_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
+                      .list-group-item{id: "remaining_pack_#{pack['TagNumber']}", class: "remaining_pack #{pack['PrintDescription']}", style: 'display: none;'}
                         = "#{pack['TagNumber']} #{pack['PrintDescription']}"
               - else
                 .panel-body
                   %p.lead None
-      .tab-pane{:id => "closed"}
-        %br
-        %div.row
-          %div.col-sm-12
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title
-                  Closed Packs
-              - unless @inventory.closed_packs.blank?
-                %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
-                  %div.list_group
-                    - @inventory.closed_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
-                      .list-group-item
-                        = "#{pack['TagNumber']} #{pack['PrintDescription']}"
-                        =# pack
-              - else
-                .panel-body
-                  %p.lead None
+      -#
+        .tab-pane{:id => "closed"}
+          %br
+          %div.row
+            %div.col-sm-12
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    Closed Packs
+                - unless @inventory.closed_packs.blank?
+                  %div{id: "closed_packs", "data-closed-packs-array" => @inventory.closed_packs.collect{ |pack| {id: pack['Id'], text: "#{pack['PrintDescription']}"} }}
+                    %div.list_group
+                      - @inventory.closed_packs.sort_by{|pack| pack['PrintDescription']}.each do |pack|
+                        .list-group-item
+                          = "#{pack['TagNumber']} #{pack['PrintDescription']}"
+                          =# pack
+                - else
+                  .panel-body
+                    %p.lead None
        
 =# render partial: "shared/footer_navbar", locals: {title: "Inventory"}

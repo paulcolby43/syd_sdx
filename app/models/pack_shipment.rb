@@ -98,4 +98,83 @@ class PackShipment
     end
   end
   
+  def self.all_by_date_and_customers(auth_token, yard_id, start_date, end_date, customer_ids)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/getshipmentsbycustomer"
+    
+    payload = {
+      "CustomerIds" => customer_ids,
+      "StartDate" => "#{start_date} 00:00:00",
+      "EndDate" => "#{end_date} 00:00:00"
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info json_encoded_payload
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "PackShipment.all_by_date_customers: #{data}"
+    
+    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank? or data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # No results, so put into empty array
+      return []
+    else # Array of results returned
+      return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+    end
+  end
+  
+  def self.all_by_date(auth_token, yard_id, start_date, end_date)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/getshipmentsbycustomer"
+    
+    payload = {
+      "CustomerIds" => [],
+      "StartDate" => "#{start_date} 00:00:00",
+      "EndDate" => "#{end_date} 00:00:00"
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info json_encoded_payload
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "PackShipment.all_by_date: #{data}"
+    
+    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank? or data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # No results, so put into empty array
+      return []
+    else # Array of results returned
+      return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+    end
+  end
+  
+  def self.customer_summary_to_csv(pack_shipments_array)
+    require 'csv'
+    headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'NetWeight']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      pack_shipments_array.each do |pack_shipment|
+        csv << headers.map{ |attr| pack_shipment[attr] }
+      end
+    end
+  end
+  
+  def self.commodity_summary_to_csv(pack_lists_array)
+    require 'csv'
+#    headers = ['DateCreated']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << ['DateCreated', 'InventoryDescription', 'TagNumber', 'NetWeight']
+
+      pack_lists_array.each do |pack_list|
+        csv << [pack_list['DateCreated'], pack_list['Items']['PackListItemInformation']['InventoryDescription'], pack_list['Items']['PackListItemInformation']['PackInfo']['TagNumber'], pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight']]
+#        csv << headers.map{ |attr| pack_list[attr] }
+      end
+    end
+  end
+  
 end

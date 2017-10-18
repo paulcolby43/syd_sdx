@@ -20,7 +20,7 @@ class PackShipmentsController < ApplicationController
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
     @available_packs_array = Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }
 #    @shipment_images = Shipment.where(ticket_nbr: @pack_shipment["ShipmentNumber"], yardid: current_yard_id)
-#    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company).reverse # Shipment images
+    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company).reverse # Shipment images
 #    unless params[:pack_tag_number].blank?
 #      @available_packs = Pack.find_all_by_tag_number(current_user.token, current_yard_id, 0, params[:pack_tag_number])
 #    end
@@ -39,8 +39,17 @@ class PackShipmentsController < ApplicationController
   # GET /pack_shipments/1/edit
   def edit
     authorize! :edit, :pack_shipments
-    @status = "#{params[:status].blank? ? '0' : params[:status]}"
-    @pack_shipment = PackShipment.find_by_id(current_user.token, current_yard_id, @status, params[:id])
+    @pack_shipment = PackShipment.find(current_user.token, current_yard_id, params[:id])
+    @pack_list = PackShipment.pack_list(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
+    PackList.set_shipment_id(current_user.token, current_yard_id, @pack_list['Id'], params[:id], @pack_shipment['ContractHeadId']) # Set the shipment_id of pack_list so they're connected correctly
+    @contract_items = PackShipment.contract_items(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
+    @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
+    @available_packs_array = Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }
+    respond_to do |format|
+      format.html {}
+      format.json {render json: {"name" => @pack_shipment['ShipmentNumber']} } 
+      format.js
+    end
   end
 
   # POST /pack_shipments

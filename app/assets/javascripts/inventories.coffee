@@ -189,5 +189,22 @@ jQuery ->
         return response.msg
       #msg will be shown in editable form
       return
-  return
   ### End Edit inventory title in place ###
+
+  ### Hide/Show Remaining Packs based on selection ###
+  $('#pack_description_selection').on 'change', '#print_description', ->
+    $(this).find('option:selected').each ->
+      optionValue = $(this).attr('value')
+      # alert optionValue
+      if optionValue
+        $('#remaining_packs_panel').show()
+        $('.remaining_pack').not('.' + optionValue).hide()
+        $('.' + optionValue).show()
+      else
+        $('#remaining_packs_panel').hide()
+        $('.remaining_pack').hide()
+      return
+    return
+  ### End Hide/Show Remaining Packs based on selection ###
+  
+  

@@ -18,7 +18,8 @@
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Purchases"}} 
+              .col-xs-12
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Purchases"}} 
                 %i.fa.fa-ticket.fa-lg
                 %br
                 =# "Held"
@@ -68,7 +69,12 @@
               %a.btn.btn-default.btn-lg.btn-block{:href => inventories_path, disabled: current_user.company.include_inventories? ? false:true,  class: "welcome_button #{current_user.company.include_inventories? ? '' : 'disabled'}", :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Inventory"}} 
                 %i.fa.fa-list-alt.fa-lg
                 %br
-                = "Inventory"
+                = "Inventory Audit"
+        %div.row
+          %p
+            .col-xs-12
+              %a.btn.btn-default.btn-lg.btn-block{:href => reports_path('report[type]' => 'customer_summary'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
+                = "Management Reports"
             
         -#
           %div.row
