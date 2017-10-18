@@ -6,17 +6,18 @@
     %h2.text-center
       = link_to "Scrap Dragon Xtreme", 'http://www.scrapdragon.com', target: '_blank'
       Customer Portal
-    - unless @tickets.blank? and @line_items.blank?
-      %p
-        .pull-right
-          %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-lg btn-default'}
-            %i.fa.fa-download
-            CSV Report
+    -#
+      - unless @tickets.blank? and @line_items.blank?
+        %p
+          .pull-right
+            %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-lg btn-default'}
+              %i.fa.fa-download
+              CSV
     %p
       = form_tag reports_path, :method => 'get', :class => "form-inline" do
         =# hidden_field_tag 'report[type]', @type
+        = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'],['Shipments', 'shipments']], @status), class: "form-control input-lg"
         = select_tag 'report[type]', options_for_select([['Customer Summary', 'customer_summary'],['Commodity Summary', 'commodity_summary']], @type), class: "form-control input-lg"
-        = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3']], @status), class: "form-control input-lg"
         .form-group
           = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
         To
@@ -25,17 +26,22 @@
         = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}) do
           %i.fa.fa-search
 
-    - unless @tickets.blank?
-      .text-muted= "#{pluralize(@tickets.count, "ticket")} found"
-      - unless @type == 'commodity_summary'
-        = render 'customer_summary'
+    - unless @tickets.blank? and @pack_shipments.blank?
+      - unless @status == 'shipments'
+        .text-muted= "#{pluralize(@tickets.count, "ticket")} found"
+        - unless @type == 'commodity_summary'
+          = render 'tickets_customer_summary'
+        - else
+          = render 'tickets_commodity_summary'
       - else
-        = render 'commodity_summary'
+        .text-muted= "#{pluralize(@pack_shipments.count, "shipment")} found"
+        - unless @type == 'commodity_summary'
+          = render 'shipments_customer_summary'
+        - else
+          = render 'shipments_commodity_summary'
+        
     - else
-      - unless @type == 'commodity_summary'
-        %p No Customer Summary tickets to report on
-      - else
-        %p No Commodity Summary tickets to report on
+      %p Nothing to report on
       
         
 =# render partial: "shared/footer_navbar", locals: {title: "Reports"}

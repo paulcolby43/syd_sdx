@@ -189,6 +189,7 @@ class Ability
       if user.company.include_shipments?
         can :index, :pack_shipments
         can :show, :pack_shipments
+        can :edit, :pack_shipments
         can :fetches, :pack_shipments
         can :pictures, :pack_shipments
       end
@@ -299,6 +300,10 @@ class Ability
       # Reports
       ############
       can :index, :reports
+      
+      # PackShipments
+      ############
+      can :show, :pack_shipments
       
     # End customer user role
     end 

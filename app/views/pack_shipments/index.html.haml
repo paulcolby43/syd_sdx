@@ -10,7 +10,7 @@
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
                 %div.list_group
-                  %a{href: pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
+                  %a{href: edit_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
                     .pull-right
                       &nbsp;
                       %i.fa.fa-chevron-right.fa-lg

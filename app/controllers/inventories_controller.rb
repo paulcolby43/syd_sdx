@@ -13,7 +13,12 @@ class InventoriesController < ApplicationController
   # GET /inventories/1.json
   def show
     authorize! :show, :inventories
-    @remaining_packs = @inventory.closed_packs - @inventory.scanned_packs
+    respond_to do |format|
+      format.html {}
+      format.csv {
+        send_data @inventory.to_csv, filename: "Inventory#{@inventory.title}-#{@inventory.created_at}.csv"
+      }
+    end
   end
 
   # GET /inventories/new
