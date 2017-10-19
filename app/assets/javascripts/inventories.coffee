@@ -191,19 +191,27 @@ jQuery ->
       return
   ### End Edit inventory title in place ###
 
+  # Dropdown multi-select for inventories remaining packs name filter
+  $('#print_description').select2 
+    theme: 'bootstrap'
+    placeholder: "Select type"
+    cache: true
+
   ### Hide/Show Remaining Packs based on selection ###
   $('#pack_description_selection').on 'change', '#print_description', ->
-    $(this).find('option:selected').each ->
-      optionValue = $(this).attr('value')
-      # alert optionValue
-      if optionValue
+    selections = $(this).find('option:selected')
+    if !selections.length
+      # No selections
+      $('#remaining_packs_panel').hide()
+      $('.remaining_pack').hide()
+    else
+      # One or more selections
+      $('.remaining_pack').hide() # Hide everything
+      $(this).find('option:selected').each ->
+        # Show selected
+        optionValue = $(this).attr('value')
         $('#remaining_packs_panel').show()
-        $('.remaining_pack').not('.' + optionValue).hide()
         $('.' + optionValue).show()
-      else
-        $('#remaining_packs_panel').hide()
-        $('.remaining_pack').hide()
-      return
     return
   ### End Hide/Show Remaining Packs based on selection ###
   

@@ -57,7 +57,7 @@
         %br
         %div.row{id: 'pack_description_selection'}
           .col-xs-12.col-sm-6.col-md-4
-            %p= select_tag :print_description, options_for_select(@inventory.distinct_pack_descriptions), prompt: 'Select pack type', class: "form-control input-lg"
+            %p= select_tag :print_description, options_for_select(@inventory.distinct_pack_descriptions), multiple: true, style: "width: 100%;", class: "form-control input-lg"
         %div.row
           %div.col-sm-12
             .panel.panel-success{id: "remaining_packs_panel", style: 'display: none;'}
