@@ -48,6 +48,8 @@ class ReportsController < ApplicationController
           end
         end
       end
+      @cash_total = @cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
+      @check_total = @check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
     else
       # Shipments report
       @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) if current_user.customer?

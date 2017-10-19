@@ -1,9 +1,22 @@
-%p.lead 
-  Tickets Customer Summary Report
-  - unless @tickets.blank? 
-    %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
-      %i.fa.fa-download
-      CSV
+.row
+  .col-xs-12.col-sm-6
+    %p.lead 
+      Tickets Customer Summary Report
+      - unless @tickets.blank? 
+        %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+          %i.fa.fa-download
+          CSV
+  .col-xs-12.col-sm-6
+    .pull-right
+      %p.lead
+        Cash
+        = number_to_currency(@cash_total)
+        %br
+        Check
+        = number_to_currency(@check_total)
+        %br
+        %strong Total
+        = number_to_currency(@line_items_total)
 
 
 -# @tickets.group_by{ |t| t['Company']}.each_with_index do |(ticket_group, tickets), index|
@@ -55,10 +68,10 @@
 .pull-right
   %p.lead
     Cash
-    = number_to_currency(@cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+    = number_to_currency(@cash_total)
     %br
     Check
-    = number_to_currency(@check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+    = number_to_currency(@check_total)
     %br
     %strong Total
     = number_to_currency(@line_items_total)
