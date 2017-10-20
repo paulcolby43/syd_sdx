@@ -4,6 +4,8 @@
     %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
       %i.fa.fa-download
       CSV
+  %br
+  = "#{pluralize(@pack_shipments.count, "shipment")} found"
 
 - @pack_shipments.group_by{ |ps| "#{ps['CustomerName']}"}.each_with_index do |(pack_shipment_group, pack_shipments), index|
   %div.panel.panel-default

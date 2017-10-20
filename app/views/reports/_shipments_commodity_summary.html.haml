@@ -4,6 +4,8 @@
     %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
       %i.fa.fa-download
       CSV
+  %br
+  = "#{pluralize(@pack_shipments.count, "shipment")} found"
 
 =# @pack_lists
 - unless @pack_lists.blank?

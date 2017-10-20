@@ -28,13 +28,15 @@
 
     - unless @tickets.blank? and @pack_shipments.blank?
       - unless @status == 'shipments'
-        .text-muted= "#{pluralize(@tickets.count, "ticket")} found"
+        -#
+          .text-muted= "#{pluralize(@tickets.count, "ticket")} found"
         - unless @type == 'commodity_summary'
           = render 'tickets_customer_summary'
         - else
           = render 'tickets_commodity_summary'
       - else
-        .text-muted= "#{pluralize(@pack_shipments.count, "shipment")} found"
+        -#
+          .text-muted= "#{pluralize(@pack_shipments.count, "shipment")} found"
         - unless @type == 'commodity_summary'
           = render 'shipments_customer_summary'
         - else
