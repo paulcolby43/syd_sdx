@@ -30,23 +30,26 @@
       .tab-pane.active{:id => "shipment_pictures"}
         %br
         %div#shipment_images
-        - @images_array.each_slice(6) do |images|
-          .row
-            - images.each do |image|
-              .col-xs-12.col-sm-2.col-md-2
-                .thumbnail
-                  %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                    = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-                  .text-center
-                    %small.text-muted= image['EVENT_CODE']
-        - @inventory_tags_array.each_slice(6) do |inventory_tags|
-          .row
-            - inventory_tags.each do |inv_tag|
-              .col-xs-12.col-sm-2.col-md-2
-                .thumbnail
-                  %a{href: inv_tag_path(inv_tag['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                    = image_tag(show_preview_image_inv_tag_path(inv_tag['CAPTURE_SEQ_NBR']), alt: inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-                  .text-center
-                    %small.text-muted= inv_tag['EVENT_CODE']
+        - unless @images_array.blank? and @inventory_tags_array.blank?
+          - @images_array.each_slice(6) do |images|
+            .row
+              - images.each do |image|
+                .col-xs-12.col-sm-2.col-md-2
+                  .thumbnail
+                    %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                      = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                    .text-center
+                      %small.text-muted= image['EVENT_CODE']
+          - @inventory_tags_array.each_slice(6) do |inventory_tags|
+            .row
+              - inventory_tags.each do |inv_tag|
+                .col-xs-12.col-sm-2.col-md-2
+                  .thumbnail
+                    %a{href: inv_tag_path(inv_tag['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                      = image_tag(show_preview_image_inv_tag_path(inv_tag['CAPTURE_SEQ_NBR']), alt: inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                    .text-center
+                      %small.text-muted= inv_tag['EVENT_CODE']
+        - else
+          %p.lead No pictures found
       
 = render partial: "shared/shipment_footer_navbar", locals: {title: "Shipment"}
