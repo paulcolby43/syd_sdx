@@ -20,7 +20,7 @@
           %thead
             %tr
               %td 
-                %strong Date
+                %strong Date Shipped
               %td 
                 %strong Shipment
               %td 
@@ -30,7 +30,7 @@
           %tbody
             - pack_lists.each do |pack_list|
               %tr
-                %td= pack_list['DateShipped'].to_date.strftime("%m/%d/%y")
+                %td= pack_list['DateShipped']#.to_date.strftime("%m/%d/%y")
                 %td= link_to @pack_shipments.find {|pack_shipment| pack_shipment['PackListHeadId'] == pack_list['Id']}['ShipmentNumber'], pack_shipment_path(@pack_shipments.find {|pack_shipment| pack_shipment['PackListHeadId'] == pack_list['Id']}['Id'])
                 %td= pack_list['Items']['PackListItemInformation']['PackInfo']['TagNumber']
                 %td= "#{pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight'].to_d.round(3)} #{pack_list['Items']['PackListItemInformation']['PackInfo']['UnitOfMeasure']}"

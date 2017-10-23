@@ -20,7 +20,7 @@
       %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
         %thead
           %tr
-            %th Date
+            %th Date Shipped
             %th Shipment
             %th Description
             %th Net
@@ -29,7 +29,7 @@
         %tbody
           - pack_shipments.sort_by{|pack_shipment| pack_shipment['DateShipped']}.reverse.each do |pack_shipment|
             %tr
-              %td= pack_shipment['DateShipped'].to_date.strftime("%m/%d/%y")
+              %td= pack_shipment['DateShipped']#.to_date.strftime("%m/%d/%y")
               %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
               %td= pack_shipment['ContractDescription']
               %td= "#{pack_shipment['NetWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
