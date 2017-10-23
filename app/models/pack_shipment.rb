@@ -117,10 +117,14 @@ class PackShipment
     data= Hash.from_xml(xml_content)
     Rails.logger.info "PackShipment.all_by_date_customers: #{data}"
     
-    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank? or data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # No results, so put into empty array
+    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank? # No results, so put into empty array
       return []
     else # Array of results returned
-      return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+      if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash  # Only one result returned, so put it into an array
+        return [data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else
+        return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
     end
   end
   
@@ -143,10 +147,14 @@ class PackShipment
     data= Hash.from_xml(xml_content)
     Rails.logger.info "PackShipment.all_by_date: #{data}"
     
-    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank? or data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # No results, so put into empty array
+    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank?# No results, so put into empty array
       return []
     else # Array of results returned
-      return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+      if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash  # Only one result returned, so put it into an array
+        return [data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else
+        return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
     end
   end
   
