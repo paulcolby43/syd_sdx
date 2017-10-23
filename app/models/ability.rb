@@ -304,6 +304,7 @@ class Ability
       # PackShipments
       ############
       can :show, :pack_shipments
+      can :pictures, :pack_shipments
       
     # End customer user role
     end 
