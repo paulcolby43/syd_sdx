@@ -106,7 +106,7 @@ class PackShipment
     payload = {
       "CustomerIds" => customer_ids,
       "StartDate" => "#{start_date} 00:00:00",
-      "EndDate" => "#{end_date} 00:00:00"
+      "EndDate" => "#{end_date} 23:59:59"
       }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info json_encoded_payload
@@ -132,7 +132,7 @@ class PackShipment
     payload = {
       "CustomerIds" => [],
       "StartDate" => "#{start_date} 00:00:00",
-      "EndDate" => "#{end_date} 00:00:00"
+      "EndDate" => "#{end_date} 23:59:59"
       }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info json_encoded_payload
