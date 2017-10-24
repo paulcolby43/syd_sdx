@@ -17,9 +17,9 @@
           %br
           = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateCreated'].to_date.strftime('%-m/%-d/%Y')}"
           %br
-          = "Container Number: #{@pack_list['ContainerNumber']}"
+          = "Container Number: #{@pack_shipment['ContainerNumber']}"
           %br
-          = "Vehicle Number: #{@pack_list['DeliveryVehicleIdNumber']}"
+          = "Vehicle Number: #{@pack_shipment['DeliveryVehicleIdNumber']}"
         
           
     %ul.nav.nav-tabs
