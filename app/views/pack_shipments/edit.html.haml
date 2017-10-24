@@ -11,11 +11,15 @@
           Pictures
       %p  
         %small
-          = "Shipment #{@pack_shipment['ShipmentNumber']}"
+          = "Shipment: #{@pack_shipment['ShipmentNumber']}"
           %br
-          = "Pack List #{@pack_list['PackListNumber']}"
+          = "Pack List: #{@pack_list['PackListNumber']}"
           %br
           = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateCreated'].to_date.strftime('%-m/%-d/%Y')}"
+          %br
+          = "Container Number: #{@pack_list['ContainerNumber']}"
+          %br
+          = "Vehicle Number: #{@pack_list['DeliveryVehicleIdNumber']}"
         
           
     %ul.nav.nav-tabs

@@ -17,6 +17,10 @@
           = "Pack List #{@pack_list['PackListNumber']}"
           %br
           = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateShipped'].to_date.strftime('%-m/%-d/%Y')}"
+          %br
+          = "Container Number: #{@pack_list['ContainerNumber']}"
+          %br
+          = "Vehicle Number: #{@pack_list['DeliveryVehicleIdNumber']}"
         
           
     %ul.nav.nav-tabs
