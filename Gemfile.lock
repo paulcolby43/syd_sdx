@@ -157,6 +157,8 @@ GEM
     mini_portile (0.6.2)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
+    morrisjs-rails (0.5.1.2)
+      railties (> 3.1, < 6)
     multi_json (1.11.2)
     nested_form_fields (0.8)
       coffee-rails (>= 3.2.1)
@@ -197,6 +199,7 @@ GEM
       activesupport (>= 3.0)
       i18n
       polyamorous (~> 1.2)
+    raphael-rails (2.1.2)
     rdoc (4.2.2)
       json (~> 1.4)
     redis (3.2.2)
@@ -313,10 +316,12 @@ DEPENDENCIES
   jquery-rails
   jquery-turbolinks
   kaminari-bootstrap
+  morrisjs-rails
   nested_form_fields
   polyamorous
   rails (= 4.1.8)
   ransack
+  raphael-rails
   rest-client
   rest-client-logger (~> 0.0.1)
   rmagick

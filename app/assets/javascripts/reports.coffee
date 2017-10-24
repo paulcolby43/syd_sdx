@@ -10,7 +10,15 @@ jQuery ->
       return
     return
 
-  #$('a.group').on 'click', ->
-  #  $(this).find( "#details" ).toggle 'slow', ->
-  #    return
-  #  return
+  #$(document).on 'turbolinks:load', ->
+  if $('#ticket-commodity-weight-summary-donut').length
+    line_items = $('#ticket-commodity-weight-summary-donut').data('items')
+    commodity_donut=Morris.Donut
+      element: 'ticket-commodity-weight-summary-donut'
+      data: line_items
+
+  if $('#ticket-commodity-amount-summary-donut').length
+    line_items = $('#ticket-commodity-amount-summary-donut').data('items')
+    commodity_donut=Morris.Donut
+      element: 'ticket-commodity-amount-summary-donut'
+      data: line_items

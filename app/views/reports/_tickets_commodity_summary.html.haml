@@ -20,56 +20,66 @@
         %strong Total
         = number_to_currency(@line_items_total)
 
+- unless @line_items.blank?
+  .row
+    .well.col-xs-12.col-sm-6
+      %p.text-center= "Commodity by Weight (#{@line_items.first['UnitOfMeasure']})"
+      = content_tag :div, "", id: "ticket-commodity-weight-summary-donut", data: {items: ticket_commodity_weight_donut_data(@line_items)}
+    .well.col-xs-12.col-sm-6
+      %p.text-center= "Commodity by Amount ($)"
+      = content_tag :div, "", id: "ticket-commodity-amount-summary-donut", data: {items: ticket_commodity_amount_donut_data(@line_items)}
+
 - @line_items.group_by{ |i| i['PrintDescription'] }.each_with_index do |(line_item_group, line_items), index|
-  %div.panel.panel-default
-    %div.panel-heading
-      %h3.panel-title
-        %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
-          = line_item_group
-          #details.text-muted.pull-right
-            = "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round)}#{line_items.first['UnitOfMeasure']}"
-            =# "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
-            = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
-    %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
-      %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
-        %thead
-          %tr
-            %td 
-              %strong Date
-            %td 
-              %strong Ticket
-            %td 
-              %strong Customer
-            %td
-              %strong Net
-            %td
-              %strong Price
-            %td 
-              %strong Amount
-        %tbody
-          - line_items.each do |line_item|
+  .row
+    %div.panel.panel-default
+      %div.panel-heading
+        %h3.panel-title
+          %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
+            = line_item_group
+            #details.text-muted.pull-right
+              = "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round)}#{line_items.first['UnitOfMeasure']}"
+              =# "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
+              = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+      %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
+        %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
+          %thead
             %tr
-              %td= line_item["DateCreated"].to_date.strftime("%m/%d/%y")
-              %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'])
+              %td 
+                %strong Date
+              %td 
+                %strong Ticket
+              %td 
+                %strong Customer
               %td
-                - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
-                  = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
-                - else
-                  = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-              %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} #{line_item['UnitOfMeasure']}"
-              %td= "#{number_to_currency(line_item['Price'])}"
-              %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
-              -#
-                %td= line_item
-          %tr
-            %td
-            %td
-            %td
-            %td
-              %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
-            %td
-            %td
-              %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+                %strong Net
+              %td
+                %strong Price
+              %td 
+                %strong Amount
+          %tbody
+            - line_items.each do |line_item|
+              %tr
+                %td= line_item["DateCreated"].to_date.strftime("%m/%d/%y")
+                %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'])
+                %td
+                  - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
+                    = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+                  - else
+                    = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
+                %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} #{line_item['UnitOfMeasure']}"
+                %td= "#{number_to_currency(line_item['Price'])}"
+                %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
+                -#
+                  %td= line_item
+            %tr
+              %td
+              %td
+              %td
+              %td
+                %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
+              %td
+              %td
+                %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
 
 
 -#
