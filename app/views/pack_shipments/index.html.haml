@@ -17,8 +17,12 @@
                     = "#{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"
                     %small
                       .text-muted
-                        = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
                         = "#{pack_shipment['ContractDescription']}"
+                        = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
+                        %br
+                        = "Container Number: #{pack_shipment['ContainerNumber']}"
+                        %br
+                        = "Vehicle Number: #{pack_shipment['DeliveryVehicleIdNumber']}"
                     =# pack_shipment
                   %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
                     .pull-right
