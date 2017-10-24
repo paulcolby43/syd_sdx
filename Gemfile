@@ -113,6 +113,10 @@ gem 'exception_notification'
 # Dynamically add and remove nested has_many association fields in a Ruby on Rails form
 gem 'nested_form_fields'
 
+# morris.js Graphs for the Rails Asset Pipeline
+gem 'morrisjs-rails'
+gem 'raphael-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
