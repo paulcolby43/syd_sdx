@@ -69,11 +69,11 @@
               %a.btn.btn-default.btn-lg.btn-block{:href => inventories_path, disabled: current_user.company.include_inventories? ? false:true,  class: "welcome_button #{current_user.company.include_inventories? ? '' : 'disabled'}", :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Inventory"}} 
                 %i.fa.fa-list-alt.fa-lg
                 %br
-                = "Inventory Audit"
+                = "Inventory"
         %div.row
           %p
             .col-xs-12
-              %a.btn.btn-default.btn-lg.btn-block{:href => reports_path('report[type]' => 'customer_summary'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => reports_path('report[type]' => 'customer_summary'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Management Reports"}} 
                 = "Management Reports"
             
         -#
