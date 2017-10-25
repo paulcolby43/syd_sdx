@@ -22,3 +22,15 @@ jQuery ->
     commodity_donut=Morris.Donut
       element: 'ticket-commodity-amount-summary-donut'
       data: line_items
+
+  if $('#ticket-customer-number-summary-donut').length
+    tickets = $('#ticket-customer-number-summary-donut').data('tickets')
+    customer_donut=Morris.Donut
+      element: 'ticket-customer-number-summary-donut'
+      data: tickets
+
+  if $('#ticket-customer-amount-summary-donut').length
+    tickets = $('#ticket-customer-amount-summary-donut').data('tickets')
+    customer_donut=Morris.Donut
+      element: 'ticket-customer-amount-summary-donut'
+      data: tickets
