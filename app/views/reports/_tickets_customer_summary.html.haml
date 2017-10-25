@@ -77,6 +77,7 @@
                 %td
                 %td
                   %strong= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
+%hr
 .pull-right
   %p.lead
     Cash

@@ -36,3 +36,7 @@ body { padding-top: 30px; }
     margin: auto;
     height:100%;
 }
+
+.select2-container .select2-search__field {
+  height: 44px; 
+}
