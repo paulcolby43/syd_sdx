@@ -23,7 +23,7 @@
 - unless @line_items.blank?
   .row
     .well.col-xs-12.col-sm-6
-      %p.text-center= "Commodity by Weight (#{@line_items.first['UnitOfMeasure']})"
+      %p.text-center= "Commodity by Weight"
       = content_tag :div, "", id: "ticket-commodity-weight-summary-donut", data: {items: ticket_commodity_weight_donut_data(@line_items)}
     .well.col-xs-12.col-sm-6
       %p.text-center= "Commodity by Amount ($)"
@@ -112,13 +112,13 @@
           = number_to_currency(@line_items_total)
 
 %hr
-  .pull-right
-    %p.lead
-      Cash
-      = number_to_currency(@cash_total)
-      %br
-      Check
-      = number_to_currency(@check_total)
-      %br
-      %strong Total
-      = number_to_currency(@line_items_total)
+.pull-right
+  %p.lead
+    Cash
+    = number_to_currency(@cash_total)
+    %br
+    Check
+    = number_to_currency(@check_total)
+    %br
+    %strong Total
+    = number_to_currency(@line_items_total)

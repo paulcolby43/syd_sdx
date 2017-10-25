@@ -12,4 +12,16 @@ module ReportsHelper
     end
   end
   
+  def ticket_customer_number_donut_data(tickets)
+    tickets.group_by{ |t| "#{t['FirstName']} #{t['LastName']}" }.map do |(ticket_group, tickets)|
+      {label: ticket_group, value: tickets.count }
+    end
+  end
+  
+  def ticket_customer_amount_donut_data(tickets)
+    tickets.group_by{ |t| "#{t['FirstName']} #{t['LastName']}" }.map do |(ticket_group, tickets)|
+      {label: ticket_group, value: tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d}.sum.round }
+    end
+  end
+  
 end
