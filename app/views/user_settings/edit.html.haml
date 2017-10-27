@@ -57,26 +57,41 @@
                   No Event Codes
       .row
         .col-xs-12.col-sm-6
-          - unless @contract.blank?
-            %div.panel.panel-default
+          #signature_verbiage_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+            .panel.panel-default
               .panel-heading
-                %h5.panel-title
-                  Contract
-                  .pull-right= link_to 'Edit', edit_contract_path(@contract)
-              %ul.list-group
-                %li.list-group-item
-                  = @contract.contract_name
-                  %br
-                  = @contract.verbiage.html_safe
-          - else
-            %div.panel.panel-default
-              .panel-heading
-                %h5.panel-title
-                  Contract
-                  .pull-right= link_to 'New', new_contract_path
-              %ul.list-group
-                %li.list-group-item
-                  No existing contract
+                %h5.panel-title 
+                  %a{"aria-controls" => "contract", "aria-expanded" => "false", "data-parent" => "#signature_verbiage_accordion", "data-toggle" => "collapse", :href => "#signature_verbiage", :role => "button"}
+                    Signature Verbiage
+                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+              #signature_verbiage.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
+                %ul.list-group
+                  %li.list-group-item 
+                    - unless current_user.company.signature_verbiage.blank?
+                      = current_user.company.signature_verbiage.html_safe
+                    - else
+                      None
+          -#
+            - unless @contract.blank?
+              %div.panel.panel-default
+                .panel-heading
+                  %h5.panel-title
+                    Contract
+                    .pull-right= link_to 'Edit', edit_contract_path(@contract)
+                %ul.list-group
+                  %li.list-group-item
+                    = @contract.contract_name
+                    %br
+                    = @contract.verbiage.html_safe
+            - else
+              %div.panel.panel-default
+                .panel-heading
+                  %h5.panel-title
+                    Contract
+                    .pull-right= link_to 'New', new_contract_path
+                %ul.list-group
+                  %li.list-group-item
+                    No existing contract
 
         .col-xs-12.col-sm-6
           %div.panel.panel-default
