@@ -34,14 +34,14 @@
                 -#
                   %td= pack_list['DateShipped'].to_datetime.strftime("%m/%d/%y %l:%M:%S%P")
                 %td= link_to @pack_shipments.find {|pack_shipment| pack_shipment['PackListHeadId'] == pack_list['Id']}['ShipmentNumber'], pack_shipment_path(@pack_shipments.find {|pack_shipment| pack_shipment['PackListHeadId'] == pack_list['Id']}['Id'])
-                %td= pack_list['Items']['PackListItemInformation']['PackInfo']['TagNumber']
-                %td= "#{pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight'].to_d.round(3)} #{pack_list['Items']['PackListItemInformation']['PackInfo']['UnitOfMeasure']}"
+                %td= pack_list['Items']['PackListItemInformation'].first['PackInfo']['TagNumber']
+                %td= "#{pack_list['Items']['PackListItemInformation'].first['PackInfo']['NetWeight'].to_d.round(3)} #{pack_list['Items']['PackListItemInformation'].first['PackInfo']['UnitOfMeasure']}"
             %tr
               %td
               %td
               %td
               %td
-                %strong= "#{pack_lists.map { |pl| pl['Items']['PackListItemInformation']['PackInfo']['NetWeight'].to_d }.sum.round(3)}"
+                %strong= "#{pack_lists.map { |pl| pl['Items']['PackListItemInformation'].first['PackInfo']['NetWeight'].to_d }.sum.round(3)}"
 - else
   %p No packs found in shipments
               
