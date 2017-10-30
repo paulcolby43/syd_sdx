@@ -30,11 +30,11 @@ class Inventory < ActiveRecord::Base
       csv << headers
       
       scanned_packs.each do |scanned_pack|
-        csv << [scanned_pack['PrintDescription'], scanned_pack['TagNumber'], scanned_pack['Status'], 'Scanned']
+        csv << [scanned_pack['PrintDescription'], scanned_pack['TagNumber'], "#{Pack.pack_status_description(scanned_pack['Status'])}", 'Scanned']
       end
       
       remaining_packs.each do |remaining_pack|
-        csv << [remaining_pack['PrintDescription'], remaining_pack['TagNumber'], remaining_pack['Status'], 'Remaining']
+        csv << [remaining_pack['PrintDescription'], remaining_pack['TagNumber'], "#{Pack.pack_status_description(remaining_pack['Status'])}", 'Remaining']
       end
     end
   end

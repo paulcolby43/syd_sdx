@@ -7,8 +7,8 @@ class ReportsController < ApplicationController
   # GET /reports.json
   def index
     authorize! :index, :reports
-    @status = "#{report_params[:status].blank? ? '3' : report_params[:status]}"
-    @type = report_params[:type] || 'customer_summary'
+    @status = "#{report_params[:status].blank? ? 'shipments' : report_params[:status]}"
+    @type = report_params[:type] || 'commodity_summary'
     @start_date = report_params[:start_date] ||= Date.today.to_s
     @end_date = report_params[:end_date] ||= Date.today.to_s
     unless @status == 'shipments'
@@ -61,6 +61,7 @@ class ReportsController < ApplicationController
         unless @pack_shipments.blank?
           @pack_shipments.each do |pack_shipment|
             pack_list = PackShipment.pack_list(current_user.token, current_yard_id, pack_shipment['Id'], pack_shipment['ContractHeadId'])
+            Rails.logger.info "*********** pack_list: {#{pack_list}}"
             unless pack_list.blank? or pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank? or pack_list['Items']['PackListItemInformation']['InventoryDescription'].blank?
               @pack_lists << pack_list
   #            @packs = @packs + PackList.pack_items(current_user.token, current_yard_id, pack_list['Id'])
