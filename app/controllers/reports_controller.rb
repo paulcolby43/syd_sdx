@@ -61,7 +61,7 @@ class ReportsController < ApplicationController
         unless @pack_shipments.blank?
           @pack_shipments.each do |pack_shipment|
             pack_list = PackShipment.pack_list(current_user.token, current_yard_id, pack_shipment['Id'], pack_shipment['ContractHeadId'])
-            Rails.logger.info "*********** pack_list: {#{pack_list}}"
+#            Rails.logger.info "*********** pack_list: {#{pack_list}}"
             unless pack_list.blank? or pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank? or pack_list['Items']['PackListItemInformation'].first['InventoryDescription'].blank?
               @pack_lists << pack_list
   #            @packs = @packs + PackList.pack_items(current_user.token, current_yard_id, pack_list['Id'])
