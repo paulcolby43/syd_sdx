@@ -9,7 +9,7 @@
 
 =# @pack_lists
 - unless @pack_lists.blank?
-  - @pack_lists.group_by{ |pl| pl['Items']['PackListItemInformation']['InventoryDescription'] }.each_with_index do |(pack_list_group, pack_lists), index|
+  - @pack_lists.group_by{ |pl| pl['Items']['PackListItemInformation'].first['InventoryDescription'] }.each_with_index do |(pack_list_group, pack_lists), index|
     %div.panel.panel-default
       %div.panel-heading
         %h3.panel-title
