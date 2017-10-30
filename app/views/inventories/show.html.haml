@@ -10,6 +10,8 @@
           %a{href: inventory_path(@inventory, format: "csv"), class: 'btn btn-default'}
             %i.fa.fa-download
             CSV 
+        .pull-right
+          = link_to 'Delete', @inventory, :method => :delete, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-sm btn-danger'
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#scanned", :data => {:toggle => "tab"}}
