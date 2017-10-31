@@ -52,23 +52,23 @@ class ReportsController < ApplicationController
       @check_total = @check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
     else
       # Shipments report
+      # Just show customer summary report
+      @type = 'customer_summary'
       @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) if current_user.customer?
       @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless current_user.customer?
       
-      if @type == 'commodity_summary'
-#        @packs = []
-        @pack_lists = []
-        unless @pack_shipments.blank?
-          @pack_shipments.each do |pack_shipment|
-            pack_list = PackShipment.pack_list(current_user.token, current_yard_id, pack_shipment['Id'], pack_shipment['ContractHeadId'])
-#            Rails.logger.info "*********** pack_list: {#{pack_list}}"
-            unless pack_list.blank? or pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank? or pack_list['Items']['PackListItemInformation'].first['InventoryDescription'].blank?
-              @pack_lists << pack_list
-  #            @packs = @packs + PackList.pack_items(current_user.token, current_yard_id, pack_list['Id'])
-            end
-          end
-        end
-      end
+#      if @type == 'commodity_summary'
+#        @pack_lists = []
+#        unless @pack_shipments.blank?
+#          @pack_shipments.each do |pack_shipment|
+#            pack_list = PackShipment.pack_list(current_user.token, current_yard_id, pack_shipment['Id'], pack_shipment['ContractHeadId'])
+#            unless pack_list.blank? or pack_list['Items'].blank? or pack_list['Items']['PackListItemInformation'].blank? or pack_list['Items']['PackListItemInformation'].first['InventoryDescription'].blank?
+#              @pack_lists << pack_list
+#            end
+#          end
+#        end
+#      end
+      
     end
     
     respond_to do |format|
