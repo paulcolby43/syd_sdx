@@ -53,6 +53,7 @@ class ReportsController < ApplicationController
     else
       # Shipments report
       # Just show customer summary report
+      @type = 'customer_summary'
       @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) if current_user.customer?
       @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless current_user.customer?
       
