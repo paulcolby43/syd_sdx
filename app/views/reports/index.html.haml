@@ -35,12 +35,14 @@
         - else
           = render 'tickets_commodity_summary'
       - else
+        = render 'shipments_customer_summary'
         -#
           .text-muted= "#{pluralize(@pack_shipments.count, "shipment")} found"
-        - unless @type == 'commodity_summary'
-          = render 'shipments_customer_summary'
-        - else
-          = render 'shipments_commodity_summary'
+        -#
+          - unless @type == 'commodity_summary'
+            = render 'shipments_customer_summary'
+          - else
+            = render 'shipments_commodity_summary'
         
     - else
       %p Nothing to report on
