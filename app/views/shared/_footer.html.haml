@@ -1,12 +1,43 @@
 %footer
-  .container
-    %hr
-    %p.text-center
-      = link_to "http://www.tranact.com" do
-        = "TranAct • Copyright #{Date.today.year} • All rights reserved"
-      •
-      Dragon Dog 1.0
-      •
-      = link_to "Privacy", welcome_privacy_path, target: '_blank'
-      •
-      = link_to "Terms", welcome_tos_path, target: '_blank'
+  .jumbotron{style: 'background-color: black; color: white'}
+    .container
+      .row
+        .col-xs-12.col-sm-4
+          .lead
+            = "Copyright © #{Date.today.year} Tranact"
+            %br
+            All Rights Reserved
+            %br
+            Powered by Tranact: 
+            = link_to 'www.Tranact.com', 'https://www.tranact.com', style: 'color: lightgray', target: '_blank'
+            & 
+            %br
+            = link_to 'www.ScrapDragon.com', 'https://www.scrapdragon.com', style: 'color: lightgray', target: '_blank'
+            %br
+            = link_to "Privacy", welcome_privacy_path,style: 'color: lightgray', target: '_blank'
+            •
+            = link_to "Terms", 'https://www.dropbox.com/s/zntzvgc2eo9yx62/TERMS%20OF%20SERVICE%20AGREEMENT%20FOR%20TRANACT%20SCRAP%20YARD%20DOG%20SERVICE.pdf?dl=1', style: 'color: lightgray'
+        .col-xs-12.col-sm-4
+          .text-center
+            %a{href: 'https://www.facebook.com/TranAct.ScrapDragonSoftware', style: 'color: lightgray', target: '_blank'}
+              %span.fa-stack.fa-lg
+                %i.fa.fa-circle.fa-stack-2x
+                %i.fa.fa-facebook.fa-stack-1x.text-info
+            %a{href: 'https://www.youtube.com/user/TransactMedia', style: 'color: lightgray', target: '_blank'}
+              %span.fa-stack.fa-lg
+                %i.fa.fa-circle.fa-stack-2x
+                %i.fa.fa-youtube-play.fa-stack-1x.text-info
+        .col-xs-12.col-sm-4
+          %br
+          .pull-right.lead (727) 568-7076
+      -#
+        %hr
+        %p.text-center
+          = link_to "http://www.tranact.com" do
+            = "TranAct • Copyright #{Date.today.year} • All rights reserved"
+          •
+          Dragon Dog 1.0
+          •
+          = link_to "Privacy", welcome_privacy_path, target: '_blank'
+          •
+          = link_to "Terms", welcome_tos_path, target: '_blank'
