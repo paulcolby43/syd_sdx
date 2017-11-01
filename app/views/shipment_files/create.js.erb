@@ -8,5 +8,6 @@
   alert("Failed to upload picture <%= j @shipment_file.errors.full_messages.join(', ').html_safe %>");
 <% else %>
   $("#pictures").prepend("<%= j render(@shipment_file) %>");
+  $("#event_code_<%= @shipment_file.event_code_id %>_pictures").prepend("<%= j render(@shipment_file) %>");
   $(".picture_loading_spinner").hide();
 <% end %>

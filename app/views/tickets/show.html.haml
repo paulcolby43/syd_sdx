@@ -46,6 +46,9 @@
             %p
               = "Balance Due:"
               = "#{number_to_currency(@ticket['BalanceDue'])}"
+    %a{href: ticket_path(@ticket['Id'], status: @ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-lg", target: '_blank'}
+      %i.fa.fa-file-pdf-o.fa-lg
+      Print
     -#
       - if @ticket['Status'] == '3'
         %p.pull-right
@@ -61,22 +64,32 @@
         %p= @ticket["DateCreated"].to_date.strftime("%m/%d/%y")
         %p= @ticket
     %hr
-    - @images.each_slice(4) do |images|
+    - @images_array.each_slice(6) do |images|
       .row
         - images.each do |image|
-          .col-xs-12.col-sm-3
-            - unless image.pdf?
-              = link_to image_tag(image.jpeg_image_data_uri, alt: image.id, class: 'img-responsive center-block'), "#image_#{image.id}_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
-            - else
-              %p.lead.text-center
-                %a{href: send_pdf_data_image_path(image)}
-                  %i.fa.fa-file-pdf-o.fa-lg
-                  Download PDF
-          %div{:id => "image_#{image.id}_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
-            .modal-dialog.modal-lg
-              .modal-content
-                .modal-body
-                  = image_tag(image.jpeg_image_data_uri, alt: image.id, class: 'img-responsive')
+          .col-xs-12.col-sm-2.col-md-2
+            .thumbnail
+              %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+              .text-center
+                %small.text-muted= image['EVENT_CODE']
+    -#
+      - @images.each_slice(4) do |images|
+        .row
+          - images.each do |image|
+            .col-xs-12.col-sm-3
+              - unless image.pdf?
+                = link_to image_tag(image.jpeg_image_data_uri, alt: image.id, class: 'img-responsive center-block'), "#image_#{image.id}_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
+              - else
+                %p.lead.text-center
+                  %a{href: send_pdf_data_image_path(image)}
+                    %i.fa.fa-file-pdf-o.fa-lg
+                    Download PDF
+            %div{:id => "image_#{image.id}_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+              .modal-dialog.modal-lg
+                .modal-content
+                  .modal-body
+                    = image_tag(image.jpeg_image_data_uri, alt: image.id, class: 'img-responsive')
     -#
       %div#images
 

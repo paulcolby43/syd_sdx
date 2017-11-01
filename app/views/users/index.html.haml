@@ -23,7 +23,9 @@
                       %br
                       = "#{user.email_confirmed? ? 'Email confirmed' : 'Email not confirmed'}"
     - else
-      %p No users found            
+      %p No users found  
+
+    = link_to 'New User', new_user_path, class: 'btn btn-primary btn-lg'       
     
 -#
   %h1 Listing users

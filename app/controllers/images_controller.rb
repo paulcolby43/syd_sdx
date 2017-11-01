@@ -1,8 +1,8 @@
 class ImagesController < ApplicationController
   before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
-  before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
+#  before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
-  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
+#  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
 
   respond_to :html, :js
 
@@ -53,8 +53,13 @@ class ImagesController < ApplicationController
   end
 
   def show
-    @ticket_number = @image.ticket_nbr
-    respond_with(@image)
+    @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company)
+    @ticket_number = @image['TICKET_NBR']
+    if @image['YARDID'] != current_yard_id
+      flash[:danger] = "You don't have access to that page."
+      redirect_to root_path
+    end
+#    respond_with(@image)
   end
 
   def new
@@ -76,11 +81,13 @@ class ImagesController < ApplicationController
   end
   
   def show_jpeg_image
-    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Image.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
-    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Image.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def send_pdf_data

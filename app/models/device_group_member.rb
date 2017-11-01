@@ -13,7 +13,7 @@ class DeviceGroupMember < ActiveRecord::Base
   
   
   #############################
-  #     Class Methods      #
+  #     Class Methods         #
   #############################
   
   def self.table_exists?
@@ -23,6 +23,7 @@ class DeviceGroupMember < ActiveRecord::Base
     else
       true
   end
+  
   
 end
 

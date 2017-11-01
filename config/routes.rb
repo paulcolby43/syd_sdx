@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
   
+  resources :inv_tags do
+    member do
+      get 'show_jpeg_image'
+      get 'show_preview_image'
+    end
+  end
+  
+  resources :event_codes
+  
   resources :password_resets
 
   resources :devices do
@@ -66,6 +75,13 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :blobs do
+    member do
+      get 'show_jpeg_image'
+      get 'show_preview_image'
+    end
+  end
+  
   ### Start sidekiq stuff ###
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -94,6 +110,7 @@ Rails.application.routes.draw do
     member do
       put 'update_price'
       get :price
+      get :unit_of_measure_weight_conversion
     end
   end
   
@@ -111,6 +128,40 @@ Rails.application.routes.draw do
     end
     member do
       get :send_to_leads_online
+    end
+  end
+  
+  resources :packs do
+    collection do
+      get :search_by_tag_number
+      get :show_information
+    end
+  end
+  
+  resources :pack_lists do
+    collection do
+      get :pack_fields
+    end
+    member do
+      get :add_pack
+      get :remove_pack
+      get :add_pack_to_contract_item
+    end
+  end
+  
+  resources :pack_contracts
+  
+  resources :pack_shipments do
+    member do
+      get :fetches
+      get :show_pictures
+    end
+  end
+  
+  resources :inventories do
+    member do
+      get :add_scanned_pack
+      get :remove_scanned_pack
     end
   end
   

@@ -18,33 +18,25 @@
         %div.row
           %p
             .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Held"}} 
-                %i.fa.fa-folder-open-o.fa-lg
-                %br
-                = "Held"
-          %p
-            .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Closed"}} 
-                %i.fa.fa-folder.fa-lg
-                %br
-                = "Closed"
-        %div.row
-          %p
-            .col-xs-6
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Paid"}} 
-                %i.fa.fa-dollar.fa-lg
-                %br
-                = "Paid"
-          %p
-            .col-xs-6
-              -#
-                %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
-                  %i.fa.fa-image.fa-lg
-                  Pictures
-              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Ticket"}} 
+              .col-xs-12
+              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 2),  class: 'welcome_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Purchases"}} 
                 %i.fa.fa-ticket.fa-lg
                 %br
-                = "Ticket"
+                =# "Held"
+                = "Purchases" 
+          %p
+            .col-xs-6
+              %a.btn.btn-default.btn-lg.btn-block{:href => pack_shipments_path,  disabled: current_user.company.include_shipments? ? false:true, class: "welcome_button #{current_user.company.include_shipments? ? '' : 'disabled'}", :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Shipments"}} 
+                %i.fa.fa-truck.fa-lg
+                %br
+                = "Shipments"
+          -#
+            %p
+              .col-xs-6
+                %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Closed"}} 
+                  %i.fa.fa-folder.fa-lg
+                  %br
+                  = "Closed"
         %div.row
           %p
             .col-xs-6
@@ -57,6 +49,47 @@
                 %i.fa.fa-list.fa-lg
                 %br
                 = "Commodities"
+            
+          -#
+            %p
+              .col-xs-6
+                %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Paid"}} 
+                  %i.fa.fa-dollar.fa-lg
+                  %br
+                  = "Paid"
+          
+        %div.row
+          %p
+            .col-xs-6
+              %a.btn.btn-default.btn-lg.btn-block{:href => create_ticket_customer_path(empty_guid),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Ticket"}} 
+                = "Quick"
+                %br
+                = "Ticket"
+            .col-xs-6
+              %a.btn.btn-default.btn-lg.btn-block{:href => inventories_path, disabled: current_user.company.include_inventories? ? false:true,  class: "welcome_button #{current_user.company.include_inventories? ? '' : 'disabled'}", :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Inventory Audit"}} 
+                %i.fa.fa-list-alt.fa-lg
+                %br
+                = "Inventory Audit"
+        %div.row
+          %p
+            .col-xs-12
+              %a.btn.btn-default.btn-lg.btn-block{:href => reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Management Reports"}} 
+                = "Management Reports"
+            
+        -#
+          %div.row
+            %p
+              .col-xs-6
+                %a.btn.btn-default.btn-lg.btn-block{:href => reports_path('report[type]' => 'customer_summary'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Customer Report"}} 
+                  = "Customer"
+                  %br
+                  = "Report"
+            %p
+              .col-xs-6
+                %a.btn.btn-default.btn-lg.btn-block{:href => reports_path('report[type]' => 'commodity_summary'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Commodity Report"}} 
+                  = "Commodity"
+                  %br
+                  = "Report"
       - else
         .navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
           .container-fluid

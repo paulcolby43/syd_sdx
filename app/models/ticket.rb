@@ -82,7 +82,7 @@ class Ticket
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info json_encoded_payload
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
@@ -151,9 +151,9 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
-#        "CurrentUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
         "TicketHead" => {
           "Id" => guid,
+          "Description" => "",
           "YardId" => yard_id,
           "CustomerId" => customer_id,
           "FirstName" => customer['FirstName'],
@@ -163,18 +163,17 @@ class Ticket
           "TicketNumber" => ticket_number,
           "Status" => 2,
           "CurrencyId" => user.user_setting.currency_id,
-  #        "DateClosed" => "2016-02-18T22:01:30.217",
           "DateCreated" => Time.now.utc
           }
         })
       
-#      Rails.logger.info response
+      Rails.logger.info "Ticket.create response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
   
   # Update an existing ticket
-  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status)
+  def self.update(auth_token, yard_id, customer_id, guid, ticket_number, status, description)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
@@ -183,6 +182,7 @@ class Ticket
       payload: {
         "TicketHead" => {
           "Id" => guid,
+          "Description" => description,
           "YardId" => yard_id,
           "CustomerId" => customer_id,
           "FirstName" => customer.blank? ? "" : customer['FirstName'],
@@ -198,13 +198,13 @@ class Ticket
           }
         })
       
-#      Rails.logger.info response
+      Rails.logger.info "Ticket update response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
   
   # Add a line item to a ticket
-  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id)
+  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -256,7 +256,7 @@ class Ticket
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
-          "UnitOfMeasure" => "LB",
+          "UnitOfMeasure" => unit_of_measure,
           "TaxCollection" => tax_collection_array
           }
         }
@@ -270,7 +270,7 @@ class Ticket
   end 
    
   # Update line item of ticket
-  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id)
+  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -369,7 +369,7 @@ class Ticket
           "Status" => 'Hold', 
           "TareWeight" => tare, 
           "TicketHeadId" => ticket_id,
-          "UnitOfMeasure" => "LB",
+          "UnitOfMeasure" => unit_of_measure,
           "TaxCollection" => tax_collection_array 
           }
         }
@@ -593,7 +593,7 @@ class Ticket
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-#    Rails.logger.info data
+    Rails.logger.info data
     
     if data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"]]
@@ -739,6 +739,32 @@ class Ticket
       end
     end
     
+  end
+  
+  def self.customer_summary_to_csv(tickets_array)
+    require 'csv'
+    headers = ['DateCreated', 'TicketNumber', 'BalanceDue', 'Company', 'FirstName', 'LastName']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      tickets_array.each do |ticket|
+        csv << headers.map{ |attr| ticket[attr] }
+      end
+    end
+  end
+  
+  def self.commodity_summary_to_csv(line_items_array)
+    require 'csv'
+    headers = ['DateCreated', 'PrintDescription', 'NetWeight', 'Price', 'ExtendedAmount']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      line_items_array.each do |line_item|
+        csv << headers.map{ |attr| line_item[attr] }
+      end
+    end
   end
   
 end

@@ -64,7 +64,7 @@ class DeviceGroup < ActiveRecord::Base
   end
   
   #############################
-  #     Class Methods      #
+  #     Class Methods         #
   #############################
   
   def self.table_exists?
@@ -74,6 +74,7 @@ class DeviceGroup < ActiveRecord::Base
     else
       true
   end
+  
   
 end
 

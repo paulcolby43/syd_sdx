@@ -1,0 +1,126 @@
+= render partial: "shared/navbars/show_pack_shipment_navbar", locals: {title: @pack_shipment['ShipmentNumber'], net: "#{@pack_shipment['NetWeight']} #{@pack_shipment['UnitOfMeasure']}"}
+- @title="Shipment: #{@pack_shipment['ShipmentNumber']}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    =# @pack_shipment
+    %h3
+      = "#{@pack_shipment['CustomerName']}"
+      .pull-right
+        %a{href: show_pictures_pack_shipment_path(@pack_shipment['Id']), :class => "btn btn-default pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
+          %i.fa.fa-photo.fa-lg
+          Pictures
+      %p  
+        %small
+          = "Shipment #{@pack_shipment['ShipmentNumber']}"
+          %br
+          = "Pack List #{@pack_list['PackListNumber']}"
+          %br
+          = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateShipped'].to_date.strftime('%-m/%-d/%Y')}"
+          %br
+          = "Container Number: #{@pack_shipment['ContainerNumber']}"
+          %br
+          = "Vehicle Number: #{@pack_shipment['DeliveryVehicleIdNumber']}"
+        
+          
+    %ul.nav.nav-tabs
+      %li.active
+        %a{:href => "#pack_details", :data => {:toggle => "tab"}}
+          %i.fa.fa-dropbox.fa-lg
+          - unless mobile_device?
+            = "Pack Details"
+          - else
+            %small Details
+      %li
+        %a{:href => "#contract_items", :data => {:toggle => "tab"}}
+          %i.fa.fa-list-alt.fa-lg
+          - unless mobile_device?
+            = "Contract Items" 
+          - else
+            %small Items
+      -#
+        %li
+          %a{:href => "#shipment_pictures", :data => {:toggle => "tab"}}
+            %i.fa.fa-photo.fa-lg
+            - unless mobile_device?
+              = "Pictures"
+            - else
+              %small Pictures
+    .tab-content
+      .tab-pane.active{:id => "pack_details"}
+        %br
+        %div#add_contract_items
+        - unless @available_packs.blank?
+          - @available_packs.each do |available_pack|
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-warning
+                  %a{href: add_pack_pack_list_path(@pack_list['Id'], pack_shipment_id: @pack_shipment['Id'], internal_pack_number: available_pack['InternalPackNumber'], tag_number: available_pack['TagNumber']), class: "list-group-item pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{available_pack['PrintDescription']}"}}
+                    %i.fa.fa-plus-circle.text-warning
+                    = available_pack['PrintDescription']
+        - else
+          - unless params[:pack_tag_number].blank?
+            %p.lead No packs founds
+        
+        %div#current_packs
+          - unless @current_packs.blank?
+            - @current_packs.each do |pack|
+              %div.row
+                .col-xs-12.col-sm-12.col-md-12
+                  %div.panel.panel-primary.pack
+                    %div.list-group-item
+                      = "#{pack['PackInfo']['TagNumber']} #{pack['InventoryDescription']}"
+                      %small
+                        .text-muted
+                          .net_weight{style: "display: inline;"}= pack['PackInfo']['NetWeight']
+                          %span{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']
+      
+      .tab-pane{:id => "contract_items"}
+        %br
+        %p.lead
+          %strong Materials
+        - unless @contract_items.blank?
+          - @contract_items.each do |contract_item|
+            %p.lead= contract_item['Description']
+        - else
+          %p.lead None
+      -#
+        .tab-pane{:id => "shipment_pictures"}
+          %br
+          %div#shipment_images
+          - @images_array.each_slice(6) do |images|
+            .row
+              - images.each do |image|
+                .col-xs-12.col-sm-2.col-md-2
+                  .thumbnail
+                    %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                      = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                    -#
+                      .text-center= shipment_image.event_code
+                    .text-center
+                      %small.text-muted= image['EVENT_CODE']
+    -#
+      %p
+        %strong Pack Lists
+        %br
+        =# @pack_lists['Items']['PackListItemInformation']
+        - unless @pack_lists.blank?
+          - @pack_lists.each do |pack_list|
+            -#
+              = pack_list
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list_group
+                    %a{href: edit_pack_list_path(pack_list['Id'], contract_id: @pack_contract['Id'], contract_number: @pack_contract['ContractNumber']), class: "list-group-item pack_list_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{pack_list['PackListNumber']}"}}
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+                      = pack_list['PackListNumber']
+                      %br
+                      %small
+                        .text-muted
+                          = "(#{pack_list['Units']})"
+                          = pack_list['Items']['PackListItemInformation']['PackInfo']['NetWeight']
+
+
+=# render partial: "shared/shipment_footer_navbar", locals: {title: "Shipment"}

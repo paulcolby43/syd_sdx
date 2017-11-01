@@ -161,6 +161,58 @@ class Ability
       ############
       can :index, :reports
       
+      # Packs
+      ############
+      can :index, :packs
+      can :show, :packs
+      can :create, :packs
+      can :edit, :packs
+      can :search_by_tag_number, :packs
+      can :show_information, :packs
+      
+      # PackLists
+      ############
+      can :index, :pack_lists
+      can :show, :pack_lists
+      can :create, :pack_lists
+      can :edit, :pack_lists
+      
+      # PackContracts
+      ############
+      can :index, :pack_contracts
+      can :show, :pack_contracts
+      can :create, :pack_contracts
+      can :edit, :pack_contracts
+      
+      # PackShipments
+      ############
+      if user.company.include_shipments?
+        can :index, :pack_shipments
+        can :show, :pack_shipments
+        can :edit, :pack_shipments
+        can :fetches, :pack_shipments
+        can :pictures, :pack_shipments
+      end
+      
+      # Inventories
+      ############
+      if user.company.include_inventories?
+        can :manage, Inventory do |inventory|
+          inventory.user_id == user.id
+        end
+        can :index, :inventories
+        can :show, :inventories
+        can :create, :inventories
+        can :edit, :inventories
+      end
+      
+      # EventCodes
+      ############
+      can :manage, EventCode do |event_code|
+        event_code.user_id == user.id
+      end
+      can :create, EventCode
+      
     # End admin user role
     
     elsif user.basic?
@@ -248,6 +300,11 @@ class Ability
       # Reports
       ############
       can :index, :reports
+      
+      # PackShipments
+      ############
+      can :show, :pack_shipments
+      can :pictures, :pack_shipments
       
     # End customer user role
     end 

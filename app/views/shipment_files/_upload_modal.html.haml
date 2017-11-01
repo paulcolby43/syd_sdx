@@ -2,25 +2,38 @@
   = form_for ShipmentFile.new do |f|
     .modal-dialog.modal-sm
       .modal-content
-        .modal-header
-          = @ticket_number
-          = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+        -#
+          .modal-header
+            = @ticket_number
+            = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
         .modal-body
           = f.hidden_field :user_id, value: current_user.id
           = f.hidden_field :yard_id, value: current_yard_id
-          = f.hidden_field :ticket_number, value: @ticket_number
+          = f.hidden_field :ticket_number, value: @pack_shipment['ShipmentNumber']
+          = f.hidden_field :customer_name, value: @pack_shipment['CustomerName']
           .form-group{:id => "event_code"}
-            = f.label "Event Code", :class => 'control-label'
-            = f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
-          .form-group
-            = f.label :container_number, :class => 'control-label'
-            = f.text_field :container_number, :placeholder => "Container Number", class: "form-control input-lg"
-          .form-group
-            = f.label :booking_number, :class => 'control-label'
-            = f.text_field :booking_number, :placeholder => "Booking Number", class: "form-control input-lg"
-          .form-group
-            = f.label :contract_number, :class => 'control-label'
-            = f.text_field :contract_number, :placeholder => "Contract Number", class: "form-control input-lg"
+            =# f.label "Event Code", :class => 'control-label'
+            .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
+              - current_user.company.event_codes.each do |event_code|
+                %label.btn.btn-lg.btn-default.btn-block.event_code_radio
+                  = f.radio_button :event_code_id, event_code.id, required: true
+                  = event_code.name
+              -#
+                - shipment_event_codes.each do |event_code, index|
+                  %label.btn.btn-lg.btn-default.btn-block.event_code_radio
+                    = f.radio_button :event_code, event_code, required: true, onClick: "alert('hi TRUE!');"
+                    = event_code
+            =# f.select :event_code, options_for_select(shipment_event_codes), {prompt: "Select event code"}, {:class => "form-control input-lg", onchange: "$('#upload_button').show();"}
+          -#
+            .form-group
+              = f.label :container_number, :class => 'control-label'
+              = f.text_field :container_number, :placeholder => "Container Number", class: "form-control input-lg"
+            .form-group
+              = f.label :booking_number, :class => 'control-label'
+              = f.text_field :booking_number, :placeholder => "Booking Number", class: "form-control input-lg"
+            .form-group
+              = f.label :contract_number, :class => 'control-label'
+              = f.text_field :contract_number, :placeholder => "Contract Number", class: "form-control input-lg"
           %div{:id => 'uploads', :style => 'display:block;'}
             %p{id: "upload_button", style: "display:none;"}
               = f.file_field :file, name: "shipment_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe

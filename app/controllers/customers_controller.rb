@@ -51,7 +51,8 @@ class CustomersController < ApplicationController
     authorize! :show, :customers
     
     @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
-    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id) if CustPic.table_exists?
+#    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id) if CustPic.table_exists?
+    @cust_pics_array = CustPic.api_find_all_by_customer_number(params[:id], current_user.company).reverse # Customer images
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])

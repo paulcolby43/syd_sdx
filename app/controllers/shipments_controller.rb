@@ -1,8 +1,8 @@
 class ShipmentsController < ApplicationController
   before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
-  before_action :set_shipment, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
+#  before_action :set_shipment, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
-  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
+#  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
 
   respond_to :html, :js
 
@@ -48,8 +48,13 @@ class ShipmentsController < ApplicationController
   end
 
   def show
-    @ticket_number = @shipment.ticket_nbr
-    respond_with(@shipment)
+    @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company)
+    @ticket_number = @shipment['TICKET_NBR']
+    if @shipment['YARDID'] != current_yard_id
+      flash[:danger] = "You don't have access to that page."
+      redirect_to root_path
+    end
+#    respond_with(@shipment)
   end
 
   def new
@@ -71,11 +76,13 @@ class ShipmentsController < ApplicationController
   end
   
   def show_jpeg_image
-    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Shipment.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
-    send_data @shipment.preview, :type => 'image/jpeg',:disposition => 'inline'
+#    send_data @shipment.preview, :type => 'image/jpeg',:disposition => 'inline'
+    send_data Shipment.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def destroy

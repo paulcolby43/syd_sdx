@@ -285,4 +285,26 @@ class Commodity
     end
   end
   
+  def self.unit_of_measure_weight_conversion(auth_token, to_unit, weight)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/shared/conversion"
+    payload = {
+      "FromUnit" => 'LB',
+      "ToUnit" => to_unit,
+      "PreConversionValue" => weight,
+      "IsPriceConversion" => false
+      }
+      
+    json_encoded_payload = JSON.generate(payload)
+    
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info "unit_of_measure_conversion call response:#{data}"
+#    return data
+    return data["GetConversionFactorResponse"]["ConvertedValue"]
+  end
+  
 end

@@ -3,6 +3,7 @@
   %head
     %title
       = @title || "SYD SDX"
+    = favicon_link_tag 'favicon.ico'
 
     %meta{ charset: 'utf-8' }
     %meta{ name: 'viewport', id: 'viewport', content: "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" }
@@ -24,7 +25,7 @@
 
   %body
     - if not logged_in?
-      = render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"} unless current_page?(signup_path)
+      =# render partial: "shared/navbars/no_user_navbar", locals: {title: "Home"} unless current_page?(signup_path)
     - else
       - unless current_yard_id.blank?
         - if current_user.admin?
@@ -33,11 +34,19 @@
           = render partial: "shared/navbars/basic_user_navbar", locals: {title: "Home"}
         - elsif current_user.customer?
           = render partial: "shared/navbars/customer_user_navbar", locals: {title: "Home"}
-    - flash.each do |message_type, message|
-      %br
-      = content_tag(:div, message, class: "alert alert-#{message_type}") do 
-        = message
-        = content_tag(:button, 'x', class: "close", data: { dismiss: 'alert' })
-      =# content_tag(:div, message, class: "alert alert-#{message_type}")
+    - if logged_in?
+      - flash.each do |message_type, message|
+        %br
+        = content_tag(:div, message, class: "alert alert-#{message_type}") do 
+          = message
+          = content_tag(:button, 'x', class: "close", data: { dismiss: 'alert' })
+    - else
+      - if not current_page? root_path
+        - flash.each do |message_type, message|
+          %br
+          = content_tag(:div, message, class: "alert alert-#{message_type}") do 
+            = message
+            = content_tag(:button, 'x', class: "close", data: { dismiss: 'alert' })
     = yield
-    = render 'shared/footer'
+    - if not logged_in? and current_page? root_path
+      = render 'shared/footer'

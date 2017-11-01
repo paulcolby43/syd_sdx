@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
   has_one :user_setting
   belongs_to :company
   has_many :portal_customers # Allow customer user to view other customer tickets via their portal
+  has_many :inventories
+  has_many :event_codes
   
   accepts_nested_attributes_for :portal_customers, allow_destroy: true
 
@@ -320,6 +322,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def currency_id
+    user_setting.currency_id
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -410,8 +416,9 @@ class User < ActiveRecord::Base
     json_encoded_payload = JSON.generate(payload)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
       payload: json_encoded_payload)
+    Rails.logger.info "create_scrap_dragon_user_for_current_user response: #{response}"
     data= Hash.from_xml(response)
-    Rails.logger.info data
+    Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
     return data["AddApiUserResponse"]
   end
   

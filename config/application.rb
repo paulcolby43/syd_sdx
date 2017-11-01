@@ -22,6 +22,7 @@ module SydSdx
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
 #    config.active_record.raise_in_transactional_callbacks = true
-    config.action_mailer.default_url_options = { host: '71.41.52.55', port: 3000 }
+#    config.action_mailer.default_url_options = { host: '71.41.52.55', port: 3000 }
+    config.action_mailer.default_url_options = { host: 'uat.scrapyarddog.com', port: 80 }
   end
 end

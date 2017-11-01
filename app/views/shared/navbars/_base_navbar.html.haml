@@ -7,31 +7,38 @@
         %span.icon-bar
         %span.icon-bar
       %a{class: 'navbar-brand', :href => root_path}
-        = image_tag('syd_logo_20x37.png')
+        =# image_tag('syd_logo_20x37.png')
+        - unless current_page? root_path
+          Home 
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            TICKETS
+            PURCHASES
             %b.caret
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
             %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1') ? 'active' : ''}"}= link_to 'Closed', tickets_path(status: 1)
             %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3') ? 'active' : ''}"}= link_to 'Paid', tickets_path(status: 3)
-        %li.dropdown{:class => "#{(params[:controller] == 'customers') ? 'active' : ''}"}
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            CUSTOMERS
-            %b.caret
-          %ul.dropdown-menu
-            %li= link_to 'All', customers_path
-            %li= link_to 'New', new_customer_path
-        %li.dropdown{:class => "#{(params[:controller] == 'commodities') ? 'active' : ''}"}
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            COMMODITIES
-            %b.caret
-          %ul.dropdown-menu
-            %li= link_to 'All', commodities_path
-            %li= link_to 'New', new_commodity_path
+        %li{:class => "#{(params[:controller] == 'customers') ? 'active' : ''} "}
+          %a{href: customers_path} CUSTOMERS
+        %li{:class => "#{(params[:controller] == 'commodities') ? 'active' : ''} "}
+          %a{href: commodities_path} COMMODITIES
+        -#
+          %li.dropdown{:class => "#{(params[:controller] == 'customers') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              CUSTOMERS
+              %b.caret
+            %ul.dropdown-menu
+              %li= link_to 'All', customers_path
+              %li= link_to 'New', new_customer_path
+          %li.dropdown{:class => "#{(params[:controller] == 'commodities') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              COMMODITIES
+              %b.caret
+            %ul.dropdown-menu
+              %li= link_to 'All', commodities_path
+              %li= link_to 'New', new_commodity_path
         -#
           %li= link_to 'WORK ORDERS', workorders_path
         -#
@@ -42,9 +49,30 @@
             %ul.dropdown-menu
               - Yard.all(current_user.token).each do |yard|
                 %li{:class => (yard['Id'] == current_yard_id) ? "active" : ""}= link_to yard["Name"], yard_path(yard['Id'])
-        %li= link_to 'PICTURES', images_path
         -#
-          %li= link_to 'SHIPMENTS', shipments_path
+          %li.dropdown{:class => "#{(params[:controller] == 'packs') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              PACKS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '0') ? 'active' : ''}"}
+                = link_to 'Closed', packs_path(status: 0)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '1') ? 'active' : ''}"}
+                = link_to 'Void', packs_path(status: 1)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '2') ? 'active' : ''}"}
+                = link_to 'Held', packs_path(status: 2)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '3') ? 'active' : ''}"}
+                = link_to 'Manifest', packs_path(status: 3)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '4') ? 'active' : ''}"}
+                = link_to 'Shipped', packs_path(status: 4)
+              %li{:class => "#{(params[:controller] == 'packs' and params[:action] == 'index' and params[:status] == '5') ? 'active' : ''}"}
+                = link_to 'Transferred', packs_path(status: 5)
+        %li{:class => "#{(params[:controller] == 'inventories') ? 'active' : ''} #{current_user.company.include_inventories? ? '' : 'disabled'} "}
+          %a{href: "#{current_user.company.include_shipments? ? inventories_path : '#'}"} INVENTORY
+        %li{:class => "#{(params[:controller] == 'pack_shipments') ? 'active' : ''} #{current_user.company.include_shipments? ? '' : 'disabled'} "}
+          %a{href: "#{current_user.company.include_shipments? ? pack_shipments_path : '#'}", disabled: current_user.company.include_shipments? ? false:true} SHIPMENTS
+        %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
+          %a{href: reports_path} REPORTS
         -#
           - unless Yard.device_groups(current_yard_id).blank?
             %li.dropdown
@@ -54,32 +82,16 @@
               %ul.dropdown-menu
                 %li{:class => (current_user.device_group == nil) ? "active" : ""}= link_to 'None', user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => ''), :method => :put
                 - Yard.device_groups(current_yard_id).each do |device_group|
-                  -#
-                    %li= link_to device_group.DeviceGroupName, '#'
                   %li{:class => (current_user.device_group == device_group) ? "active" : ""}= link_to device_group.DeviceGroupName, user_setting_path(current_user.user_setting, "user_setting[device_group_id]" => device_group.id), :method => :put
-        -#
-        %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            REPORTS
-            %b.caret
-          %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
-            %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
-          -#
-            - if current_user.admin?
-              %li.dropdown{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}
-                %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-                  USERS
-                  %b.caret
-                %ul.dropdown-menu
-                  %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'All', users_path
-                  -#
-                    %li{:class => "#{( current_page? new_user_path) ? 'active' : ''}"}= link_to 'New', new_user_path
+          %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              REPORTS
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
+              %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
           
       %ul.nav.navbar-nav.navbar-right
-        -#
-          - unless current_yard_id.blank?
-            %li= link_to current_yard['Name'], yard_path(current_yard_id)
         %li.dropdown{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             More

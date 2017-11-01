@@ -1,0 +1,31 @@
+= render partial: "shared/search_navbar", locals: {title: "#{@inv_tag['TICKET_NBR']}"}
+.jumbotron{style: 'background-color: white;'}
+  .container
+    %div.row
+      .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
+        = link_to image_tag(show_jpeg_image_inv_tag_path(@inv_tag['CAPTURE_SEQ_NBR']), alt: @inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive'), "#inv_tag_popup", "data-toggle" => "modal", :alt => "InvTag", :class => 'thumbnail'
+    %div{:id => "inv_tag_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+      .modal-dialog.modal-lg
+        .modal-content
+          .modal-body
+            = image_tag(show_jpeg_image_inv_tag_path(@inv_tag['CAPTURE_SEQ_NBR']), alt: @inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+    %div.row
+      .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
+        %div.panel.panel-primary
+          %div.list_group
+            - unless @inv_tag['EVENT_CODE'].blank?
+              %div.list-group-item
+                %strong= "Event:"
+                .pull-right
+                  = "#{@inv_tag['EVENT_CODE']}"
+            - unless @inv_tag['CAMERA_NAME'].blank?
+              %div.list-group-item
+                %strong= "Camera:"
+                .pull-right
+                  = "#{@inv_tag['CAMERA_NAME']}"
+            %div.list-group-item
+              %strong= "Date/Time:"
+              .pull-right
+                = "#{@inv_tag['SYS_DATE_TIME']}"
+
+= render partial: "shared/footer_navbar", locals: {title: "Shipments"}

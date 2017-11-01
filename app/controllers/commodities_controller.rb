@@ -123,7 +123,19 @@ class CommoditiesController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @commodity['PrintDescription'], "price" => "#{price.blank? ? @commodity['ScalePrice'] : price}", 
-          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100} } 
+          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100, "unit_of_measure" => @commodity['UnitOfMeasure']}} 
+    end
+  end
+  
+  def unit_of_measure_weight_conversion
+    authorize! :show, :commodities
+    
+    commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
+    @new_weight = Commodity.unit_of_measure_weight_conversion(current_user.token, commodity['UnitOfMeasure'], params[:net])
+    
+    respond_to do |format|
+      format.html {}
+      format.json {render json: {"new_weight" => @new_weight} }
     end
   end
 

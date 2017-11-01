@@ -1,0 +1,11 @@
+$('#packs').append('<%= j render "pack" %>');
+$('#more_packs_spinner').hide();
+
+<% if @packs.next_page %>
+  $('a.load-more-packs').show();
+  $('a.load-more-packs').attr('href', '<%= packs_path page: @packs.next_page, q: params[:q] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-packs').attr('href', '#');
+  $('a.reload-packs').show();
+<% end %>

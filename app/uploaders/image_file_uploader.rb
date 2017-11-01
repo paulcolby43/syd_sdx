@@ -58,7 +58,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
       txt.stroke = "#000000"
       txt.fill = "#F3F315"
       txt.font_weight = Magick::BoldWeight
-      caption = "#{model.customer_name} #{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{model.event_code}"
+      caption = "#{model.customer_name} #{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{model.event_code.name}"
       source.annotate(txt, 0, 0, 0, 20, caption)
     end
 
@@ -173,15 +173,15 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     end
     
     def not_signature?(file)
-      return model.event_code != "Signature"
+      return model.event_code.name != "Signature"
     end
     
     def should_process_caption?(file)
-      (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and model.event_code != "SIGNATURE CAPTURE"
+      (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and model.event_code.name != "SIGNATURE CAPTURE"
     end
     
     def should_process_contract?(file)
-      (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and model.event_code == "SIGNATURE CAPTURE"
+      (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and model.event_code.name == "SIGNATURE CAPTURE"
     end
 
 end

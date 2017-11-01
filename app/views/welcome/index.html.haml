@@ -1,9 +1,15 @@
 - if not logged_in?
-  .jumbotron{style: 'background-color: white;'}
+  .intro-header.jumbotron
     .container
-      = image_tag('dragon_dog_logo_529x214.png', alt: 'dragon_dog_logo_529x214.png', class: 'img-responsive center-block')
-      %p.text-center Scrap Yard Dog with Scrap Dragon Xtreme
+      %p= image_tag('sd_portal_transparent_small.png', alt: 'sd_portal_transparent_small.png', class: 'img-responsive center-block')
+      %hr
       %div.text-center
+        %h1.lead 
+          Welcome to the Scrap Dragon Portal
+        %p
+          %a{href: login_path, class: 'btn btn-lg btn-info welcome_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> LOG IN NOW OR CREATE AN ACCOUNT"}}
+            LOG IN NOW OR CREATE AN ACCOUNT
+      -#
         %p
           %a{href: signup_path, class: 'btn btn-lg btn-primary welcome_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign Up"}}
             %i.fa.fa-lock
@@ -11,6 +17,53 @@
           %a{href: login_path, class: 'btn btn-lg btn-default welcome_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}}
             %i.fa.fa-lock
             Log In
+  .jumbotron{style: 'background-color: white;'}
+    .container
+      %div.text-center
+        %h1.lead Scrap Dragon Xtreme - Scale to Sale Technology
+
+  .container
+    .row
+      .col-xs-12.col-sm-6
+        %h3.text-center Want to learn more about Scrap Dragon Xtreme?
+        = link_to image_tag('yard_simplified.jpeg', alt: 'yard_simplified.jpeg', class: 'img-responsive center-block'), 'http://www.scrapdragon.com/', target: '_blank'
+        %h4.text-center Running a scrap yard is difficult, let us help!
+        .lead
+          %ul
+            %li Capture weight and pictures simultaneously
+            %li Generate management & compliance reports automatically 
+            %li Get get back to scrappin!
+        %h4.text-center
+          Cloud or Locally Installed? You Decide! 
+          %br
+          Visit 
+          = link_to 'www.ScrapDragon.com', 'https://www.scrapdragon.com', target: '_blank'
+          for more info
+      .col-xs-12.col-sm-6
+        %h3.text-center Add Scrap Dragon Portal to an existing account!
+        = link_to image_tag('sd_sand.jpeg', alt: 'sd_sand.jpeg', class: 'img-responsive center-block'), 'https://tranact.com/request-a-quote/', target: '_blank'
+        %h4.text-center Already have Scrap Dragon Xtreme, let's go mobile!
+        .lead
+          %ul
+            %li Run purchase reports on your mobile device
+            %li Same level of support as all Tranact products
+            %li Do it!
+        %h4.text-center
+          Give us a call at (727)568-7075 or shoot an email to
+          %br
+          = mail_to 'adam@tranact.com'
+  .jumbotron{style: 'background-color: white;'}
+    .container
+      .col-xs-12.col-sm-3
+        = link_to image_tag('tranact_logo', alt: 'tranact_logo', class: 'img-responsive center-block'), 'https://tranact.com', target: '_blank'
+      .col-xs-12.col-sm-3
+        = link_to image_tag('scrapdragon_logo', alt: 'scrapdragon_logo', class: 'img-responsive center-block'), 'https://scrapdragon.com', target: '_blank'
+      .col-xs-12.col-sm-3
+        = link_to image_tag('ezcash_logo', alt: 'ezcash_logo', class: 'img-responsive center-block'), 'https://tranact.com/products/ezcash/', target: '_blank'
+      .col-xs-12.col-sm-3
+        = link_to image_tag('facebook_logo', alt: 'facebook_logo', class: 'img-responsive center-block'), 'https://www.facebook.com/TranAct.ScrapDragonSoftware/', target: '_blank'
+      
+
 - else
   - if current_user.admin?
     = render 'admin_start'

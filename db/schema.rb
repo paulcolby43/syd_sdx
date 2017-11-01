@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170213165010) do
+ActiveRecord::Schema.define(version: 20171026163453) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -73,6 +73,12 @@ ActiveRecord::Schema.define(version: 20170213165010) do
     t.string  "zip"
     t.string  "phone"
     t.string  "logo"
+    t.string  "jpegger_service_ip"
+    t.string  "jpegger_service_port"
+    t.boolean "include_shipments",         default: false
+    t.boolean "include_inventories",       default: false
+    t.boolean "include_external_users",    default: false
+    t.text    "signature_verbiage"
   end
 
   create_table "cust_pic_files", force: true do |t|
@@ -90,6 +96,19 @@ ActiveRecord::Schema.define(version: 20170213165010) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "yard_id"
+  end
+
+  create_table "event_codes", force: true do |t|
+    t.string   "name"
+    t.string   "camera_class"
+    t.string   "camera_position"
+    t.integer  "user_id"
+    t.integer  "company_id"
+    t.boolean  "include_in_fetch_lists", default: false
+    t.boolean  "include_in_shipments",   default: true
+    t.boolean  "include_in_images",      default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "image_files", force: true do |t|
@@ -117,6 +136,16 @@ ActiveRecord::Schema.define(version: 20170213165010) do
     t.datetime "updated_at"
     t.string   "yard_id"
     t.string   "contract_verbiage"
+    t.integer  "event_code_id"
+  end
+
+  create_table "inventories", force: true do |t|
+    t.integer  "user_id"
+    t.string   "title",         default: "Untitled"
+    t.text     "closed_packs"
+    t.text     "scanned_packs"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "portal_customers", force: true do |t|
@@ -145,6 +174,7 @@ ActiveRecord::Schema.define(version: 20170213165010) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "customer_name"
+    t.integer  "event_code_id"
   end
 
   create_table "user_settings", force: true do |t|

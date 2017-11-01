@@ -1,0 +1,16 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          = link_to root_path do
+            Home
+        .col-xs-4.col-sm-4
+          %i.fa.fa-list-alt.fa-lg
+          = title unless mobile_device?
+        .col-xs-4.col-sm-4
+          = form_for Inventory.new  do |f|
+            = f.hidden_field :user_id, value: current_user.id
+            %a{href: nil, onclick: "document.getElementById('new_inventory').submit()", style: "cursor: pointer", class: 'inventory_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' New'}"}}
+              = "New"
+            

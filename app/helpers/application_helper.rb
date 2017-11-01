@@ -21,11 +21,11 @@ module ApplicationHelper
   end
   
   def ticket_event_codes
-    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer"]
+    ["Gross", "Tare", "Deduction", "License Plate", "Title", "VIN", "Signature", "Vehicle", "Customer", "Other"]
   end
   
   def shipment_event_codes
-    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up"]
+    ["On ground", "Empty inside #", "Empty outside #", "Half loaded", "Fully loaded", "Full - outside #", "Sealed", "Seal close-up", "Other"]
   end
   
   def cust_pic_event_codes
@@ -110,5 +110,111 @@ module ApplicationHelper
       ['Wyoming', 'WY']
     ]
 end
+
+  def us_states_and_ca_provinces
+    [
+      ['Alabama', 'AL'],
+      ['Alaska', 'AK'],
+      ['Arizona', 'AZ'],
+      ['Arkansas', 'AR'],
+      ['California', 'CA'],
+      ['Colorado', 'CO'],
+      ['Connecticut', 'CT'],
+      ['Delaware', 'DE'],
+      ['District of Columbia', 'DC'],
+      ['Florida', 'FL'],
+      ['Georgia', 'GA'],
+      ['Hawaii', 'HI'],
+      ['Idaho', 'ID'],
+      ['Illinois', 'IL'],
+      ['Indiana', 'IN'],
+      ['Iowa', 'IA'],
+      ['Kansas', 'KS'],
+      ['Kentucky', 'KY'],
+      ['Louisiana', 'LA'],
+      ['Maine', 'ME'],
+      ['Maryland', 'MD'],
+      ['Massachusetts', 'MA'],
+      ['Michigan', 'MI'],
+      ['Minnesota', 'MN'],
+      ['Mississippi', 'MS'],
+      ['Missouri', 'MO'],
+      ['Montana', 'MT'],
+      ['Nebraska', 'NE'],
+      ['Nevada', 'NV'],
+      ['New Hampshire', 'NH'],
+      ['New Jersey', 'NJ'],
+      ['New Mexico', 'NM'],
+      ['New York', 'NY'],
+      ['North Carolina', 'NC'],
+      ['North Dakota', 'ND'],
+      ['Ohio', 'OH'],
+      ['Oklahoma', 'OK'],
+      ['Oregon', 'OR'],
+      ['Pennsylvania', 'PA'],
+      ['Puerto Rico', 'PR'],
+      ['Rhode Island', 'RI'],
+      ['South Carolina', 'SC'],
+      ['South Dakota', 'SD'],
+      ['Tennessee', 'TN'],
+      ['Texas', 'TX'],
+      ['Utah', 'UT'],
+      ['Vermont', 'VT'],
+      ['Virginia', 'VA'],
+      ['Washington', 'WA'],
+      ['West Virginia', 'WV'],
+      ['Wisconsin', 'WI'],
+      ['Wyoming', 'WY'],
+      ["Alberta", "AB"],
+      ["British Columbia", "BC"],
+      ["Manitoba", "MB"],
+      ["New Brunswick", "NB"],
+      ["Newfoundland and Labrador", "NL"],
+      ["Nova Scotia", "NS"],
+      ["Northwest Territories", "NT"],
+      ["Nunavut", "NU"],
+      ["Ontario", "ON"],
+      ["Prince Edward Island", "PE"],
+      ["Quebec", "QC"],
+      ["Saskatchewan", "SK"],
+      ["Yukon", "YT"]
+    ]
+end
+
+  def pack_status_description(status)
+    if status == '0'
+      return "Closed"
+    elsif status == '1'
+      return "Void"
+    elsif status == '2'
+      return "Held"
+    elsif status == '3'
+      return "Manifest"
+    elsif status == '4'
+      return "Shipped"
+    elsif status == '5'
+      return "Transferred"
+    else
+      return "Unknown Status"
+    end
+  end
+ 
+  def camera_classes
+    [['Article Image', 'A'], ['Customer image', 'C'], ['Customer ID image', 'I'], ['Customer thumbprint image', 'T'], ['Customer signature', 'S'], ['Vehicle image', 'V'], ['Do not send image', 'N'], ['Document', 'D']]
+  end
+  
+  def camera_positions
+    [['Directly above', 'A'], ['From behind', 'B'], ['From left/driver side', 'D'], ['From front', 'F'], ['Not supplied or not applicable', 'N'], ['Right/passenger side', 'P'], ['Unspecified side', 'S']]
+  end
+  
+  def camera_class_string(camera_class)
+    camera_class_hash = {'A' => 'Article Image', 'C' => 'Customer image', 'I' => 'Customer ID image', 'T' => 'Customer thumbprint image', 'S' => 'Customer signature', 'V' => 'Vehicle image', 'N' => 'Do not send image', 'D' => 'Document'}
+    return camera_class_hash[camera_class]
+  end
+  
+  def camera_position_string(camera_position)
+    camera_position_hash = {'A' => 'Directly above', 'B' => 'From behind', 'D' => 'From left/driver side', 'F' => 'From front', 'N' => 'Not supplied or not applicable', 'P' => 'Right/passenger side', 'S' => 'Unspecified side'}
+    return camera_position_hash[camera_position]
+  end
 
 end

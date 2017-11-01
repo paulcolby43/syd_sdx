@@ -19,6 +19,7 @@
  *= jquery.fileupload-ui.css
  *= require select2
  *= require select2-bootstrap
+*= require morris
  *= require_tree .
  *= require_self
  */
@@ -34,4 +35,8 @@ body { padding-top: 30px; }
     text-align: center;
     margin: auto;
     height:100%;
+}
+
+.select2-container .select2-search__field {
+  height: 44px; 
 }

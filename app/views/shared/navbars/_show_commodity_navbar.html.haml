@@ -3,11 +3,7 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          -#
-            = link_to 'javascript:history.back()' do
-              Back
-          %a{href: 'javascript:history.back()'}
-            %i.fa.fa-angle-left.fa-lg
+          %a{href: commodities_path}
             Commodities
           =# link_to 'Commodities', commodities_path
         .col-xs-4.col-sm-4

@@ -30,4 +30,6 @@
 //= require jquery-fileupload/jquery.fileupload-image
 //= require select2
 //= require nested_form_fields
+//= require raphael
+//= require morris
 //= require_tree .

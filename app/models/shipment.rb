@@ -9,45 +9,10 @@ class Shipment < ActiveRecord::Base
   self.table_name = 'shipments_data'
   
   belongs_to :blob
-
-   ### SEARCH WITH RANSACK ###
-  def self.ransack_search(query, sort, direction)
-    search = Shipment.ransack(query)
-    search.sorts = "#{sort} #{direction}"
-    shipments = search.result
-
-    # Search through the mounted archives if any exists and current database doesn't return anything
-#    if not MountedArchive.empty? and shipments.empty?
-#      Shipment.search_mounted_archives(query)
-#    end
-
-    return shipments
-  end
-
-  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
-#  def self.ransack_search_external_user(query, sort, direction, customer_name)
-#    search = Shipment.ransack(query)
-#    search.sorts = "#{sort} #{direction}"
-#    shipments = search.result
-#
-#    return shipments
-#
-#  end
-
-  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
-  def self.ransack_search_external_user(query, sort, direction, customer_name)
-    search = Shipment.ransack(query)
-    search.sorts = "#{sort} #{direction}"
-    shipments = []
-    search.result.each do |shipment|
-      if shipment.is_customer_shipment(customer_name)
-        shipments << shipment
-      end
-    end
-
-    return shipments
-  end
-
+  
+  #############################
+  #     Instance Methods      #
+  ############################
 
   def jpeg_image
     blob.jpeg_image
@@ -108,5 +73,123 @@ class Shipment < ActiveRecord::Base
 #      nil
 #    end
 #  end
+
+  #############################
+  #     Class Methods         #
+  #############################
+  
+  # Open and read jpegger shipment preview page, over ssl
+  def Shipment.preview(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
+  # Open and read jpegger shipment jpeg_image page, over ssl
+  def Shipment.jpeg_image(company, capture_sequence_number)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
+    
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+
+  def self.api_find_all_by_shipment_number(shipment_number, company)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+    ssl_client.close
+    
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["RESULT"]["ROW"]]
+      else
+        return data["RESULT"]["ROW"]
+      end
+    else
+      return [] # No shipments found
+    end
+    
+  end
+  
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+    ssl_client.close
+    
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      return data["RESULT"]["ROW"]
+    else
+      return nil # No shipment found
+    end
+
+  end
+  
+  ### SEARCH WITH RANSACK ###
+  def self.ransack_search(query, sort, direction)
+    search = Shipment.ransack(query)
+    search.sorts = "#{sort} #{direction}"
+    shipments = search.result
+
+    # Search through the mounted archives if any exists and current database doesn't return anything
+#    if not MountedArchive.empty? and shipments.empty?
+#      Shipment.search_mounted_archives(query)
+#    end
+
+    return shipments
+  end
+
+  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
+#  def self.ransack_search_external_user(query, sort, direction, customer_name)
+#    search = Shipment.ransack(query)
+#    search.sorts = "#{sort} #{direction}"
+#    shipments = search.result
+#
+#    return shipments
+#
+#  end
+
+  ### SEARCH WITH RANSACK BY EXTERNAL/LAW USER ###
+  def self.ransack_search_external_user(query, sort, direction, customer_name)
+    search = Shipment.ransack(query)
+    search.sorts = "#{sort} #{direction}"
+    shipments = []
+    search.result.each do |shipment|
+      if shipment.is_customer_shipment(customer_name)
+        shipments << shipment
+      end
+    end
+
+    return shipments
+  end
 
 end

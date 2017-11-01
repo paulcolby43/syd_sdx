@@ -31,6 +31,9 @@
         
       #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         .panel.panel-default
+          -#
+            .well
+              = @ticket
           %div.panel-heading{:role => "tab", id: "vendor_heading"}
             %h4.panel-title
               %a.text-success{"aria-controls" => "collapseVendor", "aria-expanded" => "true", "data-parent" => "#vendor_accordion", "data-toggle" => "collapse", :href => "#collapseVendor", :role => "button" }
@@ -42,6 +45,7 @@
           %div{id: "collapseVendor", "aria-labelledby" => "headingOne", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
             .panel-body
               = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
+              = hidden_field_tag "ticket[description]", "#{@ticket['Description'].blank? ? "" : @ticket['Description']}"
       - unless @ticket["TicketItemCollection"].blank?
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
           / Multiple ticket line items
@@ -82,7 +86,7 @@
                           %i.fa.fa-plus{style: "font-size:0.7em;"}
                         = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                         %span.input-group-addon
-                          %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
+                          %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross",  'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
                       %br
                       %div.input-group.tare_input_group
@@ -100,7 +104,7 @@
                           %i.fa.fa-minus{style: "font-size:0.7em;"}
                         = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                         %span.input-group-addon
-                          %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
+                          %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
                       %br
                       %div
@@ -109,6 +113,7 @@
                         %span.input-group-addon
                           %i.fa.fa-dollar.fa-lg
                         = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                      = hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                       = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                       - unless line_item['TaxCollection'].blank?
                         - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -139,9 +144,9 @@
                   .panel-footer
                     %ul{class: 'list-inline'}
                       %li.calculation_details
-                        = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{line_item['UnitOfMeasure']}"
+                        = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
                         x
-                        = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}"
+                        = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
                         = "= $#{line_item['ExtendedAmount']}"
                         - unless line_item['TaxCollection'].blank?
                           - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -192,7 +197,7 @@
                         %i.fa.fa-plus{style: "font-size:0.7em;"}
                       = phone_field_tag "ticket[line_items][][gross]", number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
                       %span.input-group-addon
-                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
+                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
                     %br
                     %div.input-group.tare_input_group
@@ -210,7 +215,7 @@
                         %i.fa.fa-minus{style: "font-size:0.7em;"}
                       = phone_field_tag "ticket[line_items][][tare]", number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
                       %span.input-group-addon
-                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
+                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => @ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], 'data-item-name' => @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"], 'data-item-id' => @ticket["TicketItemCollection"]["ApiTicketItem"]["Id"]}
                           %i.fa.fa-upload.fa-2x
                     %br
                     %div
@@ -219,6 +224,7 @@
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                    = hidden_field_tag "ticket[line_items][][unit_of_measure]", @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", @ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                     - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
                       - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -249,9 +255,9 @@
                 .panel-footer
                   %ul{class: 'list-inline'}
                     %li.calculation_details
-                      = "(#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+                      = "(#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
                       x
-                      = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3, strip_insignificant_zeros: true)}"
+                      = "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{@ticket['TicketItemCollection']['ApiTicketItem']['UnitOfMeasure']}"
                       = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
                       - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank?
                         - if @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -297,7 +303,7 @@
                       %i.fa.fa-plus{style: "font-size:0.7em;"}
                     = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
                     %span.input-group-addon
-                      %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-weight' => 0}
+                      %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => 0}
                         %i.fa.fa-upload.fa-2x
                   %br
                   %div.input-group.tare_input_group
@@ -315,7 +321,7 @@
                       %i.fa.fa-minus{style: "font-size:0.7em;"}
                     = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
                     %span.input-group-addon
-                      %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-weight' => 0}
+                      %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => 0}
                         %i.fa.fa-upload.fa-2x
                   %br
                   = hidden_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
@@ -323,8 +329,8 @@
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                  = hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
-
                   = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_percent_1]", '0.00', :placeholder => "Tax Percent 1", class: "form-control input-lg", readonly: true
@@ -353,9 +359,12 @@
               %i.fa.fa-plus
               = 'Item' unless mobile_device?
         %div.col-xs-3.col-sm-3
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Hold"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
             %i.fa.fa-check.fa-lg
-            = 'Save' unless mobile_device?
+            - if @ticket['Status'] == '2'
+              = 'Hold' unless mobile_device?
+            - else
+              = 'Save' unless mobile_device?
         %div.col-xs-3.col-sm-3
           - if @ticket['Status'] == '2'
             = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
@@ -364,7 +373,7 @@
           - if @ticket['Status'] == '1'
             %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
-              = 'Pay'  unless mobile_device?
+              = 'Pay' unless mobile_device?
             
         - if @ticket['Status'] == '2'
           %div.col-xs-3.col-sm-3
@@ -373,12 +382,51 @@
               = 'Pay' unless mobile_device?
             
     %hr
+      
     %div#images
 
-    %div{id: 'endless_page'}
-      %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
-      %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
-      %p= link_to 'Re-load pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'reload-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#images').empty(); $('a.load-more-images').attr('href', '<%= images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');", style: "display:none;" 
+    - @images_array.each_slice(6) do |images|
+      .row
+        - images.each do |image|
+          .col-xs-12.col-sm-2.col-md-2
+            .thumbnail
+              %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+              -#
+                .text-center= image.event_code
+              .text-center
+                %small.text-muted= image['EVENT_CODE']
+        -#
+          .col-xs-12.col-sm-2.col-md-2
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: image_path(capture_sequence_number), class: "list-group-item"}
+                  - if current_user.show_ticket_thumbnails?
+                    = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}", alt: capture_sequence_number, class: 'thumbnail img-responsive')
+                  .pull-right
+                    %i.fa.fa-chevron-right
+                  %br
+                  %small Event code
+                  %br
+                  %small Camera name
+                  %br
+                  %small.text-muted Date
+
+                -#
+                  - unless image.event_code.blank?
+                    %br/
+                    %small= image.event_code
+                  - unless image.camera_name.blank?
+                    %br/
+                    %small= image.camera_name
+                  %br/
+                  %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
+              
+    -#
+      %div{id: 'endless_page'}
+        %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
+        %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
+        %p= link_to 'Re-load pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'reload-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#images').empty(); $('a.load-more-images').attr('href', '<%= images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');", style: "display:none;" 
     -#
       .well
         %p= @ticket
