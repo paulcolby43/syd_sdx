@@ -209,7 +209,7 @@ class Ability
       # EventCodes
       ############
       can :manage, EventCode do |event_code|
-        event_code.user_id == user.id
+        event_code.company_id == user.company_id
       end
       can :create, EventCode
       

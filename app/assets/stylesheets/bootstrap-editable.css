@@ -82,6 +82,10 @@
    color: red;  
 }
 
+#error_explanation {
+   color: indianred;  
+}
+
 /* ---- For specific types ---- */
 
 .editableform .editable-date {
