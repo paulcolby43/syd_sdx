@@ -33,7 +33,10 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-
+    if Company.count == 1
+      # When there is only one company, all users go under that company
+      @user.company_id = Company.first.id
+    end
     respond_to do |format|
       unless @user.customer?
         create_scrap_dragon_user_response = User.create_scrap_dragon_user(user_params) if current_user.blank? and user_params[:dragon_account_number].blank?
