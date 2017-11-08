@@ -42,5 +42,10 @@
               %strong= "Date/Time:"
               .pull-right
                 = "#{@image['SYS_DATE_TIME']}"
+            - if @image['HIDDEN'] == '1'
+              %div.list-group-item
+                %strong= "Hidden:"
+                .pull-right
+                  Yes
 
 = render partial: "shared/footer_navbar", locals: {title: "Images"}
