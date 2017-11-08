@@ -16,7 +16,8 @@
           %br
           = "Pack List #{@pack_list['PackListNumber']}"
           %br
-          = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateShipped'].to_date.strftime('%-m/%-d/%Y')}"
+          = "#{@pack_shipment['ContractDescription']}"
+          = "#{@pack_shipment['DateShipped'].to_date.strftime('%-m/%-d/%Y')}" unless @pack_shipment['DateShipped'] == {"i:nil"=>"true"}
           %br
           = "Container Number: #{@pack_shipment['ContainerNumber']}"
           %br

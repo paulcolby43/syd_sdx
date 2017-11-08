@@ -55,7 +55,8 @@ class ImagesController < ApplicationController
   def show
     @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company)
     @ticket_number = @image['TICKET_NBR']
-    if @image['YARDID'] != current_yard_id
+    if @image['YARDID'] != current_yard_id or (current_user.customer? and @image['HIDDEN'] == '1')
+      # Don't allow access if yard ID doesn't match, or if customer user and the image is set to hidden
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
     end

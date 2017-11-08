@@ -55,6 +55,11 @@
               %strong= "Date/Time:"
               .pull-right
                 = "#{@shipment['SYS_DATE_TIME']}"
+            - if @shipment['HIDDEN'] == '1'
+              %div.list-group-item
+                %strong= "Hidden:"
+                .pull-right
+                  Yes
     -#        
       %div.row
         .text-center
