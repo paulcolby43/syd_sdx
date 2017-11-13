@@ -87,6 +87,7 @@ class ImagesController < ApplicationController
     unless blob[0..3] == "%PDF" 
       send_data Image.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
     else
+      # PDF file
       send_data Image.jpeg_image(current_user.company, params[:id]), :type => 'application/pdf',:disposition => 'inline'
     end
   end
