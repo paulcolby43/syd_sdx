@@ -62,6 +62,7 @@ class ImagesController < ApplicationController
     else
       @blob = Image.jpeg_image(current_user.company, params[:id])
       if @blob[0..3] == "%PDF"
+        # Show pdf directly in the browser
         redirect_to show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR'])
       end
     end
@@ -90,11 +91,9 @@ class ImagesController < ApplicationController
 #    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
     blob = Image.jpeg_image(current_user.company, params[:id])
     unless blob[0..3] == "%PDF" 
-#      send_data Image.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
       send_data blob, :type => 'image/jpeg',:disposition => 'inline'
     else
       # PDF file
-#      send_data Image.jpeg_image(current_user.company, params[:id]), :type => 'application/pdf',:disposition => 'inline'
       send_data blob, :type => 'application/pdf',:disposition => 'inline'
     end
   end
