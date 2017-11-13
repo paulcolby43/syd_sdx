@@ -54,6 +54,12 @@ class ShipmentsController < ApplicationController
       # Don't allow access if yard ID doesn't match, or if customer user and the shipment image is set to hidden
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
+    else
+      @blob = Shipment.jpeg_image(current_user.company, params[:id])
+      if @blob[0..3] == "%PDF"
+        # Show pdf directly in the browser
+        redirect_to show_jpeg_image_shipment_path(@shipment['CAPTURE_SEQ_NBR'])
+      end
     end
 #    respond_with(@shipment)
   end
@@ -78,7 +84,13 @@ class ShipmentsController < ApplicationController
   
   def show_jpeg_image
 #    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
-    send_data Shipment.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
+    blob = Shipment.jpeg_image(current_user.company, params[:id])
+    unless blob[0..3] == "%PDF" 
+      send_data blob, :type => 'image/jpeg',:disposition => 'inline'
+    else
+      # PDF file
+      send_data blob, :type => 'application/pdf',:disposition => 'inline'
+    end
   end
   
   def show_preview_image
