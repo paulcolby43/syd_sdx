@@ -3,7 +3,6 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    = @rt_lookup_images
     .panel.panel-default
       %div.panel-heading{:role => "tab", id: "vendor_heading"}
         %h4.panel-title
@@ -75,18 +74,19 @@
                   = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                 .text-center
                   %small.text-muted= image['EVENT_CODE']
-    %hr
-    RtLookup Images
-    - @rt_lookup_images.each_slice(6) do |images|
-      .row
-        - images.each do |image|
-          - unless image['HIDDEN'] == '1'
-            .col-xs-12.col-sm-2.col-md-2
-              .thumbnail
-                %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-                .text-center
-                  %small.text-muted= image['EVENT_CODE']
+    -#
+      %hr
+      RtLookup Images
+      - @rt_lookup_images.each_slice(6) do |images|
+        .row
+          - images.each do |image|
+            - unless image['HIDDEN'] == '1'
+              .col-xs-12.col-sm-2.col-md-2
+                .thumbnail
+                  %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  .text-center
+                    %small.text-muted= image['EVENT_CODE']
     -#
       - @images.each_slice(4) do |images|
         .row
