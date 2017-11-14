@@ -109,6 +109,7 @@ class TicketsController < ApplicationController
     @contract = Yard.contract(current_yard_id)
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
 #    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
+    @rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company)
   end
 
   # PATCH/PUT /tickets/1
