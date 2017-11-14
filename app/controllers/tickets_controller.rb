@@ -61,6 +61,11 @@ class TicketsController < ApplicationController
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company).reverse # Ticket images
+    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company)
+    rt_lookups.each do |rt_lookup|
+      images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company).reverse
+      @images_array << images
+    end
   
     respond_to do |format|
       format.html{}

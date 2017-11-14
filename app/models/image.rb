@@ -193,4 +193,36 @@ class Image < ActiveRecord::Base
 
   end
   
+  # Get all jpegger images for this company with this receipt number
+  def self.api_find_all_by_receipt_number(receipt_number, company)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>select * from images where receipt_nbr='#{receipt_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+    ssl_client.close
+    
+    Rails.logger.debug "*********** Image.api_find_all_by_receipt_number response: #{response}"
+    data= Hash.from_xml(response) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["RESULT"]["ROW"]]
+      else
+        return data["RESULT"]["ROW"]
+      end
+    else
+      return [] # No images found
+    end
+  end
+  
 end
