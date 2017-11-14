@@ -62,11 +62,9 @@ class TicketsController < ApplicationController
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company).reverse # Ticket images
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company)
-#    @rt_lookup_images = []
     rt_lookups.each do |rt_lookup|
-      images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company).reverse
-#      @rt_lookup_images =  @rt_lookup_images | images # Union the arrays
-      @images_array =  @images_array | images # Union the arrays
+      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company).reverse
+      @images_array =  @images_array | rt_lookup_images # Union the image arrays
     end
   
     respond_to do |format|
@@ -116,7 +114,11 @@ class TicketsController < ApplicationController
     @contract = Yard.contract(current_yard_id)
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
 #    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
-    @rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company)
+    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company)
+    rt_lookups.each do |rt_lookup|
+      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company).reverse
+      @images_array =  @images_array | rt_lookup_images # Union the image arrays
+    end
   end
 
   # PATCH/PUT /tickets/1
