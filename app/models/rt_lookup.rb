@@ -25,14 +25,14 @@ class RtLookup < ActiveRecord::Base
     
     ssl_client.close
     
-    Rails.logger.debug "***********RtLookup.api_find_all_by_ticket_number response: #{response}"
+#    Rails.logger.debug "***********RtLookup.api_find_all_by_ticket_number response: #{response}"
     
     data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]
     else
-      return nil # No rt_lookups found
+      return [] # No rt_lookups found
     end
 
   end
