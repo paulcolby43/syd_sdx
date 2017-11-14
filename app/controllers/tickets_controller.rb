@@ -65,7 +65,7 @@ class TicketsController < ApplicationController
     @rt_lookup_images = []
     rt_lookups.each do |rt_lookup|
       images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company).reverse
-      @rt_lookup_images =  @rt_lookup_images + images
+      @rt_lookup_images =  @rt_lookup_images | images
     end
   
     respond_to do |format|
