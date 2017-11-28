@@ -10,17 +10,17 @@ class InvTag < ActiveRecord::Base
   #############################
   
   # Open and read jpegger INVTAG image preview page, over ssl
-  def self.preview(company, capture_sequence_number)
+  def self.preview(company, capture_sequence_number, yard_id)
     require "open-uri"
-    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
   
   # Open and read jpegger INVTAG jpeg_image page, over ssl
-  def self.jpeg_image(company, capture_sequence_number)
+  def self.jpeg_image(company, capture_sequence_number, yard_id)
     require "open-uri"
-    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=INVTAGS&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end

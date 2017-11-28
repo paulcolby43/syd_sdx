@@ -35,11 +35,11 @@ class InvTagsController < ApplicationController
   end
   
   def show_jpeg_image
-    send_data InvTag.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
+    send_data InvTag.jpeg_image(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
-    send_data InvTag.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
+    send_data InvTag.preview(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def destroy
