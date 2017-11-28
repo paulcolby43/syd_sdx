@@ -55,7 +55,7 @@ class ShipmentsController < ApplicationController
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
     else
-      @blob = Shipment.jpeg_image(current_user.company, params[:id])
+      @blob = Shipment.jpeg_image(current_user.company, params[:id], current_yard_id)
       if @blob[0..3] == "%PDF"
         # Show pdf directly in the browser
         redirect_to show_jpeg_image_shipment_path(@shipment['CAPTURE_SEQ_NBR'])
@@ -84,7 +84,7 @@ class ShipmentsController < ApplicationController
   
   def show_jpeg_image
 #    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
-    blob = Shipment.jpeg_image(current_user.company, params[:id])
+    blob = Shipment.jpeg_image(current_user.company, params[:id], current_yard_id)
     unless blob[0..3] == "%PDF" 
       send_data blob, :type => 'image/jpeg',:disposition => 'inline'
     else
@@ -95,7 +95,7 @@ class ShipmentsController < ApplicationController
   
   def show_preview_image
 #    send_data @shipment.preview, :type => 'image/jpeg',:disposition => 'inline'
-    send_data Shipment.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
+    send_data Shipment.preview(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def destroy
