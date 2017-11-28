@@ -109,13 +109,13 @@ class Image < ActiveRecord::Base
   end
   
   # Get all jpegger images for this company with this ticket number
-  def self.api_find_all_by_ticket_number(ticket_number, company)
+  def self.api_find_all_by_ticket_number(ticket_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
@@ -158,13 +158,13 @@ class Image < ActiveRecord::Base
   end
   
   # Get all the data for the image with this capture sequence number
-  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from images where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from images where capture_seq_nbr='#{capture_sequence_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
@@ -194,13 +194,13 @@ class Image < ActiveRecord::Base
   end
   
   # Get all jpegger images for this company with this receipt number
-  def self.api_find_all_by_receipt_number(receipt_number, company)
+  def self.api_find_all_by_receipt_number(receipt_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from images where receipt_nbr='#{receipt_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from images where receipt_nbr='#{receipt_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
