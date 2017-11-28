@@ -22,12 +22,12 @@ class BlobsController < ApplicationController
   end
   
   def show_jpeg_image
-    @blob = Blob.api_find_by_id(params[:id], current_user.company)
+    @blob = Blob.api_find_by_id(params[:id], current_user.company, current_yard_id)
     send_data @blob['JPEG_IMAGE'], :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
-    @blob = Blob.api_find_by_id(params[:id], current_user.company)
+    @blob = Blob.api_find_by_id(params[:id], current_user.company, current_yard_id)
     send_data @blob['PREVIEW'], :type => 'image/jpeg',:disposition => 'inline'
   end
   

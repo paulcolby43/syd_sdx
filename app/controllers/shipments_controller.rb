@@ -48,7 +48,7 @@ class ShipmentsController < ApplicationController
   end
 
   def show
-    @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company)
+    @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company, current_yard_id)
     @ticket_number = @shipment['TICKET_NBR']
     if @shipment['YARDID'] != current_yard_id or (current_user.customer? and @shipment['HIDDEN'] == '1')
       # Don't allow access if yard ID doesn't match, or if customer user and the shipment image is set to hidden

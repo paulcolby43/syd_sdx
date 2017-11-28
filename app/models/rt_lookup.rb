@@ -9,11 +9,11 @@ class RtLookup < ActiveRecord::Base
   #     Class Methods      #
   #############################
   
-  def self.api_find_all_by_ticket_number(ticket_number, company)
+  def self.api_find_all_by_ticket_number(ticket_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-    command = "<FETCH><SQL>select * from rt_lookup where ticket_nbr='#{ticket_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from rt_lookup where ticket_nbr='#{ticket_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client

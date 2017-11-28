@@ -103,7 +103,7 @@ class PackShipmentsController < ApplicationController
   def fetches
     authorize! :fetches, :pack_shipments
     @pack_shipment = PackShipment.find(current_user.token, current_yard_id, params[:id])
-    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company).reverse # Shipment images
+    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company, current_yard_id).reverse # Shipment images
     @fetch_event_codes = current_user.company.fetch_event_codes
     respond_to do |format|
       format.html {}
@@ -120,7 +120,7 @@ class PackShipmentsController < ApplicationController
     @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company).reverse # Shipment images
     @inventory_tags_array = []
     @current_packs.each do |pack|
-      @inventory_tags_array << InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company) 
+      @inventory_tags_array << InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company, current_yard_id) 
     end
     @inventory_tags_array = @inventory_tags_array.flatten # Need to flatten array since may end up with array filled with arrays, and we only want a one dimensional array
     respond_to do |format|

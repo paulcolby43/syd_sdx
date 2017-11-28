@@ -53,7 +53,7 @@ class ImagesController < ApplicationController
   end
 
   def show
-    @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company)
+    @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company, current_yard_id)
     @ticket_number = @image['TICKET_NBR']
     if @image['YARDID'] != current_yard_id or (current_user.customer? and @image['HIDDEN'] == '1')
       # Don't allow access if yard ID doesn't match, or if customer user and the image is set to hidden

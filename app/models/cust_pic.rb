@@ -114,13 +114,13 @@ class CustPic < ActiveRecord::Base
   end
   
   # Get all jpegger cust_pics for this company with this customer number
-  def self.api_find_all_by_customer_number(customer_number, company)
+  def self.api_find_all_by_customer_number(customer_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from cust_pics where cust_nbr='#{customer_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from cust_pics where cust_nbr='#{customer_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
@@ -153,13 +153,13 @@ class CustPic < ActiveRecord::Base
     
   end
   
-  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from cust_pics where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from cust_pics where capture_seq_nbr='#{capture_sequence_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
