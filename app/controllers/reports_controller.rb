@@ -34,9 +34,10 @@ class ReportsController < ApplicationController
       @line_items.each do |line_item|
         @line_items_total = @line_items_total + line_item["ExtendedAmount"].to_d
       end
-      # Collect cash and check tickets
+      # Collect cash, check, and ezcash tickets
       @cash_payment_tickets = []
       @check_payment_tickets = []
+      @ezcash_payment_tickets = []
       unless @tickets.blank? or @status == '1' # Don't look for accounts payable for each ticket if there aren't any, or if showing closed tickets
         @tickets.each do |ticket|
           # Find accounts payable for this ticket and payment status of 1, then determine payment method
@@ -45,11 +46,14 @@ class ReportsController < ApplicationController
             @cash_payment_tickets << ticket
           elsif accounts_payable['PaymentMethod'] == "1"
             @check_payment_tickets << ticket
+          elsif accounts_payable['PaymentMethod'] == "1"
+            @ezcash_payment_tickets << ticket
           end
         end
       end
       @cash_total = @cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
       @check_total = @check_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
+      @ezcash_total = @ezcash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
     else
       # Shipments report
       # Just show customer summary report
