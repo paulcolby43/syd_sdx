@@ -69,7 +69,8 @@
                   =# "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
                 - unless @status == '1'  # Don't show for closed tickets
                   %td
-                    = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}" 
+                    = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}"
+                    = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod']
                 -# %td= ticket
             -#
               %tr
