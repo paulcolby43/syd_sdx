@@ -122,7 +122,8 @@
             .panel-heading
               %h5.panel-title 
                 Jpegger Service
-                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+                -# 
+                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
             %ul.list-group
               %li.list-group-item
                 = "IP Address"
