@@ -22,10 +22,10 @@
         .row
           %div{:class => "col-sm-12 col-md-12"}
             - unless params[:customer_guid].blank?
-              = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign In"}) do
+              = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Password"}) do
                 Create Password
             - else
-              = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-info', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign In"}) do
+              = button_tag(:type => 'submit', :class => 'btn btn-block btn-lg btn-info', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Log In"}) do
                 Log In
       - if params[:customer_guid].blank?
         %br
