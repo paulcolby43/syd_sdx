@@ -1,0 +1,128 @@
+= render partial: "shared/navbars/show_task_navbar", locals: {title: "Task"}
+-@title="Task"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container  
+    %p.lead= "#{task_status_string(@task['TaskStatus'])}"
+    %ul.nav.nav-tabs
+      %li.active
+        %a{:href => "#task_details", :data => {:toggle => "tab"}}
+          Details
+      %li
+        %a{:href => "#containers", :data => {:toggle => "tab"}}
+          Containers
+      %li
+        %a{:href => "#images", :data => {:toggle => "tab"}}
+          Images
+    .tab-content
+      .tab-pane.active{:id => "task_details"}
+        %br
+        .panel.panel-default
+          %div.panel-heading
+            %h4.panel-title
+              Destination
+          %div.panel-body
+            %strong= "To:"
+            .pull-right
+              = "#{@task['ToLocation']}"
+            %br
+            %strong= "Phone:"
+            .pull-right
+              = @workorder['Phone'] unless @workorder.blank?
+
+        .panel.panel-default
+          %div.panel-heading
+            %h4.panel-title
+              General
+          %div.panel-body
+            %strong= "Type:"
+            .pull-right
+              = "#{@task['TaskType']}"
+            %br
+            %strong= "Work Order:"
+            .pull-right
+              = @task['WorkOrderNumber']
+            %br
+            %strong= "Customer:"
+            .pull-right
+              = @task['Customer']
+            %br
+            %strong= "Notes:"
+            .pull-right
+              = @task['Notes']
+
+        .well
+          Trip:
+          = @trip
+        %br
+        .well
+          WorkOrder:
+          = @workorder unless @workorder.blank?
+        %br
+        .well
+          Task:
+          = @task
+
+        -#
+          - unless @packs.blank?
+            - @packs.each do |pack|
+              .panel.panel-default.line-item
+                %div.panel-heading{:role => "tab", id: "heading#{pack['Id']}"}
+                  %h4.panel-title
+                    %ul{class: 'list-inline'}
+                      %li
+                        %a.line_item_name.text-success{"aria-controls" => "collapse#{pack['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{pack['Id']}", :role => "button", class: "collapsed"}
+                          = "#{pack['PackListItemInformation']['InventoryDescription']}"
+                      %li.pull-right
+                        %a{href: '#', class: 'void_item remove_field'}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                      -#
+                        %li.pull-right
+                          %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
+                            %i.fa.fa-trash.fa-lg.text-danger
+                            %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                %div{id: "collapse_#{pack['Id']}", "aria-labelledby" => "heading#{pack['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
+                  .panel-body
+                    %strong Tag Number
+                    = pack['PackListItemInformation']['PackInfo']['TagNumber']
+                    %strong Description
+                    = pack['PackListItemInformation']['PackInfo']['PrintDescription']
+                    %br
+                    %strong Type:
+                    = pack['PackListItemInformation']['PackInfo']['PackType']
+                    %br
+                    %strong Quantity:
+                    = pack['PackListItemInformation']['PackInfo']['Quantity']
+                    %br
+                    %strong Gross:
+                    = pack['PackListItemInformation']['PackInfo']['GrossWeight']
+                    %br
+                    %strong Tare:
+                    = pack['PackListItemInformation']['PackInfo']['TareWeight']
+                    %br
+                    %strong Net:
+                    = pack['PackListItemInformation']['PackInfo']['NetWeight']
+          - else
+            %p.lead Empty
+      .tab-pane{:id => "containers"}
+        %br
+        - unless @containers.blank?
+          - @containers.each do |container|
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list_group
+                    %a{href: '#', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item task_button"}
+                      .pull-right
+                        &nbsp;
+                        %i.fa.fa-chevron-right.fa-lg
+                      = container['ContainerId']
+                      %small
+                        .text-muted
+        - else
+          None
+
+      .tab-pane{:id => "images"}
+
+=# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}

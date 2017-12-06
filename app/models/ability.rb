@@ -213,6 +213,15 @@ class Ability
       end
       can :create, EventCode
       
+      # Trips
+      ############
+      can :index, :trips
+      can :show, :trips
+      
+      # Tasks
+      ############
+      can :show, :tasks
+      
     # End admin user role
     
     elsif user.basic?
