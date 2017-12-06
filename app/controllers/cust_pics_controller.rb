@@ -38,7 +38,7 @@ class CustPicsController < ApplicationController
 
   def show
 #    respond_with(@cust_pic)
-    @cust_pic = CustPic.api_find_by_capture_sequence_number(params[:id], current_user.company)
+    @cust_pic = CustPic.api_find_by_capture_sequence_number(params[:id], current_user.company, current_yard_id)
     if @cust_pic['YARDID'] != current_yard_id
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
@@ -65,12 +65,12 @@ class CustPicsController < ApplicationController
   
   def show_jpeg_image
 #    send_data @cust_pic.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
-    send_data CustPic.jpeg_image(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
+    send_data CustPic.jpeg_image(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def show_preview_image
 #    send_data @cust_pic.preview, :type => 'image/jpeg',:disposition => 'inline'
-    send_data CustPic.preview(current_user.company, params[:id]), :type => 'image/jpeg',:disposition => 'inline'
+    send_data CustPic.preview(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def destroy

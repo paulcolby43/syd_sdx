@@ -13,7 +13,7 @@
         %div{:class => "col-sm-12"}
           = f.label "Name*", :class => "control-label"
           %br/
-          = f.text_field :name, placeholder: "Name", :class => "form-control input-lg", required: true
+          = f.text_field :name, placeholder: "Name", :class => "form-control input-lg", required: true, readonly: (not @event_code.new_record? and (@event_code.gross_event_code? or @event_code.tare_event_code? or @event_code.signature_event_code?))
       .row.form-group
         %div{:class => "col-sm-12"}
           = f.label :camera_class, :class => "control-label"
@@ -40,3 +40,7 @@
       .row.form-group
         %div{:class => "col-sm-12"}
           = f.submit "Save", :class => "btn btn-lg btn-primary btn-block"
+      - unless @event_code.new_record? or @event_code.gross_event_code? or @event_code.tare_event_code? or @event_code.signature_event_code?
+        .row.form-group
+          %div{:class => "col-sm-12"}
+            = link_to 'Delete', @event_code, :method => :delete, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-sm btn-danger'

@@ -7,5 +7,26 @@ class EventCode < ActiveRecord::Base
   
   
   validates :name, presence: true
+  validates_uniqueness_of :name, case_sensitive: false, scope: :company_id
+  
+  ############################
+  #     Instance Methods     #
+  ############################
+  
+  def gross_event_code?
+    name == 'Gross'
+  end
+  
+  def tare_event_code?
+    name == 'Tare'
+  end
+  
+  def signature_event_code?
+    name == 'Signature'
+  end
+  
+  #############################
+  #     Class Methods         #
+  #############################
   
 end

@@ -3,7 +3,8 @@ class Company < ActiveRecord::Base
   before_save :default_jpegger_service_ip
   before_save :default_jpegger_service_port
   
-  after_create :create_gross_and_tare_and_signature_event_codes
+#  after_create :create_gross_and_tare_and_signature_event_codes
+  after_create :create_default_event_codes
   
   has_many :users
   has_many :inventories, through: :users
@@ -58,10 +59,34 @@ class Company < ActiveRecord::Base
     event_codes.where(include_in_fetch_lists: true)
   end
   
-  def create_gross_and_tare_and_signature_event_codes
-    EventCode.create(company_id: self.id, name: 'Gross', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
-    EventCode.create(company_id: self.id, name: 'Tare', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+#  def create_gross_and_tare_and_signature_event_codes
+#    EventCode.create(company_id: self.id, name: 'Gross', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+#    EventCode.create(company_id: self.id, name: 'Tare', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+#    EventCode.create(company_id: self.id, name: 'Signature', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+#  end
+  
+  def create_default_event_codes
+    
+    # Standard Event Codes
+    EventCode.create(company_id: self.id, name: 'Gross', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Tare', camera_class: 'A', camera_position: 'A', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
     EventCode.create(company_id: self.id, name: 'Signature', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'License Plate', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Photo ID', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Car Title', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Deduction', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Other', include_in_fetch_lists: false, include_in_shipments: true, include_in_images: true)
+    
+    # Fetch Event Codes
+    EventCode.create(company_id: self.id, name: 'On Ground', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Empty Inside #', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Empty Outside #', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Half Loaded', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Fully Loaded', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Full – Outside #', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Sealed', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    EventCode.create(company_id: self.id, name: 'Seal Close-up', include_in_fetch_lists: true, include_in_shipments: true, include_in_images: true)
+    
   end
   
   def gross_event_code

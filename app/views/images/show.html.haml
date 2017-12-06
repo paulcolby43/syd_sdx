@@ -23,7 +23,7 @@
         .modal-content
           .modal-body
             =# image_tag(@image.jpeg_image_data_uri, alt: @image.id, class: 'img-responsive')
-            = image_tag(show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR']), alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+            = image_tag(show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR']), alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive') 
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         %div.panel.panel-primary
@@ -42,5 +42,10 @@
               %strong= "Date/Time:"
               .pull-right
                 = "#{@image['SYS_DATE_TIME']}"
+            - if @image['HIDDEN'] == '1'
+              %div.list-group-item
+                %strong= "Hidden:"
+                .pull-right
+                  Yes
 
 = render partial: "shared/footer_navbar", locals: {title: "Images"}

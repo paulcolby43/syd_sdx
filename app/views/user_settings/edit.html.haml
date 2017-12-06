@@ -40,21 +40,19 @@
                     .pull-right= f.select :currency_id, options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']] }, @user_setting.currency_id), {:include_blank => false}, {:class => "form-control input-lg"}
 
         .col-xs-12.col-sm-6
-          - unless @event_codes.blank?
-            %div.panel.panel-default
-              %div.panel-heading
-                %h5.panel-title 
-                  Event codes
-                  .pull-right= link_to 'Edit', event_codes_path
-              %ul.list-group
+          %div.panel.panel-default
+            %div.panel-heading
+              %h5.panel-title 
+                Event codes
+                .pull-right= link_to 'New', new_event_code_path
+            %ul.list-group
+              - unless @event_codes.blank?
                 - @event_codes.each do |event_code|
                   %li.list-group-item
                     = link_to event_code.name, edit_event_code_path(event_code)
-          - else
-            .panel.panel-default
-              .panel-heading
-                %h5.panel-title
-                  No Event Codes
+              - else
+                %li.list-group-item None
+                
       .row
         .col-xs-12.col-sm-6
           #signature_verbiage_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
@@ -124,7 +122,8 @@
             .panel-heading
               %h5.panel-title 
                 Jpegger Service
-                .pull-right= link_to 'Edit', edit_company_path(current_user.company)
+                -# 
+                  .pull-right= link_to 'Edit', edit_company_path(current_user.company)
             %ul.list-group
               %li.list-group-item
                 = "IP Address"

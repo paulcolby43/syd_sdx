@@ -17,6 +17,9 @@
         Check
         = number_to_currency(@check_total)
         %br
+        EZcash
+        = number_to_currency(@ezcash_total)
+        %br
         %strong Total
         = number_to_currency(@line_items_total)
 
@@ -119,6 +122,9 @@
     %br
     Check
     = number_to_currency(@check_total)
+    %br
+    EZcash
+    = number_to_currency(@ezcash_total)
     %br
     %strong Total
     = number_to_currency(@line_items_total)

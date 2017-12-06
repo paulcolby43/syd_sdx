@@ -17,6 +17,9 @@
         Check
         = number_to_currency(@check_total)
         %br
+        EZcash
+        = number_to_currency(@ezcash_total)
+        %br
         %strong Total
         = number_to_currency(@line_items_total)
 
@@ -69,7 +72,7 @@
                   =# "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
                 - unless @status == '1'  # Don't show for closed tickets
                   %td
-                    = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}" 
+                    = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}"
                 -# %td= ticket
             -#
               %tr
@@ -85,6 +88,9 @@
     %br
     Check
     = number_to_currency(@check_total)
+    %br
+    EZcash
+    = number_to_currency(@ezcash_total)
     %br
     %strong Total
     = number_to_currency(@line_items_total)

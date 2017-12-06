@@ -79,28 +79,28 @@ class Shipment < ActiveRecord::Base
   #############################
   
   # Open and read jpegger shipment preview page, over ssl
-  def Shipment.preview(company, capture_sequence_number)
+  def Shipment.preview(company, capture_sequence_number, yard_id)
     require "open-uri"
-    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
   
   # Open and read jpegger shipment jpeg_image page, over ssl
-  def Shipment.jpeg_image(company, capture_sequence_number)
+  def Shipment.jpeg_image(company, capture_sequence_number, yard_id)
     require "open-uri"
-    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
 
-  def self.api_find_all_by_shipment_number(shipment_number, company)
+  def self.api_find_all_by_shipment_number(shipment_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from shipments where ticket_nbr='#{shipment_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
@@ -126,13 +126,13 @@ class Shipment < ActiveRecord::Base
     
   end
   
-  def self.api_find_by_capture_sequence_number(capture_sequence_number, company)
+  def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from shipments where capture_seq_nbr='#{capture_sequence_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port

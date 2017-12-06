@@ -46,7 +46,7 @@ module ApplicationHelper
   end
   
   def payment_method_string(method_number)
-    method_hash = {"0" => "Cash", "1" => "Check"}
+    method_hash = {"0" => "Cash", "1" => "Check", "3" => "EZcash"}
     return method_hash[method_number]
   end
   

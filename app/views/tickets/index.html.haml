@@ -58,7 +58,7 @@
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
                 %div.list_group
-                  - unless current_user.customer?
+                  - unless current_user.customer? or ticket['Status'] == '3'
                     %a{href: edit_ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
                       .pull-right
                         =# number_to_currency(ticket["BalanceDue"]) if params[:status] == 'closed'
