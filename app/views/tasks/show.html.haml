@@ -1,9 +1,8 @@
-= render partial: "shared/navbars/show_task_navbar", locals: {title: "Task"}
+= render partial: "shared/navbars/show_task_navbar", locals: {title: "Task", status: task_status_string(@task['TaskStatus'])}
 -@title="Task"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container  
-    %p.lead= "#{task_status_string(@task['TaskStatus'])}"
     %ul.nav.nav-tabs
       %li.active
         %a{:href => "#task_details", :data => {:toggle => "tab"}}
@@ -120,9 +119,15 @@
                       = container['ContainerId']
                       %small
                         .text-muted
-        - else
-          None
+
+        %p
+          %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add"}} 
+            Add 
 
       .tab-pane{:id => "images"}
+        %br
+        %p
+          %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Photo"}} 
+            Photo
 
 =# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}

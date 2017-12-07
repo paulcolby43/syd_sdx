@@ -19,16 +19,20 @@
                     = "#{@trucks.find {|t| t['TruckListInformation']['Id'] == trip['TruckId']}['TruckListInformation']['Description'] }"
                     %small
                       .text-muted
-                        = "#{trip['BeginDate']} - #{trip['EndDate']}"
-                        %br
-                        = "Status: #{trip['TripStatus']}"
+                        = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                        - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
+                          = " - "
+                          = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
                         -#
-                          = "#{pack_shipment['ContractDescription']}"
-                          = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
                           %br
-                          = "Container Number: #{pack_shipment['ContainerNumber']}"
-                          %br
-                          = "Vehicle Number: #{pack_shipment['DeliveryVehicleIdNumber']}"
+                          = "Status: #{trip['TripStatus']}"
+                          -#
+                            = "#{pack_shipment['ContractDescription']}"
+                            = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
+                            %br
+                            = "Container Number: #{pack_shipment['ContainerNumber']}"
+                            %br
+                            = "Vehicle Number: #{pack_shipment['DeliveryVehicleIdNumber']}"
       -#                    
         .row
           .text-center

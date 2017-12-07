@@ -70,8 +70,11 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html{}
       format.pdf do
-        @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
-        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
+#        @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
+        @signature_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Signature")
+#        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
+        @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Finger Print")
+        
         unless current_user.printer_devices.blank?
           printer = current_user.printer_devices.last
           render pdf: "ticket#{@ticket_number}",

@@ -225,4 +225,43 @@ class Image < ActiveRecord::Base
     end
   end
   
+  # Get first jpegger image for this company with this ticket number and event code
+  def self.api_find_first_by_ticket_number_and_event_code(ticket_number, company, yard_id, event_code)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>SELECT TOP 1 [images].* from images where ticket_nbr='#{ticket_number}' and event_code='#{event_code}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+    ssl_client.close
+    
+    Rails.logger.debug "***********Image.api_find_first_by_ticket_number_and_event_code response: #{response}"
+#    data= Hash.from_xml(response.first) # Convert xml response to a hash
+    data= Hash.from_xml(response) # Convert xml response to a hash
+    
+    unless data["RESULT"]["ROW"].blank?
+      return data["RESULT"]["ROW"]
+    else
+      return nil # No image found
+    end
+    
+  end
+  
+  def self.jpeg_image_data_uri(jpeg_image)
+    unless jpeg_image.blank?
+      "data:image/jpg;base64, #{Base64.encode64(jpeg_image)}"
+    else
+      nil
+    end
+  end
+    
+  
 end

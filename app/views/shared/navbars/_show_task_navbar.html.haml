@@ -3,14 +3,17 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to 'javascript:history.back()' do
-            Cancel
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to 'javascript:history.back()' do
+              Cancel
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title
           - else
             = truncate(title, length: 8)
         .col-xs-4.col-sm-4
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            .text-success= status
           -#
             - if current_user.admin?
               %a{href: edit_trip_path(@trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i>"}, class: 'customer_button'}
