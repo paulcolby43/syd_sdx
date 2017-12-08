@@ -49,18 +49,22 @@
             %strong= "Notes:"
             .pull-right
               = @task['Notes']
+        %p
+          %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Complete"}} 
+            Complete
 
-        .well
-          Trip:
-          = @trip
-        %br
-        .well
-          WorkOrder:
-          = @workorder unless @workorder.blank?
-        %br
-        .well
-          Task:
-          = @task
+        -#
+          .well
+            Trip:
+            = @trip
+          %br
+          .well
+            WorkOrder:
+            = @workorder unless @workorder.blank?
+          %br
+          .well
+            Task:
+            = @task
 
         -#
           - unless @packs.blank?
@@ -119,6 +123,8 @@
                       = container['ContainerId']
                       %small
                         .text-muted
+        - else
+          %p None
 
         %p
           %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add"}} 
@@ -126,6 +132,11 @@
 
       .tab-pane{:id => "images"}
         %br
+        - unless @images.blank?
+          - @images.each do |image|
+            = image
+        - else
+          %p None
         %p
           %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Photo"}} 
             Photo

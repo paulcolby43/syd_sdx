@@ -3,76 +3,96 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container  
-    %ul.nav.nav-tabs
-      %li.active
-        %a{:href => "#tasks", :data => {:toggle => "tab"}}
-          Tasks
-      %li
-        %a{:href => "#trip_details", :data => {:toggle => "tab"}}
-          Details
-      
-    .tab-content
-      .tab-pane{:id => "trip_details"}
-        = @trip
-        -#
-          - unless @packs.blank?
-            - @packs.each do |pack|
-              .panel.panel-default.line-item
-                %div.panel-heading{:role => "tab", id: "heading#{pack['Id']}"}
-                  %h4.panel-title
-                    %ul{class: 'list-inline'}
-                      %li
-                        %a.line_item_name.text-success{"aria-controls" => "collapse#{pack['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{pack['Id']}", :role => "button", class: "collapsed"}
-                          = "#{pack['PackListItemInformation']['InventoryDescription']}"
-                      %li.pull-right
-                        %a{href: '#', class: 'void_item remove_field'}
-                          %i.fa.fa-trash.fa-lg.text-danger
-                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
-                      -#
+    %br
+    %p Tasks
+    - unless @tasks.blank?
+      - @tasks.each_with_index do |task, index|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: task_path(task['Id'], task: task, trip_id: @trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{index + 1}"}, class: "list-group-item trip_button"}
+                  .pull-right
+                    &nbsp;
+                    %i.fa.fa-chevron-right.fa-lg
+                  = "#{index + 1}"
+                  = task_type_string(task['TaskType'])
+                  %small
+                    .text-muted
+    - else
+      None
+    
+    -#
+      %ul.nav.nav-tabs
+        %li.active
+          %a{:href => "#tasks", :data => {:toggle => "tab"}}
+            Tasks
+        %li
+          %a{:href => "#trip_details", :data => {:toggle => "tab"}}
+            Details
+
+      .tab-content
+        .tab-pane{:id => "trip_details"}
+          = @trip
+          -#
+            - unless @packs.blank?
+              - @packs.each do |pack|
+                .panel.panel-default.line-item
+                  %div.panel-heading{:role => "tab", id: "heading#{pack['Id']}"}
+                    %h4.panel-title
+                      %ul{class: 'list-inline'}
+                        %li
+                          %a.line_item_name.text-success{"aria-controls" => "collapse#{pack['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{pack['Id']}", :role => "button", class: "collapsed"}
+                            = "#{pack['PackListItemInformation']['InventoryDescription']}"
                         %li.pull-right
-                          %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
+                          %a{href: '#', class: 'void_item remove_field'}
                             %i.fa.fa-trash.fa-lg.text-danger
                             %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
-                %div{id: "collapse_#{pack['Id']}", "aria-labelledby" => "heading#{pack['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
-                  .panel-body
-                    %strong Tag Number
-                    = pack['PackListItemInformation']['PackInfo']['TagNumber']
-                    %strong Description
-                    = pack['PackListItemInformation']['PackInfo']['PrintDescription']
-                    %br
-                    %strong Type:
-                    = pack['PackListItemInformation']['PackInfo']['PackType']
-                    %br
-                    %strong Quantity:
-                    = pack['PackListItemInformation']['PackInfo']['Quantity']
-                    %br
-                    %strong Gross:
-                    = pack['PackListItemInformation']['PackInfo']['GrossWeight']
-                    %br
-                    %strong Tare:
-                    = pack['PackListItemInformation']['PackInfo']['TareWeight']
-                    %br
-                    %strong Net:
-                    = pack['PackListItemInformation']['PackInfo']['NetWeight']
+                        -#
+                          %li.pull-right
+                            %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
+                              %i.fa.fa-trash.fa-lg.text-danger
+                              %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                  %div{id: "collapse_#{pack['Id']}", "aria-labelledby" => "heading#{pack['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
+                    .panel-body
+                      %strong Tag Number
+                      = pack['PackListItemInformation']['PackInfo']['TagNumber']
+                      %strong Description
+                      = pack['PackListItemInformation']['PackInfo']['PrintDescription']
+                      %br
+                      %strong Type:
+                      = pack['PackListItemInformation']['PackInfo']['PackType']
+                      %br
+                      %strong Quantity:
+                      = pack['PackListItemInformation']['PackInfo']['Quantity']
+                      %br
+                      %strong Gross:
+                      = pack['PackListItemInformation']['PackInfo']['GrossWeight']
+                      %br
+                      %strong Tare:
+                      = pack['PackListItemInformation']['PackInfo']['TareWeight']
+                      %br
+                      %strong Net:
+                      = pack['PackListItemInformation']['PackInfo']['NetWeight']
+            - else
+              %p.lead Empty
+        .tab-pane.active{:id => "tasks"}
+          %br
+          - unless @tasks.blank?
+            - @tasks.each_with_index do |task, index|
+              %div.row
+                .col-xs-12.col-sm-12.col-md-12
+                  %div.panel.panel-primary
+                    %div.list_group
+                      %a{href: task_path(task['Id'], task: task, trip_id: @trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{index + 1}"}, class: "list-group-item trip_button"}
+                        .pull-right
+                          &nbsp;
+                          %i.fa.fa-chevron-right.fa-lg
+                        = "#{index + 1}"
+                        = task_type_string(task['TaskType'])
+                        %small
+                          .text-muted
           - else
-            %p.lead Empty
-      .tab-pane.active{:id => "tasks"}
-        %br
-        - unless @tasks.blank?
-          - @tasks.each_with_index do |task, index|
-            %div.row
-              .col-xs-12.col-sm-12.col-md-12
-                %div.panel.panel-primary
-                  %div.list_group
-                    %a{href: task_path(task['Id'], task: task, trip_id: @trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{index + 1}"}, class: "list-group-item trip_button"}
-                      .pull-right
-                        &nbsp;
-                        %i.fa.fa-chevron-right.fa-lg
-                      = "#{index + 1}"
-                      = task_type_string(task['TaskType'])
-                      %small
-                        .text-muted
-        - else
-          None
+            None
 
 =# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}
