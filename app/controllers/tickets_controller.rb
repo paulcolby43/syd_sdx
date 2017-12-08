@@ -72,7 +72,7 @@ class TicketsController < ApplicationController
       format.pdf do
 #        @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
         @signature_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Signature")
-        @signature_blob = Image.jpeg_image(current_user.company, @image['CAPTURE_SEQ_NBR'], current_yard_id)
+        @signature_blob = Image.jpeg_image(current_user.company, @signature_image['CAPTURE_SEQ_NBR'], current_yard_id)
 #        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
         @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Finger Print")
         
