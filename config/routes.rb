@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   
+  resources :tasks
+  resources :trips
+  
   resources :inv_tags do
     member do
       get 'show_jpeg_image'

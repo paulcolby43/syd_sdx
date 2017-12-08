@@ -12,10 +12,14 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/models/yard.rb</file>
-            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/assets/javascripts/customers.coffee</file>
-            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/commodities/index.html.haml</file>
-            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/tickets_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/helpers/application_helper.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/reports/_tickets_customer_summary.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/reports_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/controllers/pack_shipments_controller.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/models/shipment.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/reports/index.html.haml</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/models/accounts_payable.rb</file>
+            <file>file:/Users/jeremysenn/RubyProjects/Tranact/syd_sdx/app/views/reports/_tickets_commodity_summary.html.haml</file>
         </group>
     </open-files>
 </project-private>
