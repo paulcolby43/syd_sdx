@@ -160,7 +160,7 @@
         %td{colspan: "5"}
           -#
             %p= image_tag(@signature_image.jpeg_image_data_uri, style: 'width: 150%')
-          %p= image_tag(Image.jpeg_image_data_uri(show_jpeg_image_image_url(@signature_image['CAPTURE_SEQ_NBR'])), style: 'width: 150%')
+          %p= image_tag(Image.jpeg_image_data_uri(show_jpeg_image_image_path(@signature_image['CAPTURE_SEQ_NBR'])), style: 'width: 150%')
     - unless @finger_print_image.blank?
       %tr
         %td{colspan: "2"}
