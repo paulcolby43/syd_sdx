@@ -83,7 +83,7 @@ class Image < ActiveRecord::Base
   #############################
   
   # Open and read jpegger image preview page, over ssl
-  def Image.preview(company, capture_sequence_number, yard_id)
+  def self.preview(company, capture_sequence_number, yard_id)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
@@ -91,7 +91,7 @@ class Image < ActiveRecord::Base
   end
   
   # Open and read jpegger image jpeg_image page, over ssl
-  def Image.jpeg_image(company, capture_sequence_number, yard_id)
+  def self.jpeg_image(company, capture_sequence_number, yard_id)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
@@ -101,8 +101,6 @@ class Image < ActiveRecord::Base
   def self.proper_yardid(current_yard_id)
     where(yardid: current_yard_id)
   end
-  
-  private
   
   def self.ransackable_scopes(auth_object = nil)
     ["proper_yardid"]
