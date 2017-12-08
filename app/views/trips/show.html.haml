@@ -69,8 +69,7 @@
                         &nbsp;
                         %i.fa.fa-chevron-right.fa-lg
                       = "#{index + 1}"
-                      %br
-                      = "Task Type: #{task['TaskType']}"
+                      = task_type_string(task['TaskType'])
                       %small
                         .text-muted
         - else

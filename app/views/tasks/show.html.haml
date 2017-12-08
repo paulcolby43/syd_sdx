@@ -36,7 +36,7 @@
           %div.panel-body
             %strong= "Type:"
             .pull-right
-              = "#{@task['TaskType']}"
+              = task_type_string(@task['TaskType'])
             %br
             %strong= "Work Order:"
             .pull-right
