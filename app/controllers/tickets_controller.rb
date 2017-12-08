@@ -75,6 +75,7 @@ class TicketsController < ApplicationController
         @signature_blob = Image.jpeg_image(current_user.company, @signature_image['CAPTURE_SEQ_NBR'], current_yard_id)
 #        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
         @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Finger Print")
+        @finger_print_blob = Image.jpeg_image(current_user.company, @finger_print_image['CAPTURE_SEQ_NBR'], current_yard_id)
         
         unless current_user.printer_devices.blank?
           printer = current_user.printer_devices.last
