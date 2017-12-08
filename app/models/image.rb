@@ -124,15 +124,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    # Non-SSL TCP socket communication with jpegger
-#    socket = TCPSocket.open(host,port) # Connect to server
-#    socket.send(command, 0)
-#    sleep 2 # Give socket a little time to send, then receive
-#    response = socket.recvfrom(200000)
-#    socket.close
-    
 #    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{response}"
-#    data= Hash.from_xml(response.first) # Convert xml response to a hash
     data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
@@ -144,14 +136,6 @@ class Image < ActiveRecord::Base
     else
       return [] # No images found
     end
-    
-#    unless response.blank?
-#      response_array = response.first.split(/\r\n/)
-#      response_array -= ["EOF!"] # Remove EOF element from array
-#      return response_array.collect {|e| e.scan( /<([^>]*)>/).first.first} # Return just an array of capture sequence numbers
-#    else
-#      return nil
-#    end
     
   end
   
