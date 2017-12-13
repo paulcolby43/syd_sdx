@@ -57,7 +57,8 @@
                           =# task
                         .modal-footer
                           %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
-                          %button.btn.btn-primary{:type => "button"} Save changes
+                          -#
+                            %button.btn.btn-primary{:type => "button"} Save changes
 
                   -#
                     %a{href: "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item"}
