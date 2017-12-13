@@ -3,43 +3,120 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    -#
+      - @containers.each do |container|
+        .well
+          = container
     - unless @trips.blank?
-      %div{id: "trips"}
-        =# @trips.first  
-        - @trips.each do |trip|
-          %div.row
-            .col-xs-12.col-sm-12.col-md-12
-              %div.panel.panel-primary
-                %div.list_group
-                  %a{href: trip_path(trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{trip['TripNumber']}"}, class: "list-group-item trip_button"}
-                    .pull-right
-                      &nbsp;
-                      %i.fa.fa-chevron-right.fa-lg
-                    = "#{trip['TripNumber']}"
-                    = "#{@trucks.find {|t| t['TruckListInformation']['Id'] == trip['TruckId']}['TruckListInformation']['Description'] }"
+      #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        - @trips.each_with_index do |trip, index|
+          .panel.panel-default
+            .panel-heading{id: "trip_#{index}", :role => "tab"}
+              %h4.panel-title
+                %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
+                  = "#{trip['TripNumber']}"
+                  = Trip.tasks(trip).first['Customer']
+                  %small
+                    .text-muted
+                      %br
+                      = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                      - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
+                        = " - "
+                        = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+            .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
+              %ul.list-group
+                - Trip.tasks(trip).each_with_index do |task, task_index|
+                  -#
+                  %a{"data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item"}
+                    = "#{task_index + 1}"
+                    = task_type_string(task['TaskType'])
                     %small
-                      .text-muted
-                        = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
-                        - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
-                          = " - "
-                          = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                      .text-muted 
+                        - unless task['ToLocation'].blank?
+                          = task['ToLocation']
+                        - else
+                          7100 30th Ave N
+                        %br
+                        = task_status_string(task['TaskStatus'])
+                  / Modal
+                  .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+                    .modal-dialog{:role => "document"}
+                      .modal-content
                         -#
+                          .modal-header
+                            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                              %span{"aria-hidden" => "true"} ×
+                            %h4#myModalLabel.modal-title 
+                              = "#{task_index + 1}"
+                              = task_type_string(task['TaskType'])
+                        .modal-body
+                          %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                            %span{"aria-hidden" => "true"} ×
                           %br
-                          = "Status: #{trip['TripStatus']}"
+                          = render partial: "tasks/edit", locals: {task: task, workorder: Trip.workorders(trip).find {|workorder| workorder['Id'] == task['WorkOrderId']}, task_containers: Task.containers(task)}
+                          =# task
+                        .modal-footer
+                          %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+                          %button.btn.btn-primary{:type => "button"} Save changes
+
+                  -#
+                    %a{href: "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item"}
+                      = "#{task_index + 1}"
+                      = task_type_string(task['TaskType'])
+                      %small
+                        .text-muted 
+                          - unless task['ToLocation'].blank?
+                            = task['ToLocation']
+                          - else
+                            7100 30th Ave N
+                          %br
+                          = task_status_string(task['TaskStatus'])
+                      .modal.fade{id: "trip_#{task['DispatchTripId']}_task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+                        .modal-dialog
+                          .modal-content
+                            .modal-header
+                              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                                %span{"aria-hidden" => "true"} ×
+                              %h4#myModalLabel.modal-title= task_type_string(task['TaskType'])
+                            .modal-body
+                              = form_tag task_path(task["Id"]), method: 'put', :class => "form-horizontal", id: 'task_form' do
+                                = task
+                            .modal-footer
+                              %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+                              %button.btn.btn-primary{:type => "button"} Save changes
+    -#
+      - unless @trips.blank?
+        %div{id: "trips"}
+          =# @trips.first  
+          - @trips.each do |trip|
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list_group
+                    %a{href: trip_path(trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{trip['TripNumber']}"}, class: "list-group-item trip_button"}
+                      .pull-right
+                        &nbsp;
+                        %i.fa.fa-chevron-right.fa-lg
+                      = "#{trip['TripNumber']}"
+                      =# "#{@trucks.find {|t| t['TruckListInformation']['Id'] == trip['TruckId']}['TruckListInformation']['Description'] }"
+                      = Trip.tasks(trip).first['Customer']
+                      %small
+                        .text-muted
+                          = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                          - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
+                            = " - "
+                            = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
                           -#
-                            = "#{pack_shipment['ContractDescription']}"
-                            = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
                             %br
-                            = "Container Number: #{pack_shipment['ContainerNumber']}"
-                            %br
-                            = "Vehicle Number: #{pack_shipment['DeliveryVehicleIdNumber']}"
-      -#                    
-        .row
-          .text-center
-            %div{id: 'endless_page'}
-              %p= image_tag("ajax-loader.gif", :id => "more_pack_shipments_spinner", :alt => "Loading ...", style: "display:none;")
-              %p= link_to 'Load more ...', pack_shipments_path(:page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
-    - else
-      %p.text-center No trips found
+                            = "Status: #{trip['TripStatus']}"
+                            -#
+                              = "#{pack_shipment['ContractDescription']}"
+                              = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
+                              %br
+                              = "Container Number: #{pack_shipment['ContainerNumber']}"
+                              %br
+                              = "Vehicle Number: #{pack_shipment['DeliveryVehicleIdNumber']}"
+      - else
+        %p.text-center No trips found
 
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}

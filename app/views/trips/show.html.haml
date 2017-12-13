@@ -3,7 +3,6 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container  
-    %br
     %p Tasks
     - unless @tasks.blank?
       - @tasks.each_with_index do |task, index|
@@ -11,16 +10,24 @@
           .col-xs-12.col-sm-12.col-md-12
             %div.panel.panel-primary
               %div.list_group
-                %a{href: task_path(task['Id'], task: task, trip_id: @trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{index + 1}"}, class: "list-group-item trip_button"}
+                %a{href: edit_task_path(task['Id'], task: task, trip_id: @trip['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{index + 1}"}, class: "list-group-item trip_button"}
                   .pull-right
                     &nbsp;
                     %i.fa.fa-chevron-right.fa-lg
                   = "#{index + 1}"
                   = task_type_string(task['TaskType'])
                   %small
-                    .text-muted
+                    .text-muted 
+                      - unless task['ToLocation'].blank?
+                        = task['ToLocation']
+                      - else
+                        7100 30th Ave N
+                      %br
+                      = task_status_string(task['TaskStatus'])
+                  =# task
     - else
-      None
+      %p None
+    =# @trip
     
     -#
       %ul.nav.nav-tabs

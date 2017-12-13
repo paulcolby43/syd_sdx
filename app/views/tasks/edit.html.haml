@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/show_task_navbar", locals: {title: task_type_abbreviated_string(@task['TaskType']), status: task_status_string(@task['TaskStatus'])}
+= render partial: "shared/navbars/edit_task_navbar", locals: {title: task_type_abbreviated_string(@task['TaskType'])}
 -@title="Task"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
@@ -55,41 +55,47 @@
             %strong= "Customer:"
             .pull-right
               = @task['Customer']
-            %br
-            %strong= "Notes:"
-            .pull-right
-              = @task['Notes']
+            %br 
+            = form_tag task_path(@task["Id"]), method: 'put', :class => "form-horizontal", id: 'task_form' do
+              = hidden_field_tag :trip_id, @trip['Id']
+              = hidden_field_tag "task[id]", @task['Id']
+              .row.form-group
+                %div{:class => "col-sm-12 col-md-6"}
+                  = label_tag "Starting Mileage", nil, :class => 'control-label'
+                  = text_field_tag "task[starting_mileage]", @task['StartingMileage'], :placeholder => "Starting Mileage", class: "form-control input-lg"
+              .row.form-group
+                %div{:class => "col-sm-12 col-md-6"}
+                  = label_tag "Ending Mileage", nil, :class => 'control-label'
+                  = text_field_tag "task[ending_mileage]", @task['EndingMileage'], :placeholder => "Ending Mileage", class: "form-control input-lg"
+              .row.form-group
+                %div{:class => "col-sm-12 col-md-6"}
+                  = label_tag "Notes", nil, :class => 'control-label'
+                  = text_area_tag "task[notes]", @task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+              .row.form-group
+                %div{:class => "col-sm-12 col-md-6"}
+                  = label_tag "Status", nil, :class => 'control-label'
+                  = select_tag "task[status]", options_for_select(task_status_array, @task['TaskStatus']), :class => "form-control input-lg"
+              .row.form-group
+                %div{:class => "col-sm-12 col-md-6"}
+                  = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+                    Save
         -#
-        %p
-          %a.btn.btn-default.btn-lg{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{task_status_string(@task['TaskStatus'])}"}} 
-            = task_status_string(@task['TaskStatus'])
+          .well
+            Trip:
+            = @trip
+          %br
+          .well
+            WorkOrder:
+            = @workorder unless @workorder.blank?
+          %br
+          .well
+            Task:
+            = @task
+          %br
+          .well
+            Containers:
+            = @containers
 
-        -#
-        .well
-          Trip:
-          = @trip
-        %br
-        .well
-          All WorkOrders:
-          = @workorders unless @workorders.blank?
-        %br
-          .well
-            Task Workorder
-            = @task_workorder
-        %br
-        .well
-          Task:
-          = @task
-        %br
-        Task Containers:
-        - @task_containers.each do |container|
-          .well
-            = container
-        %br
-        All Containers:
-        - @all_containers.each do |container|
-          .well
-            = container
         -#
           - unless @packs.blank?
             - @packs.each do |pack|

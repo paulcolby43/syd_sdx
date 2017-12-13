@@ -221,6 +221,7 @@ class Ability
       # Tasks
       ############
       can :show, :tasks
+      can :edit, :tasks
       
     # End admin user role
     

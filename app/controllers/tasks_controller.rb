@@ -7,12 +7,44 @@ class TasksController < ApplicationController
   def show
     authorize! :show, :tasks
     @task = params[:task]
+    @dispatch_information = Trip.dispatch_info_by_user_guid(current_user.token)
+    @trips = Trip.all_trips(@dispatch_information)
+#    @trip = Trip.find(current_user.token, params[:trip_id])
+    @trip = Trip.find_in_trips(@trips, params[:trip_id])
+    @workorders = Trip.workorders(@trip)
+    @task_workorder = @workorders.find {|workorder| workorder['Id'] == @task['WorkOrderId']}
+    @task_containers = Task.containers(@task)
+    @all_containers = Trip.containers(@dispatch_information)
+    @images = nil
+    
+  end
+  
+  # GET /tasks/1/edit
+  def edit
+    authorize! :edit, :tasks
+    @task = params[:task]
     @trip = Trip.find(current_user.token, params[:trip_id])
     @workorders = Trip.workorders(@trip)
     @workorder = @workorders.find {|workorder| workorder['Id'] == @task['WorkOrderId']}
     @containers = Task.containers(@task)
     @images = nil
-    
+  end
+  
+  # PATCH/PUT /tasks/1
+  # PATCH/PUT /tasks/1.json
+  def update
+    update_task_response = Task.update(current_user.token, task_params)
+    respond_to do |format|
+      format.html {
+        if update_task_response["Success"] == 'true'
+          flash[:success] = 'Task was successfully updated.'
+          redirect_to trip_path(params[:trip_id])
+        else
+          flash[:danger] = update_task_response["FailureInformation"]
+          redirect_to trip_path(params[:trip_id])
+        end
+      }
+    end
   end
 
   
@@ -20,6 +52,6 @@ class TasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def task_params
-      params.require(:task).permit(:id, :description, :quantity, :net)
+      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status)
     end
 end

@@ -51,6 +51,12 @@ class Trip
     return trip
   end
   
+  def self.find_in_trips(trips, trip_id)
+    # Find trip within array of hashes
+    trip = trips.find {|trip| trip['Id'] == trip_id}
+    return trip
+  end
+  
   def self.tasks(trip)
     if trip["Tasks"]["MobileDispatchTaskInformation"].is_a? Hash # Only one result returned, so put it into an array
       return [trip["Tasks"]["MobileDispatchTaskInformation"]]
@@ -72,6 +78,14 @@ class Trip
       return [trip['WorkOrders']['MobileWorkOrderInformation']]
     else
       return trip['WorkOrders']['MobileWorkOrderInformation']
+    end
+  end
+  
+  def self.containers(dispatch_information)
+    if dispatch_information['Containers']['MobileDispatchContainerInformation'].is_a? Hash # Only one result returned, so put it into an array
+      return [dispatch_information['Containers']['MobileDispatchContainerInformation']]
+    else
+      return dispatch_information['Containers']['MobileDispatchContainerInformation']
     end
   end
   
