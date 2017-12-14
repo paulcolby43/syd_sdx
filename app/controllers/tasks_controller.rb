@@ -33,7 +33,11 @@ class TasksController < ApplicationController
   # PATCH/PUT /tasks/1
   # PATCH/PUT /tasks/1.json
   def update
-    update_task_response = Task.update(current_user.token, task_params)
+    if task_params[:container_id].blank?
+      update_task_response = Task.update(current_user.token, task_params)
+    else
+      update_task_response = Task.add_container(current_user.token, task_params)
+    end
     respond_to do |format|
       format.html {
         if update_task_response["Success"] == 'true'
@@ -59,6 +63,6 @@ class TasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def task_params
-      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status)
+      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container)
     end
 end

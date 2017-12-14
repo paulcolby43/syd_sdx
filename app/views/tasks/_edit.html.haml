@@ -11,69 +11,66 @@
 .tab-content
   .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
     %br
-    .panel.panel-default
-      %div.panel-heading
-        %h4.panel-title
-          Destination
-      %div.panel-body
-        %strong= "To:"
-        .pull-right
-          - unless task['ToLocation'].blank?
-            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-              = "#{task['ToLocation']}"
-          - else
-            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
-              7100 30th Ave N
-        %br
-        %strong= "Phone:"
-        .pull-right
-          - unless workorder.blank? or workorder['Phone'].blank?
-            %a{href: "tel:#{workorder['Phone']}"}
-              = workorder['Phone']
-          - else
-            %a{href: "tel:727-568-7076", target: '_blank'}
-              = '727-568-7076'
-
-    .panel.panel-default
-      %div.panel-heading
-        %h4.panel-title
-          General
-      %div.panel-body
-        %strong= "Type:"
-        .pull-right
-          = task_type_string(task['TaskType'])
-        %br
-        %strong= "Work Order:"
-        .pull-right
-          = task['WorkOrderNumber']
-        %br
-        %strong= "Customer:"
-        .pull-right
-          = task['Customer']
-        %br 
-        = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
-          = hidden_field_tag :trip_id, task['DispatchTripId']
-          = hidden_field_tag "task[id]", task['Id']
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-6"}
-              = label_tag "Starting Mileage", nil, :class => 'control-label'
-              = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Starting Mileage", class: "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-6"}
-              = label_tag "Ending Mileage", nil, :class => 'control-label'
-              = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "Ending Mileage", class: "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-6"}
-              = label_tag "Notes", nil, :class => 'control-label'
-              = text_area_tag "task[notes]", task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-6"}
-              = label_tag "Status", nil, :class => 'control-label'
-              = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), :class => "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-6"}
-              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
-                Save
+    %div
+      %p Destination
+    %div
+      %strong= "To:"
+      .pull-right
+        - unless task['ToLocation'].blank?
+          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+            = "#{task['ToLocation']}"
+        - else
+          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+            7100 30th Ave N
+      %br
+      %strong= "Phone:"
+      .pull-right
+        - unless workorder.blank? or workorder['Phone'].blank?
+          %a{href: "tel:#{workorder['Phone']}"}
+            = workorder['Phone']
+        - else
+          %a{href: "tel:727-568-7076", target: '_blank'}
+            = '727-568-7076'
+    %hr
+    %div
+      %p General
+    %div
+      %strong= "Type:"
+      .pull-right
+        = task_type_string(task['TaskType'])
+      %br
+      %strong= "Work Order:"
+      .pull-right
+        = task['WorkOrderNumber']
+      %br
+      %strong= "Customer:"
+      .pull-right
+        = task['Customer']
+      %br 
+      %br
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
+        = hidden_field_tag :trip_id, task['DispatchTripId']
+        = hidden_field_tag "task[id]", task['Id']
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            = label_tag "Starting Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Starting Mileage", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            = label_tag "Ending Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "Ending Mileage", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            = label_tag "Notes", nil, :class => 'control-label'
+            = text_area_tag "task[notes]", task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            = label_tag "Status", nil, :class => 'control-label'
+            = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), :class => "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+              Save
 
   .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
     %br
@@ -85,12 +82,22 @@
               %div.list_group
                 %a{href: '#', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item task_button"}
                   =# container['ContainerId']
-                  = Task.find_container_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+                  = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
                   %small
                     .text-muted
     %p
-      %br
-      = select_tag "container[id]", options_for_select(@containers.collect {|c| [ c['UserDispatchContainerNumber'], c['Id'] ] }), prompt: 'Add container', class: "form-control input-lg"
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
+        = hidden_field_tag :trip_id, task['DispatchTripId']
+        = hidden_field_tag "task[id]", task['Id']
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            =# label_tag "New Container", nil, :class => 'control-label'
+            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Add container', class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-6"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
+              Add Container
+      
     -#
       %br
       %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add"}} 
