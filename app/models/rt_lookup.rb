@@ -30,7 +30,11 @@ class RtLookup < ActiveRecord::Base
     data= Hash.from_xml(response) # Convert xml response to a hash
     
     unless data["RESULT"]["ROW"].blank?
-      return data["RESULT"]["ROW"]
+      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["RESULT"]["ROW"]]
+      else
+        return data["RESULT"]["ROW"]
+      end
     else
       return [] # No rt_lookups found
     end
