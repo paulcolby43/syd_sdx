@@ -44,6 +44,13 @@ class TasksController < ApplicationController
           redirect_to trip_path(params[:trip_id])
         end
       }
+      format.js {
+        if update_task_response["Success"] == 'true'
+          @response = 'Task was successfully updated.'
+        else
+          @response = update_task_response["FailureInformation"]
+        end
+      }
     end
   end
 

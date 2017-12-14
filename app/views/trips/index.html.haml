@@ -27,7 +27,7 @@
               %ul.list-group
                 - Trip.tasks(trip).each_with_index do |task, task_index|
                   -#
-                  %a{"data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item"}
+                  %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item"}
                     = "#{task_index + 1}"
                     = task_type_string(task['TaskType'])
                     %small

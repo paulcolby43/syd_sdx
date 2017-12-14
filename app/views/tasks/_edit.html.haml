@@ -51,7 +51,7 @@
         .pull-right
           = task['Customer']
         %br 
-        = form_tag task_path(task["Id"]), method: 'put', :class => "form-horizontal", id: 'task_form' do
+        = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
           = hidden_field_tag :trip_id, task['DispatchTripId']
           = hidden_field_tag "task[id]", task['Id']
           .row.form-group
