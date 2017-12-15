@@ -127,7 +127,7 @@
               = event_code.name
       %div{:id => 'uploads', :style => 'display:block;'}
         %p{id: "upload_button", style: "display:block;"}
-          = f.file_field :file, name: "image_file[file]", :type => 'file', "data-div-id" => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+          = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
       .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
         = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
         Uploading ...
