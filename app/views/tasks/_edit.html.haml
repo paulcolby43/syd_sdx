@@ -52,23 +52,23 @@
         = hidden_field_tag :trip_id, task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Starting Mileage", nil, :class => 'control-label'
             = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Starting Mileage", class: "form-control input-lg"
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Ending Mileage", nil, :class => 'control-label'
             = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "Ending Mileage", class: "form-control input-lg"
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Notes", nil, :class => 'control-label'
             = text_area_tag "task[notes]", task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Status", nil, :class => 'control-label'
             = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), :class => "form-control input-lg"
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
               Save
 
@@ -94,11 +94,11 @@
         =# hidden_field_tag :trip_id, task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             =# label_tag "New Container", nil, :class => 'control-label'
             %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Add container', id: "task_#{task['Id']}_container_select", class: "form-control input-lg", required: true
         .row.form-group
-          %div{:class => "col-sm-12 col-md-6"}
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
               Add Container
       

@@ -40,7 +40,7 @@
                         = task_status_string(task['TaskStatus'])
                   / Modal
                   .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
-                    .modal-dialog{:role => "document"}
+                    .modal-dialog{class: "#{mobile_device? ? '' : 'modal-sm'}", :role => "document"}
                       .modal-content
                         -#
                           .modal-header
