@@ -33,6 +33,7 @@ class TasksController < ApplicationController
   # PATCH/PUT /tasks/1
   # PATCH/PUT /tasks/1.json
   def update
+    @task = task_params
     if task_params[:container_id].blank?
       update_task_response = Task.update(current_user.token, task_params)
     else

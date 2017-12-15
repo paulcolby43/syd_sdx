@@ -74,26 +74,29 @@
 
   .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
     %br
-    .task_containers
+    %div{id: "task_#{task['Id']}_containers"}
     - unless task_containers.blank?
       - task_containers.each do |container|
         %div.row
-          .col-xs-12.col-sm-12.col-md-12
-            %div.panel.panel-primary
-              %div.list_group
-                %a{href: '#', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item task_button"}
-                  =# container['ContainerId']
-                  = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
-                  %small
-                    .text-muted
+          %p
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list-group
+                  -#
+                    %a{href: '#', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item task_button"}
+                  .list-group-item
+                    =# container['ContainerId']
+                    = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+                    %small
+                      .text-muted
     %p
-      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
-        = hidden_field_tag :trip_id, task['DispatchTripId']
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_form" do
+        =# hidden_field_tag :trip_id, task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
         .row.form-group
           %div{:class => "col-sm-12 col-md-6"}
             =# label_tag "New Container", nil, :class => 'control-label'
-            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Add container', class: "form-control input-lg", required: true
+            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Add container', id: "task_#{task['Id']}_container_select", class: "form-control input-lg", required: true
         .row.form-group
           %div{:class => "col-sm-12 col-md-6"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do

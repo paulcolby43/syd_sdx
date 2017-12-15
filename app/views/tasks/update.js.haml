@@ -1,14 +1,4 @@
 - unless @container_id.blank?
-  $('.task_containers').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">#{@container_id}</div></div>')
-
+  var container_name = $("#task_#{@task['id']}_container_select option:selected").text();
+  $("#task_#{@task['id']}_containers").prepend('<div class="row"><p><div class="col-xs-12 col-sm-12 col-md-12"><div class="panel panel-primary"><div class="list-group"><div class="list-group-item">' + container_name + '</div></div></div></div></p></div>')
 alert("#{@response}");
--#
-  $('#tickets').append('#{j render "ticket"}');
-  $('#more_tickets_spinner').hide();
-  - if @tickets.next_page
-    $('a.load-more-tickets').show();
-    $('a.load-more-tickets').attr('href', '#{tickets_path page: @tickets.next_page, q: params[:q], status: params[:status]}');
-  - else
-    $(window).off('scroll');
-    $('a.load-more-tickets').attr('href', '#');
-    $('a.reload-tickets').show();
