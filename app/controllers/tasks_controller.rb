@@ -37,6 +37,7 @@ class TasksController < ApplicationController
       update_task_response = Task.update(current_user.token, task_params)
     else
       update_task_response = Task.add_container(current_user.token, task_params)
+      @container_id = task_params[:container_id]
     end
     respond_to do |format|
       format.html {
@@ -63,6 +64,6 @@ class TasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def task_params
-      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container)
+      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container_id)
     end
 end

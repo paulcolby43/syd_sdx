@@ -1,3 +1,6 @@
+- unless @container_id.blank?
+  $('.task_containers').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">#{@container_id}</div></div>')
+
 alert("#{@response}");
 -#
   $('#tickets').append('#{j render "ticket"}');
