@@ -3,9 +3,14 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to root_path do
-            = "Home"
+          = link_to 'javascript:history.back()' do
+            %i.fa.fa-chevron-left
+          -#
+            = link_to root_path do
+              = "Home"
         .col-xs-4.col-sm-4
           %i.fa.fa-map-marker.fa-lg
           = title
         .col-xs-4.col-sm-4
+          = link_to 'javascript:location.reload();', data: {disable_with: "<i class='fa fa-refresh fa-spin'></i>"} do
+            %i.fa.fa-refresh

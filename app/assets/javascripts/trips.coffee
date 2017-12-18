@@ -43,3 +43,9 @@ jQuery ->
         progress = parseInt(data.loaded / data.total * 100, 10)
         data.context.find('.progress-bar').css('width', progress + '%')
   ### End file upload ###
+
+  $('.container_select').select2 
+    
+    theme: 'bootstrap'
+    minimumInputLength: 3
+    cache: true

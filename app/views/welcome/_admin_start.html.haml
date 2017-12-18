@@ -78,7 +78,7 @@
         %div.row
           %p
             .col-xs-12
-              %a.btn.btn-default.btn-lg.btn-block{:href => trips_path, disabled: current_user.company.include_dispatch? ? false:true,  class: "welcome_button #{current_user.company.include_dispatch? ? '' : 'disabled'}", :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i><br>Dispatch"}} 
+              %a.btn.btn-default.btn-lg.btn-block{:href => trips_path, disabled: current_user.company.include_dispatch? ? false:true,  class: "welcome_button #{current_user.company.include_dispatch? ? '' : 'disabled'}", :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Dispatch"}} 
                 %i.fa.fa-map-marker.fa-lg
                 = "Dispatch"
             

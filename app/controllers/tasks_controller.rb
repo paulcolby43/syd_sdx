@@ -14,7 +14,7 @@ class TasksController < ApplicationController
     @workorders = Trip.workorders(@trip)
     @task_workorder = @workorders.find {|workorder| workorder['Id'] == @task['WorkOrderId']}
     @task_containers = Task.containers(@task)
-    @all_containers = Trip.containers(@dispatch_information)
+    @all_containers = Container.all_by_dispatch_information(@dispatch_information)
     @images = nil
     
   end
