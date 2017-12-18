@@ -19,13 +19,13 @@
                   %small
                     .text-muted
                       %br
-                      - Trip.workorders(trip).each do |workorder|
-                        = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
-                      %br
                       = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
                       - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
                         = " - "
                         = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                      %br
+                      - Trip.workorders(trip).each do |workorder|
+                        = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
             .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
               %ul.list-group
                 - Trip.tasks(trip).each_with_index do |task, task_index|
