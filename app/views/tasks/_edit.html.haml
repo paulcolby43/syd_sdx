@@ -89,13 +89,12 @@
         = hidden_field_tag :trip_id, task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
         .row.form-group
-          %div{:class => "col-sm-12 col-md-12"}
-            = label_tag "Starting Mileage", nil, :class => 'control-label'
-            = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Starting Mileage", class: "form-control input-lg"
-        .row.form-group
-          %div{:class => "col-sm-12 col-md-12"}
-            = label_tag "Ending Mileage", nil, :class => 'control-label'
-            = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "Ending Mileage", class: "form-control input-lg"
+          %div{:class => "col-xs-6"}
+            = label_tag "Start Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
+          %div{:class => "col-xs-6"}
+            = label_tag "End Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Notes", nil, :class => 'control-label'
