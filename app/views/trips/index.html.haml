@@ -19,6 +19,9 @@
                   %small
                     .text-muted
                       %br
+                      - Trip.workorders(trip).each do |workorder|
+                        = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
+                      %br
                       = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
                       - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
                         = " - "

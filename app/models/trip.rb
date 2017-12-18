@@ -81,4 +81,28 @@ class Trip
     end
   end
   
+  def self.task_functions(dispatch_information)
+    unless dispatch_information["TaskFunctions"].blank? or dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"].blank?
+      if dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]]
+      else # Array of results returned
+        return dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
+      end
+    else
+      return []
+    end
+  end
+  
+#  def self.task_functions(dispatch_information)
+#    unless dispatch_information["TaskFunctions"].blank? or dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
+#      if dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"].is_a? Hash # Only one result returned, so put it into an array
+#        return [dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]]
+#      else # Array of results returned
+#        return dispatch_information["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
+#      end
+#    else
+#      return []
+#    end
+#  end
+  
 end

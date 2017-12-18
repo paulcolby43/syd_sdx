@@ -28,6 +28,7 @@ class Task
     payload = {
         "MobileDispatchTaskInformation" => {
           "Id" => task[:id],
+          "DispatchTripId" => task[:trip_id],
           "Notes" => task[:notes],
           "StartingMileage" => task[:starting_mileage],
           "EndingMileage" => task[:ending_mileage],
@@ -42,6 +43,7 @@ class Task
       payload: {
         "MobileDispatchTaskInformation" => {
           "Id" => task[:id],
+          "DispatchTripId" => task[:trip_id],
           "Notes" => task[:notes],
           "StartingMileage" => task[:starting_mileage],
           "EndingMileage" => task[:ending_mileage],
@@ -94,6 +96,7 @@ class Task
       payload: {
         "MobileDispatchTaskInformation" => {
           "Id" => task[:id],
+          "DispatchTripId" => task[:trip_id],
           "MobileDispatchTaskContainerXLinkInformation" => current_task_containers_collection_array,
           "IsUpdateRequired" => true
           }

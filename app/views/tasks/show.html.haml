@@ -90,6 +90,11 @@
         - @all_containers.each do |container|
           .well
             = container
+        %br
+        Task Functions:
+        - @task_functions.each do |task_function|
+          .well
+            = task_function
         -#
           - unless @packs.blank?
             - @packs.each do |pack|

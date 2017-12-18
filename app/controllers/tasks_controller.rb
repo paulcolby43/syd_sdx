@@ -15,6 +15,7 @@ class TasksController < ApplicationController
     @task_workorder = @workorders.find {|workorder| workorder['Id'] == @task['WorkOrderId']}
     @task_containers = Task.containers(@task)
     @all_containers = Container.all_by_dispatch_information(@dispatch_information)
+    @task_functions = Trip.task_functions(@dispatch_information)
     @images = nil
     
   end
@@ -35,26 +36,26 @@ class TasksController < ApplicationController
   def update
     @task = task_params
     if task_params[:container_id].blank?
-      update_task_response = Task.update(current_user.token, task_params)
+      @update_task_response = Task.update(current_user.token, task_params)
     else
-      update_task_response = Task.add_container(current_user.token, task_params)
+      @update_task_response = Task.add_container(current_user.token, task_params)
       @container_id = task_params[:container_id]
     end
     respond_to do |format|
       format.html {
-        if update_task_response["Success"] == 'true'
+        if @update_task_response["Success"] == 'true'
           flash[:success] = 'Task was successfully updated.'
-          redirect_to trip_path(params[:trip_id])
+          redirect_to trip_path(task_params[:trip_id])
         else
-          flash[:danger] = update_task_response["FailureInformation"]
-          redirect_to trip_path(params[:trip_id])
+          flash[:danger] = @update_task_response["FailureInformation"]
+          redirect_to trip_path(task_params[:trip_id])
         end
       }
       format.js {
-        if update_task_response["Success"] == 'true'
+        if @update_task_response["Success"] == 'true'
           @response = 'Task was successfully updated.'
         else
-          @response = update_task_response["FailureInformation"]
+          @response = @update_task_response["FailureInformation"]
         end
       }
     end
@@ -65,6 +66,6 @@ class TasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def task_params
-      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container_id)
+      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container_id, :trip_id)
     end
 end
