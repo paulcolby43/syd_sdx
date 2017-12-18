@@ -215,8 +215,11 @@ class Ability
       
       # Trips
       ############
-      can :index, :trips
-      can :show, :trips
+      if user.company.include_dispatch?
+        can :index, :trips
+        can :show, :trips
+        can :edit, :trips
+      end
       
       # Tasks
       ############
