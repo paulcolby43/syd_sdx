@@ -174,11 +174,11 @@ jQuery ->
     #description = $(this).closest('.panel').find('#item_description').val()
     price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
     unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
-    tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
-    tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
-    total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
-    changed_field.closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
-    changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
+    #tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
+    #tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
+    #total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
+    #changed_field.closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
+    #changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
 
     # Get unit of measure weight conversion for commodity item
     item_id = changed_field.closest('.panel').find('#ticket_line_items__commodity').val()
@@ -195,6 +195,13 @@ jQuery ->
           amount = (parseFloat(price) * parseFloat(new_weight)).toFixed(2)
           console.log 'amount:', amount
           changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
+
+          # Update tax amount to account for possibility that unit of measure is different than price measurement, making a 'new weight'
+          tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(new_weight))).toFixed(2)
+          tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(new_weight))).toFixed(2)
+          total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
+          changed_field.closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
+          changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
           
           if total_tax_amount > 0
             # Show tax amount
