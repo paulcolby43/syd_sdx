@@ -73,6 +73,8 @@
           %a{href: "#{current_user.company.include_shipments? ? pack_shipments_path : '#'}", disabled: current_user.company.include_shipments? ? false:true} SHIPMENTS
         %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
           %a{href: reports_path} REPORTS
+        %li{:class => "#{(params[:controller] == 'trips') ? 'active' : ''} #{current_user.company.include_dispatch? ? '' : 'disabled'} "}
+          %a{href: "#{current_user.company.include_dispatch? ? trips_path : '#'}", disabled: current_user.company.include_dispatch? ? false:true} DISPATCH
         -#
           - unless Yard.device_groups(current_yard_id).blank?
             %li.dropdown

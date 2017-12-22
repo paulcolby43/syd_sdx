@@ -3,11 +3,12 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          -#
-            = link_to 'javascript:history.back()' do
-              Back
-          = link_to root_path do
-            Home
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            -#
+              = link_to 'javascript:history.back()' do
+                Back
+            = link_to root_path do
+              Home
         .col-xs-4.col-sm-4
           -#
             - if params[:status] == '2' or params[:status].blank?
@@ -19,10 +20,11 @@
           = title
         .col-xs-4.col-sm-4
           - unless current_user.customer?
-            %a{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' Ticket'}"}} 
-              %i.fa.fa-ticket.fa-lg
-              = "Ticket" unless mobile_device?
-            -#
-              %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+            %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+              %a{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' Ticket'}"}} 
                 %i.fa.fa-ticket.fa-lg
                 = "Ticket" unless mobile_device?
+              -#
+                %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+                  %i.fa.fa-ticket.fa-lg
+                  = "Ticket" unless mobile_device?
