@@ -1,0 +1,5 @@
+- unless @container_id.blank?
+  var container_name = $("#task_#{@task['id']}_container_select option:selected").text();
+  - if @update_task_response["Success"] == 'true'
+    $("#task_#{@task['id']}_containers").prepend('<div class="row"><p><div class="col-xs-12 col-sm-12 col-md-12"><div class="panel panel-primary"><div class="list-group"><div class="list-group-item">' + container_name + '</div></div></div></div></p></div>')
+alert("#{@response}");

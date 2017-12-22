@@ -84,6 +84,6 @@ class CompaniesController < ApplicationController
       params.require(:company).permit(:name, :dragon_api, :leads_online_store_id, :leads_online_ftp_username, :leads_online_ftp_password,
       :custom_field_1, :custom_field_2, :custom_field_1_value, :custom_field_2_value, :address1, :address2, :city, :state, :zip, :phone, 
       :logo, :logo_cache, :remove_logo, :jpegger_service_ip, :jpegger_service_port, 
-      :include_shipments, :include_inventories, :include_external_users, :signature_verbiage)
+      :include_shipments, :include_inventories, :include_external_users, :signature_verbiage, :include_dispatch)
     end
 end

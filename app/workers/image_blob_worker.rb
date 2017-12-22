@@ -50,6 +50,7 @@ class ImageBlobWorker
                 <WEIGHT>#{image_file.weight}</WEIGHT>
                 <VIN>#{image_file.vin_number}</VIN>
                 <TAGNBR>#{image_file.tag_number}</TAGNBR>
+                <SERVICE_REQ_NBR>#{image_file.service_request_number}</SERVICE_REQ_NBR>
               </APPEND>"
     
     tcp_client = TCPSocket.new host, port
