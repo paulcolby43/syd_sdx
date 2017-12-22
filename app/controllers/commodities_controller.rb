@@ -119,11 +119,14 @@ class CommoditiesController < ApplicationController
     taxes_by_customer = Commodity.taxes_by_customer(current_user.token, params[:id], params[:customer_id]) unless params[:customer_id].blank?
 #    tax_percent = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
     tax_percent_1 = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
-    tax_percent_2 = taxes_by_customer.last['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 1
+    tax_percent_2 = taxes_by_customer.second['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 1
+    tax_percent_3 = taxes_by_customer.third['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 2
+    Rails.logger.debug "Commodity price and taxes response: #{taxes_by_customer}"
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @commodity['PrintDescription'], "price" => "#{price.blank? ? @commodity['ScalePrice'] : price}", 
-          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100, "unit_of_measure" => @commodity['UnitOfMeasure']}} 
+          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100, 
+          "tax_percent_3" =>  tax_percent_3.blank? ? 0 : tax_percent_3.to_f/100, "unit_of_measure" => @commodity['UnitOfMeasure']}} 
     end
   end
   
@@ -131,13 +134,24 @@ class CommoditiesController < ApplicationController
     authorize! :show, :commodities
     
     commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
-    @new_weight = Commodity.unit_of_measure_weight_conversion(current_user.token, commodity['UnitOfMeasure'], params[:net])
+    unit_of_measure_conversion_response = Commodity.unit_of_measure_weight_conversion(current_user.token, commodity['UnitOfMeasure'], params[:net])
+#    @new_weight = Commodity.unit_of_measure_weight_conversion(current_user.token, commodity['UnitOfMeasure'], params[:net])
+    if unit_of_measure_conversion_response["Success"] == 'true'
+      @new_weight = unit_of_measure_conversion_response["ConvertedValue"]
+    end
     
     respond_to do |format|
       format.html {}
-      format.json {render json: {"new_weight" => @new_weight} }
+      format.json {
+        if @new_weight
+          render json: {"new_weight" => @new_weight}, status: :ok
+        else
+          render json: {error: unit_of_measure_conversion_response["FailureInformation"]}, :status => :bad_request
+        end
+        }
     end
   end
+
 
   # DELETE /commodities/1
   # DELETE /commodities/1.json
