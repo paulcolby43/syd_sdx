@@ -39,18 +39,8 @@ class Task
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info "Task.update json encoded payload: #{json_encoded_payload}"
     
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
-      payload: {
-        "MobileDispatchTaskInformation" => {
-          "Id" => task[:id],
-          "DispatchTripId" => task[:trip_id],
-          "Notes" => task[:notes],
-          "StartingMileage" => task[:starting_mileage],
-          "EndingMileage" => task[:ending_mileage],
-          "TaskStatus" => task[:status],
-          "IsUpdateRequired" => true
-          }
-        })
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
+      payload: payload)
       
       Rails.logger.info "Task update response: #{response}"
       data= Hash.from_xml(response)
