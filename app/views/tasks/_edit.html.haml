@@ -34,7 +34,7 @@
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             =# label_tag "New Container", nil, :class => 'control-label'
-            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Add container', id: "task_#{task['Id']}_container_select", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", class: "form-control input-lg container_select", style: "width: 100%;", required: true
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
