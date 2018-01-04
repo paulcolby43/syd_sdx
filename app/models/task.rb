@@ -39,7 +39,7 @@ class Task
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info "Task.update json encoded payload: #{json_encoded_payload}"
     
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/json", :content_type => 'application/json'},
       payload: payload)
       
       Rails.logger.info "Task update response: #{response}"
