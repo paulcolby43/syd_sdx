@@ -36,7 +36,8 @@ class TasksController < ApplicationController
   def update
     @task = task_params
     if task_params[:container_id].blank?
-      @update_task_response = Task.update(current_user.token, task_params)
+#      @update_task_response = Task.update(current_user.token, task_params)
+      @update_task_response = Task.update_details(current_user.token, task_params)
     else
       @update_task_response = Task.add_container(current_user.token, task_params)
       @container_id = task_params[:container_id]
