@@ -78,7 +78,7 @@ class Task
     
     current_task_containers_collection_array << new_container_hash
     
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: {
         "MobileDispatchTaskInformation" => {
           "Id" => task[:id],
