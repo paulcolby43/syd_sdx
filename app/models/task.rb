@@ -23,33 +23,6 @@ class Task
   def self.update(auth_token, task)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/dispatch/task"
-    
-    payload = {
-        "MobileDispatchTaskInformation" => {
-          "Id" => task[:id],
-          "DispatchTripId" => task[:trip_id],
-          "Notes" => task[:notes],
-          "StartingMileage" => task[:starting_mileage],
-          "EndingMileage" => task[:ending_mileage],
-          "TaskStatus" => task[:status],
-          "IsUpdateRequired" => true
-          }
-        }
-    json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info "Task.update json encoded payload: #{json_encoded_payload}"
-    
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
-      payload: json_encoded_payload)
-      
-      Rails.logger.info "Task update response: #{response}"
-      data= Hash.from_xml(response)
-      return data["UpdateMobileDispatchTaskResponse"]
-  end
-  
-  def self.update_details(auth_token, task)
-    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-    user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetaskdetails"
     
     payload = {
@@ -65,7 +38,7 @@ class Task
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)
       
-      Rails.logger.info "Task update response: #{response}"
+      Rails.logger.info "Task.update response: #{response}"
       data= Hash.from_xml(response)
       return data["ApiUpdateDispatchTaskDetailsResponse"]
   end
