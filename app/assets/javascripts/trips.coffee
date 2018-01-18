@@ -92,24 +92,25 @@ jQuery ->
     container_id = $(this).data("container-id")
     task_id = $(this).data("task-id")
     trash_icon = $(this).find( ".fa-trash" )
-    trash_icon.hide()
     trash_icon_spinner = $(this).find( ".fa-spinner" )
-    trash_icon_spinner.show()
+    
     confirm1 = confirm('Are you sure you want to remove this container?')
     if confirm1
-        e.preventDefault()
-        $.ajax
-          url: "/tasks/" + task_id + "/remove_container"
-          dataType: 'json'
-          data:
-            container_id: container_id
-          success: (data) ->
-            trash_icon.closest('.panel').remove()
-            return
-          error: ->
-            trash_icon_spinner.hide()
-            trash_icon.show()
-            alert 'Error removing container.'
-            console.log 'Error removing container.'
-            return
-        return
+      trash_icon_spinner.show()
+      trash_icon.hide()
+      e.preventDefault()
+      $.ajax
+        url: "/tasks/" + task_id + "/remove_container"
+        dataType: 'json'
+        data:
+          container_id: container_id
+        success: (data) ->
+          trash_icon.closest('.panel').remove()
+          return
+        error: ->
+          trash_icon_spinner.hide()
+          trash_icon.show()
+          alert 'Error removing container.'
+          console.log 'Error removing container.'
+          return
+      return
