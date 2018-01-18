@@ -105,7 +105,7 @@ jQuery ->
         data:
           container_id: container_id
         success: (data) ->
-          trash_icon.closest('.panel').remove()
+          trash_icon.closest('.row').remove()
           return
         error: ->
           trash_icon_spinner.hide()
