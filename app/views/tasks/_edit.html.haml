@@ -9,24 +9,41 @@
     %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
       Images
 .tab-content
-
+  -#
+    .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
+      %br
+      %div{id: "task_#{task['Id']}_containers"}
+      - unless task_containers.blank?
+        - task_containers.each do |container|
+          %div.row
+            %p
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list-group
+                    -#
+                      %a{href: '#', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item task_button"}
+                    .list-group-item
+                      =# container['ContainerId']
+                      = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+                      %small
+                        .text-muted
   .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
     %br
-    %div{id: "task_#{task['Id']}_containers"}
-    - unless task_containers.blank?
-      - task_containers.each do |container|
-        %div.row
-          %p
-            .col-xs-12.col-sm-12.col-md-12
-              %div.panel.panel-primary
-                %div.list-group
-                  -#
-                    %a{href: '#', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}, class: "list-group-item task_button"}
-                  .list-group-item
-                    =# container['ContainerId']
-                    = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
-                    %small
-                      .text-muted
+    %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
+      - unless task_containers.blank?
+        - task_containers.each do |container|
+          %div.row
+            %p
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list-group
+                    .list-group-item
+                      .pull-right 
+                        %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId']}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                      = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+
     %p
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_form" do
         =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
@@ -34,7 +51,7 @@
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             =# label_tag "New Container", nil, :class => 'control-label'
-            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do

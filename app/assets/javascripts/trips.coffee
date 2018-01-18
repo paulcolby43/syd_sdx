@@ -3,6 +3,11 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 jQuery ->
+
+  myOnClickEvent = ->
+    alert 'hey there'
+    return
+
   ### Re-enable disabled_with buttons for back button ###
   $(document).on 'page:change', ->
     $('.trip_button').each ->
@@ -44,8 +49,67 @@ jQuery ->
         data.context.find('.progress-bar').css('width', progress + '%')
   ### End file upload ###
 
-  $('.container_select').select2 
-    
+  #$('.container_select').select2 
+  #  theme: 'bootstrap'
+  #  minimumInputLength: 3
+  #  cache: true
+  #  language: noResults: ->
+  #    'No results found. <a href = "/tasks/2/create_new_container?tag=" data-remote = "true" class="btn btn-primary btn-sm" type="button">Create</a>'
+  #  escapeMarkup: (markup) ->
+  #    markup
+
+  $('.container_select').select2(
     theme: 'bootstrap'
     minimumInputLength: 3
     cache: true
+    tags: true
+    insertTag: (data, tag) ->
+      tag.text = 'Create: ' + tag.text
+      data.push tag
+      return
+  ).on 'select2:select', ->
+    if $(this).find('option:selected').data('select2-tag') == true
+      task_id = $(this).data("task-id")
+      tag_number = $(this).find('option:selected').val()
+      create_new_container_ajax(task_id, tag_number)
+    return
+
+  create_new_container_ajax = (task_id, tag_number) ->
+    $.ajax
+      url: "/tasks/" + task_id + "/create_new_container"
+      dataType: 'script'
+      data:
+        tag: tag_number
+        
+      success: (data) ->
+        alert "New container created and added to task."
+
+  
+
+  ### Remove Container ###
+  $('.task_containers').on 'click', '.remove_container', (e) ->
+    # User clicks on container trash button
+    container_id = $(this).data("container-id")
+    task_id = $(this).data("task-id")
+    trash_icon = $(this).find( ".fa-trash" )
+    trash_icon.hide()
+    trash_icon_spinner = $(this).find( ".fa-spinner" )
+    trash_icon_spinner.show()
+    confirm1 = confirm('Are you sure you want to remove this container?')
+    if confirm1
+        e.preventDefault()
+        $.ajax
+          url: "/tasks/" + task_id + "/remove_container"
+          dataType: 'json'
+          data:
+            container_id: container_id
+          success: (data) ->
+            trash_icon.closest('.panel').remove()
+            return
+          error: ->
+            trash_icon_spinner.hide()
+            trash_icon.show()
+            alert 'Error removing container.'
+            console.log 'Error removing container.'
+            return
+        return

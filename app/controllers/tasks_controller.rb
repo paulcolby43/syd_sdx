@@ -39,8 +39,8 @@ class TasksController < ApplicationController
 #      @update_task_response = Task.update(current_user.token, task_params)
       @update_task_response = Task.update(current_user.token, task_params)
     else
-      @update_task_response = Task.add_container(current_user.token, task_params)
       @container_id = task_params[:container_id]
+      @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id)
     end
     respond_to do |format|
       format.html {
@@ -58,6 +58,28 @@ class TasksController < ApplicationController
         else
           @response = @update_task_response["FailureInformation"]
         end
+      }
+    end
+  end
+  
+  def remove_container
+    respond_to do |format|
+      format.json { 
+        @remove_container_response = Task.remove_container(current_user.token, params[:id], params[:container_id])
+        if @remove_container_response["Success"] == "true"
+          render json: {results: nil}, :status => :ok
+        else
+          render json: {error: 'Error removing container'}, status: :unprocessable_entity
+        end
+        }
+    end
+  end
+  
+  def create_new_container
+    respond_to do |format|
+      format.js {
+        @task_id = params[:id]
+        @tag = params[:tag]
       }
     end
   end
