@@ -103,7 +103,7 @@ class Task
           "TagNumber" => container_params[:tag_number]
           }
     json_encoded_payload = JSON.generate(payload)
-#    Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"
+    Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)

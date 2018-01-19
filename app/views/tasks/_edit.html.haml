@@ -64,14 +64,17 @@
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             .row.form-group
               %div{:class => "col-xs-12"}
-                = label_tag "Container Type ID", nil, :class => 'control-label'
-                = text_field_tag "container[container_type_id]", nil, :placeholder => "Container Type ID", class: "form-control input-lg"
+                = label_tag "Container Type", nil, :class => 'control-label'
+                = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct['Type'], ct['Id'] ] }), prompt: 'Select type', class: "form-control input-lg", required: true
               %div{:class => "col-xs-12"}
                 = label_tag "Container Number", nil, :class => 'control-label'
                 = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
               %div{:class => "col-xs-12"}
                 = label_tag "Tag Number", nil, :class => 'control-label'
                 = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+              %div{:class => "col-xs-12"}
+                = label_tag "Description", nil, :class => 'control-label'
+                = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Container"}) do

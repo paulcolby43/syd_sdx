@@ -78,8 +78,13 @@ class TasksController < ApplicationController
   def create_new_container
     respond_to do |format|
       format.js {
-        @task_id = params[:id]
-        @container_number = params[:container][:container_number]
+        @create_new_container_response = Task.create_new_container(current_user.token, params[:id], params[:container])
+        if @create_new_container_response["Success"] == "true"
+          @task_id = params[:id]
+          @container_number = params[:container][:container_number]
+        else
+          
+        end
       }
     end
   end
