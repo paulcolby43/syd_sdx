@@ -89,17 +89,18 @@ class Task
     return data["UpdateMobileDispatchContainerXLinkResponse"]
   end
   
-  def self.create_new_container(auth_token, task_id, container_id, teg_number)
+  def self.create_new_container(auth_token, task_id, container_params)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/dispatch/addcontainer"
     
     payload = {
-          "OriginatingYardId" => "Guid",
-          "DispatchContainerTypeId" => "Guid",
-          "DispatchContainerStatus" => "int",
-          "Description" => "string",
-          "TagNumber" => "string"
+          "TaskId" => task_id,
+          "DispatchContainerTypeId" => container_params[:container_type_id],
+          "DispatchContainerStatus" => 0,
+          "Description" => container_params[:description],
+          "UserDispatchContainerNumber" => container_params[:container_number],
+          "TagNumber" => container_params[:tag_number]
           }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"

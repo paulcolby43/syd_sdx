@@ -43,6 +43,7 @@
                           %i.fa.fa-trash.fa-lg.text-danger
                           %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                       = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+                      =# Container.find_by_container_id(@containers, container['ContainerId'])
 
     %p
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_form" do
@@ -51,11 +52,31 @@
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             =# label_tag "New Container", nil, :class => 'control-label'
-            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
               Add Container
+              
+    %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
+      = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_create_new_container_form" do
+        .row.form-group
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = label_tag "Container Type ID", nil, :class => 'control-label'
+                = text_field_tag "container[container_type_id]", nil, :placeholder => "Container Type ID", class: "form-control input-lg"
+              %div{:class => "col-xs-12"}
+                = label_tag "Container Number", nil, :class => 'control-label'
+                = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
+              %div{:class => "col-xs-12"}
+                = label_tag "Tag Number", nil, :class => 'control-label'
+                = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+        .row.form-group
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Container"}) do
+              Create Container
+            = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show();"
       
     -#
       %br

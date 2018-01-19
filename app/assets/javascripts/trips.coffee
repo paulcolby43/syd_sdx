@@ -63,6 +63,8 @@ jQuery ->
     minimumInputLength: 3
     cache: true
     tags: true
+    allowClear: true
+    placeholder: 'Search containers'
     insertTag: (data, tag) ->
       tag.text = 'Create: ' + tag.text
       data.push tag
@@ -70,8 +72,13 @@ jQuery ->
   ).on 'select2:select', ->
     if $(this).find('option:selected').data('select2-tag') == true
       task_id = $(this).data("task-id")
-      tag_number = $(this).find('option:selected').val()
-      create_new_container_ajax(task_id, tag_number)
+      container_number = $(this).find('option:selected').val()
+      new_container_div = $("#task_" + task_id + "_create_new_container")
+      task_form = $("#task_" + task_id + "_form")
+      new_container_div.find('#container_container_number').val(container_number)
+      new_container_div.show()
+      task_form.hide()
+      #create_new_container_ajax(task_id, container_number)
     return
 
   create_new_container_ajax = (task_id, tag_number) ->

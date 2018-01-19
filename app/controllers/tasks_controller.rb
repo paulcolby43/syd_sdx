@@ -79,7 +79,7 @@ class TasksController < ApplicationController
     respond_to do |format|
       format.js {
         @task_id = params[:id]
-        @tag = params[:tag]
+        @container_number = params[:container][:container_number]
       }
     end
   end
