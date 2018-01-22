@@ -110,7 +110,7 @@ class Task
     
     Rails.logger.info "Task.create_new_container response: #{response}"
     data = Hash.from_xml(response)
-    return data["UpdateMobileDispatchContainerXLinkResponse"]
+    return data["ApiAddDispatchContainerResponse"]
   end
   
 end

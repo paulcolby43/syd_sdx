@@ -82,8 +82,10 @@ class TasksController < ApplicationController
         if @create_new_container_response["Success"] == "true"
           @task_id = params[:id]
           @container_number = params[:container][:container_number]
+          # Get the newly created container's ID from response
+          @container_id = @create_new_container_response["ContainerId"]
         else
-          
+          @error = @create_new_container_response["FailureInformation"]
         end
       }
     end
