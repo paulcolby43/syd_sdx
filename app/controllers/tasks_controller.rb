@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   before_filter :login_required  
   include ApplicationHelper
+  include TasksHelper
 
   # GET /tasks/1
   # GET /tasks/1.json
@@ -38,6 +39,7 @@ class TasksController < ApplicationController
     if task_params[:container_id].blank?
 #      @update_task_response = Task.update(current_user.token, task_params)
       @update_task_response = Task.update(current_user.token, task_params)
+      @task_status_color = task_status_color(task_params[:status])
     else
       @container_id = task_params[:container_id]
       @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id)

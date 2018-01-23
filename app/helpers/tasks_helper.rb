@@ -19,4 +19,15 @@ module TasksHelper
     [["InQueue", "0"], ["Started", "1"], ["Completed", "2"], ["Void", "3"], ["Delayed", "4"]]
   end
   
+  def task_status_color(status)
+#    White: InQueue (0)
+#    Yellow: Started (1)
+#    Green: Completed (2)
+#    Red: Void (3)
+#    Gray(blue): Delayed (4)
+#    
+    task_status_color_hash = {'0' => '', '1' => 'list-group-item-warning', '2' => 'list-group-item-success', '3' => 'list-group-item-danger', '4' => 'list-group-item-info'}
+    return task_status_color_hash[status]
+  end
+  
 end
