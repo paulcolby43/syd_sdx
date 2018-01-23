@@ -7,3 +7,6 @@
 
 -# Update task status color
 $("#task_#{@task['id']}_link").removeClass().addClass( "list-group-item #{@task_status_color}" );
+
+-# Update task status string
+$("#task_#{@task['id']}_status_string").html( "#{@task_status_string}" );

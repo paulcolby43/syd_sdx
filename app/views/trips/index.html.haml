@@ -40,7 +40,7 @@
                         - else
                           7100 30th Ave N
                         %br
-                        = task_status_string(task['TaskStatus'])
+                        %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
                   / Modal
                   .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
                     .modal-dialog{class: "#{mobile_device? ? '' : 'modal-sm'}", :role => "document"}

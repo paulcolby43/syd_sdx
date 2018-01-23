@@ -40,6 +40,7 @@ class TasksController < ApplicationController
 #      @update_task_response = Task.update(current_user.token, task_params)
       @update_task_response = Task.update(current_user.token, task_params)
       @task_status_color = task_status_color(task_params[:status])
+      @task_status_string = task_status_string(task_params[:status])
     else
       @container_id = task_params[:container_id]
       @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id)
