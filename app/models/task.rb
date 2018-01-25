@@ -23,78 +23,94 @@ class Task
   def self.update(auth_token, task)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/dispatch/task"
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetaskdetails"
     
     payload = {
-        "MobileDispatchTaskInformation" => {
           "Id" => task[:id],
-          "DispatchTripId" => task[:trip_id],
           "Notes" => task[:notes],
           "StartingMileage" => task[:starting_mileage],
           "EndingMileage" => task[:ending_mileage],
-          "TaskStatus" => task[:status],
-          "IsUpdateRequired" => true
+          "TaskStatus" => task[:status]
           }
-        }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info "Task.update json encoded payload: #{json_encoded_payload}"
+#    Rails.logger.info "Task.update json encoded payload: #{json_encoded_payload}"
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
-      payload: payload)
+      payload: json_encoded_payload)
       
-      Rails.logger.info "Task update response: #{response}"
-      data= Hash.from_xml(response)
-      return data["UpdateMobileDispatchTaskResponse"]
+      Rails.logger.info "Task.update response: #{response}"
+      data = Hash.from_xml(response)
+      return data["ApiUpdateDispatchTaskDetailsResponse"]
   end
   
-  def self.add_container(auth_token, task)
+  def self.add_container(auth_token, task_id, container_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/dispatch/task"
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/containerxlink"
     
-    current_task_containers = Task.containers(task)
-    current_task_containers_collection_array = []
-    unless current_task_containers.blank?
-      current_task_containers.each do |current_task_container|
-        container_hash = {
-          "Id" => current_task_container['Id'],
-          "DispatchTaskId" => task['Id'],		
-          "ContainerId"	=> current_task_container['ContainerId'],		
-          "Container" => current_task_container['Container'],	
-          "Task"	=> current_task_container['Task'],
-          "EntryDate" => current_task_container['EntryDate'],
-          "IsUpdateRequired" => current_task_container['IsUpdateRequired'],
-          "MobileUpdateType" => current_task_container['MobileUpdateType']
-        }
-        current_task_containers_collection_array << container_hash
-      end
-    end
-    new_container_hash = {
-      "Id" => SecureRandom.uuid,
-      "DispatchTaskId" => task['Id'],		
-      "ContainerId"	=> task['container_id'],		
-      "Container" => "",	
-      "Task"	=> "",
-      "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
-      "IsUpdateRequired" => true,
-      "MobileUpdateType" => 0
-    }
-    
-    current_task_containers_collection_array << new_container_hash
-    
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
-      payload: {
-        "MobileDispatchTaskInformation" => {
-          "Id" => task[:id],
-          "DispatchTripId" => task[:trip_id],
-          "MobileDispatchTaskContainerXLinkInformation" => current_task_containers_collection_array,
-          "IsUpdateRequired" => true
+    payload = {
+          "DispatchTaskId" => task_id,
+          "ContainerId" => container_id,
+          "IsUpdateRequired" => "true",
+          "MobileUpdateType" => "0", # Add container
+          "EntryDate" => Time.now.utc.iso8601 # Remove the UTC from the end
           }
-        })
-      
-      Rails.logger.info "Task.add_container response: #{response}"
-      data= Hash.from_xml(response)
-      return data["UpdateMobileDispatchTaskResponse"]
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info "Task.remove_container json encoded payload: #{json_encoded_payload}"
+
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    
+    Rails.logger.info "Task.add_container response: #{response}"
+    data = Hash.from_xml(response)
+    return data["UpdateMobileDispatchContainerXLinkResponse"]
+  end
+  
+  def self.remove_container(auth_token, task_id, container_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/containerxlink"
+    
+    payload = {
+          "DispatchTaskId" => task_id,
+          "ContainerId" => container_id,
+          "IsUpdateRequired" => "true",
+          "MobileUpdateType" => "2", # Remove container
+          "EntryDate" => Time.now.utc.iso8601 # Remove the UTC from the end
+          }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info "Task.remove_container json encoded payload: #{json_encoded_payload}"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    
+    Rails.logger.info "Task.remove_container response: #{response}"
+    data = Hash.from_xml(response)
+    return data["UpdateMobileDispatchContainerXLinkResponse"]
+  end
+  
+  def self.create_new_container(auth_token, task_id, container_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/addcontainer"
+    
+    payload = {
+          "TaskId" => task_id,
+          "DispatchContainerTypeId" => container_params[:container_type_id],
+          "DispatchContainerStatus" => 0,
+          "Description" => container_params[:description],
+          "UserDispatchContainerNumber" => container_params[:container_number],
+          "TagNumber" => container_params[:tag_number]
+          }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    
+    Rails.logger.info "Task.create_new_container response: #{response}"
+    data = Hash.from_xml(response)
+    return data["ApiAddDispatchContainerResponse"]
   end
   
 end
