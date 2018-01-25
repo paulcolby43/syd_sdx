@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   before_filter :login_required  
   include ApplicationHelper
+  include TasksHelper
 
   # GET /tasks/1
   # GET /tasks/1.json
@@ -36,10 +37,13 @@ class TasksController < ApplicationController
   def update
     @task = task_params
     if task_params[:container_id].blank?
+#      @update_task_response = Task.update(current_user.token, task_params)
       @update_task_response = Task.update(current_user.token, task_params)
+      @task_status_color = task_status_color(task_params[:status])
+      @task_status_string = task_status_string(task_params[:status])
     else
-      @update_task_response = Task.add_container(current_user.token, task_params)
       @container_id = task_params[:container_id]
+      @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id)
     end
     respond_to do |format|
       format.html {
@@ -56,6 +60,35 @@ class TasksController < ApplicationController
           @response = 'Task was successfully updated.'
         else
           @response = @update_task_response["FailureInformation"]
+        end
+      }
+    end
+  end
+  
+  def remove_container
+    respond_to do |format|
+      format.json { 
+        @remove_container_response = Task.remove_container(current_user.token, params[:id], params[:container_id])
+        if @remove_container_response["Success"] == "true"
+          render json: {results: nil}, :status => :ok
+        else
+          render json: {error: 'Error removing container'}, status: :unprocessable_entity
+        end
+        }
+    end
+  end
+  
+  def create_new_container
+    respond_to do |format|
+      format.js {
+        @create_new_container_response = Task.create_new_container(current_user.token, params[:id], params[:container])
+        if @create_new_container_response["Success"] == "true"
+          @task_id = params[:id]
+          @container_number = params[:container][:container_number]
+          # Get the newly created container's ID from response
+          @container_id = @create_new_container_response["ContainerId"]
+        else
+          @error = @create_new_container_response["FailureInformation"]
         end
       }
     end

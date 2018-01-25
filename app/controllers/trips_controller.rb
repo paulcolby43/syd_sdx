@@ -11,6 +11,7 @@ class TripsController < ApplicationController
 #    @trucks = Trip.all_trucks(@dispatch_information)
     @containers = Container.all_by_dispatch_information(@dispatch_information)
     @task_functions = Trip.task_functions(@dispatch_information)
+    @container_types = Trip.container_types(@dispatch_information)
   end
   
   # GET /trips/1
