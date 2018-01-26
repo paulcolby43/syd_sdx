@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   
-  resources :tasks
+  resources :tasks do
+    member do
+      get 'remove_container'
+      get 'create_new_container'
+    end
+  end
   resources :trips
   
   resources :inv_tags do

@@ -1,0 +1,174 @@
+%ul.nav.nav-tabs
+  %li.active
+    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
+      Details
+  %li
+    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
+      Containers
+  %li
+    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
+      Images
+.tab-content
+
+  .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
+    %br
+    %div
+      %strong= "To:"
+      .pull-right
+        - unless task['ToLocation'].blank?
+          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+            = "#{task['ToLocation']}"
+        - else
+          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+            7100 30th Ave N
+      %br
+      %strong= "Phone:"
+      .pull-right
+        - unless workorder.blank? or workorder['Phone'].blank?
+          %a{href: "tel:#{workorder['Phone']}"}
+            = workorder['Phone']
+        - else
+          %a{href: "tel:727-568-7076", target: '_blank'}
+            = '727-568-7076'
+    %div
+      %strong= "Type:"
+      .pull-right
+        = task_type_string(task['TaskType'])
+      %br
+      %strong= "Work Order:"
+      .pull-right
+        = task['WorkOrderNumber']
+      %br
+      %strong= "Customer:"
+      .pull-right
+        = task['Customer']
+      %br 
+      %br
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
+        =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
+        = hidden_field_tag "task[id]", task['Id']
+        .row.form-group
+          %div{:class => "col-xs-6"}
+            = label_tag "Start Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
+          %div{:class => "col-xs-6"}
+            = label_tag "End Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Notes", nil, :class => 'control-label'
+            = text_area_tag "task[notes]", task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Status", nil, :class => 'control-label'
+            = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), :class => "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+              Save
+  
+  .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
+    %br
+    %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
+      - unless task_containers.blank?
+        - task_containers.each do |container|
+          %div.row
+            %p
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-primary
+                  %div.list-group
+                    .list-group-item
+                      .pull-right 
+                        %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId']}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                      = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+                      =# Container.find_by_container_id(@containers, container['ContainerId'])
+
+    %p
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_form" do
+        =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
+        = hidden_field_tag "task[id]", task['Id']
+        .row.form-group
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            =# label_tag "New Container", nil, :class => 'control-label'
+            %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+        .row.form-group
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
+              Add Container
+              
+    %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
+      = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_create_new_container_form" do
+        .row.form-group
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = label_tag "Container Type", nil, :class => 'control-label'
+                = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct['Type'], ct['Id'] ] }), prompt: 'Select type', class: "form-control input-lg", required: true
+              %div{:class => "col-xs-12"}
+                = label_tag "Container Number", nil, :class => 'control-label'
+                = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
+              %div{:class => "col-xs-12"}
+                = label_tag "Tag Number", nil, :class => 'control-label'
+                = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+              %div{:class => "col-xs-12"}
+                = label_tag "Description", nil, :class => 'control-label'
+                = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
+        .row.form-group
+          %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Container"}) do
+              Create Container
+            = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show();"
+      
+  
+    -#
+      %hr
+      %div
+        %p General
+    
+
+  
+
+  .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_images"}
+    %br
+    -#
+      - Image.api_find_all_by_service_request_number(task['WorkOrderNumber'], current_user.company, current_yard_id).each do |image|
+        .thumbnail
+          = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+    = form_for ImageFile.new do |f|
+      = f.hidden_field :user_id, value: current_user.id
+      = f.hidden_field :yard_id, value: current_yard_id
+      = f.hidden_field :customer_name, value: "#{task['Customer']}"
+      =# f.hidden_field :tare_seq_nbr
+      =# f.hidden_field :commodity_name
+      =# f.hidden_field :weight
+      =# f.hidden_field :ticket_number, value: @ticket["TicketNumber"]
+      = f.hidden_field :service_request_number, value: task['WorkOrderNumber']
+      .form-group{:id => "event_code"}
+        .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
+          - current_user.company.image_event_codes.each do |event_code|
+            %label.btn.btn-lg.btn-default.btn-block.event_code_radio
+              = f.radio_button :event_code_id, event_code.id, required: true
+              = event_code.name
+      %div{:id => 'uploads', :style => 'display:block;'}
+        %p{id: "upload_button", style: "display:block;"}
+          = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+      .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+        = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+        Uploading ...
+      .task_pictures
+
+      .clear
+      %script{:id => "template-upload", :type => "text/x-tmpl"}
+        .upload
+          {%=o.name%}
+          .progress.progress-striped
+            .progress-bar{:style => "width: 0%"}
+      %script{:id => "template-download", :type => "text/x-tmpl"}
+        .download
+          {%=o.name%}
+    -#
+      %p
+        %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Photo"}} 
+          Photo

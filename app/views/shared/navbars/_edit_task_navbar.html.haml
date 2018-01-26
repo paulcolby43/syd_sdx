@@ -5,13 +5,13 @@
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
             = link_to 'javascript:history.back()' do
-              %i.fa.fa-chevron-left
-              Back
+              Cancel
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title
           - else
             = truncate(title, length: 15)
         .col-xs-4.col-sm-4
-          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
-            .text-success= status
+          -#
+            %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+              .text-success= status
