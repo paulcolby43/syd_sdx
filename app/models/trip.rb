@@ -21,10 +21,15 @@ class Trip
   end
   
   def self.all_trips(dispatch_information)
-    if dispatch_information["Trips"]["MobileDispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
-      return [dispatch_information["Trips"]["MobileDispatchTripInformation"]]
-    else # Array of results returned
-      return dispatch_information["Trips"]["MobileDispatchTripInformation"]
+    unless dispatch_information.blank? or dispatch_information["Trips"].blank? or dispatch_information["Trips"]["MobileDispatchTripInformation"].blank?
+      if dispatch_information["Trips"]["MobileDispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [dispatch_information["Trips"]["MobileDispatchTripInformation"]]
+      else # Array of results returned
+        return dispatch_information["Trips"]["MobileDispatchTripInformation"]
+      end
+    else
+      # No trips
+      return [] 
     end
   end
   
