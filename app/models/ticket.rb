@@ -516,7 +516,7 @@ class Ticket
   end
   
   def self.commodities(status, auth_token, yard_id, ticket_id)
-    ticket = Ticket.find_by_id(status, auth_token, yard_id, ticket_id)
+    ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
     commodities = []
     unless ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
       # Multiple ticket line items
@@ -604,7 +604,7 @@ class Ticket
 
   def self.generate_leads_online_xml(auth_token, ticket_id, yard_id, user, customer_id, images)
     yard = Yard.find_by_id(auth_token, yard_id)
-    ticket = Ticket.find_by_id(3, auth_token, yard_id, ticket_id)
+    ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
     xml = ::Builder::XmlMarkup.new(:indent => 2)
     xml.instruct!
