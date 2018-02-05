@@ -240,7 +240,7 @@ class TicketsController < ApplicationController
     authorize! :send_to_leads_online, :tickets
 #    
     path_to_file = "public/leads_online/f_0_#{current_user.company.leads_online_store_id}_#{Date.today.strftime("%m")}_#{Date.today.strftime("%d")}_#{Date.today.strftime("%Y")}_#{Time.now.strftime("%H%M%S")}.xml"
-    SendTicketToLeadsWorker.perform_async(params[:status], current_user.token, path_to_file, params[:id], current_yard_id, current_user.id)
+    SendTicketToLeadsWorker.perform_async(current_user.token, path_to_file, params[:id], current_yard_id, current_user.id)
 
     respond_to do |format|
       format.html { 

@@ -12,7 +12,7 @@
 
   - if (@status == '1' or @status == '3') and current_user.company.include_leads_online? and current_user.company.leads_online_config_settings_present?
     %p
-      %a{href: send_to_leads_online_ticket_path(ticket['Id'], status: @status), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
+      %a{href: send_to_leads_online_ticket_path(ticket['Id']), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
         %i.fa.fa-search
         Send to Leads
   - if @status == '3'
