@@ -27,9 +27,6 @@
         - unless workorder.blank? or workorder['Phone'].blank?
           %a{href: "tel:#{workorder['Phone']}"}
             = workorder['Phone']
-        - else
-          %a{href: "tel:727-568-7076", target: '_blank'}
-            = '727-568-7076'
     %div
       %strong= "Type:"
       .pull-right
