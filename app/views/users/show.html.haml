@@ -6,7 +6,7 @@
     .row
       .col-sm-12.col-md-6
         %p
-          %strong Role
+          %strong User Type
           %br
           = @user.role.titleize
       .col-sm-12.col-md-6
@@ -59,6 +59,14 @@
             %br
             = current_yard_id
     .row
+      .col-sm-12.col-md-6
+        %p
+          %strong Dragon Roles
+        - unless @dragon_roles.blank?
+          - @dragon_roles.each do |dragon_role|
+            %p= dragon_role
+        - else
+          %p None
       .col-sm-12.col-md-6
         - if @user.customer? and not @portal_customers.blank?
           %p

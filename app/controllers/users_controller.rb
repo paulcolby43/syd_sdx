@@ -14,6 +14,7 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @portal_customers = @user.portal_customers
+    @dragon_roles = @user.access_token.roles
   end
 
   # GET /users/new
