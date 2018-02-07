@@ -47,11 +47,11 @@ class UsersController < ApplicationController
       end
       format.html { 
         if create_scrap_dragon_user_response.blank? or create_scrap_dragon_user_response["Success"] == 'true' # Private Dragon API or Dragon user successfully created
+          @user.email_confirmed = true # Automatically confirm email address to simplify process for now
           if @user.save
             User.generate_scrap_dragon_token(user_params, @user.id)
-#            UserMailer.confirmation_instructions(@user).deliver
-            @user.send_confirmation_instructions_email
-            flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
+#            @user.send_confirmation_instructions_email
+            flash[:success] = "New user created."
             redirect_to login_path if current_user.blank?
             redirect_to users_path unless current_user.blank?
           else

@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   before_save { |user| user.username = username.downcase }
   before_save { |user| user.email = email.downcase }
   
-  before_create :confirmation_token
+#  before_create :confirmation_token # Remove for now to simplify sign up process
 #  after_commit :create_user_settings, :on => :create
   after_create :create_user_settings
   after_create :create_company, unless: :company?
@@ -476,7 +476,6 @@ class User < ActiveRecord::Base
     json_encoded_payload = JSON.generate(payload)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
       payload: json_encoded_payload)
-    Rails.logger.info "create_scrap_dragon_user_for_current_user response: #{response}"
     data= Hash.from_xml(response)
     Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
     return data["AddApiUserResponse"]
