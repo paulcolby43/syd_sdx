@@ -63,26 +63,38 @@ class Trip
   end
   
   def self.tasks(trip)
-    if trip["Tasks"]["MobileDispatchTaskInformation"].is_a? Hash # Only one result returned, so put it into an array
-      return [trip["Tasks"]["MobileDispatchTaskInformation"]]
-    else # Array of results returned
-      return trip["Tasks"]["MobileDispatchTaskInformation"]
+    unless trip["Tasks"].blank? or trip["Tasks"]["MobileDispatchTaskInformation"].blank?
+      if trip["Tasks"]["MobileDispatchTaskInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [trip["Tasks"]["MobileDispatchTaskInformation"]]
+      else # Array of results returned
+        return trip["Tasks"]["MobileDispatchTaskInformation"]
+      end
+    else
+      return []
     end
   end
   
   def self.all_trucks(dispatch_information)
-    if dispatch_information["Trucks"].is_a? Hash # Only one result returned, so put it into an array
-      return [dispatch_information["Trucks"]]
-    else # Array of results returned
-      return dispatch_information["Trucks"]
+    unless dispatch_information["Trucks"].blank?
+      if dispatch_information["Trucks"].is_a? Hash # Only one result returned, so put it into an array
+        return [dispatch_information["Trucks"]]
+      else # Array of results returned
+        return dispatch_information["Trucks"]
+      end
+    else
+      return []
     end
   end
   
   def self.workorders(trip)
-    if trip['WorkOrders']['MobileWorkOrderInformation'].is_a? Hash # Only one result returned, so put it into an array
-      return [trip['WorkOrders']['MobileWorkOrderInformation']]
+    unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
+      if trip['WorkOrders']['MobileWorkOrderInformation'].is_a? Hash # Only one result returned, so put it into an array
+        return [trip['WorkOrders']['MobileWorkOrderInformation']]
+      else
+        return trip['WorkOrders']['MobileWorkOrderInformation']
+      end
     else
-      return trip['WorkOrders']['MobileWorkOrderInformation']
+      return []
     end
   end
   

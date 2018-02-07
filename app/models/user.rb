@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   before_save { |user| user.username = username.downcase }
   before_save { |user| user.email = email.downcase }
   
-  before_create :confirmation_token
+#  before_create :confirmation_token # Remove for now to simplify sign up process
 #  after_commit :create_user_settings, :on => :create
   after_create :create_user_settings
   after_create :create_company, unless: :company?
@@ -58,17 +58,17 @@ class User < ActiveRecord::Base
     AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
   end
   
-  def update_scrap_dragon_token(user_id, pass)
-    user = User.find(user_id)
-    api_url = "https://#{user.company.dragon_api}/token"
+  def update_scrap_dragon_token(pass)
+#    user = User.find(user_id)
+    api_url = "https://#{company.dragon_api}/token"
     begin
-      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: username, password: pass})
 #    Rails.logger.info response
       access_token_string = JSON.parse(response)["access_token"]
-      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours, roles: dragon_role_names)
       return 'success'
     rescue RestClient::ExceptionWithResponse => e
-      e.response
+#      e.response
 #    rescue => exception
       Rails.logger.info e.response
       e.response
@@ -223,6 +223,26 @@ class User < ActiveRecord::Base
     role == "customer"
   end
   
+  def mobile_admin?
+    access_token.roles.include?("Mobile Admin")
+  end
+  
+  def mobile_dispatch?
+    access_token.roles.include?("Mobile Dispatch")
+  end
+  
+  def mobile_buy?
+    access_token.roles.include?("Mobile Buy")
+  end
+  
+  def mobile_sell?
+    access_token.roles.include?("Mobile Sell")
+  end
+  
+  def mobile_reports?
+    access_token.roles.include?("Mobile Reports")
+  end
+  
   def portal_customer_ids
     ids = []
     if customer? and not customer_guid.blank?
@@ -326,6 +346,45 @@ class User < ActiveRecord::Base
     user_setting.currency_id
   end
   
+  def send_password_reset
+    create_password_reset_token
+    self.password_reset_sent_at = Time.zone.now
+    save!
+    UserMailer.forgot_password_instructions(self).deliver
+  end
+  
+  def create_password_reset_token
+    self.password_reset_token = SecureRandom.urlsafe_base64.to_s
+  end
+  
+  def dragon_roles
+    api_url = "https://#{self.company.dragon_api}/api/roles/#{username}"
+    
+    begin
+      response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{token}", :content_type => 'application/json'})
+      data= Hash.from_xml(response)
+      Rails.logger.info data
+      unless data["ArrayOfUserRoleInformation"].blank? or data["ArrayOfUserRoleInformation"]["UserRoleInformation"].blank?
+        if data["ArrayOfUserRoleInformation"]["UserRoleInformation"].is_a? Hash # Only one result returned, so put it into an array
+          return []
+        else # Array of results returned
+          return data["ArrayOfUserRoleInformation"]["UserRoleInformation"]
+        end
+      else
+        return []
+      end
+    rescue => e
+      Rails.logger.info "Problem calling user.dragon_role: #{e.response}"
+      return []
+    end
+    
+  end
+  
+  def dragon_role_names
+    # Get unique listing of dragon role names
+    dragon_roles.map { |dragon_role| dragon_role['RoleName']}.uniq
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -336,7 +395,7 @@ class User < ActiveRecord::Base
     user = User.where(username: login.downcase, dragon_account_number: account_number).first || User.where(email: login.downcase, dragon_account_number: account_number).first unless account_number.blank?
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
-      response = user.update_scrap_dragon_token(user.id, pass)
+      response = user.update_scrap_dragon_token(pass)
       if response == 'success'
         return user 
       end
@@ -347,6 +406,7 @@ class User < ActiveRecord::Base
   
   def self.generate_scrap_dragon_token(user_params, user_id)
     company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
+    user = User.find(user_id)
     unless company.blank?
       api_url = "https://#{company.dragon_api}/token"
     else
@@ -355,7 +415,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
     Rails.logger.info response
     access_token_string = JSON.parse(response)["access_token"]
-    AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours)
+    AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours, roles: user.dragon_role_names )
   end
   
   def self.update_scrap_dragon_token(user_id, pass)
@@ -416,7 +476,6 @@ class User < ActiveRecord::Base
     json_encoded_payload = JSON.generate(payload)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
       payload: json_encoded_payload)
-    Rails.logger.info "create_scrap_dragon_user_for_current_user response: #{response}"
     data= Hash.from_xml(response)
     Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
     return data["AddApiUserResponse"]
@@ -443,17 +502,6 @@ class User < ActiveRecord::Base
     data= Hash.from_xml(response)
     Rails.logger.info data
     return data["AddApiCustomerUserResponse"]
-  end
-  
-  def send_password_reset
-    create_password_reset_token
-    self.password_reset_sent_at = Time.zone.now
-    save!
-    UserMailer.forgot_password_instructions(self).deliver
-  end
-  
-  def create_password_reset_token
-    self.password_reset_token = SecureRandom.urlsafe_base64.to_s
   end
   
   private
