@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   ROLES = %w[customer admin].freeze
   
   has_one :access_token
-  has_one :user_setting
+  has_one :user_setting, :dependent => :destroy
   belongs_to :company
   has_many :portal_customers # Allow customer user to view other customer tickets via their portal
   has_many :inventories
@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
   before_save :prepare_password
 #  after_create :generate_token, if: :admin?
   before_save { |user| user.username = username.downcase }
-  before_save { |user| user.email = email.downcase }
+  before_save { |user| user.email = email.downcase unless user.email.blank?}
   
 #  before_create :confirmation_token # Remove for now to simplify sign up process
 #  after_commit :create_user_settings, :on => :create
@@ -23,20 +23,19 @@ class User < ActiveRecord::Base
   after_commit :send_registration_notice_email, :on => :create
     
   validates :password, confirmation: true
-#  validates :password_confirmation, presence: true, on: :create
-  validates_presence_of :role, :message => 'Please select type of user.'
-  validates_presence_of :first_name
-  validates_presence_of :last_name
-  validates_presence_of :email
-  validates_presence_of :phone
-  validates_presence_of :username, length: { minimum: 7 }
+#  validates_presence_of :role, :message => 'Please select type of user.'
+#  validates_presence_of :first_name
+#  validates_presence_of :last_name
+#  validates_presence_of :email
+#  validates_presence_of :phone
+  validates_presence_of :username#, length: { minimum: 7 }
   validates :username, format: { without: /\s/, message: "must contain no spaces" }
-  validates_presence_of :company_name
-  validates_presence_of :address1, on: :create
-  validates_presence_of :city, on: :create
-  validates_presence_of :state, on: :create
+#  validates_presence_of :company_name
+#  validates_presence_of :address1, on: :create
+#  validates_presence_of :city, on: :create
+#  validates_presence_of :state, on: :create
   validates_uniqueness_of :username, scope: :dragon_account_number, case_sensitive: false
-  validates_uniqueness_of :email, case_sensitive: false
+#  validates_uniqueness_of :email, case_sensitive: false
   validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
@@ -65,13 +64,18 @@ class User < ActiveRecord::Base
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: username, password: pass})
 #    Rails.logger.info response
       access_token_string = JSON.parse(response)["access_token"]
-      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours, roles: dragon_role_names)
+      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
       return 'success'
     rescue RestClient::ExceptionWithResponse => e
 #      e.response
 #    rescue => exception
-      Rails.logger.info e.response
-      e.response
+      unless e.response.blank?
+        Rails.logger.info e.response
+        return e.response
+      else
+        Rails.logger.info e
+        return e
+      end
     end
   end
   
@@ -374,7 +378,7 @@ class User < ActiveRecord::Base
         return []
       end
     rescue => e
-      Rails.logger.info "Problem calling user.dragon_role: #{e.response}"
+      Rails.logger.info "Problem calling user.dragon_role: #{e}"
       return []
     end
     
@@ -397,6 +401,8 @@ class User < ActiveRecord::Base
     if user
       response = user.update_scrap_dragon_token(pass)
       if response == 'success'
+        # Update user's dragon roles
+        user.access_token.update_attribute(:roles, user.dragon_role_names)
         return user 
       end
     else
@@ -405,17 +411,29 @@ class User < ActiveRecord::Base
   end
   
   def self.generate_scrap_dragon_token(user_params, user_id)
-    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
+#    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
     user = User.find(user_id)
-    unless company.blank?
-      api_url = "https://#{company.dragon_api}/token"
+    unless user.company.blank?
+      api_url = "https://#{user.company.dragon_api}/token"
     else
      api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     end
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
-    Rails.logger.info response
-    access_token_string = JSON.parse(response)["access_token"]
-    AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours, roles: user.dragon_role_names )
+    
+    begin
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
+      Rails.logger.info "User.generate_scrap_dragon_token response: #{response}"
+      access_token_string = JSON.parse(response)["access_token"]
+      AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours )
+      return 'success'
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "Problem with User.generate_scrap_dragon_token: #{e.response}"
+        return e.response
+      else
+        Rails.logger.info "Problem with User.generate_scrap_dragon_token: #{e}"
+        return e
+      end
+    end
   end
   
   def self.update_scrap_dragon_token(user_id, pass)
