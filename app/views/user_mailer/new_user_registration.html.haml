@@ -6,7 +6,10 @@
     %h2= "New User Sign Up"
     %p
       Name:
-      = "#{@user.first_name} #{@user.last_name}"
+      - if not (@user.first_name.blank? and @user.last_name.blank?)
+        = "#{@user.first_name} #{@user.last_name}"
+      - else
+        = @user.username
     %p
       Email:
       = "#{@user.email}"
