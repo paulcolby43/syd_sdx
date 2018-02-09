@@ -14,18 +14,22 @@
                 %div.panel{class: "#{user.admin? ? 'panel-danger' : user.customer? ? 'panel-warning' : 'panel-primary'}"}
                   %div.list_group
                     %a{href: user_path(user.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{user.first_name} #{user.last_name}"}, class: "list-group-item user_button"}
-                      = "#{user.first_name} #{user.last_name}"
+                      - unless user.first_name.blank? and user.last_name.blank?
+                        = "#{user.first_name} #{user.last_name}"
+                      - else
+                        = user.username
                       .pull-right
                         &nbsp;
                         %i.fa.fa-chevron-right.fa-lg
                     %div.list-group-item
                       = "#{user.role} user"
-                      %br
-                      = "#{user.email_confirmed? ? 'Email confirmed' : 'Email not confirmed'}"
+                      - if user_role == 'customer'
+                        %br
+                        = "#{user.email_confirmed? ? 'Email confirmed' : 'Email not confirmed'}"
     - else
       %p No users found  
 
-    = link_to 'New User', new_user_path, class: 'btn btn-primary btn-lg'       
+    = link_to 'Add User', new_user_path, class: 'btn btn-primary btn-lg'       
     
 -#
   %h1 Listing users

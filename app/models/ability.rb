@@ -229,23 +229,75 @@ class Ability
     # End admin user role
     
     elsif user.basic?
-    # Start basic user role
-      # Tickets
-      ############
-      can :index, :tickets
-      can :show, :tickets
-      can :edit, :tickets
+    # Start basic user type
+     
+      if user.mobile_buy? or user.mobile_admin?
+        # Mobile Buy or Admin Dragon Role
+        # Tickets
+        ############
+        can :index, :tickets
+        can :show, :tickets
+        can :edit, :tickets
       
-      # Customers
-      ############
-      can :index, :customers
-      can :show, :customers
+        # Customers
+        ############
+        can :index, :customers
+        can :show, :customers
       
-      # Commodities
-      ############
-      can :index, :commodities
-      can :show, :commodities
-        
+        # Commodities
+        ############
+        can :index, :commodities
+        can :show, :commodities
+      end
+      
+      if user.mobile_sell? or user.mobile_admin?
+        # Mobile Sell or Admin Dragon Role
+        # PackShipments
+        ############
+        if user.company.include_shipments?
+          can :index, :pack_shipments
+          can :show, :pack_shipments
+          can :edit, :pack_shipments
+          can :fetches, :pack_shipments
+          can :pictures, :pack_shipments
+        end
+
+        # Inventories
+        ############
+        if user.company.include_inventories?
+          can :manage, Inventory do |inventory|
+            inventory.user_id == user.id
+          end
+          can :index, :inventories
+          can :show, :inventories
+          can :create, :inventories
+          can :edit, :inventories
+        end
+      end
+      
+      if user.mobile_reports? or user.mobile_admin?
+        # Mobile Reports or Admin Dragon Role
+        # Reports
+        ############
+        can :index, :reports
+      end
+      
+      if user.mobile_dispatch? or user.mobile_admin?
+        # Mobile Dispatch or Admin Dragon Role
+        # Trips
+        ############
+        if user.company.include_dispatch?
+          can :index, :trips
+          can :show, :trips
+          can :edit, :trips
+        end
+
+        # Tasks
+        ############
+        can :show, :tasks
+        can :edit, :tasks
+      end
+      
       # Images
       ############
       can :manage, Image do |image|

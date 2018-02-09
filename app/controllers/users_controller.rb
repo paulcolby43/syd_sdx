@@ -14,6 +14,7 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @portal_customers = @user.portal_customers
+    @dragon_roles = @user.access_token.roles
   end
 
   # GET /users/new
@@ -47,12 +48,17 @@ class UsersController < ApplicationController
       format.html { 
         if create_scrap_dragon_user_response.blank? or create_scrap_dragon_user_response["Success"] == 'true' # Private Dragon API or Dragon user successfully created
           if @user.save
-            User.generate_scrap_dragon_token(user_params, @user.id)
-#            UserMailer.confirmation_instructions(@user).deliver
-            @user.send_confirmation_instructions_email
-            flash[:success] = "New user created. Confirmation instructions have been sent to the user email address."
-            redirect_to login_path if current_user.blank?
-            redirect_to users_path unless current_user.blank?
+            generate_scrap_dragon_token_response = User.generate_scrap_dragon_token(user_params, @user.id)
+            if generate_scrap_dragon_token_response == 'success'
+              @user.send_confirmation_instructions_email
+              flash[:success] = "New user created."
+              redirect_to login_path if current_user.blank?
+              redirect_to users_path unless current_user.blank?
+            else
+              flash[:danger] = "Problem creating user: #{generate_scrap_dragon_token_response}"
+              redirect_to login_path if current_user.blank?
+              redirect_to users_path unless current_user.blank?
+            end
           else
             if current_user.blank?
               render :new
@@ -65,10 +71,19 @@ class UsersController < ApplicationController
           if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists.'
             @user.email_confirmed = true # Automatically confirm email address since already in Dragon
             if @user.save
-              User.generate_scrap_dragon_token(user_params, @user.id)
-              flash[:success] = "This is an existing Scrap Dragon user. Confirmation instructions have been sent to the user email address."
-              redirect_to login_path if current_user.blank?
-              redirect_to users_path unless current_user.blank?
+              generate_scrap_dragon_token_response = User.generate_scrap_dragon_token(user_params, @user.id)
+              if generate_scrap_dragon_token_response == 'success'
+                # Save user's dragon roles
+                @user.access_token.update_attribute(:roles, @user.dragon_role_names)
+                flash[:success] = "Scrap Dragon user successfully added to Scrap Yard Dog."
+                redirect_to login_path if current_user.blank?
+                redirect_to users_path unless current_user.blank?
+              else
+                flash[:danger] = "Problem adding Scrap Dragon user to Scrap Yard Dog: #{generate_scrap_dragon_token_response}"
+                @user.destroy
+                redirect_to login_path if current_user.blank?
+                redirect_to users_path unless current_user.blank?
+              end
             else
               #flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
               render :new
