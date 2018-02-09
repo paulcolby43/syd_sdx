@@ -370,7 +370,7 @@ class User < ActiveRecord::Base
       Rails.logger.info data
       unless data["ArrayOfUserRoleInformation"].blank? or data["ArrayOfUserRoleInformation"]["UserRoleInformation"].blank?
         if data["ArrayOfUserRoleInformation"]["UserRoleInformation"].is_a? Hash # Only one result returned, so put it into an array
-          return []
+          return [data["ArrayOfUserRoleInformation"]["UserRoleInformation"]]
         else # Array of results returned
           return data["ArrayOfUserRoleInformation"]["UserRoleInformation"]
         end
