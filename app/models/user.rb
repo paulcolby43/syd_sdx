@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   before_save { |user| user.username = username.downcase }
   before_save { |user| user.email = email.downcase unless user.email.blank?}
   
-#  before_create :confirmation_token # Remove for now to simplify sign up process
+  before_create :confirmation_token # Remove for now to simplify sign up process
 #  after_commit :create_user_settings, :on => :create
   after_create :create_user_settings
   after_create :create_company, unless: :company?
