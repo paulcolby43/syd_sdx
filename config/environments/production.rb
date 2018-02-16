@@ -96,7 +96,7 @@ Rails.application.configure do
   
   Rails.application.config.middleware.use ExceptionNotification::Rack,
   :email => {
-    :ignore_exceptions => ['ActionView::TemplateError'] + ExceptionNotifier.ignored_exceptions,
+    :ignore_exceptions => ['ActionView::TemplateError'] + ['ActionController::InvalidAuthenticityToken'] + ExceptionNotifier.ignored_exceptions,
     :sender_address => %{"Dragon Dog Exception Notifier" <notifier@tranact.com>},
     :exception_recipients => %w{jeremy@tranact.com shark@tranact.com}
   }
