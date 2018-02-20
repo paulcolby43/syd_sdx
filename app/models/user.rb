@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   ROLES = %w[customer admin].freeze
   
-  has_one :access_token
+  has_one :access_token, :dependent => :destroy
   has_one :user_setting, :dependent => :destroy
   belongs_to :company
   has_many :portal_customers # Allow customer user to view other customer tickets via their portal
@@ -520,6 +520,22 @@ class User < ActiveRecord::Base
     data= Hash.from_xml(response)
     Rails.logger.info data
     return data["AddApiCustomerUserResponse"]
+  end
+  
+  def self.current_valid_scrap_dragon_user(auth_token, user_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user/isvaliduser"
+    payload = {
+      "Username" => user_params[:username],
+      "Password" => user_params[:password]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info "User.current_valid_scrap_dragon_user response data: #{data}"
+    return data["boolean"]
   end
   
   private
