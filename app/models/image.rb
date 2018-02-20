@@ -26,9 +26,9 @@ class Image < ActiveRecord::Base
     blob.preview
   end
   
-  def jpeg_image(company)
-    blob.jpeg_image
-  end
+#  def jpeg_image(company)
+#    blob.jpeg_image
+#  end
   
   def jpeg_image_data_uri
     unless jpeg_image.blank?
