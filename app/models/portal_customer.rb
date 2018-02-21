@@ -9,8 +9,8 @@ class PortalCustomer < ActiveRecord::Base
   #     Instance Methods      #
   ############################
   
-  def customer
-    
+  def customer(auth_token, yard_id)
+    return Customer.find_by_id(auth_token, yard_id, customer_guid)
   end
   
   #############################
