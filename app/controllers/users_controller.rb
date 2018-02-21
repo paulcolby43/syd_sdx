@@ -100,7 +100,7 @@ class UsersController < ApplicationController
               redirect_to users_path unless current_user.blank?
             end
           else
-            flash[:danger] = "There was a problem creating the user in Scrap Dragon #{create_scrap_dragon_user_response['FailureInformation']}"
+            flash[:danger] = "There was a problem creating the user in Scrap Dragon #{create_scrap_dragon_user_response}"
             redirect_to login_path if current_user.blank?
             redirect_to users_path unless current_user.blank?
           end
