@@ -98,8 +98,8 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
     payload = {
       "CustomerIds" => [],
-      "StartDate" => "#{start_date}T00:00:00",
-      "EndDate" => "#{end_date}T23:59:59",
+      "StartDate" => start_date,
+      "EndDate" => end_date,
       "Take" => 200, 
       "PaymentType" => [status],
       "ShowAllYards" => true # Pass back tickets from all yards
@@ -122,8 +122,8 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
     payload = {
       "CustomerIds" => [],
-      "StartDate" => "#{start_date}T00:00:00",
-      "EndDate" => "#{end_date}T23:59:59",
+      "StartDate" => start_date,
+      "EndDate" => end_date,
       "Take" => 200, 
       "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
       "ShowAllYards" => false # Only tickets from this yard
@@ -147,8 +147,8 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
     payload = {
       "CustomerIds" => [],
-      "StartDate" => "#{start_date}T00:00:00",
-      "EndDate" => "#{end_date}T23:59:59",
+      "StartDate" => start_dat,
+      "EndDate" => end_date,
       "Take" => 200, 
       "TicketStatuses" => [1,2,3], # All statuses
       "ShowAllYards" => false # Only tickets from this yard
@@ -200,8 +200,8 @@ class Ticket
     
     payload = {
       "CustomerIds" => customer_ids,
-      "StartDate" => "#{start_date}T00:00:00",
-      "EndDate" => "#{end_date}T23:59:59",
+      "StartDate" => start_date,
+      "EndDate" => end_date,
 #        "SearchTerms" => "",
       "Take" => 200, 
       "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
