@@ -20,3 +20,6 @@ jQuery ->
   #  else
   #    $('#sign_up_button').attr 'disabled', 'disabled'
   #  return
+
+  # Dropdown select for linking external users to customers
+  $('.portal_customers').select2 theme: 'bootstrap'

@@ -11,13 +11,13 @@ class TicketsController < ApplicationController
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
     unless params[:q].blank?
-      results = Ticket.search(@status, current_user.token, current_yard_id, params[:q])
+      results = Ticket.search(@status.to_i, current_user.token, current_yard_id, params[:q])
     else
-      results = Ticket.all(@status, current_user.token, current_yard_id) unless current_user.customer?
+      results = Ticket.all_by_status_and_yard(@status.to_i, current_user.token, current_yard_id) unless current_user.customer?
       if current_user.customer?
-        results = Customer.tickets(@status, current_user.token, current_yard_id, current_user.customer_guid)
+        results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, current_user.customer_guid)
         current_user.portal_customers.each do |portal_customer|
-          portal_customer_results = Customer.tickets(@status, current_user.token, current_yard_id, portal_customer.customer_guid)
+          portal_customer_results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, portal_customer.customer_guid)
           results = [] if results.blank? # Create an empty array to add to if there are no results yet
           results = results + portal_customer_results unless portal_customer_results.blank?
         end

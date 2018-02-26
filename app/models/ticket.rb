@@ -8,15 +8,40 @@ class Ticket
   #     Class Methods         #
   #############################
   
-  def self.all(status, auth_token, yard_id)
+#  def self.all(status, auth_token, yard_id)
+##    status = 'held' if status == 'Hold'
+#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+#    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
+#    
+#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+#    data= Hash.from_xml(xml_content)
+##    Rails.logger.info data
+#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+#    else # Array of results returned
+#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+#    end
+#  end
+
+  def self.all_by_status_and_yard(status, auth_token, yard_id)
 #    status = 'held' if status == 'Hold'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
-    
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydays?d=60"
+    payload = {
+      "CustomerIds" => [],
+      "Take" => 200, 
+#      "PaymentType" => [status],
+      "TicketStatuses" => [status],
+      "ShowAllYards" => false # Only get this yard's tickets
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info "payload: #{json_encoded_payload}"
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-#    Rails.logger.info data
+    Rails.logger.info "Ticket.all_by_status response: #{data}"
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
     else # Array of results returned
@@ -38,12 +63,50 @@ class Ticket
     end
   end
   
-  def self.all_this_week(status, auth_token, yard_id)
+#  def self.all_this_week(status, auth_token, yard_id)
+#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+#    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=7&t=100"
+#    
+#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+#    data= Hash.from_xml(xml_content)
+#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+#    else # Array of results returned
+#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+#    end
+#  end
+  
+#  def self.all_by_date(status, auth_token, yard_id, start_date, end_date)
+#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+#    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
+#    
+#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+#    data= Hash.from_xml(xml_content)
+#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+#    else # Array of results returned
+#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+#    end
+#  end
+  
+  def self.all_by_date_and_status(status, auth_token, yard_id, start_date, end_date)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=7&t=100"
-    
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
+    payload = {
+      "CustomerIds" => [],
+      "StartDate" => start_date,
+      "EndDate" => end_date,
+      "Take" => 200, 
+      "PaymentType" => [status],
+      "ShowAllYards" => true # Pass back tickets from all yards
+      }
+    json_encoded_payload = JSON.generate(payload)
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
@@ -52,12 +115,23 @@ class Ticket
     end
   end
   
-  def self.all_by_date(status, auth_token, yard_id, start_date, end_date)
+  def self.all_by_date_and_status_and_yard(status, auth_token, yard_id, start_date, end_date)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
-    
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
+    payload = {
+      "CustomerIds" => [],
+      "StartDate" => start_date,
+      "EndDate" => end_date,
+      "Take" => 200, 
+      "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
+      "ShowAllYards" => false # Only tickets from this yard
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.debug "payload: #{json_encoded_payload}"
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
@@ -65,11 +139,64 @@ class Ticket
       return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
   end
+  
+  def self.all_by_date_and_yard(auth_token, yard_id, start_date, end_date)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
+    payload = {
+      "CustomerIds" => [],
+      "StartDate" => start_date,
+      "EndDate" => end_date,
+      "Take" => 200, 
+      "TicketStatuses" => [1,2,3], # All statuses
+      "ShowAllYards" => false # Only tickets from this yard
+      }
+    json_encoded_payload = JSON.generate(payload)
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
+    data= Hash.from_xml(xml_content)
+    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+  end
+  
+#  def self.all_by_date_and_customers(status, auth_token, yard_id, start_date, end_date, customer_ids)
+#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+#    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bycustomeridsbydate"
+#    
+#    payload = {
+#      "CustomerIds" => customer_ids,
+#      "StartDate" => start_date,
+#      "EndDate" => end_date,
+##        "SearchTerms" => "",
+#      "Take" => 200, 
+#      "PaymentType" => status
+#      }
+#    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info json_encoded_payload
+#    
+#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+#      payload: json_encoded_payload)
+#    
+#    data= Hash.from_xml(xml_content)
+#    Rails.logger.info data
+#    
+#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+#    else # Array of results returned
+#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+#    end
+#  end
   
   def self.all_by_date_and_customers(status, auth_token, yard_id, start_date, end_date, customer_ids)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bycustomeridsbydate"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
     
     payload = {
       "CustomerIds" => customer_ids,
@@ -77,12 +204,13 @@ class Ticket
       "EndDate" => end_date,
 #        "SearchTerms" => "",
       "Take" => 200, 
-      "PaymentType" => status
+      "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
+      "ShowAllYards" => true # Pass back tickets from all yards
       }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info json_encoded_payload
     
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)

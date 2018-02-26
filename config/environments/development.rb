@@ -51,4 +51,13 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  
+  # Exception Notification gem settings are now in exception notification initializer file.
+#  Rails.application.config.middleware.use ExceptionNotification::Rack,
+#  :email => {
+#    :ignore_exceptions => ['ActionView::TemplateError', 'ActionController::InvalidAuthenticityToken'] + ExceptionNotifier.ignored_exceptions,
+#    :sender_address => %{"Dragon Dog Exception Notifier" <notifier@tranact.com>},
+#    :exception_recipients => %w{jeremy@tranact.com shark@tranact.com}
+#  }
+
 end

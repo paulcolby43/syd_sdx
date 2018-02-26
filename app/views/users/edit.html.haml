@@ -70,9 +70,10 @@
               = f.nested_fields_for :portal_customers do |ff|
                 = ff.hidden_field :user_id, value: @user.id
                 %div.input-group
-                  = ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select portal customer"}, {:class => "form-control input-lg"}
+                  =# ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select portal customer"}, {:class => "form-control input-lg"}
+                  = ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select customer"}, {:class => "form-control input-lg portal_customers"}
                   %span.input-group-btn
-                    = ff.remove_nested_fields_link "<i class='fa fa-trash-o'></i>".html_safe, class: 'btn btn-danger btn-lg', role: 'button', data: { confirm: 'Are you sure you want to remove?' }
+                    = ff.remove_nested_fields_link "<i class='fa fa-trash-o'></i>".html_safe, class: 'btn btn-danger', role: 'button', data: { confirm: 'Are you sure you want to remove?' }
                 %br
           .row.form-group
             %div{:class => "col-sm-4"}
@@ -84,3 +85,14 @@
               = link_to 'Cancel', root_path, :class => "btn btn-lg btn-default btn-block"
           %div{:class => "col-sm-3"}
             = f.submit "Save", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }
+
+:javascript
+  // Apply select2 to dynamically added customer selects
+  $('.more_portal_customers_link').on("click", function(){
+    // Need to add a bit of a delay so that select2 gets applied to newly added items
+    setTimeout(function() {
+       $('.portal_customers').select2({
+        theme: 'bootstrap',
+      });
+    }, 0);
+  });
