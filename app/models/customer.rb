@@ -33,7 +33,11 @@ class Customer
     data= Hash.from_xml(xml_content)
     Rails.logger.info data
     
-    return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Item"]
+    unless data["ApiItemResponseOfApiCustomerC9S9lUui"].blank? or data["ApiItemResponseOfApiCustomerC9S9lUui"]["Item"].blank?
+      return data["ApiItemResponseOfApiCustomerC9S9lUui"]["Item"]
+    else
+      return nil
+    end
     
 #    customers = Customer.all(auth_token, yard_id)
 #    customers.find {|customer| customer['Id'] == customer_id}

@@ -41,7 +41,10 @@ class UsersController < ApplicationController
     respond_to do |format|
       unless @user.customer?
         create_scrap_dragon_user_response = User.create_scrap_dragon_user(user_params) if current_user.blank? and user_params[:dragon_account_number].blank?
-        create_scrap_dragon_user_response = User.create_scrap_dragon_user_for_current_user(current_user.token, user_params) unless current_user.blank?
+        unless current_user.blank?
+          create_scrap_dragon_user_response = User.create_scrap_dragon_user_for_current_user(current_user.token, user_params)
+          current_valid_scrap_dragon_user_response = User.current_valid_scrap_dragon_user(current_user.token, user_params)
+        end
       else
         create_scrap_dragon_user_response = User.create_scrap_dragon_customer_user(current_user.token, user_params)
       end
@@ -69,27 +72,35 @@ class UsersController < ApplicationController
           end
         else
           if create_scrap_dragon_user_response['FailureInformation'] == 'Username already exists.'
-            @user.email_confirmed = true # Automatically confirm email address since already in Dragon
-            if @user.save
-              generate_scrap_dragon_token_response = User.generate_scrap_dragon_token(user_params, @user.id)
-              if generate_scrap_dragon_token_response == 'success'
-                # Save user's dragon roles
-                @user.access_token.update_attribute(:roles, @user.dragon_role_names)
-                flash[:success] = "Scrap Dragon user successfully added to Scrap Yard Dog."
-                redirect_to login_path if current_user.blank?
-                redirect_to users_path unless current_user.blank?
+            if current_valid_scrap_dragon_user_response == 'true'
+              # This is an existing valid dragon user with correct password
+              @user.email_confirmed = true # Automatically confirm email address since already in Dragon
+              if @user.save
+                generate_scrap_dragon_token_response = User.generate_scrap_dragon_token(user_params, @user.id)
+                if generate_scrap_dragon_token_response == 'success'
+                  # Save user's dragon roles
+                  @user.access_token.update_attribute(:roles, @user.dragon_role_names)
+                  flash[:success] = "Scrap Dragon user successfully added to Scrap Yard Dog."
+                  redirect_to login_path if current_user.blank?
+                  redirect_to users_path unless current_user.blank?
+                else
+                  flash[:danger] = "Problem adding Scrap Dragon user to Scrap Yard Dog: #{generate_scrap_dragon_token_response}"
+                  @user.destroy
+                  redirect_to login_path if current_user.blank?
+                  redirect_to users_path unless current_user.blank?
+                end
               else
-                flash[:danger] = "Problem adding Scrap Dragon user to Scrap Yard Dog: #{generate_scrap_dragon_token_response}"
-                @user.destroy
-                redirect_to login_path if current_user.blank?
-                redirect_to users_path unless current_user.blank?
+                #flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
+                render :new
               end
             else
-              #flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
-              render :new
+              # current_valid_scrap_dragon_user_response did not return true, so password is incorrect for existing dragon user
+              flash[:danger] = "Problem adding Scrap Dragon user to Scrap Yard Dog: password is incorrect."
+              redirect_to login_path if current_user.blank?
+              redirect_to users_path unless current_user.blank?
             end
           else
-            flash[:danger] = "There was a problem creating the user in Scrap Dragon #{create_scrap_dragon_user_response['FailureInformation']}"
+            flash[:danger] = "There was a problem creating the user in Scrap Dragon #{create_scrap_dragon_user_response}"
             redirect_to login_path if current_user.blank?
             redirect_to users_path unless current_user.blank?
           end

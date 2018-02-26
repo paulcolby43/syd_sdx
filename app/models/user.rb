@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   ROLES = %w[customer admin].freeze
   
-  has_one :access_token
+  has_one :access_token, :dependent => :destroy
   has_one :user_setting, :dependent => :destroy
   belongs_to :company
   has_many :portal_customers # Allow customer user to view other customer tickets via their portal
@@ -466,11 +466,21 @@ class User < ActiveRecord::Base
       "YardState" => user_params[:state]
       }
     json_encoded_payload = JSON.generate(payload)
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
-      payload: json_encoded_payload)
-    data= Hash.from_xml(response)
-    Rails.logger.info data
-    return data["AddApiUserResponse"]
+    begin
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+        payload: json_encoded_payload)
+      data= Hash.from_xml(response)
+      Rails.logger.info data
+      return data["AddApiUserResponse"]
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "Problem with User.create_scrap_dragon_user: #{e.response}"
+        return e.response
+      else
+        Rails.logger.info "Problem with User.create_scrap_dragon_user: #{e}"
+        return e
+      end
+    end
   end
   
   def self.create_scrap_dragon_user_for_current_user(auth_token, user_params)
@@ -492,11 +502,21 @@ class User < ActiveRecord::Base
       "YardState" => user_params[:state]
       }
     json_encoded_payload = JSON.generate(payload)
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
-      payload: json_encoded_payload)
-    data= Hash.from_xml(response)
-    Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
-    return data["AddApiUserResponse"]
+    begin
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+        payload: json_encoded_payload)
+      data= Hash.from_xml(response)
+      Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
+      return data["AddApiUserResponse"]
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "Problem with User.create_scrap_dragon_user_for_current_user: #{e.response}"
+        return e.response
+      else
+        Rails.logger.info "Problem with User.create_scrap_dragon_user_for_current_user: #{e}"
+        return e
+      end
+    end
   end
   
   def self.create_scrap_dragon_customer_user(auth_token, user_params)
@@ -515,11 +535,47 @@ class User < ActiveRecord::Base
       "CustomerIdCollection" => [user_params[:customer_guid]],
       }
     json_encoded_payload = JSON.generate(payload)
-    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
-      payload: json_encoded_payload)
-    data= Hash.from_xml(response)
-    Rails.logger.info data
-    return data["AddApiCustomerUserResponse"]
+    begin
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
+        payload: json_encoded_payload)
+      data= Hash.from_xml(response)
+      Rails.logger.info data
+      return data["AddApiCustomerUserResponse"]
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "Problem with User.create_scrap_dragon_customer_user: #{e.response}"
+        return e.response
+      else
+        Rails.logger.info "Problem with User.create_scrap_dragon_customer_user: #{e}"
+        return e
+      end
+    end
+  end
+  
+  def self.current_valid_scrap_dragon_user(auth_token, user_params)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/user/isvaliduser"
+    payload = {
+      "Username" => user_params[:username],
+      "Password" => user_params[:password]
+      }
+    json_encoded_payload = JSON.generate(payload)
+    begin
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
+        payload: json_encoded_payload)
+      data= Hash.from_xml(response)
+      Rails.logger.info "User.current_valid_scrap_dragon_user response data: #{data}"
+      return data["boolean"]
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "Problem with User.current_valid_scrap_dragon_user: #{e.response}"
+        return e.response
+      else
+        Rails.logger.info "Problem with User.current_valid_scrap_dragon_user: #{e}"
+        return e
+      end
+    end
   end
   
   private

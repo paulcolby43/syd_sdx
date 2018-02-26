@@ -4,10 +4,6 @@
 
 jQuery ->
 
-  myOnClickEvent = ->
-    alert 'hey there'
-    return
-
   ### Re-enable disabled_with buttons for back button ###
   $(document).on 'page:change', ->
     $('.trip_button').each ->
@@ -121,3 +117,16 @@ jQuery ->
           console.log 'Error removing container.'
           return
       return
+
+  ### Task status being changed - check if all other tasks in this trip are set to complete ###
+  $('.task_status').on 'change', ->
+    input_select = $(this)
+    if input_select.val() == '2'
+      all_done = true
+      $(this).closest('.panel').find('.task_status').each ->
+        if $(this).val() != '2'
+          all_done = false
+      if all_done == true
+        alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
+    return
+  ### Task status being changed - check if all others are set to complete ###
