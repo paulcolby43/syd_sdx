@@ -22,4 +22,11 @@ jQuery ->
   #  return
 
   # Dropdown select for linking external users to customers
-  $('.portal_customers').select2 theme: 'bootstrap'
+  #$('.portal_customers').select2 theme: 'bootstrap'
+  $('.portal_customers').select2
+    theme: 'bootstrap'
+    minimumInputLength: 3
+    ajax:
+      url: '/customers'
+      dataType: 'json'
+      delay: 250
