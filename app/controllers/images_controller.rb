@@ -3,6 +3,7 @@ class ImagesController < ApplicationController
 #  before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
 #  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
+  load_and_authorize_resource :only => [:show]
 
   respond_to :html, :js
 
