@@ -202,6 +202,6 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, 
         :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state, :zip, :terms_of_service, :email_confirmed, :confirm_token, 
-        :dragon_account_number, portal_customers_attributes:[:user_id, :customer_guid, :_destroy,:id])
+        :dragon_account_number, :view_images, portal_customers_attributes:[:user_id, :customer_guid, :_destroy,:id])
     end
 end
