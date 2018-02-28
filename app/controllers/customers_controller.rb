@@ -54,6 +54,7 @@ class CustomersController < ApplicationController
 #    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], yardid: current_yard_id) if CustPic.table_exists?
     @cust_pics_array = CustPic.api_find_all_by_customer_number(params[:id], current_user.company, current_yard_id).reverse # Customer images
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
+    @customer_users = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id)
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
 #    if @customer_user.blank?
@@ -73,9 +74,11 @@ class CustomersController < ApplicationController
     authorize! :edit, :customers
     @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
     @customer_user = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id).last
-    if @customer_user.blank?
-      @new_user = User.new
-    end
+    @customer_users = User.where(customer_guid: @customer['Id'], yard_id: current_yard_id)
+    @new_user = User.new
+#    if @customer_user.blank?
+#      @new_user = User.new
+#    end
   end
 
   # POST /customers
