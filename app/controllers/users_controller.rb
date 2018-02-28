@@ -26,7 +26,9 @@ class UsersController < ApplicationController
   def edit
     if @user.customer?
 #      @customer_user_portal_customer = @user.customer_user_portal_customers.build
-      @customers = Customer.all(current_user.token, current_yard_id)
+#      @portal_customers = @user.portal_customers
+#      @customers = Customer.all(current_user.token, current_yard_id)
+      @portal_customers_options_array = @user.portal_customers_options_array(current_user.token, current_yard_id)
     end
   end
 

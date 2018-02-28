@@ -34,4 +34,3 @@ tud_config:
   password: <%= ENV["TUD_CONFIG_PASSWORD"] %>
   database: <%= ENV["TUD_CONFIG_DATABASE"] %>
   port: <%= ENV["TUD_CONFIG_PORT"] %>
-
