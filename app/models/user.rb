@@ -398,6 +398,18 @@ class User < ActiveRecord::Base
     return customers_array
   end
   
+  def name
+    unless first_name.blank? and last_name.blank?
+      return "#{first_name} #{last_name}"
+    else
+      unless email.blank?
+        return email
+      else
+        return username
+      end
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################

@@ -20,14 +20,26 @@
           =# image_tag("ajax-loader.gif", :id => "image_scan_spinner", :class => "save_to_jpegger_spinner", :alt => "Loading ...", style: "display:none;")
 
   - if current_user.admin?
-    - if @customer_user.blank?
+    .alert.alert-warning
+      %p.lead
+        %i.fa.fa-compress
+        = "Customer Portal"
+      - @customer_users.each do |customer_user|
+        %p= link_to customer_user.name, edit_user_path(@customer_user), class: 'btn btn-default'
       - if current_user.company.include_external_users?
-        .alert.alert-warning
-          = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
+        %p= link_to "Create new customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-primary'
         = render partial: 'users/new_modal'
       - else
-        .alert.alert-warning
-          = link_to "Create customer login", "#", "data-toggle" => "modal", class: 'btn btn-default disabled'
+        %p= link_to "Create new customer login", "#", "data-toggle" => "modal", class: 'btn btn-primary disabled'
+    -#
+      - if @customer_user.blank?
+        - if current_user.company.include_external_users?
+          .alert.alert-warning
+            = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
+          = render partial: 'users/new_modal'
+        - else
+          .alert.alert-warning
+            = link_to "Create customer login", "#", "data-toggle" => "modal", class: 'btn btn-default disabled'
         
   .well.col-sm-12.col-md-12{id: 'customer_info'}
     = form_tag customer_path(@customer["Id"]), method: 'put', :class => "form-horizontal", id: 'customer_form' do

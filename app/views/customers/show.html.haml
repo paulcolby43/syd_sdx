@@ -5,13 +5,21 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     - if current_user.admin? and current_user.company.include_external_users?
-      - unless @customer_user.blank?
+      - unless @customer_users.blank?
         .alert.alert-warning
           %p.lead
             %i.fa.fa-compress
             = "Customer Portal Open"
-          %p
-            = link_to "Edit customer's user account", edit_user_path(@customer_user), class: 'btn btn-primary'
+          - @customer_users.each do |customer_user|
+            %p= link_to customer_user.name, edit_user_path(@customer_user), class: 'btn btn-default'
+      -#   
+        - unless @customer_user.blank?
+          .alert.alert-warning
+            %p.lead
+              %i.fa.fa-compress
+              = "Customer Portal Open"
+            %p
+              = link_to "Edit customer's user account", edit_user_path(@customer_user), class: 'btn btn-primary'
       -#
         .alert.alert-warning
           = link_to "Create customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-default'
