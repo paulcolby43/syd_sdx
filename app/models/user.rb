@@ -389,6 +389,15 @@ class User < ActiveRecord::Base
     dragon_roles.map { |dragon_role| dragon_role['RoleName']}.uniq
   end
   
+  def portal_customers_options_array(auth_token, yard_id)
+    customers_array = []
+    portal_customers.each do |portal_customer|
+      Rails.logger.debug "portal customer: #{portal_customer}"
+      customers_array << portal_customer.customer(auth_token, yard_id)
+    end
+    return customers_array
+  end
+  
   #############################
   #     Class Methods         #
   #############################

@@ -13,6 +13,14 @@ class PortalCustomer < ActiveRecord::Base
     return Customer.find_by_id(auth_token, yard_id, customer_guid)
   end
   
+  def name
+    unless customer['LastName'].blank? and  customer['FirstName'].blank?
+      "#{customer['FirstName']} #{customer['LastName']}"
+    else
+      customer['Company']
+    end
+  end
+  
   #############################
   #     Class Methods      #
   #############################

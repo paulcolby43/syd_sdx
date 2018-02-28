@@ -73,7 +73,8 @@
                   = ff.hidden_field :user_id, value: @user.id
                   %div.input-group
                     =# ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select portal customer"}, {:class => "form-control input-lg"}
-                    = ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select customer"}, {:class => "form-control input-lg portal_customers"}
+                    =# ff.select :customer_guid, options_for_select(@customers.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select customer"}, {:class => "form-control input-lg portal_customers"}
+                    = ff.select :customer_guid, options_for_select(@portal_customers_options_array.map{ |customer| ["#{customer['Company'].blank? ? customer['LastName'] : customer['Company']}", customer['Id']] }, ff.object.customer_guid), {prompt: "Select customer"}, {:class => "form-control input-lg portal_customers"}
                     %span.input-group-btn
                       = ff.remove_nested_fields_link "<i class='fa fa-trash-o'></i>".html_safe, class: 'btn btn-danger', role: 'button', data: { confirm: 'Are you sure you want to remove?' }
                   %br
@@ -96,8 +97,14 @@
   $('.more_portal_customers_link').on("click", function(){
     // Need to add a bit of a delay so that select2 gets applied to newly added items
     setTimeout(function() {
-       $('.portal_customers').select2({
-        theme: 'bootstrap',
-      });
+    $('.portal_customers').select2({
+      theme: 'bootstrap',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/customers',
+        dataType: 'json',
+        delay: 250
+      }
+    });
     }, 0);
   });
