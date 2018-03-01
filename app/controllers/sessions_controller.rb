@@ -21,6 +21,12 @@ class SessionsController < ApplicationController
     user = User.authenticate(params[:username], params[:password], params[:dragon_account_number])
     if user
       cookies.permanent[:dragon_account_number] = user.dragon_account_number # Store Dragon account number in a permanent cookie so can remember next time.
+      if user.customer?
+        yard_id = current_user.yard_id
+        yard = Yard.find_by_id(current_user.token, yard_id)
+        session[:yard_id] = yard_id
+        session[:yard_name] = yard['Name']
+      end
       if user.email_confirmed
         log_in user
         unless (user.admin? and user.user_setting.currency_id.blank?) or (user.customer? and params[:customer_needs_to_change_password] == 'true')
