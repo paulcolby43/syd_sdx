@@ -882,15 +882,15 @@ class Ticket
     end
   end
   
-  def self.commodity_summary_to_csv(line_items_array)
+  def self.commodity_summary_to_csv(line_items_array, tickets_array)
     require 'csv'
-    headers = ['DateCreated', 'PrintDescription', 'NetWeight', 'Price', 'ExtendedAmount']
+    headers = ['DateCreated', 'Ticket', 'Customer', 'PrintDescription', 'NetWeight', 'Price', 'ExtendedAmount']
     
     CSV.generate(headers: true) do |csv|
       csv << headers
 
       line_items_array.each do |line_item|
-        csv << headers.map{ |attr| line_item[attr] }
+        csv << headers.map{ |attr| (attr == 'Ticket' ? tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"] : (attr == 'Customer' ? tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"] : line_item[attr]) ) }
       end
     end
   end
