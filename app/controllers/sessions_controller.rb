@@ -22,8 +22,8 @@ class SessionsController < ApplicationController
     if user
       cookies.permanent[:dragon_account_number] = user.dragon_account_number # Store Dragon account number in a permanent cookie so can remember next time.
       if user.customer?
-        yard_id = current_user.yard_id
-        yard = Yard.find_by_id(current_user.token, yard_id)
+        yard_id = user.yard_id
+        yard = Yard.find_by_id(user.token, yard_id)
         session[:yard_id] = yard_id
         session[:yard_name] = yard['Name']
       end
