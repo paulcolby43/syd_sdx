@@ -63,7 +63,7 @@ class ReportsController < ApplicationController
           if @type == "customer_summary"
             send_data Ticket.customer_summary_to_csv(@tickets), filename: "customer-summary-report-#{@start_date}-#{@end_date}.csv" 
           else
-            send_data Ticket.commodity_summary_to_csv(@line_items), filename: "commodity-summary-report-#{@start_date}-#{@end_date}.csv"
+            send_data Ticket.commodity_summary_to_csv(@line_items, @tickets), filename: "commodity-summary-report-#{@start_date}-#{@end_date}.csv"
           end
         else
           if @type == "customer_summary"
