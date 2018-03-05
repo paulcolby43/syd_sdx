@@ -890,7 +890,10 @@ class Ticket
       csv << headers
 
       line_items_array.each do |line_item|
-        csv << headers.map{ |attr| (attr == 'Ticket' ? tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"] : (attr == 'Customer' ? tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"] : line_item[attr]) ) }
+        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
+        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
+        csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
       end
     end
   end
