@@ -91,18 +91,9 @@ class TicketsController < ApplicationController
           # Remove the temporary pdf file that was created above
           FileUtils.remove(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))
         else
-#          pdf = render_to_string pdf: "ticket#{@ticket_number}", :layout => 'pdf.html.haml', :zoom => 1.25
-#          # then save to a file
-#          save_path = Rails.root.join('pdfs',"ticket#{@ticket_number}.pdf")
-#          File.open(save_path, 'wb') do |file|
-#            file << pdf
-#          end
-          
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
-            :zoom => 1.25,
-            :save_to_file => Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf")
-          send_file Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"), :type => 'application/pdf', :disposition => 'inline'
+            :zoom => 1.25
         end
       end
     end
