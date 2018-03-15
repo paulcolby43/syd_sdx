@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   has_one :access_token, :dependent => :destroy
   has_one :user_setting, :dependent => :destroy
   belongs_to :company
-  has_many :portal_customers, optional: true # Allow customer user to view other customer tickets via their portal
+  has_many :portal_customers # Allow customer user to view other customer tickets via their portal
   has_many :inventories
   has_many :event_codes
   
