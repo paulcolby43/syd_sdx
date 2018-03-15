@@ -884,17 +884,21 @@ class Ticket
   
   def self.commodity_summary_to_csv(line_items_array, tickets_array)
     require 'csv'
-    headers = ['DateCreated', 'Ticket', 'Customer', 'PrintDescription', 'NetWeight', 'Price', 'ExtendedAmount']
+    headers = ['DateCreated', 'Ticket', 'Customer', 'PrintDescription', 'TareWeight', 'GrossWeight', 'NetWeight', 'Price', 'ExtendedAmount']
     
     CSV.generate(headers: true) do |csv|
       csv << headers
-
+      net_total = 0
+      extended_amount_total = 0
       line_items_array.each do |line_item|
+        net_total = net_total + line_item['NetWeight'].to_d
+        extended_amount_total = extended_amount_total + line_item['ExtendedAmount'].to_d
         ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
         company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
         customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
         csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
       end
+      csv << ['', '', '', '', '', '', net_total, '', extended_amount_total]
     end
   end
   
