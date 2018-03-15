@@ -1,7 +1,8 @@
 %p.text-center
   = @ticket_number
   %br
-  = DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
+  =# DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
+  = @ticket["DateClosed"].to_date.strftime("%a, %d %b %Y %I:%M%p")
 - unless @current_user.company.logo.url.blank?
   %p= image_tag ["http://", request.host_with_port, @current_user.company.logo.url].join(), size: '50x50'
 - else

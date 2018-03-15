@@ -144,7 +144,7 @@
                             %a.btn.btn-primary{href: "#vin_search_form", id: 'vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
                               %i.fa.fa-car.fa-lg
                               Car
-                            = render 'car_details_modal'
+                            =# render 'car_details_modal'
                           = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
                           %br
                           = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
@@ -262,7 +262,7 @@
                           %a.btn.btn-primary{href: "#item_{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal", id: "#item_{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
                             %i.fa.fa-car.fa-lg
                             Car
-                          = render partial: 'car_details_modal', locals: {item: @ticket["TicketItemCollection"]["ApiTicketItem"]}
+                          =# render partial: 'car_details_modal', locals: {item: @ticket["TicketItemCollection"]["ApiTicketItem"]}
                         = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'], :placeholder => "Notes", class: "form-control input-lg"
