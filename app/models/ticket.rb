@@ -911,7 +911,11 @@ class Ticket
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     Rails.logger.info "Ticket.vin_search response: #{data}"
-    return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
+    unless data["GetVehicleIdentificationDecodeResponse"].blank? or data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"].blank?
+      return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
+    else
+      return nil
+    end
   end
   
 end
