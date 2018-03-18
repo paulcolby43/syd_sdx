@@ -4,6 +4,10 @@ class SessionsController < ApplicationController
   end
 
   def new
+    unless params[:account].blank?
+      account_number = params[:account]
+      @company = Company.find_by(account_number: account_number)
+    end
   end
 
 #  def create

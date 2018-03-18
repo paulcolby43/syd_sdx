@@ -34,6 +34,11 @@
         %a{"aria-controls" => "more_#{index}", "aria-expanded" => "false", "data-target" => "#more_#{index}", "data-toggle" => "collapse"}
           More
         %div.collapse{id: "more_#{index}"}
+          %p
+            %a.btn.btn-primary{href: "#item_#{index}_vin_search_modal", id: "item_#{index}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+              %i.fa.fa-car.fa-lg
+              Car
+            = render partial: 'car_details_modal', locals: {id: "#{index}"}
           = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
           %br
           = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
@@ -42,5 +47,5 @@
       %li.calculation_details
       - unless mobile_device?
         %li.pull-right
-          %a.text-success{"aria-controls" => "collapse#{index}", "data-toggle" => "collapse", :href => "#collapse_#{index}", class: 'pull-right ticket_collapse_link' }
-            %i.fa.fa-check-square.fa-3x.collapse_icon
+          %a.text-muted{"aria-controls" => "collapse#{index}", "data-toggle" => "collapse", :href => "#collapse_#{index}", class: 'pull-right ticket_collapse_link' }
+            %i.fa.fa-check-square.fa-2x.collapse_icon

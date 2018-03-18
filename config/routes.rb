@@ -133,6 +133,7 @@ Rails.application.routes.draw do
       get :line_item_fields
       get :void_item
       get :customer_tickets
+      get :vin_search
     end
     member do
       get :send_to_leads_online

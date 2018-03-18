@@ -225,6 +225,22 @@ class TicketsController < ApplicationController
       }
     end
   end
+  
+  def vin_search
+    respond_to do |format|
+      format.html {}
+      format.json {
+        @search_results = Ticket.vin_search(current_user.token, params[:vin])
+        Rails.logger.debug @search_results
+        if @search_results
+          render json: {"valid" => @search_results['IsValid'], "make" => @search_results['DecodedText']['Make'], 
+            "model" => @search_results['DecodedText']['Model'], "style" => @search_results['DecodedText']['Style']}, status: :ok
+        else
+          render json: {error: "VIN search failed."}, :status => :bad_request
+        end
+      }
+    end
+  end
 
   # DELETE /tickets/1
   # DELETE /tickets/1.json

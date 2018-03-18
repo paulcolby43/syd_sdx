@@ -118,14 +118,18 @@ jQuery ->
           return
       return
 
-  ### Task status being changed - check if all other tasks in this trip are set to complete ###
+  ### Task status being changed - check if all other tasks in this trip are set to complete, as well as whether previous tasks are completed. ###
   $('.task_status').on 'change', ->
     input_select = $(this)
-    if input_select.val() == '2'
+    original_sequence_number = parseInt($(this).data("sequence-number")) # Get original task's sequence number and convert string to an integer for comparison
+    if input_select.val() == '2' # Task is being marked complete
       all_done = true
       $(this).closest('.panel').find('.task_status').each ->
-        if $(this).val() != '2'
+        other_sequence_number = parseInt($(this).data("sequence-number")) # Get other tasks' sequence number and convert string to an integer for comparison
+        if $(this).val() != '2' # Task is not marked complete
           all_done = false
+          if (other_sequence_number < original_sequence_number) && ($(this).val() != '3') # This task has a lesser sequence number than the original task, and has not been marked complete and is not void (value 3)
+            alert "Task " + $(this).data("sequence-number") + " of this trip still needs to be completed!"
       if all_done == true
         alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
     return
