@@ -28,10 +28,9 @@
                         = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
             .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
               %ul.list-group
-                - Trip.tasks(trip).each_with_index do |task, task_index|
-                  -#
+                - Trip.tasks(trip).each do |task|
                   %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
-                    = "#{task_index + 1}"
+                    = task['Sequence']
                     = task_type_string(task['TaskType'])
                     %small
                       .text-muted 
@@ -45,49 +44,14 @@
                   .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
                     .modal-dialog{class: "#{mobile_device? ? '' : 'modal-sm'}", :role => "document"}
                       .modal-content
-                        -#
-                          .modal-header
-                            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-                              %span{"aria-hidden" => "true"} ×
-                            %h4#myModalLabel.modal-title 
-                              = "#{task_index + 1}"
-                              = task_type_string(task['TaskType'])
                         .modal-body
                           %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
                             %span{"aria-hidden" => "true"} ×
                           %br
                           = render partial: "tasks/edit", locals: {task: task, workorder: Trip.workorders(trip).find {|workorder| workorder['Id'] == task['WorkOrderId']}, task_containers: Task.containers(task)}
-                          =# task
                         .modal-footer
                           %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
-                          -#
-                            %button.btn.btn-primary{:type => "button"} Save changes
 
-                  -#
-                    %a{href: "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item"}
-                      = "#{task_index + 1}"
-                      = task_type_string(task['TaskType'])
-                      %small
-                        .text-muted 
-                          - unless task['ToLocation'].blank?
-                            = task['ToLocation']
-                          - else
-                            7100 30th Ave N
-                          %br
-                          = task_status_string(task['TaskStatus'])
-                      .modal.fade{id: "trip_#{task['DispatchTripId']}_task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
-                        .modal-dialog
-                          .modal-content
-                            .modal-header
-                              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-                                %span{"aria-hidden" => "true"} ×
-                              %h4#myModalLabel.modal-title= task_type_string(task['TaskType'])
-                            .modal-body
-                              = form_tag task_path(task["Id"]), method: 'put', :class => "form-horizontal", id: 'task_form' do
-                                = task
-                            .modal-footer
-                              %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
-                              %button.btn.btn-primary{:type => "button"} Save changes
     - else
       %p.text-center No trips found
 

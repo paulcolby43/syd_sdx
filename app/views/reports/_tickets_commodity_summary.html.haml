@@ -53,6 +53,10 @@
                 %strong Ticket
               %td 
                 %strong Customer
+              %td 
+                %strong Tare
+              %td 
+                %strong Gross
               %td
                 %strong Net
               %td
@@ -69,6 +73,8 @@
                     = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
                   - else
                     = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
+                %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td= "#{number_to_currency(line_item['Price'])} / #{line_item['UnitOfMeasure']}"
                 %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
@@ -79,40 +85,13 @@
               %td
               %td
               %td
+              %td
+              %td
                 %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
               %td
               %td
                 %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
 
-
--#
-  %table.table.table-striped.table-responsive
-    %thead
-      %tr
-        %td 
-          %strong Commodity
-        %td 
-          %strong Total
-    %tbody
-      - @line_items.group_by{ |i| i['PrintDescription'] }.each do |line_item_group, line_items|
-        %tr
-          %td
-            = line_item_group
-            %ul.list-inline
-              - line_items.each do |line_item|
-                %li
-                  %small= "#{line_item['NetWeight']}LB"
-                %li
-                  %small= "#{number_to_currency(line_item['Price'])}"
-                %br
-                =# line_item
-          %td
-            = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
-      %tr
-        %td
-        %td
-          %strong Total
-          = number_to_currency(@line_items_total)
 
 %hr
 .pull-right

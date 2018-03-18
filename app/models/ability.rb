@@ -353,7 +353,8 @@ class Ability
       # Images
       ############
       can :manage, Image do |image|
-        image.cust_nbr == user.customer_guid and user.view_images?
+#        image.cust_nbr == user.customer_guid and user.view_images?
+        user.view_images?
       end
       
       # User

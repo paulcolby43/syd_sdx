@@ -140,6 +140,11 @@
                         %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
                           More
                         %div.collapse{id: "more_#{line_item['Id']}"}
+                          %p
+                            %a.btn.btn-primary{href: "#item_#{line_item['Id']}_vin_search_modal", id: "#item_#{line_item['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                              %i.fa.fa-car.fa-lg
+                              Car
+                            = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}"}
                           = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
                           %br
                           = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
@@ -253,6 +258,11 @@
                       %a{"aria-controls" => "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse"}
                         More
                       %div.collapse{id: "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
+                        %p
+                          %a.btn.btn-primary{href: "#item_#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal", id: "#item_#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                            %i.fa.fa-car.fa-lg
+                            Car
+                          = render partial: 'car_details_modal', locals: {id: "#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}"}
                         = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'], :placeholder => "Notes", class: "form-control input-lg"
@@ -346,6 +356,11 @@
                     %a{"aria-controls" => "more#{1}", "aria-expanded" => "false", "data-target" => "#more_#{1}", "data-toggle" => "collapse"}
                       More
                     %div.collapse{id: "more_#{1}"}
+                      %p
+                        %a.btn.btn-primary{href: "#item_1_vin_search_modal", id: 'item_1_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
+                          %i.fa.fa-car.fa-lg
+                          Car
+                        = render partial: 'car_details_modal', locals: {id: 1}
                       = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
                       %br
                       = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
@@ -354,8 +369,8 @@
                   %li.calculation_details
                   - unless mobile_device?
                     %li.pull-right
-                      %a.text-success{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
-                        %i.fa.fa-check-square.fa-3x.collapse_icon
+                      %a.text-muted{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
+                        %i.fa.fa-check-square.fa-2x.collapse_icon
       
       .row.form-group
         - unless @ticket['Status'] == '3'
@@ -403,42 +418,5 @@
                   .text-center= image.event_code
                 .text-center
                   %small.text-muted= image['EVENT_CODE']
-        -#
-          .col-xs-12.col-sm-2.col-md-2
-            %div.panel.panel-primary
-              %div.list_group
-                %a{href: image_path(capture_sequence_number), class: "list-group-item"}
-                  - if current_user.show_ticket_thumbnails?
-                    = image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{capture_sequence_number}", alt: capture_sequence_number, class: 'thumbnail img-responsive')
-                  .pull-right
-                    %i.fa.fa-chevron-right
-                  %br
-                  %small Event code
-                  %br
-                  %small Camera name
-                  %br
-                  %small.text-muted Date
-
-                -#
-                  - unless image.event_code.blank?
-                    %br/
-                    %small= image.event_code
-                  - unless image.camera_name.blank?
-                    %br/
-                    %small= image.camera_name
-                  %br/
-                  %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
-              
-    -#
-      %div{id: 'endless_page'}
-        %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
-        %p= link_to 'More pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" 
-        %p= link_to 'Re-load pictures ...', images_path(:page => nil, :q => {ticket_nbr_eq: @ticket_number, yardid_eq: current_yard_id}, :one_image_per_ticket => '0'), :class => 'reload-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#images').empty(); $('a.load-more-images').attr('href', '<%= images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');", style: "display:none;" 
-    -#
-      .well
-        %p= @ticket
-    -#
-      .well
-        = Ticket.generate_leads_online_xml(current_user.token, params[:id], current_yard_id, current_user, @ticket['CustomerId'], Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id))
-
+    
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}

@@ -790,3 +790,44 @@ jQuery ->
   ### Ticket picture event code chosen ###
   $(".event_code_radio").on 'click', ->
     $('#upload_button').show()
+
+  ### VIN Search ###
+  $(document).on 'click', '.vin_search_button', (e) ->
+    modal = $(this).closest('.modal')
+    vin_number = modal.find('#vin_number').val()
+    results_div = modal.find('#results')
+    search_icon = $(this).find( ".fa-search" )
+    search_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
+    results_div.empty()
+    $.ajax
+      url: "/tickets/vin_search"
+      dataType: 'json'
+      data:
+        vin: vin_number
+      success: (data) ->
+        search_icon.show()
+        spinner_icon.hide()
+        valid = data.valid
+        make = data.make
+        model = data.model
+        style = data.style
+        console.log 'valid', valid
+        console.log 'make', make
+        console.log 'model', model
+        console.log 'style', style
+        if valid == 'true'
+          results_div.append '<p><b>Make:</b> ' + make + '</p>'
+          results_div.append '<p><b>Model:</b> ' + model + '</p>'
+          results_div.append '<p><b>Style:</b> ' + style + '</p>'
+        else
+          alert 'Not a valid VIN'
+        return
+      error: ->
+        search_icon.show()
+        spinner_icon.hide()
+        alert 'VIN search failed'
+        return
+    return
+  ### End VIN Search ###
