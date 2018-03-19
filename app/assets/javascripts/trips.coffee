@@ -87,8 +87,6 @@ jQuery ->
       success: (data) ->
         alert "New container created and added to task."
 
-  
-
   ### Remove Container ###
   $('.task_containers').on 'click', '.remove_container', (e) ->
     # User clicks on container trash button
@@ -121,6 +119,8 @@ jQuery ->
   ### Task status being changed - check if all other tasks in this trip are set to complete, as well as whether previous tasks are completed. ###
   $('.task_status').on 'change', ->
     input_select = $(this)
+    newly_selected_value = input_select.val()
+    task_form = $(this).closest('form')
     original_sequence_number = parseInt($(this).data("sequence-number")) # Get original task's sequence number and convert string to an integer for comparison
     if input_select.val() == '2' # Task is being marked complete
       all_done = true
@@ -131,6 +131,17 @@ jQuery ->
           if (other_sequence_number < original_sequence_number) && ($(this).val() != '3') # This task has a lesser sequence number than the original task, and has not been marked complete and is not void (value 3)
             alert "Task " + $(this).data("sequence-number") + " of this trip still needs to be completed!"
       if all_done == true
+        task_form.submit()
         alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
-    return
+        $(this).closest('.modal').modal('hide')
+        $(this).closest('.panel').remove()
+      else
+        task_form.submit()
+        return
+    else
+      task_form.submit()
+      return
   ### Task status being changed - check if all others are set to complete ###
+
+  $('.hide_trip_icon').on 'click', ->
+    $(this).closest('.panel').remove()
