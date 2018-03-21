@@ -12,6 +12,9 @@
         - @trips.each_with_index do |trip, index|
           .panel.panel-default
             .panel-heading{id: "trip_#{index}", :role => "tab"}
+              .pull-right
+                %a{href: nil, class: 'hide_trip_icon'}
+                  %i.fa.fa-times-circle
               %h4.panel-title
                 %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
                   = "#{trip['TripNumber']}"
