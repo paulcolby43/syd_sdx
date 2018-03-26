@@ -8,22 +8,6 @@ class Ticket
   #     Class Methods         #
   #############################
   
-#  def self.all(status, auth_token, yard_id)
-##    status = 'held' if status == 'Hold'
-#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-#    user = access_token.user # Get access token's user record
-#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=60&t=100"
-#    
-#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
-#    data= Hash.from_xml(xml_content)
-##    Rails.logger.info data
-#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
-#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
-#    else # Array of results returned
-#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
-#    end
-#  end
-
   def self.all_by_status_and_yard(status, auth_token, yard_id)
 #    status = 'held' if status == 'Hold'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
@@ -62,34 +46,6 @@ class Ticket
       return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
   end
-  
-#  def self.all_this_week(status, auth_token, yard_id)
-#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-#    user = access_token.user # Get access token's user record
-#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=7&t=100"
-#    
-#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
-#    data= Hash.from_xml(xml_content)
-#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
-#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
-#    else # Array of results returned
-#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
-#    end
-#  end
-  
-#  def self.all_by_date(status, auth_token, yard_id, start_date, end_date)
-#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-#    user = access_token.user # Get access token's user record
-#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}/bydate?startdate=#{start_date}T00:00:00&enddate=#{end_date}T23:59:59&t=200"
-#    
-#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
-#    data= Hash.from_xml(xml_content)
-#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
-#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
-#    else # Array of results returned
-#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
-#    end
-#  end
   
   def self.all_by_date_and_status(status, auth_token, yard_id, start_date, end_date)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
@@ -163,35 +119,6 @@ class Ticket
       return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
   end
-  
-#  def self.all_by_date_and_customers(status, auth_token, yard_id, start_date, end_date, customer_ids)
-#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-#    user = access_token.user # Get access token's user record
-#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bycustomeridsbydate"
-#    
-#    payload = {
-#      "CustomerIds" => customer_ids,
-#      "StartDate" => start_date,
-#      "EndDate" => end_date,
-##        "SearchTerms" => "",
-#      "Take" => 200, 
-#      "PaymentType" => status
-#      }
-#    json_encoded_payload = JSON.generate(payload)
-#    Rails.logger.info json_encoded_payload
-#    
-#    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
-#      payload: json_encoded_payload)
-#    
-#    data= Hash.from_xml(xml_content)
-#    Rails.logger.info data
-#    
-#    if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
-#      return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
-#    else # Array of results returned
-#      return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
-#    end
-#  end
   
   def self.all_by_date_and_customers(status, auth_token, yard_id, start_date, end_date, customer_ids)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
@@ -332,12 +259,12 @@ class Ticket
   end
   
   # Add a line item to a ticket
-  def self.add_item(auth_token, yard_id, ticket_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
+  def self.add_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
-    new_id = SecureRandom.uuid
+#    new_id = SecureRandom.uuid
     commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
     commodity_name = commodity["PrintDescription"]
     commodity_unit_of_measure = commodity["UnitOfMeasure"]
@@ -371,7 +298,8 @@ class Ticket
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
           "GrossWeight" => gross,
-          "Id" => new_id, 
+#          "Id" => new_id,
+          "Id" => item_id,
           "NetWeight" => net,
           "Notes" => notes, 
           "Price" => price,
@@ -911,8 +839,12 @@ class Ticket
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     Rails.logger.info "Ticket.vin_search response: #{data}"
-    unless data["GetVehicleIdentificationDecodeResponse"].blank? or data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"].blank?
-      return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
+    if not data["GetVehicleIdentificationDecodeResponse"].blank? and data["GetVehicleIdentificationDecodeResponse"]["Success"] == 'true'
+      unless data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"].blank?
+        return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
+      else
+        return nil
+      end
     else
       return nil
     end

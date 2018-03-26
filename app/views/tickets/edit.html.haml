@@ -28,6 +28,25 @@
             = "Payment by #{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
           - if @apcashier['PaymentMethod'] == '1'
             = "Check Number: #{@apcashier['CheckNumber']}"
+
+      =# @combolists
+      -#
+        .well
+          %strong Makes
+          - @vehicle_makes.each do |make|
+            %p= make["Make"]
+        .well
+          %strong Models
+          - @vehicle_models.each do |model|
+            %p= model["Model"]
+        .well
+          %strong Bodies
+          - @body_styles.each do |body|
+            %p= body["ReportDescription"]
+        .well
+          %strong Colors
+          - @vehicle_colors.each do |color|
+            %p= color["ReportDescription"]
         
       #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         .panel.panel-default
@@ -300,6 +319,8 @@
                         %i.fa.fa-trash.fa-lg.text-danger
               %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
+                  - new_item_id = SecureRandom.uuid
+                  = hidden_field_tag "ticket[line_items][][id]", new_item_id
                   = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
                   %br
                   %div.input-group.gross_input_group
@@ -353,14 +374,14 @@
                   = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                   %br
                   %p
-                    %a{"aria-controls" => "more#{1}", "aria-expanded" => "false", "data-target" => "#more_#{1}", "data-toggle" => "collapse"}
+                    %a{"aria-controls" => "more#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse"}
                       More
-                    %div.collapse{id: "more_#{1}"}
+                    %div.collapse{id: "more_#{new_item_id}"}
                       %p
-                        %a.btn.btn-primary{href: "#item_1_vin_search_modal", id: 'item_1_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
+                        %a.btn.btn-primary{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
                           %i.fa.fa-car.fa-lg
                           Car
-                        = render partial: 'car_details_modal', locals: {id: 1}
+                        = render partial: 'car_details_modal', locals: {id: new_item_id}
                       = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
                       %br
                       = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"

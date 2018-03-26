@@ -796,11 +796,17 @@ jQuery ->
     modal = $(this).closest('.modal')
     vin_number = modal.find('#vin_number').val()
     results_div = modal.find('#results')
+    year_select = modal.find('#date_ticket_item_year')
+    make_select = modal.find('#ticket_item_make_id')
+    model_select = modal.find('#ticket_item_model_id')
+    body_select = modal.find('#ticket_item_body_id')
+    color_select = modal.find('#ticket_item_color_id')
+    results_div = modal.find('#results')
     search_icon = $(this).find( ".fa-search" )
     search_icon.hide()
     spinner_icon = $(this).find('.fa-spinner')
     spinner_icon.show()
-    results_div.empty()
+    results_div.hide()
     $.ajax
       url: "/tickets/vin_search"
       dataType: 'json'
@@ -810,17 +816,28 @@ jQuery ->
         search_icon.show()
         spinner_icon.hide()
         valid = data.valid
+        year = data.year
         make = data.make
+        make_id = data.make_id
+        added_make = data.added_make
         model = data.model
-        style = data.style
-        console.log 'valid', valid
-        console.log 'make', make
-        console.log 'model', model
-        console.log 'style', style
+        model_id = data.model_id
+        added_model = data.added_model
+        body = data.body
+        body_id = data.body_id
+        added_body = data.added_body
         if valid == 'true'
-          results_div.append '<p><b>Make:</b> ' + make + '</p>'
-          results_div.append '<p><b>Model:</b> ' + model + '</p>'
-          results_div.append '<p><b>Style:</b> ' + style + '</p>'
+          if added_make == 'true'
+            make_select.append( '<option value="' + make_id + '">' + make + '</option>' )
+          if added_model == 'true'
+            model_select.append( '<option value="' + model_id + '">' + model + '</option>' )
+          if added_body == 'true'
+            body_select.append( '<option value="' + body_id + '">' + body + '</option>' )
+          results_div.show()
+          year_select.val year
+          make_select.val make_id
+          model_select.val model_id
+          body_select.val body_id
         else
           alert 'Not a valid VIN'
         return
@@ -831,3 +848,57 @@ jQuery ->
         return
     return
   ### End VIN Search ###
+
+  ### Save VIN Info ###
+  $(document).on 'click', '.save_vin_info_button', (e) ->
+    modal = $(this).closest('.modal')
+    existing_car_details_div = modal.find('#existing_car_details')
+    item_id = modal.find('#ticket_item_id').val()
+    year_select = modal.find('#date_ticket_item_year')
+    year = year_select.val()
+    make_select = modal.find('#ticket_item_make_id')
+    make_id = make_select.val()
+    make = make_select.find('option:selected').text()
+    model_select = modal.find('#ticket_item_model_id')
+    model_id = model_select.val()
+    model = model_select.find('option:selected').text()
+    body_select = modal.find('#ticket_item_body_id')
+    body_id = body_select.val()
+    body = body_select.find('option:selected').text()
+    color_select = modal.find('#ticket_item_color_id')
+    color_id = color_select.val()
+    color = color_select.find('option:selected').text()
+    save_icon = $(this).find( ".fa-cloud-upload" )
+    save_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
+    $.ajax
+      url: "/ticket_items/" + item_id + "/save_vin"
+      dataType: 'json'
+      method: 'POST'
+      data:
+        year: year
+        make_id: make_id
+        model_id: model_id
+        body_id: body_id
+        color_id: color_id
+      success: (data) ->
+        spinner_icon.hide()
+        save_icon.show()
+        success = data.success
+        failure_information = data.failure_information
+        if success == 'true'
+          #alert 'success'
+          existing_car_details_div.prepend( '<div class="well">' + year + ' ' + color + ' ' + make + ' ' + model + ' ' + body + '</div>')
+        else
+          alert failure_information
+        modal.modal('hide')
+        return
+      error: ->
+        spinner_icon.hide()
+        save_icon.show()
+        alert 'Error saving VIN information'
+        modal.modal('hide')
+        return
+    return
+  ### End Save VIN Info ###

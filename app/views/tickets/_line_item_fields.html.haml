@@ -10,6 +10,7 @@
             %i.fa.fa-trash.fa-lg.text-danger
   %div.panel-collapse{id: "collapse_#{index}", "aria-labelledby" => "headingitem", :role => "tabpanel", class: "collapse in"}
     .panel-body
+      = hidden_field_tag "ticket[line_items][][id]", SecureRandom.uuid
       = select_tag "ticket[line_items][][commodity]", "", class: "form-control input-lg item_select", required: true
       %br
       %div.input-group.gross_input_group
