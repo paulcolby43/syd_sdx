@@ -43,12 +43,16 @@ class TicketItem
     data= Hash.from_xml(xml_content)
     Rails.logger.info data
     
-    if data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"].is_a? Hash
-      # Only one VIN for ticket item, so put into array
-      return [data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"]]
+    unless data["GetVehicleIdentificationNumberListResponse"].blank? or data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"].blank? or data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"].blank?
+      if data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"].is_a? Hash
+        # Only one VIN for ticket item, so put into array
+        return [data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"]]
+      else
+        # Multiple VIN's for ticket item, so already in an array
+        return data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"]
+      end
     else
-      # Multiple VIN's for ticket item, so already in an array
-      return data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"]
+      return []
     end
   end
   
