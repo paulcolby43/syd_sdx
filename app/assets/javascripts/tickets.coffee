@@ -921,6 +921,7 @@ jQuery ->
         if success == 'true'
           #alert 'success'
           existing_car_details_div.prepend( '<div class="well">' + year + ' ' + color + ' ' + make + ' ' + model + ' ' + body + '</div>')
+          console.log 'save VIN successful'
         else
           alert failure_information
         modal.modal('hide')
