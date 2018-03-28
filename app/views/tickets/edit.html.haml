@@ -393,7 +393,7 @@
                   %li.calculation_details
                   - unless mobile_device?
                     %li.pull-right
-                      %a.text-muted{"aria-controls" => "collapse#{1}", "data-toggle" => "collapse", :href => "#collapse_#{1}", class: 'pull-right ticket_collapse_link' }
+                      %a.text-muted{"aria-controls" => "collapse#{new_item_id}", "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-check-square.fa-2x.collapse_icon
       
       .row.form-group
