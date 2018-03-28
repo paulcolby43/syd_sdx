@@ -881,7 +881,8 @@ jQuery ->
   ### End VIN Search ###
 
   ### Save VIN Info ###
-  $(document).on 'click', '.save_vin_info_button', (e) ->
+  #$(document).on 'click', '.save_vin_info_button', (e) ->
+  $(wrapper).on 'click', '.save_vin_info_button', (e) ->
     modal = $(this).closest('.modal')
     existing_car_details_div = modal.find('#existing_car_details')
     item_id = modal.find('#ticket_item_id').val()

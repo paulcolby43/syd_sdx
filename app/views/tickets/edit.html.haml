@@ -310,17 +310,17 @@
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default.line-item  
               - new_item_id = SecureRandom.uuid
-              %div.panel-heading{:role => "tab", id: "heading#{1}"}
+              %div.panel-heading{:role => "tab", id: "heading#{new_item_id}"}
                 %h4.panel-title
                   %ul{class: 'list-inline'}
                     %li
-                      %a.line_item_name.text-success{"aria-controls" => "collapse#{1}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{1}", :role => "button", class: "ticket_collapse_link" }
+                      %a.line_item_name.text-success{"aria-controls" => "collapse#{new_item_id}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", :role => "button", class: "ticket_collapse_link" }
                         Choose an item*
                     %li.pull-right
                       %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
                         %i.fa.fa-trash.fa-lg.text-danger
                         %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
-              %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
+              %div{id: "collapse_#{new_item_id}", "aria-labelledby" => "heading#{new_item_id}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
                   = hidden_field_tag "ticket[line_items][][id]", new_item_id
                   = hidden_field_tag "ticket[line_items][][status]", nil
