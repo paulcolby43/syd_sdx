@@ -18,6 +18,21 @@ class TicketItemsController < ApplicationController
     end
   end
   
+  def quick_add
+    respond_to do |format|
+      format.html {}
+      format.json {
+        @ticket_item_quick_add_response = TicketItem.quick_add(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
+          params[:commodity_id], params[:commodity_name], params[:price])
+        if @ticket_item_quick_add_response == 'true'
+          render json: {}, :status => :ok
+        else
+          render json: {}, status: :unprocessable_entity
+        end
+      }
+    end
+  end
+  
   private
 
     # Never trust parameters from the scary internet, only allow the white list through.

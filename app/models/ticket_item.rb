@@ -56,4 +56,85 @@ class TicketItem
     end
   end
   
+  # Void/remove a line item from ticket
+  def self.void(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item/void"
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
+      payload: {
+        "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          "CurrencyId" => user.user_setting.currency_id, 
+          "DateCreated" => Time.now.utc, 
+          "ExtendedAmount" => amount, 
+          "ExtendedAmountInAssignedCurrency" => amount,
+          "GrossWeight" => gross,
+          "Id" => item_id, 
+          "NetWeight" => net,
+          "Notes" => "", 
+          "Price" => price,
+          "PriceInAssignedCurrency" => price,
+          "PrintDescription" => commodity_name, 
+          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => "", 
+          "Status" => 'Hold', 
+          "TareWeight" => tare, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => "LB"
+          }
+        })
+#      Rails.logger.info response
+      data= Hash.from_xml(response)
+      return data["SaveTicketItemResponse"]["Success"]
+  end
+  
+  # Add a line item to a ticket
+  def self.quick_add(auth_token, yard_id, item_id, ticket_id, commodity_id, commodity_name, price)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
+    payload = {
+        "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          "CurrencyId" => user.user_setting.currency_id, 
+          "DateCreated" => Time.now.utc.iso8601, 
+          "ExtendedAmount" => 0, 
+          "ExtendedAmountInAssignedCurrency" => 0,
+          "GrossWeight" => 0,
+          "Id" => item_id,
+          "NetWeight" => 0,
+          "Notes" => "", 
+          "Price" => price,
+          "PriceInAssignedCurrency" => price,
+          "PrintDescription" => commodity_name, 
+          "Quantity" => "0",
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => "", 
+          "Status" => 'Hold', 
+          "TareWeight" => 0, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => "LB"
+          }
+        }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.debug "******************* TicketItem.quick_add Payload: #{json_encoded_payload}"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+      
+    data= Hash.from_xml(response)
+    unless data["SaveTicketItemResponse"].blank? or data["SaveTicketItemResponse"]["Success"].blank?
+      return data["SaveTicketItemResponse"]["Success"]
+    else
+      return nil
+    end
+  end 
+  
 end

@@ -114,13 +114,17 @@ jQuery ->
   ### Line item changed ###
   $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
     console.log '.item_select changed', 'yes'
-    item_id = $(this).val()
+    ticket_id = $(this).data( "ticket-id" )
+    item_id = $(this).data( "item-id" )
+    commodity_id = $(this).val()
+    commodity_name = $(this).find('option:selected').text()
     input_select = $(this)
     current_customer_id = $('#ticket_customer_id').val()
+    ticket_item_status = input_select.closest('.panel').find('#ticket_line_items__status:first').val()
     # Get commodity price, unit of measure, and taxes, then update.
     get_commodity_info_ajax = ->
       $.ajax
-        url: "/commodities/" + item_id + "/price"
+        url: "/commodities/" + commodity_id + "/price"
         dataType: 'json'
         data:
           customer_id: current_customer_id
@@ -152,17 +156,43 @@ jQuery ->
           input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
           input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
           input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
-          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
-          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
+          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', commodity_id 
+          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', commodity_id
           input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
           input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
           input_select.closest('.panel').find('.amount-calculation-field:first').keyup() # Invoke 'keyup' so go through calculations again
+
+          if ticket_item_status != '0' # New ticket item that needs to be added/saved to ticket
+            ticket_item_add_ajax()
+          
           return
         error: ->
           alert 'Error getting commodity price.'
           console.log 'Error getting commodity price.'
           return
-    if item_id != ''
+    ticket_item_add_ajax = ->
+      price = input_select.closest('.panel').find('#ticket_line_items__price:first').val()
+      $.ajax
+        url: "/ticket_items/" + item_id + "/quick_add"
+        dataType: 'json'
+        method: 'POST'
+        data:
+          ticket_id: ticket_id
+          commodity_id: commodity_id
+          commodity_name: commodity_name
+          price: price
+        success: (data) ->
+          console.log 'ticket item quick add successful'
+          input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
+          input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
+          input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
+          $("#more_" + item_id + "_link").show()
+          return
+        error: ->
+          alert 'Error saving ticket line item.'
+          console.log 'Error saving ticket line item.'
+          return
+    if commodity_id != ''
       # Only get commodity info if there is a commodity item
       get_commodity_info_ajax()
     return

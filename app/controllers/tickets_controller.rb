@@ -211,6 +211,11 @@ class TicketsController < ApplicationController
   
   def line_item_fields
     @ticke_number = params[:ticket_number]
+    @ticket_id = params[:ticket_id]
+    @vehicle_makes = []
+    @vehicle_models = []
+    @body_styles = []
+    @vehicle_colors = []
     respond_to do |format|
       format.js
     end
@@ -220,7 +225,7 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket = Ticket.void_item(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
+        @ticket = TicketItem.void(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
           params[:tare], params[:net], params[:price], params[:amount])
         if @ticket == 'true'
           render json: {}, :status => :ok
