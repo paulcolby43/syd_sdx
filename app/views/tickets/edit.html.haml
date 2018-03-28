@@ -202,6 +202,7 @@
                       %li.pull-right
                         %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => @ticket["TicketItemCollection"]["ApiTicketItem"]['Id'], "data-commodity-id" => @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId'], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
                           %i.fa.fa-trash.fa-lg.text-danger
+                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                 %div{id: "collapse_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-labelledby" => "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
                   .panel-body
                     = hidden_field_tag "ticket[line_items][][id]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Id']
@@ -318,6 +319,7 @@
                     %li.pull-right
                       %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
                         %i.fa.fa-trash.fa-lg.text-danger
+                        %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
               %div{id: "collapse_#{1}", "aria-labelledby" => "heading#{1}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
                   = hidden_field_tag "ticket[line_items][][id]", new_item_id

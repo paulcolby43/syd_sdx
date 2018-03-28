@@ -185,7 +185,8 @@ jQuery ->
           console.log 'ticket item quick add successful'
           input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
           input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
-          input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
+          #input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
+          input_select.closest('.panel').find('.remove_field:first').attr 'data-commodity-id', commodity_id
           $("#more_" + item_id + "_link").show()
           return
         error: ->
