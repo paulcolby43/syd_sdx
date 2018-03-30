@@ -124,7 +124,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{response}"
+    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{response}"
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
