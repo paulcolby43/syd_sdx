@@ -65,7 +65,7 @@
               %tr
                 %td= ticket["DateClosed"].to_date.strftime("%m/%d/%y")
                 %td
-                  = link_to ticket["TicketNumber"], ticket_path(ticket['Id'], status: ticket['Status'], yard_id: ticket["YardId")
+                  = link_to ticket["TicketNumber"], ticket_path(ticket['Id'], status: ticket['Status'], yard_id: ticket["YardId"])
                   =# ticket["TicketNumber"]
                 %td
                   = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
