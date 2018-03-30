@@ -121,7 +121,7 @@ class Image < ActiveRecord::Base
     ssl_client.connect
     ssl_client.sync_close = true
     ssl_client.puts command
-    response = ssl_client.sysread(1000000) # Read up to 1,000,000 bytes
+    response = ssl_client.sysread(10,000,000) # Read up to 10,000,000 bytes
     ssl_client.close
     
 #    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{response}"
