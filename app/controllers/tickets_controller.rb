@@ -53,7 +53,11 @@ class TicketsController < ApplicationController
   # GET /tickets/1.json
   def show
     authorize! :show, :tickets
-    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
+    unless params[:yard_id].blank?
+      @ticket = Ticket.find_by_id(current_user.token, params[:yard_id], params[:id])
+    else
+      @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
+    end
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
