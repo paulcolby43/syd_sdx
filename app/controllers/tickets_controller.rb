@@ -62,13 +62,21 @@ class TicketsController < ApplicationController
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
-#    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
-#    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
-    @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
-    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id)
-    rt_lookups.each do |rt_lookup|
-      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, current_yard_id).reverse
-      @images_array =  @images_array | rt_lookup_images # Union the image arrays
+    
+    unless params[:yard_id].blank?
+      @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, params[:yard_id]).reverse # Ticket images
+      rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, params[:yard_id])
+      rt_lookups.each do |rt_lookup|
+        rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, params[:yard_id]).reverse
+        @images_array =  @images_array | rt_lookup_images # Union the image arrays
+      end
+    else
+      @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
+      rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id)
+      rt_lookups.each do |rt_lookup|
+        rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, current_yard_id).reverse
+        @images_array =  @images_array | rt_lookup_images # Union the image arrays
+      end
     end
   
     respond_to do |format|
