@@ -71,7 +71,7 @@
             .col-xs-12.col-sm-2.col-md-2
               .thumbnail
                 %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR'], yard_id: @ticket["YardId"]), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                 .text-center
                   %small.text-muted= image['EVENT_CODE']
     -#
