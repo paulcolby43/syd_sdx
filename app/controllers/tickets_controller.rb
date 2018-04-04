@@ -53,17 +53,16 @@ class TicketsController < ApplicationController
   # GET /tickets/1.json
   def show
     authorize! :show, :tickets
-    yard_id = params[:yard_id].blank? ? current_yard_id : params[:yard_id]
-    @ticket = Ticket.find_by_id(current_user.token, yard_id, params[:id])
+    @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
     @ticket_number = @ticket["TicketNumber"]
-    @accounts_payable_items = AccountsPayable.all(current_user.token, yard_id, params[:id])
-    @apcashier = Apcashier.find_by_id(current_user.token, yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
+    @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     
-    @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, yard_id).reverse # Ticket images
-    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, yard_id)
+    @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
+    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
     rt_lookups.each do |rt_lookup|
-      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, yard_id).reverse
+      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, @ticket["YardId"]).reverse
       @images_array =  @images_array | rt_lookup_images # Union the image arrays
     end
   
@@ -71,14 +70,14 @@ class TicketsController < ApplicationController
       format.html{}
       format.pdf do
 #        @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
-        @signature_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, yard_id, "Signature")
+        @signature_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, @ticket["YardId"], "Signature")
         unless @signature_image.blank?
-          @signature_blob = Image.jpeg_image(current_user.company, @signature_image['CAPTURE_SEQ_NBR'], yard_id)
+          @signature_blob = Image.jpeg_image(current_user.company, @signature_image['CAPTURE_SEQ_NBR'], @ticket["YardId"])
         end
 #        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
-        @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, yard_id, "Finger Print")
+        @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, @ticket["YardId"], "Finger Print")
         unless @finger_print_image.blank?
-          @finger_print_blob = Image.jpeg_image(current_user.company, @finger_print_image['CAPTURE_SEQ_NBR'], yard_id)
+          @finger_print_blob = Image.jpeg_image(current_user.company, @finger_print_image['CAPTURE_SEQ_NBR'], @ticket["YardId"])
         end
         
         unless current_user.printer_devices.blank?
@@ -86,10 +85,10 @@ class TicketsController < ApplicationController
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
             :zoom => "#{printer.PrinterWidth < 10 ? 2 : 1.25}",
-            :save_to_file => Rails.root.join('pdfs', "#{yard_id}Ticket#{@ticket_number}.pdf")
+            :save_to_file => Rails.root.join('pdfs', "#{@ticket['YardId']}Ticket#{@ticket_number}.pdf")
           printer.call_printer_for_ticket_pdf(Base64.encode64(File.binread(Rails.root.join('pdfs', "#{@ticket['YardId']}Ticket#{@ticket_number}.pdf"))))
           # Remove the temporary pdf file that was created above
-          FileUtils.remove(Rails.root.join('pdfs', "#{yard_id}Ticket#{@ticket_number}.pdf"))
+          FileUtils.remove(Rails.root.join('pdfs', "#{@ticket['YardId']}Ticket#{@ticket_number}.pdf"))
         else
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
