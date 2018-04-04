@@ -121,12 +121,12 @@ class Image < ActiveRecord::Base
     ssl_client.connect
     ssl_client.sync_close = true
     ssl_client.puts command
-#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
-    response = ""
-    while line = ssl_client.gets
-      response = response + line
-      break if line.to_s.strip == '</RESULT>'
-    end
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+#    response = ""
+#    while line = ssl_client.gets
+#      response = response + line
+#      break if line.to_s.strip == '</RESULT>'
+#    end
     
     ssl_client.close
     
