@@ -111,7 +111,7 @@ class Image < ActiveRecord::Base
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-    
+    Rails.logger.debug "***********Right before command"
     # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}' and yardid='#{yard_id}'</SQL><ROWS>1000</ROWS></FETCH>"
     
