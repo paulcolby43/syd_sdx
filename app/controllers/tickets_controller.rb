@@ -54,7 +54,7 @@ class TicketsController < ApplicationController
   def show
     authorize! :show, :tickets
     @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
-    Rails.logger.debug "@ticket: #{@ticket["TicketNumber"]}"
+    Rails.logger.debug "@ticket: #{@ticket}"
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
     @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
