@@ -886,6 +886,7 @@ jQuery ->
     modal = $(this).closest('.modal')
     existing_car_details_div = modal.find('#existing_car_details')
     item_id = modal.find('#ticket_item_id').val()
+    vehicle_id_number = modal.find('#vin_number').val()
     year_select = modal.find('#date_ticket_item_year')
     year = year_select.val()
     make_select = modal.find('#ticket_item_make_id')
@@ -909,6 +910,7 @@ jQuery ->
       dataType: 'json'
       method: 'POST'
       data:
+        vehicle_id_number: vehicle_id_number
         year: year
         make_id: make_id
         model_id: model_id
@@ -921,7 +923,7 @@ jQuery ->
         failure_information = data.failure_information
         if success == 'true'
           #alert 'success'
-          existing_car_details_div.prepend( '<div class="well">' + year + ' ' + color + ' ' + make + ' ' + model + ' ' + body + '</div>')
+          existing_car_details_div.prepend( '<div class="well">' + vehicle_id_number + '<br>' + year + ' ' + color + ' ' + make + ' ' + model + ' ' + body + '</div>')
           console.log 'save VIN successful'
         else
           alert failure_information

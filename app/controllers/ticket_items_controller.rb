@@ -6,7 +6,7 @@ class TicketItemsController < ApplicationController
     respond_to do |format|
       format.json { 
         @save_vin_response = TicketItem.save_vin(current_user.token, current_yard_id, params[:id], params[:year], params[:make_id], params[:model_id], 
-          params[:body_id], params[:color_id])
+          params[:body_id], params[:color_id], params[:vehicle_id_number])
         if @save_vin_response["Success"] == "true"
           render json: {"success" => "true"}, status: :ok
         elsif @save_vin_response["Success"] == "false"

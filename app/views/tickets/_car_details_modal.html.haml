@@ -61,6 +61,8 @@
               - if perform_initial_vin_search == true
                 - TicketItem.vins(current_user.token, current_yard_id, id).each do |vin|
                   .well
+                    = vin['VehicleIdNumber']
+                    %br
                     = vin['Year']
                     - vehicle_color = @vehicle_colors.find{ |vehicle_color| vehicle_color['Id'] == vin['ColorId']}
                     = vehicle_color["ReportDescription"] unless vehicle_color.blank?

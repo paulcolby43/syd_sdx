@@ -8,7 +8,7 @@ class TicketItem
   #     Class Methods         #
   #############################
   
-  def self.save_vin(auth_token, yard_id, ticket_item_id, year, make_id, model_id, body_id, color_id)
+  def self.save_vin(auth_token, yard_id, ticket_item_id, year, make_id, model_id, body_id, color_id, vehicle_id_number)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item/savevins"
@@ -16,6 +16,7 @@ class TicketItem
       "TicketItemsId" => ticket_item_id,
       "VehicleIdentificationNumbers" => [{
           "Id" => SecureRandom.uuid,
+          "VehicleIdNumber" => vehicle_id_number,
           "Year" => year,
           "VehicleMakeId" => make_id,
           "VehicleModelId" => model_id,
