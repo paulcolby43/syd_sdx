@@ -54,13 +54,13 @@ class TicketsController < ApplicationController
   def show
     authorize! :show, :tickets
     @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
-    Rails.logger.debug "@ticket: #{@ticket}"
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
     @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
-    
+    Rails.logger.debug "*********Right before images_array"
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
+    Rails.logger.debug "@images_array: #{@images_array}"
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
     rt_lookups.each do |rt_lookup|
       rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, @ticket["YardId"]).reverse
