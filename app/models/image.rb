@@ -127,8 +127,7 @@ class Image < ActiveRecord::Base
       response = response + line
       puts line
 #      break if (line.to_s.strip == '</RESULT>') or (line.to_s.strip == '<RESULT>EOF</RESULT>') # Last line or no results
-#      break unless (line.start_with?("<ROW>"))
-      break unless (line.ends_with?("\r\n"))
+      break unless (line.start_with?("<ROW>") or (line.include?("</RESULT>")))
     end
     
     ssl_client.close
