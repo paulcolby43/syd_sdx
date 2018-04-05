@@ -140,8 +140,9 @@ class Image < ActiveRecord::Base
     
     ssl_client.close
     
-    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{results}"
+    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
     data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
+    Rails.logger.debug "***********Image.api_find_all_by_ticket_number data hash #{data}"
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
