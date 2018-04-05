@@ -122,13 +122,20 @@ class Image < ActiveRecord::Base
     ssl_client.sync_close = true
     ssl_client.puts command
 #    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
-    response = ""
-    while line = ssl_client.gets
-      response = response + line
-      puts line
-      break if (line.to_s.strip == '</RESULT>') or (line.to_s.strip == '<RESULT>EOF</RESULT>') # Last line or no results
-#      break unless (line.start_with?("<ROW>") or line.include?("</RESULT>") or line.include?("\r\n"))
-#      break if (line.include?("\r\n</RESULT>"))
+
+    results = ""
+#    while line = ssl_client.gets
+#      response = response + line
+#      puts line
+#      break if (line.to_s.strip == '</RESULT>') or (line.to_s.strip == '<RESULT>EOF</RESULT>') # Last line or no results
+##      break unless (line.start_with?("<ROW>") or line.include?("</RESULT>") or line.include?("\r\n"))
+##      break if (line.include?("\r\n</RESULT>"))
+#    end
+    
+    while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
+      results = results + response
+      puts response
+      break if (response.include?("</RESULT>"))
     end
     
     ssl_client.close
