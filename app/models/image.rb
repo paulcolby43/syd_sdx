@@ -113,7 +113,7 @@ class Image < ActiveRecord::Base
     port = company.jpegger_service_port
     
     # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}' and yardid='#{yard_id}'</SQL><ROWS>1000</ROWS></FETCH>"
     
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
@@ -121,11 +121,19 @@ class Image < ActiveRecord::Base
     ssl_client.connect
     ssl_client.sync_close = true
     ssl_client.puts command
-    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+
+    results = ""
+    while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
+      results = results + response
+#      puts response
+      break if (response.include?("</RESULT>"))
+    end
+    
     ssl_client.close
     
-#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number response: #{response}"
-    data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
+#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
+    data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array

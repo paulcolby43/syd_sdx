@@ -68,7 +68,8 @@ class Ability
       # Images
       ############
       can :manage, Image do |image|
-        image.yardid == yard_id and user.view_images?
+#        image.yardid == yard_id and user.view_images?
+        user.view_images?
       end
       can :create, Image
       can :advance_search, :images

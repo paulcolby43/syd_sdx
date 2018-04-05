@@ -53,17 +53,16 @@ class TicketsController < ApplicationController
   # GET /tickets/1.json
   def show
     authorize! :show, :tickets
-    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
+    @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
     @ticket_number = @ticket["TicketNumber"]
-    @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
-    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
+    @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
-#    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id, cust_nbr: current_user.customer_guid)
-#    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
-    @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
-    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id)
+    
+    @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
+    rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
     rt_lookups.each do |rt_lookup|
-      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, current_yard_id).reverse
+      rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, @ticket["YardId"]).reverse
       @images_array =  @images_array | rt_lookup_images # Union the image arrays
     end
   
@@ -71,14 +70,14 @@ class TicketsController < ApplicationController
       format.html{}
       format.pdf do
 #        @signature_image = Image.where(ticket_nbr: @ticket_number, yardid: current_yard_id, event_code: "SIGNATURE CAPTURE").last
-        @signature_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Signature")
+        @signature_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, @ticket["YardId"], "Signature")
         unless @signature_image.blank?
-          @signature_blob = Image.jpeg_image(current_user.company, @signature_image['CAPTURE_SEQ_NBR'], current_yard_id)
+          @signature_blob = Image.jpeg_image(current_user.company, @signature_image['CAPTURE_SEQ_NBR'], @ticket["YardId"])
         end
 #        @finger_print_image = Image.where(ticket_nbr: @doc_number, yardid: current_yard_id, event_code: "Finger Print").last
-        @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, current_yard_id, "Finger Print")
+        @finger_print_image = Image.api_find_first_by_ticket_number_and_event_code(@ticket_number, current_user.company, @ticket["YardId"], "Finger Print")
         unless @finger_print_image.blank?
-          @finger_print_blob = Image.jpeg_image(current_user.company, @finger_print_image['CAPTURE_SEQ_NBR'], current_yard_id)
+          @finger_print_blob = Image.jpeg_image(current_user.company, @finger_print_image['CAPTURE_SEQ_NBR'], @ticket["YardId"])
         end
         
         unless current_user.printer_devices.blank?
@@ -86,10 +85,10 @@ class TicketsController < ApplicationController
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
             :zoom => "#{printer.PrinterWidth < 10 ? 2 : 1.25}",
-            :save_to_file => Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf")
-          printer.call_printer_for_ticket_pdf(Base64.encode64(File.binread(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))))
+            :save_to_file => Rails.root.join('pdfs', "#{@ticket['YardId']}Ticket#{@ticket_number}.pdf")
+          printer.call_printer_for_ticket_pdf(Base64.encode64(File.binread(Rails.root.join('pdfs', "#{@ticket['YardId']}Ticket#{@ticket_number}.pdf"))))
           # Remove the temporary pdf file that was created above
-          FileUtils.remove(Rails.root.join('pdfs', "#{current_yard_id}Ticket#{@ticket_number}.pdf"))
+          FileUtils.remove(Rails.root.join('pdfs', "#{@ticket['YardId']}Ticket#{@ticket_number}.pdf"))
         else
           render pdf: "ticket#{@ticket_number}",
             :layout => 'pdf.html.haml',
@@ -128,6 +127,11 @@ class TicketsController < ApplicationController
       rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, current_yard_id).reverse
       @images_array =  @images_array | rt_lookup_images # Union the image arrays
     end
+    @combolists = Vehicle.combolists(current_user.token)
+    @vehicle_makes = @combolists["VehicleMakes"]["VehicleMakeInformation"]
+    @vehicle_models = @combolists["VehicleModels"]["VehicleModelInformation"]
+    @body_styles = @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+    @vehicle_colors = @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
   end
 
   # PATCH/PUT /tickets/1
@@ -140,7 +144,7 @@ class TicketsController < ApplicationController
           if line_item[:status].blank?
             unless line_item[:commodity].blank?
               # Create new item
-              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
                 ticket_params[:customer_id], line_item[:unit_of_measure])
             end
@@ -206,6 +210,11 @@ class TicketsController < ApplicationController
   
   def line_item_fields
     @ticke_number = params[:ticket_number]
+    @ticket_id = params[:ticket_id]
+    @vehicle_makes = []
+    @vehicle_models = []
+    @body_styles = []
+    @vehicle_colors = []
     respond_to do |format|
       format.js
     end
@@ -215,7 +224,7 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket = Ticket.void_item(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
+        @ticket = TicketItem.void(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
           params[:tare], params[:net], params[:price], params[:amount])
         if @ticket == 'true'
           render json: {}, :status => :ok
@@ -233,8 +242,10 @@ class TicketsController < ApplicationController
         @search_results = Ticket.vin_search(current_user.token, params[:vin])
         Rails.logger.debug @search_results
         if @search_results
-          render json: {"valid" => @search_results['IsValid'], "make" => @search_results['DecodedText']['Make'], 
-            "model" => @search_results['DecodedText']['Model'], "style" => @search_results['DecodedText']['Style']}, status: :ok
+          render json: {"valid" => @search_results['IsValid'], "year" => @search_results['Year1'], 
+            "make" => @search_results['DecodedText']['Make'], "make_id" => @search_results['VehicleMakeId'], "added_make" => @search_results["AddedMake"],
+            "model" => @search_results['DecodedText']['Model'], "model_id" => @search_results['VehicleModelId'], "added_model" => @search_results["AddedModel"],
+            "body" => @search_results['DecodedText']['Style'], "body_id" => @search_results['BodyStyleId'], "added_body" => @search_results["AddedStyle"]}, status: :ok
         else
           render json: {error: "VIN search failed."}, :status => :bad_request
         end

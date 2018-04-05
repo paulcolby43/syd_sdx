@@ -1,16 +1,18 @@
 .panel.panel-default.line-item
-  %div.panel-heading{:role => "tab", id: "heading#{index}"}
+  %div.panel-heading{:role => "tab", id: "heading#{id}"}
     %h4.panel-title
       %ul{class: 'list-inline'}
         %li
-          %a.text-success.line_item_name{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button", class: 'ticket_collapse_link'}
+          %a.text-success.line_item_name{"aria-controls" => "collapse#{id}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse_#{id}", :role => "button", class: 'ticket_collapse_link'}
             Choose an item*
         %li.pull-right
-          %a{href: '#', class: 'remove_field'}
+          %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket_id, "data-item-id" => id, "data-commodity-id" => "", "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
             %i.fa.fa-trash.fa-lg.text-danger
-  %div.panel-collapse{id: "collapse_#{index}", "aria-labelledby" => "headingitem", :role => "tabpanel", class: "collapse in"}
+  %div.panel-collapse{id: "collapse_#{id}", "aria-labelledby" => "headingitem", :role => "tabpanel", class: "collapse in"}
     .panel-body
-      = select_tag "ticket[line_items][][commodity]", "", class: "form-control input-lg item_select", required: true
+      = hidden_field_tag "ticket[line_items][][id]", id
+      = hidden_field_tag "ticket[line_items][][status]", nil
+      = select_tag "ticket[line_items][][commodity]", "", class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket_id, "data-item-id" => id
       %br
       %div.input-group.gross_input_group
       %br
@@ -31,14 +33,14 @@
       = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
       %br
       %p
-        %a{"aria-controls" => "more_#{index}", "aria-expanded" => "false", "data-target" => "#more_#{index}", "data-toggle" => "collapse"}
+        %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
           More
-        %div.collapse{id: "more_#{index}"}
+        %div.collapse{id: "more_#{id}"}
           %p
-            %a.btn.btn-primary{href: "#item_#{index}_vin_search_modal", id: "item_#{index}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+            %a.btn.btn-primary{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
               %i.fa.fa-car.fa-lg
               Car
-            = render partial: 'car_details_modal', locals: {id: "#{index}"}
+            = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
           = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
           %br
           = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
@@ -47,5 +49,5 @@
       %li.calculation_details
       - unless mobile_device?
         %li.pull-right
-          %a.text-muted{"aria-controls" => "collapse#{index}", "data-toggle" => "collapse", :href => "#collapse_#{index}", class: 'pull-right ticket_collapse_link' }
+          %a.text-muted{"aria-controls" => "collapse#{id}", "data-toggle" => "collapse", :href => "#collapse_#{id}", class: 'pull-right ticket_collapse_link' }
             %i.fa.fa-check-square.fa-2x.collapse_icon

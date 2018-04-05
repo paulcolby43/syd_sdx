@@ -54,14 +54,14 @@ class ImagesController < ApplicationController
   end
 
   def show
-    @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company, current_yard_id)
+    @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company, params[:yard_id].blank? ? current_yard_id : params[:yard_id])
     @ticket_number = @image['TICKET_NBR']
-    if @image['YARDID'].downcase != current_yard_id.downcase or (current_user.customer? and @image['HIDDEN'] == '1')
+    if current_user.customer? and @image['HIDDEN'] == '1'
       # Don't allow access if yard ID doesn't match, or if customer user and the image is set to hidden
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
     else
-      @blob = Image.jpeg_image(current_user.company, params[:id], current_yard_id)
+      @blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
       if @blob[0..3] == "%PDF"
         # Show pdf directly in the browser
         redirect_to show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR'])
@@ -90,7 +90,7 @@ class ImagesController < ApplicationController
   
   def show_jpeg_image
 #    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
-    blob = Image.jpeg_image(current_user.company, params[:id], current_yard_id)
+    blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
     unless blob[0..3] == "%PDF" 
       send_data blob, :type => 'image/jpeg',:disposition => 'inline'
     else
@@ -101,12 +101,12 @@ class ImagesController < ApplicationController
   
   def show_preview_image
 #    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
-    send_data Image.preview(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
+    send_data Image.preview(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def send_pdf_data
 #    send_data @image.jpeg_image, :type => 'application/pdf',:disposition => 'attachment'
-    send_data Image.jpeg_image(current_user.company, params[:id], current_yard_id), :type => 'application/pdf',:disposition => 'attachment'
+    send_data Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'application/pdf',:disposition => 'attachment'
   end
   
   def destroy
