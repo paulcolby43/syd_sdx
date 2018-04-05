@@ -60,7 +60,6 @@ class TicketsController < ApplicationController
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
-    Rails.logger.debug "@images_array in ticket show: #{@images_array}"
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
     rt_lookups.each do |rt_lookup|
       rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, @ticket["YardId"]).reverse

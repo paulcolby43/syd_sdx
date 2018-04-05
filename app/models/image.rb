@@ -124,17 +124,9 @@ class Image < ActiveRecord::Base
 #    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
 
     results = ""
-#    while line = ssl_client.gets
-#      response = response + line
-#      puts line
-#      break if (line.to_s.strip == '</RESULT>') or (line.to_s.strip == '<RESULT>EOF</RESULT>') # Last line or no results
-##      break unless (line.start_with?("<ROW>") or line.include?("</RESULT>") or line.include?("\r\n"))
-##      break if (line.include?("\r\n</RESULT>"))
-#    end
-    
     while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
       results = results + response
-      puts response
+#      puts response
       break if (response.include?("</RESULT>"))
     end
     
@@ -142,7 +134,6 @@ class Image < ActiveRecord::Base
     
     Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
     data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
-    Rails.logger.debug "***********Image.api_find_all_by_ticket_number data hash #{data}"
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
