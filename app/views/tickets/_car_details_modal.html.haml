@@ -17,7 +17,7 @@
           .tab-pane.active{:id => "vin_search_#{id}"}
             %br
             .input-group
-              = text_field_tag :vin_number, nil, :placeholder => "VIN", class: "form-control input-lg", autofocus: true
+              = text_field_tag :vin_number, nil, :placeholder => "VIN", class: "form-control input-lg vin_search_field", autofocus: true
               %span.input-group-addon
                 %a{href: nil, id: "item_#{id}_vin_search_button", class: 'vin_search_button'}
                   %i.fa.fa-search
