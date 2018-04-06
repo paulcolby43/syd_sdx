@@ -937,3 +937,11 @@ jQuery ->
         return
     return
   ### End Save VIN Info ###
+
+  $('.vin_search_field').keydown (e) ->
+    if e.keyCode == 13
+      event.preventDefault()
+      modal = $(this).closest('.modal')
+      search_button = modal.find('.vin_search_button')
+      search_button.click()
+    return
