@@ -12,7 +12,6 @@
       =# hidden_field_tag "ticket[id]", @ticket['Id']
       = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
       =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
-      = render partial: "payment_modal"
       =# @accounts_payable_items
       - unless @accounts_payable_items.blank?
         - @accounts_payable_items.each do |accounts_payable_item|
@@ -425,6 +424,7 @@
             %a.btn.btn-primary.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
               %i.fa.fa-dollar.fa-lg
               = 'Pay' unless mobile_device?
+        = render partial: "payment_modal"
             
     %hr
       
