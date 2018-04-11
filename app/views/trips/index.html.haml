@@ -13,6 +13,7 @@
           .panel.panel-default
             .panel-heading{id: "trip_#{index}", :role => "tab"}
               .pull-right
+                &nbsp;
                 %a{href: nil, class: 'hide_trip_icon'}
                   %i.fa.fa-times-circle
               %h4.panel-title
@@ -29,6 +30,10 @@
                       %br
                       - Trip.workorders(trip).each do |workorder|
                         = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
+                %br
+                %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
+                  %i.fa.fa-sticky-note-o
+                  Notes
             .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
               %ul.list-group
                 - Trip.tasks(trip).each do |task|

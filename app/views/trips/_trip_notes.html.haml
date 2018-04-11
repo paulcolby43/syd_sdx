@@ -1,0 +1,7 @@
+%p
+  - unless workorders.blank?
+    - workorders.each do |workorder|
+      = workorder['Notes']
+      %br
+  - else
+    None
