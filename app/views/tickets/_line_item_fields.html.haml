@@ -36,11 +36,12 @@
         %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
           More
         %div.collapse{id: "more_#{id}"}
-          %p
-            %a.btn.btn-primary{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
-              %i.fa.fa-car.fa-lg
-              Car
-            = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
+          - unless @combolists.blank? # Car vehicle information lists
+            %p
+              %a.btn.btn-primary{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                %i.fa.fa-car.fa-lg
+                Car
+              = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
           = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
           %br
           = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
