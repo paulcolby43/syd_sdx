@@ -158,11 +158,12 @@
                         %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
                           More
                         %div.collapse{id: "more_#{line_item['Id']}"}
-                          %p
-                            %a.btn.btn-primary{href: "#item_#{line_item['Id']}_vin_search_modal", id: "#item_#{line_item['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
-                              %i.fa.fa-car.fa-lg
-                              Car
-                            = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
+                          - unless @combolists.blank? # Car vehicle information lists
+                            %p
+                              %a.btn.btn-primary{href: "#item_#{line_item['Id']}_vin_search_modal", id: "#item_#{line_item['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                                %i.fa.fa-car.fa-lg
+                                Car
+                              = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
                           = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
                           %br
                           = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
@@ -277,11 +278,12 @@
                       %a{"aria-controls" => "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}", "data-toggle" => "collapse"}
                         More
                       %div.collapse{id: "more_#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
-                        %p
-                          %a.btn.btn-primary{href: "#item_#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal", id: "#item_#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
-                            %i.fa.fa-car.fa-lg
-                            Car
-                          = render partial: 'car_details_modal', locals: {id: "#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}", perform_initial_vin_search: true}
+                        - unless @combolists.blank? # Car vehicle information lists
+                          %p
+                            %a.btn.btn-primary{href: "#item_#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal", id: "#item_#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                              %i.fa.fa-car.fa-lg
+                              Car
+                            = render partial: 'car_details_modal', locals: {id: "#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}", perform_initial_vin_search: true}
                         = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'], :placeholder => "Notes", class: "form-control input-lg"
@@ -379,11 +381,12 @@
                     %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
                       More
                     %div.collapse{id: "more_#{new_item_id}"}
-                      %p
-                        %a.btn.btn-primary{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
-                          %i.fa.fa-car.fa-lg
-                          Car
-                        = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
+                      - unless @combolists.blank? # Car vehicle information lists
+                        %p
+                          %a.btn.btn-primary{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
+                            %i.fa.fa-car.fa-lg
+                            Car
+                          = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
                       = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
                       %br
                       = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
