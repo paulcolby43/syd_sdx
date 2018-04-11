@@ -834,18 +834,22 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/vehicle/vindecode?vin=#{vin}"
-    
-    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
-        :content_type => 'application/json', :Accept => "application/xml"})
-    data= Hash.from_xml(xml_content)
-    Rails.logger.info "Ticket.vin_search response: #{data}"
-    if not data["GetVehicleIdentificationDecodeResponse"].blank? and data["GetVehicleIdentificationDecodeResponse"]["Success"] == 'true'
-      unless data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"].blank?
-        return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
+    begin
+      xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+          :content_type => 'application/json', :Accept => "application/xml"})
+      data= Hash.from_xml(xml_content)
+      Rails.logger.info "Ticket.vin_search response: #{data}"
+      if not data["GetVehicleIdentificationDecodeResponse"].blank? and data["GetVehicleIdentificationDecodeResponse"]["Success"] == 'true'
+        unless data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"].blank?
+          return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
+        else
+          return nil
+        end
       else
         return nil
       end
-    else
+    rescue RestClient::ExceptionWithResponse => e
+      Rails.logger.info "Ticket.vin_search call: no Dragon API"
       return nil
     end
   end
