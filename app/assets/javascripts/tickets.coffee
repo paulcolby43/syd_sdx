@@ -114,13 +114,17 @@ jQuery ->
   ### Line item changed ###
   $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
     console.log '.item_select changed', 'yes'
-    item_id = $(this).val()
+    ticket_id = $(this).data( "ticket-id" )
+    item_id = $(this).data( "item-id" )
+    commodity_id = $(this).val()
+    commodity_name = $(this).find('option:selected').text()
     input_select = $(this)
     current_customer_id = $('#ticket_customer_id').val()
+    ticket_item_status = input_select.closest('.panel').find('#ticket_line_items__status:first').val()
     # Get commodity price, unit of measure, and taxes, then update.
     get_commodity_info_ajax = ->
       $.ajax
-        url: "/commodities/" + item_id + "/price"
+        url: "/commodities/" + commodity_id + "/price"
         dataType: 'json'
         data:
           customer_id: current_customer_id
@@ -152,17 +156,44 @@ jQuery ->
           input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
           input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
           input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
-          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', item_id 
-          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', item_id
+          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', commodity_id 
+          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', commodity_id
           input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
           input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
           input_select.closest('.panel').find('.amount-calculation-field:first').keyup() # Invoke 'keyup' so go through calculations again
+
+          if ticket_item_status != '0' # New ticket item that needs to be added/saved to ticket
+            ticket_item_add_ajax()
+          
           return
         error: ->
           alert 'Error getting commodity price.'
           console.log 'Error getting commodity price.'
           return
-    if item_id != ''
+    ticket_item_add_ajax = ->
+      price = input_select.closest('.panel').find('#ticket_line_items__price:first').val()
+      $.ajax
+        url: "/ticket_items/" + item_id + "/quick_add"
+        dataType: 'json'
+        method: 'POST'
+        data:
+          ticket_id: ticket_id
+          commodity_id: commodity_id
+          commodity_name: commodity_name
+          price: price
+        success: (data) ->
+          console.log 'ticket item quick add successful'
+          input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
+          input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
+          #input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
+          input_select.closest('.panel').find('.remove_field:first').attr 'data-commodity-id', commodity_id
+          $("#more_" + item_id + "_link").show()
+          return
+        error: ->
+          alert 'Error saving ticket line item.'
+          console.log 'Error saving ticket line item.'
+          return
+    if commodity_id != ''
       # Only get commodity info if there is a commodity item
       get_commodity_info_ajax()
     return
@@ -796,11 +827,17 @@ jQuery ->
     modal = $(this).closest('.modal')
     vin_number = modal.find('#vin_number').val()
     results_div = modal.find('#results')
+    year_select = modal.find('#date_ticket_item_year')
+    make_select = modal.find('#ticket_item_make_id')
+    model_select = modal.find('#ticket_item_model_id')
+    body_select = modal.find('#ticket_item_body_id')
+    color_select = modal.find('#ticket_item_color_id')
+    results_div = modal.find('#results')
     search_icon = $(this).find( ".fa-search" )
     search_icon.hide()
     spinner_icon = $(this).find('.fa-spinner')
     spinner_icon.show()
-    results_div.empty()
+    results_div.hide()
     $.ajax
       url: "/tickets/vin_search"
       dataType: 'json'
@@ -810,17 +847,28 @@ jQuery ->
         search_icon.show()
         spinner_icon.hide()
         valid = data.valid
+        year = data.year
         make = data.make
+        make_id = data.make_id
+        added_make = data.added_make
         model = data.model
-        style = data.style
-        console.log 'valid', valid
-        console.log 'make', make
-        console.log 'model', model
-        console.log 'style', style
+        model_id = data.model_id
+        added_model = data.added_model
+        body = data.body
+        body_id = data.body_id
+        added_body = data.added_body
         if valid == 'true'
-          results_div.append '<p><b>Make:</b> ' + make + '</p>'
-          results_div.append '<p><b>Model:</b> ' + model + '</p>'
-          results_div.append '<p><b>Style:</b> ' + style + '</p>'
+          if added_make == 'true'
+            make_select.append( '<option value="' + make_id + '">' + make + '</option>' )
+          if added_model == 'true'
+            model_select.append( '<option value="' + model_id + '">' + model + '</option>' )
+          if added_body == 'true'
+            body_select.append( '<option value="' + body_id + '">' + body + '</option>' )
+          results_div.show()
+          year_select.val year
+          make_select.val make_id
+          model_select.val model_id
+          body_select.val body_id
         else
           alert 'Not a valid VIN'
         return
@@ -831,3 +879,69 @@ jQuery ->
         return
     return
   ### End VIN Search ###
+
+  ### Save VIN Info ###
+  #$(document).on 'click', '.save_vin_info_button', (e) ->
+  $(wrapper).on 'click', '.save_vin_info_button', (e) ->
+    modal = $(this).closest('.modal')
+    existing_car_details_div = modal.find('#existing_car_details')
+    item_id = modal.find('#ticket_item_id').val()
+    vehicle_id_number = modal.find('#vin_number').val()
+    year_select = modal.find('#date_ticket_item_year')
+    year = year_select.val()
+    make_select = modal.find('#ticket_item_make_id')
+    make_id = make_select.val()
+    make = make_select.find('option:selected').text()
+    model_select = modal.find('#ticket_item_model_id')
+    model_id = model_select.val()
+    model = model_select.find('option:selected').text()
+    body_select = modal.find('#ticket_item_body_id')
+    body_id = body_select.val()
+    body = body_select.find('option:selected').text()
+    color_select = modal.find('#ticket_item_color_id')
+    color_id = color_select.val()
+    color = color_select.find('option:selected').text()
+    save_icon = $(this).find( ".fa-cloud-upload" )
+    save_icon.hide()
+    spinner_icon = $(this).find('.fa-spinner')
+    spinner_icon.show()
+    $.ajax
+      url: "/ticket_items/" + item_id + "/save_vin"
+      dataType: 'json'
+      method: 'POST'
+      data:
+        vehicle_id_number: vehicle_id_number
+        year: year
+        make_id: make_id
+        model_id: model_id
+        body_id: body_id
+        color_id: color_id
+      success: (data) ->
+        spinner_icon.hide()
+        save_icon.show()
+        success = data.success
+        failure_information = data.failure_information
+        if success == 'true'
+          #alert 'success'
+          existing_car_details_div.prepend( '<div class="well">' + vehicle_id_number + '<br>' + year + ' ' + color + ' ' + make + ' ' + model + ' ' + body + '</div>')
+          console.log 'save VIN successful'
+        else
+          alert failure_information
+        modal.modal('hide')
+        return
+      error: ->
+        spinner_icon.hide()
+        save_icon.show()
+        alert 'Error saving VIN information'
+        modal.modal('hide')
+        return
+    return
+  ### End Save VIN Info ###
+
+  $('.vin_search_field').keydown (e) ->
+    if e.keyCode == 13
+      event.preventDefault()
+      modal = $(this).closest('.modal')
+      search_button = modal.find('.vin_search_button')
+      search_button.click()
+    return

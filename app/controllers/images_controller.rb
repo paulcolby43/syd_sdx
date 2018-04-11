@@ -61,7 +61,7 @@ class ImagesController < ApplicationController
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
     else
-      @blob = Image.jpeg_image(current_user.company, params[:id], current_yard_id)
+      @blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
       if @blob[0..3] == "%PDF"
         # Show pdf directly in the browser
         redirect_to show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR'])

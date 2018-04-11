@@ -5,16 +5,75 @@
         %strong Car Details
         = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
       .modal-body
-        .input-group
-          = text_field_tag :vin_number, nil, :placeholder => "VIN", class: "form-control input-lg"
-          %span.input-group-addon
-            %a{href: nil, id: "item_#{id}_vin_search_button", class: 'vin_search_button'}
+        %ul.nav.nav-tabs
+          %li.active
+            %a{:href => "#vin_search_#{id}", :data => {:toggle => "tab"}}
               %i.fa.fa-search
-              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-        #results
-        %br
+              = "Search"
+          %li
+            %a{:href => "#existing_cars_#{id}", :data => {:toggle => "tab"}}
+              = "Existing"
+        .tab-content
+          .tab-pane.active{:id => "vin_search_#{id}"}
+            %br
+            .input-group
+              = text_field_tag :vin_number, nil, :placeholder => "VIN", class: "form-control input-lg vin_search_field", autofocus: true
+              %span.input-group-addon
+                %a{href: nil, id: "item_#{id}_vin_search_button", class: 'vin_search_button'}
+                  %i.fa.fa-search
+                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+            #results{style: 'display: none;'}
+              %br
+              = hidden_field_tag "ticket_item[id]", id
+              .row.form-group
+                %div{:class => "col-xs-12"}
+                  = label_tag "Year", nil, :class => 'control-label'
+                  = select_year(Date.today, {start_year: 1970, end_year: Date.today.year, field_name: "ticket_item[year]"}, {class: "form-control input-lg"})
+              .row.form-group
+                %div{:class => "col-xs-12"}
+                  = label_tag "Make", nil, :class => 'control-label'
+                  =# select_tag "ticket_item[make_id]", options_for_select([["A C", "497a8c62-9ca2-4035-8243-20ec55f0a974"], ["ACURA", "0536f2db-f4ed-4288-b4fd-b2206e1a3194"], ["TOYOTA", "efd505a4-6f56-4f57-a907-9bd07a8e885c"]]), class: "form-control input-lg"
+                  = select_tag "ticket_item[make_id]", options_for_select(@vehicle_makes.map{ |make| [make["Make"], make['Id']] }), class: "form-control input-lg ticket_item_make"
+              .row.form-group
+                %div{:class => "col-xs-12"}
+                  = label_tag "Model", nil, :class => 'control-label'
+                  =# select_tag "ticket_item[model_id]", options_for_select([["AVALON", "efd505a4-6f56-4f57-a907-9bd07a8e885c"], ["CAMERY", "9ad1ab51-dd3e-4293-af0e-f72df52c65c3"], ["SIENNA", "0e23c4ca-de8c-4971-8db5-ca211b1c0792"]]), class: "form-control input-lg"
+                  = select_tag "ticket_item[model_id]", options_for_select(@vehicle_models.map{ |model| [model["Model"], model['Id']] }), class: "form-control input-lg ticket_item_model"
+              .row.form-group
+                %div{:class => "col-xs-12"}
+                  = label_tag "Body", nil, :class => 'control-label'
+                  =# select_tag "ticket_item[body_id]", options_for_select([["3 DOOR HATCHBACK", "77b77517-c37c-4a96-a153-3dac3d93aaa5"], ["4D SEDAN", "e671c33f-21b4-4124-b82c-bb2fe051949f"], ["MULTIPURPOSE PASSENGER VEHICLE (MPV)", "7a089187-6c93-48ec-bd4b-276fdf93d517"]]), class: "form-control input-lg"
+                  = select_tag "ticket_item[body_id]", options_for_select(@body_styles.map{ |body| [body["ReportDescription"], body['Id']] }), class: "form-control input-lg ticket_item_body"
+              .row.form-group
+                %div{:class => "col-xs-12"}
+                  = label_tag "Color", nil, :class => 'control-label'
+                  =# select_tag "ticket_item[color_id]", options_for_select([ ["Black", "e8d43b35-1298-4356-8b1e-53ea830b05fa"], ["Blue", "646b7909-bb20-4104-a5bf-6c7b127aedfe"] ]), class: "form-control input-lg"
+                  = select_tag "ticket_item[color_id]", options_for_select(@vehicle_colors.map{ |color| [color["ReportDescription"], color['Id']] }), class: "form-control input-lg ticket_item_color"
+              .modal-footer
+                %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Cancel
+                %a.btn.btn-primary.btn-lg.save_vin_info_button 
+                  %i.fa.fa-spinner.fa-spin{style: 'display:none;'}
+                  %i.fa.fa-cloud-upload
+                  Save
+          .tab-pane{:id => "existing_cars_#{id}"}
+            %br
+            #existing_car_details
+              - if perform_initial_vin_search == true
+                - TicketItem.vins(current_user.token, current_yard_id, id).each do |vin|
+                  .well
+                    = vin['VehicleIdNumber']
+                    %br
+                    = vin['Year']
+                    - vehicle_color = @vehicle_colors.find{ |vehicle_color| vehicle_color['Id'] == vin['ColorId']}
+                    = vehicle_color["ReportDescription"] unless vehicle_color.blank?
+                    - vehicle_make = @vehicle_makes.find{ |vehicle_make| vehicle_make['Id'] == vin['VehicleMakeId']}
+                    = vehicle_make["Make"] unless vehicle_make.blank?
+                    - vehicle_model = @vehicle_models.find{ |vehicle_model| vehicle_model['Id'] == vin['VehicleModelId']}
+                    = vehicle_model["Model"] unless vehicle_model.blank?
+                    - body_style = @body_styles.find{ |body_style| body_style['Id'] == vin['BodyStyleId']}
+                    = body_style["ReportDescription"] unless body_style.blank?
 
-        .modal-footer
-          -#
-            = button_tag(name: 'save_vehicle_info', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
-              Save
+:javascript
+  $('.modal').on('shown.bs.modal', function() {
+    $(this).find('[autofocus]').first().focus();
+  });

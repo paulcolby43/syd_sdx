@@ -119,13 +119,20 @@ class TicketsController < ApplicationController
     @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
     @commodities = Commodity.all(current_user.token, current_yard_id)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
-    @contract = Yard.contract(current_yard_id)
+#    @contract = Yard.contract(current_yard_id)
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
 #    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id)
     rt_lookups.each do |rt_lookup|
       rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, current_yard_id).reverse
       @images_array =  @images_array | rt_lookup_images # Union the image arrays
+    end
+    @combolists = Vehicle.combolists(current_user.token)
+    unless @combolists.blank?
+      @vehicle_makes = @combolists["VehicleMakes"]["VehicleMakeInformation"]
+      @vehicle_models = @combolists["VehicleModels"]["VehicleModelInformation"]
+      @body_styles = @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+      @vehicle_colors = @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
     end
   end
 
@@ -139,7 +146,7 @@ class TicketsController < ApplicationController
           if line_item[:status].blank?
             unless line_item[:commodity].blank?
               # Create new item
-              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:commodity], line_item[:gross], 
+              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
                 ticket_params[:customer_id], line_item[:unit_of_measure])
             end
@@ -205,6 +212,11 @@ class TicketsController < ApplicationController
   
   def line_item_fields
     @ticke_number = params[:ticket_number]
+    @ticket_id = params[:ticket_id]
+    @vehicle_makes = []
+    @vehicle_models = []
+    @body_styles = []
+    @vehicle_colors = []
     respond_to do |format|
       format.js
     end
@@ -214,7 +226,7 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket = Ticket.void_item(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
+        @ticket = TicketItem.void(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
           params[:tare], params[:net], params[:price], params[:amount])
         if @ticket == 'true'
           render json: {}, :status => :ok
@@ -232,8 +244,10 @@ class TicketsController < ApplicationController
         @search_results = Ticket.vin_search(current_user.token, params[:vin])
         Rails.logger.debug @search_results
         if @search_results
-          render json: {"valid" => @search_results['IsValid'], "make" => @search_results['DecodedText']['Make'], 
-            "model" => @search_results['DecodedText']['Model'], "style" => @search_results['DecodedText']['Style']}, status: :ok
+          render json: {"valid" => @search_results['IsValid'], "year" => @search_results['Year1'], 
+            "make" => @search_results['DecodedText']['Make'], "make_id" => @search_results['VehicleMakeId'], "added_make" => @search_results["AddedMake"],
+            "model" => @search_results['DecodedText']['Model'], "model_id" => @search_results['VehicleModelId'], "added_model" => @search_results["AddedModel"],
+            "body" => @search_results['DecodedText']['Style'], "body_id" => @search_results['BodyStyleId'], "added_body" => @search_results["AddedStyle"]}, status: :ok
         else
           render json: {error: "VIN search failed."}, :status => :bad_request
         end

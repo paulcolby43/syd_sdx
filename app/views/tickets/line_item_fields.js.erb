@@ -6,11 +6,22 @@ category_options = $(".category_select:last > option").clone();
 options = $(".item_select:last > option").clone();
 selected_category = $('.category_select:last').val()
 
-$('#items_accordion').append("<%= j render(:partial => 'line_item_fields', locals: {index: rand(1..1000000)}) %>");
+
+vehicle_make_options = $(".ticket_item_make:last > option").clone();
+vehicle_model_options = $(".ticket_item_model:last > option").clone();
+vehicle_body_options = $(".ticket_item_body:last > option").clone();
+vehicle_color_options = $(".ticket_item_color:last > option").clone();
+
+$('#items_accordion').append("<%= j render(:partial => 'line_item_fields', locals: {id: SecureRandom.uuid}) %>");
 $('.category_select:last').append(category_options).find("option:first").attr('selected','selected');
 if (category_options.size() == 0) {$('.category_select:last').hide();}
 $('.category_select:last').val(selected_category);
 $('.item_select:last').append(options).val('');
+
+$('.ticket_item_make:last').append(vehicle_make_options).val('');
+$('.ticket_item_model:last').append(vehicle_model_options).val('');
+$('.ticket_item_body:last').append(vehicle_body_options).val('');
+$('.ticket_item_color:last').append(vehicle_color_options).find("option:first").attr('selected','selected');
 
 first_gross_input_group_clone = $(".gross_input_group:first").clone();
 first_tare_input_group_clone = $(".tare_input_group:first").clone();

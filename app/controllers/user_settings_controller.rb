@@ -13,7 +13,7 @@ class UserSettingsController < ApplicationController
   # GET /user_settings/1
   # GET /user_settings/1.json
   def show
-    @contract = Yard.contract(current_yard_id)
+#    @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
     @event_codes = current_user.company.event_codes
   end
@@ -24,7 +24,7 @@ class UserSettingsController < ApplicationController
 
   # GET /user_settings/1/edit
   def edit
-    @contract = Yard.contract(current_yard_id)
+#    @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
     @event_codes = current_user.company.event_codes
   end

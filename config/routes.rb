@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
   
+  resources :ticket_items do
+    member do
+      post 'save_vin'
+      post 'add'
+      post 'quick_add'
+    end
+  end
+  
   resources :tasks do
     member do
       get 'remove_container'
