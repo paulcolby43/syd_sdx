@@ -128,10 +128,12 @@ class TicketsController < ApplicationController
       @images_array =  @images_array | rt_lookup_images # Union the image arrays
     end
     @combolists = Vehicle.combolists(current_user.token)
-    @vehicle_makes = @combolists["VehicleMakes"]["VehicleMakeInformation"]
-    @vehicle_models = @combolists["VehicleModels"]["VehicleModelInformation"]
-    @body_styles = @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
-    @vehicle_colors = @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    unless @combolists.blank?
+      @vehicle_makes = @combolists["VehicleMakes"]["VehicleMakeInformation"]
+      @vehicle_models = @combolists["VehicleModels"]["VehicleModelInformation"]
+      @body_styles = @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+      @vehicle_colors = @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    end
   end
 
   # PATCH/PUT /tickets/1
