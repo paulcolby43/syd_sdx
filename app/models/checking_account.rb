@@ -14,11 +14,15 @@ class CheckingAccount
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/checkingaccount"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    if data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"].is_a? Hash
-      # Put the hash in an array
-      return [data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"]]
+    unless data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"].blank? or data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"].blank? or data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"].blank?
+      if data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"].is_a? Hash
+        # Put the hash in an array
+        return [data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"]]
+      else
+        return data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"]
+      end
     else
-      return data["ApiItemsResponseOfApiCheckAccountEmq_PyO3s"]["Items"]["ApiCheckAccount"]
+      return []
     end
   end
   
