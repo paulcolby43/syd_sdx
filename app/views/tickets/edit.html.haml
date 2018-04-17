@@ -1,33 +1,33 @@
 = render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
--#
-  .jumbotron{style: 'background-color: #FFFFFF;'}
-    .container
-      -#
-        .well
-          = @ticket
-      = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
-        = hidden_field_tag "ticket[ticket_number]", @ticket_number
-        =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
-        = hidden_field_tag "ticket[status]", @ticket['Status']
-        =# hidden_field_tag "ticket[id]", @ticket['Id']
-        = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
-        =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
-        =# @accounts_payable_items
-        - unless @accounts_payable_items.blank?
-          - @accounts_payable_items.each do |accounts_payable_item|
-            .well
-              Amount Due:
-              = number_to_currency(accounts_payable_item["AmountDue"])
-              =# accounts_payable_item
-        - if @ticket['Status'] == '3'
-          .well
-            =# @accounts_payable_items.first
-            =# @apcashier
-            %p
-              = "Payment by #{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
-            - if @apcashier['PaymentMethod'] == '1'
-              = "Check Number: #{@apcashier['CheckNumber']}"
 
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    -#
+      .well
+        = @ticket
+    = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
+      = hidden_field_tag "ticket[ticket_number]", @ticket_number
+      =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
+      = hidden_field_tag "ticket[status]", @ticket['Status']
+      =# hidden_field_tag "ticket[id]", @ticket['Id']
+      = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
+      =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
+      =# @accounts_payable_items
+      - unless @accounts_payable_items.blank?
+        - @accounts_payable_items.each do |accounts_payable_item|
+          .well
+            Amount Due:
+            = number_to_currency(accounts_payable_item["AmountDue"])
+            =# accounts_payable_item
+      - if @ticket['Status'] == '3'
+        .well
+          =# @accounts_payable_items.first
+          =# @apcashier
+          %p
+            = "Payment by #{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
+          - if @apcashier['PaymentMethod'] == '1'
+            = "Check Number: #{@apcashier['CheckNumber']}"
+      -#
         =# @combolists
         -#
           .well
@@ -446,4 +446,4 @@
                   .text-center
                     %small.text-muted= image['EVENT_CODE']
 
-  = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}
+=# render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}
