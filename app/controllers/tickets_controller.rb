@@ -109,7 +109,7 @@ class TicketsController < ApplicationController
 
   # GET /tickets/1/edit
   def edit
-    authorize! :edit, :tickets
+#    authorize! :edit, :tickets
 #    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
 #    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
