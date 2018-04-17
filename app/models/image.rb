@@ -115,6 +115,8 @@ class Image < ActiveRecord::Base
     # SQL command that gets sent to jpegger service
     command = "<FETCH><SQL>select * from images where ticket_nbr='#{ticket_number}' and yardid='#{yard_id}'</SQL><ROWS>1000</ROWS></FETCH>"
     
+    Rails.logger.debug "***********Image.api_find_all_by_ticket_number prior to call"
+    
     # SSL TCP socket communication with jpegger
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
@@ -122,8 +124,6 @@ class Image < ActiveRecord::Base
     ssl_client.sync_close = true
     ssl_client.puts command
 #    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
-
-    Rails.logger.debug "***********Image.api_find_all_by_ticket_number prior to call"
     
     results = ""
     while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
