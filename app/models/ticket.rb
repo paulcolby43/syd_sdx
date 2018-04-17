@@ -156,7 +156,6 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.debug "Ticket.find_by_id: #{data}"
     return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
   end
   
