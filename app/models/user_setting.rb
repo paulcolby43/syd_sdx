@@ -28,11 +28,12 @@ class UserSetting < ActiveRecord::Base
   end
   
   def scale_devices
-    unless not DeviceGroup.table_exists? or device_group.blank?
-      device_group.scale_devices
-    else
-      []
-    end
+#    unless not DeviceGroup.table_exists? or device_group.blank?
+#      device_group.scale_devices
+#    else
+#      []
+#    end
+    []
   end
   
   def camera_devices
