@@ -1,6 +1,13 @@
 = render partial: "shared/navbars/tickets_navbar", locals: {title: ticket_status_string(@status)}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
+  = current_user
+  %br
+  = current_yard_id
+  %br
+  = current_yard_name
+  %br
+  = current_ability
   .container
     - unless current_user.customer?
       .btn-group
