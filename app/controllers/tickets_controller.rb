@@ -1,5 +1,5 @@
 class TicketsController < ApplicationController
-  before_filter :login_required
+#  before_filter :login_required
 #  before_action :set_ticket, only: [:show, :edit, :update, :destroy]
 
   # GET /tickets
