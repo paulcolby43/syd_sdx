@@ -123,6 +123,8 @@ class Image < ActiveRecord::Base
     ssl_client.puts command
 #    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
 
+    Rails.logger.debug "***********Image.api_find_all_by_ticket_number prior to call"
+    
     results = ""
     while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
       results = results + response
@@ -132,7 +134,7 @@ class Image < ActiveRecord::Base
     
     ssl_client.close
     
-#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
+    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
     data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
