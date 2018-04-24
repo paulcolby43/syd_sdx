@@ -28,9 +28,9 @@ class Company < ActiveRecord::Base
     self.jpegger_service_ip ||= "#{ENV['JPEGGER_SERVICE']}"
   end
   
-  # Set the default Jpegger service port to 3333
+  # Set the default Jpegger service port to 3332
   def default_jpegger_service_port
-    self.jpegger_service_port ||= "3333"
+    self.jpegger_service_port ||= "3332"
   end
   
   def leads_online_config_settings_present?

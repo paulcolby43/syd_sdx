@@ -54,9 +54,9 @@
               %td 
                 %strong Customer
               %td 
-                %strong Tare
-              %td 
                 %strong Gross
+              %td 
+                %strong Tare
               %td
                 %strong Net
               %td
@@ -73,8 +73,8 @@
                     = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
                   - else
                     = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-                %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td= "#{number_to_currency(line_item['Price'])} / #{line_item['UnitOfMeasure']}"
                 %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
