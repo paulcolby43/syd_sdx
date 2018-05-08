@@ -2,7 +2,7 @@
   = @ticket_number
   %br
   =# DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
-  = @ticket["DateCreated"].to_date.strftime("%a, %d %b %Y %I:%M%p") unless @ticket["DateCreated"].blank?
+  = @ticket["DateClosed"].to_date.strftime("%a, %d %b %Y %I:%M%p") unless @ticket["DateClosed"].blank?
   %br
   = @ticket["Description"] unless @ticket["Description"].blank?
 - unless @current_user.company.logo.url.blank?
