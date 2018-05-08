@@ -248,7 +248,7 @@ class Ticket
           "Status" => status,
           "CurrencyId" => user.user_setting.currency_id,
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
-          "DateClosed" =>  "",
+          "DateClosed" =>  Time.now.utc,
           "DateCreated" => Time.now.utc
           }
         })
