@@ -2,8 +2,9 @@
   = @ticket_number
   %br
   =# DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
-  = @ticket["DateClosed"].to_date.strftime("%a, %d %b %Y %I:%M%p") unless @ticket["DateClosed"].blank?
-  %br
+  - if ticket['Status'] == '1' or ticket['Status'] == '3'
+    = @ticket["DateClosed"].to_date.strftime("%a, %d %b %Y %I:%M%p") unless @ticket["DateClosed"].blank?
+    %br
   = @ticket["Description"] unless @ticket["Description"].blank?
 - unless @current_user.company.logo.url.blank?
   %p= image_tag ["http://", request.host_with_port, @current_user.company.logo.url].join(), size: '50x50'
