@@ -24,7 +24,7 @@ class Pack
     data= Hash.from_xml(xml_content)
     Rails.logger.info "Packs response: #{data}"
     
-    unless data["MobilePackListInformation"]["Packs"]["PackListInformation"].blank?
+    unless data["MobilePackListInformation"].blank? or data["MobilePackListInformation"]["Packs"].blank? or data["MobilePackListInformation"]["Packs"]["PackListInformation"].blank?
       if data["MobilePackListInformation"]["Packs"]["PackListInformation"].is_a? Hash # Only one result returned, so put it into an array
         return [data["MobilePackListInformation"]["Packs"]["PackListInformation"]]
       else # Array of results returned
