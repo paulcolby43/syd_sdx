@@ -164,7 +164,6 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
-#    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
@@ -173,6 +172,52 @@ class Ticket
     else # Array of results returned
       return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
+  end
+  
+  def self.search_all_statuses(auth_token, yard_id, query_string)
+    require 'uri'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    closed_api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/1?q=#{query_string}&d=100&t=100")
+    held_api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/2?q=#{query_string}&d=100&t=100")
+    paid_api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/3?q=#{query_string}&d=100&t=100")
+    
+    closed_xml_content = RestClient::Request.execute(method: :get, url: closed_api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    closed_data= Hash.from_xml(closed_xml_content)
+    held_xml_content = RestClient::Request.execute(method: :get, url: held_api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    held_data= Hash.from_xml(held_xml_content)
+    paid_xml_content = RestClient::Request.execute(method: :get, url: paid_api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    paid_data= Hash.from_xml(paid_xml_content)
+    
+    if closed_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      closed_tickets = [closed_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      closed_tickets =  closed_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+    
+    if held_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      held_tickets = [held_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      held_tickets =  held_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+    
+    if paid_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      paid_tickets = [paid_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      paid_tickets =  paid_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+    
+    if closed_tickets.blank?
+      closed_tickets = []
+    end
+    if held_tickets.blank?
+      held_tickets = []
+    end
+    if paid_tickets.blank?
+      paid_tickets = []
+    end
+    
+    return closed_tickets + held_tickets + paid_tickets
   end
   
   # Get next available ticket number

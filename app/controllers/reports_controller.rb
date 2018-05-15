@@ -13,8 +13,16 @@ class ReportsController < ApplicationController
     @end_date = report_params[:end_date] ||= Date.today.to_s # Default to today
     unless @status == 'shipments'
       # Tickets report
-      @tickets = Ticket.all_by_date_and_status_and_yard(@status.split(',').map(&:to_i), current_user.token, current_yard_id, @start_date, @end_date) unless current_user.customer?
-      @tickets = Ticket.all_by_date_and_customers(@status.split(',').map(&:to_i), current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) if current_user.customer?
+      if current_user.customer?
+        if params[:q].blank?
+          @tickets = Ticket.all_by_date_and_customers(@status.split(',').map(&:to_i), current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) 
+        else
+          tickets = Ticket.search_all_statuses(current_user.token, current_yard_id, params[:q])
+          @tickets = tickets.select {|t| current_user.portal_customer_ids.include?(t["CustomerId"])} # Only show tickets this customer portal user has access to
+        end
+      else
+        @tickets = Ticket.all_by_date_and_status_and_yard(@status.split(',').map(&:to_i), current_user.token, current_yard_id, @start_date, @end_date)
+      end
       @line_items = []
       unless @tickets.blank?
         @tickets.each do |ticket|
