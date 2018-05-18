@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   before_save { |user| user.username = username.downcase }
   before_save { |user| user.email = email.downcase unless user.email.blank?}
   
-  before_create :confirmation_token # Remove for now to simplify sign up process
+  before_create :confirmation_token 
 #  after_commit :create_user_settings, :on => :create
   after_create :create_user_settings
   after_create :create_company, unless: :company?
@@ -36,25 +36,39 @@ class User < ActiveRecord::Base
 #  validates_presence_of :state, on: :create
   validates_uniqueness_of :username, scope: :dragon_account_number, case_sensitive: false
 #  validates_uniqueness_of :email, case_sensitive: false
-  validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
+#  validates :terms_of_service, acceptance: true, on: :create, allow_nil: false
   
   ############################
   #     Instance Methods     #
   ############################
   
   def generate_scrap_dragon_token(user_params)
-#    user = User.find(user_params[:id])
     company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
     unless company.blank?
       api_url = "https://#{company.dragon_api}/token"
     else
      api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
     end
-    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
-#    JSON.parse(response)
-    Rails.logger.info response
-    access_token_string = JSON.parse(response)["access_token"]
-    AccessToken.create(token_string: access_token_string, user_id: id, expiration: Time.now + 24.hours)
+    begin
+      response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
+      Rails.logger.info response
+      data = JSON.parse(response)
+      unless data.blank? or data["access_token"].blank?
+        access_token_record = AccessToken.create(token_string: data["access_token"], user_id: id, expiration: Time.now + 24.hours)
+        return access_token_record
+      else
+        return nil
+      end
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "generate_scrap_dragon_token: #{e.response}"
+        return nil
+      else
+        Rails.logger.info "generate_scrap_dragon_token: #{e}"
+        return nil
+      end
+    end
+      
   end
   
   def update_scrap_dragon_token(pass)
@@ -427,7 +441,22 @@ class User < ActiveRecord::Base
         return user 
       end
     else
-      nil
+      company = Company.where(account_number: account_number).first
+      unless company.blank?
+        user = User.create(username: login, password: pass, password_confirmation: pass, role: "basic", 
+          dragon_account_number: account_number, company_id: company.id, company_name: company.name)
+        user.email_activate
+        user_access_token = user.generate_scrap_dragon_token(username: login, password: pass, dragon_account_number: account_number)
+        unless user_access_token.blank?
+          user.access_token.update_attribute(:roles, user.dragon_role_names)
+          return user
+        else
+          user.destroy
+          return nil
+        end
+      else
+        return nil
+      end
     end
   end
   
