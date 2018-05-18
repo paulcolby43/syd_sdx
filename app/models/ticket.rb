@@ -857,21 +857,44 @@ class Ticket
   
   def self.commodity_summary_to_csv(line_items_array, tickets_array)
     require 'csv'
-    headers = ['DateCreated', 'Ticket', 'Customer', 'PrintDescription', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
+    headers = ['DateCreated', 'Description', 'Ticket', 'Job', 'BOL', 'PO', 'Customer', 'Customer #', 'Customer Ship', 'PrintDescription', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
     
     CSV.generate(headers: true) do |csv|
       csv << headers
       net_total = 0
       extended_amount_total = 0
       line_items_array.each do |line_item|
+        date_created = line_item['DateCreated']
+        description = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"]
+        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
+        job_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"]
+        bol_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"]
+        purchase_order_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"]
+        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
+        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+        name = company_name.blank? ? customer_name : company_name
+        customer_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"]
+        customer_ship_date = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]
+        print_description = line_item['PrintDescription']
+        gross_weight = line_item['GrossWeight']
+        tare_weight = line_item['TareWeight']
+        gross_weight = line_item['GrossWeight']
+        net_weight = line_item['NetWeight']
+        price = line_item['Price']
+        extended_amount = line_item['ExtendedAmount']
+        
         net_total = net_total + line_item['NetWeight'].to_d
         extended_amount_total = extended_amount_total + line_item['ExtendedAmount'].to_d
-        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
-        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
-        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
-        csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
+        
+#        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
+#        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+#        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
+        
+#        csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
+          csv << [date_created, description, ticket_number, job_number, bol_number, purchase_order_number, name, customer_number, customer_ship_date, 
+            print_description, gross_weight, tare_weight, net_weight, price, extended_amount]
       end
-      csv << ['', '', '', '', '', '', net_total, '', extended_amount_total]
+      csv << ['', '', '', '', '', '', '', '', '', '', '', '', net_total, '', extended_amount_total]
     end
   end
   
