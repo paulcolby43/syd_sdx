@@ -81,17 +81,17 @@
                 %td
                   =# line_item["DateCreated"].to_date.strftime("%m/%d/%y")
                   = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["DateCreated"].to_date.strftime("%m/%d/%y")
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"]
+                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue ''
                 %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'], yard_id: @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["YardId"])
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"]
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"]
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"]
+                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue ''
+                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue ''
+                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue ''
                 %td
                   - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
                     = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
                   - else
                     = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"]
+                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue ''
                 %td= "#{DateTime.parse(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]) rescue '2000-01-01'}".to_date.strftime("%m/%d/%y")
                 %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
