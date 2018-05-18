@@ -443,21 +443,49 @@ class User < ActiveRecord::Base
     else
       company = Company.where(account_number: account_number).first
       unless company.blank?
-        user = User.create(username: login, password: pass, password_confirmation: pass, role: "basic", 
+        token = User.new_dragon_token(username: login, password: pass, dragon_account_number: account_number)
+        unless token.blank?
+          user = User.create(username: login, password: pass, password_confirmation: pass, role: "basic", 
           dragon_account_number: account_number, company_id: company.id, company_name: company.name)
-        user.email_activate
-        user_access_token = user.generate_scrap_dragon_token(username: login, password: pass, dragon_account_number: account_number)
-        unless user_access_token.blank?
+          user.email_activate
+          AccessToken.create(token_string: token, user_id: user.id, expiration: Time.now + 24.hours)
           user.access_token.update_attribute(:roles, user.dragon_role_names)
           return user
         else
-          user.destroy
           return nil
         end
       else
         return nil
       end
     end
+  end
+  
+  def self.new_dragon_token(user_params)
+    company = Company.where(account_number: user_params[:dragon_account_number]).first unless user_params[:dragon_account_number].blank?
+    unless company.blank?
+      api_url = "https://#{company.dragon_api}/token"
+    else
+     api_url = "https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/token"
+    end
+    begin
+      response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
+      Rails.logger.info response
+      data = JSON.parse(response)
+      unless data.blank? or data["access_token"].blank?
+        return data["access_token"]
+      else
+        return nil
+      end
+    rescue RestClient::ExceptionWithResponse => e
+      unless e.response.blank?
+        Rails.logger.info "User.new_dragon_token: #{e.response}"
+        return nil
+      else
+        Rails.logger.info "User.new_dragon_token: #{e}"
+        return nil
+      end
+    end
+      
   end
   
   def self.generate_scrap_dragon_token(user_params, user_id)
