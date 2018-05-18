@@ -164,7 +164,6 @@ class Ticket
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
-#    api_url = URI.encode("https://#{ENV['SCRAP_DRAGON_API_HOST']}:#{ENV['SCRAP_DRAGON_API_PORT']}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
@@ -173,6 +172,52 @@ class Ticket
     else # Array of results returned
       return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
+  end
+  
+  def self.search_all_statuses(auth_token, yard_id, query_string)
+    require 'uri'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    closed_api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/1?q=#{query_string}&d=100&t=100")
+    held_api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/2?q=#{query_string}&d=100&t=100")
+    paid_api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/3?q=#{query_string}&d=100&t=100")
+    
+    closed_xml_content = RestClient::Request.execute(method: :get, url: closed_api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    closed_data= Hash.from_xml(closed_xml_content)
+    held_xml_content = RestClient::Request.execute(method: :get, url: held_api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    held_data= Hash.from_xml(held_xml_content)
+    paid_xml_content = RestClient::Request.execute(method: :get, url: paid_api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    paid_data= Hash.from_xml(paid_xml_content)
+    
+    if closed_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      closed_tickets = [closed_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      closed_tickets =  closed_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+    
+    if held_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      held_tickets = [held_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      held_tickets =  held_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+    
+    if paid_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+      paid_tickets = [paid_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+    else # Array of results returned
+      paid_tickets =  paid_data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+    end
+    
+    if closed_tickets.blank?
+      closed_tickets = []
+    end
+    if held_tickets.blank?
+      held_tickets = []
+    end
+    if paid_tickets.blank?
+      paid_tickets = []
+    end
+    
+    return closed_tickets + held_tickets + paid_tickets
   end
   
   # Get next available ticket number
@@ -812,21 +857,44 @@ class Ticket
   
   def self.commodity_summary_to_csv(line_items_array, tickets_array)
     require 'csv'
-    headers = ['DateCreated', 'Ticket', 'Customer', 'PrintDescription', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
+    headers = ['DateCreated', 'Description', 'Ticket', 'Job', 'BOL', 'PO', 'Customer', 'Customer #', 'Customer Ship', 'PrintDescription', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
     
     CSV.generate(headers: true) do |csv|
       csv << headers
       net_total = 0
       extended_amount_total = 0
       line_items_array.each do |line_item|
+        date_created = line_item['DateCreated']
+        description = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue ''
+        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"] rescue ''
+        job_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue ''
+        bol_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue ''
+        purchase_order_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue ''
+        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
+        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+        name = company_name.blank? ? customer_name : company_name
+        customer_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue ''
+        customer_ship_date = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"] rescue ''
+        print_description = line_item['PrintDescription']
+        gross_weight = line_item['GrossWeight']
+        tare_weight = line_item['TareWeight']
+        gross_weight = line_item['GrossWeight']
+        net_weight = line_item['NetWeight']
+        price = line_item['Price']
+        extended_amount = line_item['ExtendedAmount']
+        
         net_total = net_total + line_item['NetWeight'].to_d
         extended_amount_total = extended_amount_total + line_item['ExtendedAmount'].to_d
-        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
-        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
-        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
-        csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
+        
+#        ticket_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"]
+#        company_name = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+#        customer_name = "#{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['FirstName']} #{tickets_array.find {|ticket| ticket['Id'] == line_item['TicketHeadId']}['LastName']}"
+        
+#        csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
+          csv << [date_created, description, ticket_number, job_number, bol_number, purchase_order_number, name, customer_number, customer_ship_date, 
+            print_description, gross_weight, tare_weight, net_weight, price, extended_amount]
       end
-      csv << ['', '', '', '', '', '', net_total, '', extended_amount_total]
+      csv << ['', '', '', '', '', '', '', '', '', '', '', '', net_total, '', extended_amount_total]
     end
   end
   
