@@ -61,10 +61,12 @@
             = f.text_field :zip, value: "#{current_user.blank? ? '' : current_user.company.zip}", :class => "form-control input-lg", placeholder: "Zip", required: true
         .row.form-group
           %div{:class => "col-sm-6"}
+            -#
             .well
               %div
-                = f.check_box :terms_of_service, required: true
-                I have read and agree to the 
+                -#
+                  = f.check_box :terms_of_service, required: true
+                  I have read and agree to the 
                 = link_to 'Terms of Service', welcome_tos_path, target: '_blank'
                 and 
                 = link_to 'Privacy Policy', welcome_privacy_path, target: '_blank'
@@ -100,8 +102,9 @@
         .row.form-group
           %div{:class => "col-sm-6"}
             .well
-              = f.check_box :terms_of_service, required: true
-              User has read and agrees to the 
+              -#
+                = f.check_box :terms_of_service, required: true
+                User has read and agrees to the 
               = link_to 'Terms of Service', welcome_tos_path, target: '_blank'
               and 
               = link_to 'Privacy Policy', welcome_privacy_path, target: '_blank'
