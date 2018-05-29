@@ -127,13 +127,12 @@ class TicketsController < ApplicationController
       rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, current_yard_id).reverse
       @images_array =  @images_array | rt_lookup_images # Union the image arrays
     end
+    
     @combolists = Vehicle.combolists(current_user.token)
-    unless @combolists.blank?
-      @vehicle_makes = @combolists["VehicleMakes"]["VehicleMakeInformation"]
-      @vehicle_models = @combolists["VehicleModels"]["VehicleModelInformation"]
-      @body_styles = @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
-      @vehicle_colors = @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
-    end
+    @vehicle_makes = @combolists.blank? ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
+    @vehicle_models = @combolists.blank? ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
+    @body_styles = @combolists.blank? ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+    @vehicle_colors = @combolists.blank? ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
   end
 
   # PATCH/PUT /tickets/1
