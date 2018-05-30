@@ -173,7 +173,8 @@ class Image < ActiveRecord::Base
     
 #    Rails.logger.debug "***********response: #{response}"
 #    data= Hash.from_xml(response.first) # Get first element of array response and convert xml response to a hash
-    data= Hash.from_xml(response) # Convert xml response to a hash
+#    data= Hash.from_xml(response) # Convert xml response to a hash
+    data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"] # SQL response comes back in <RESULT><ROW>
