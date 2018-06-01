@@ -295,12 +295,14 @@ class Image < ActiveRecord::Base
 
       latitude = data.gps_latitude
       longitude = data.gps_longitude
+      latitude_ref = data.gps_latitude_ref
+      longitude_ref = data.gps_longitude_ref
 
       latitude_decimal = latitude.blank? ? nil : (latitude[0] + latitude[1]/60 + latitude[2]/3600).to_f.round(6)
       longitude_decimal = longitude.blank? ? nil : (longitude[0] + longitude[1]/60 + longitude[2]/3600).to_f.round(6)
 
       unless latitude_decimal.blank? or longitude_decimal.blank?
-        return "#{latitude_decimal},#{longitude_decimal}"
+        return "#{latitude_decimal} #{latitude_ref},#{longitude_decimal} #{longitude_ref}"
       else
         return ""
       end
