@@ -285,6 +285,31 @@ class Image < ActiveRecord::Base
       nil
     end
   end
-    
+  
+  def self.latitude_and_longitude(company, capture_sequence_number, yard_id)
+    begin
+      image_source = Image.jpeg_image(company, capture_sequence_number, yard_id)
+      data = Exif::Data.new(image_source)
+
+      latitude = data.gps_latitude
+      longitude = data.gps_longitude
+
+      latitude_decimal = latitude.blank? ? nil : (latitude[0] + latitude[1]/60 + latitude[2]/3600).to_f.round(6)
+      longitude_decimal = longitude.blank? ? nil : (longitude[0] + longitude[1]/60 + longitude[2]/3600).to_f.round(6)
+
+      unless latitude_decimal.blank? or longitude_decimal.blank?
+        return "#{latitude_decimal},#{longitude_decimal}"
+      else
+        return ""
+      end
+    rescue => e
+      Rails.logger.info "Image.latitude_and_longitude: #{e}"
+      return ""
+    end
+  end
+  
+  def Image.google_map(center)
+    return "https://www.google.com/maps/embed/v1/place?key=#{ENV['GOOGLE_MAPS_API_KEY']}&q=#{center}"
+  end
   
 end

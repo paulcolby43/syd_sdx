@@ -39,7 +39,7 @@
                 .pull-right
                   = "#{@image['CAMERA_NAME']}"
             %div.list-group-item
-              %strong= "Date/Time:"
+              %strong= "Time:"
               .pull-right
                 = "#{@image['SYS_DATE_TIME']}"
             - if @image['HIDDEN'] == '1'
@@ -47,5 +47,9 @@
                 %strong= "Hidden:"
                 .pull-right
                   Yes
+        - unless @latitude_and_longitude.blank?
+          .embed-responsive.embed-responsive-16by9
+            %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map(@latitude_and_longitude), :style => "border:0"}
+
 
 = render partial: "shared/footer_navbar", locals: {title: "Images"}

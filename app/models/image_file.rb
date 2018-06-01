@@ -27,6 +27,27 @@ class ImageFile < ActiveRecord::Base
     ImageBlobWorker.perform_async(self.id) 
   end
   
+  def latitude_and_longitude
+    begin
+      data = Exif::Data.new(File.open(self.file.current_path))
+
+      latitude = data.gps_latitude
+      longitude = data.gps_longitude
+
+      latitude_decimal = latitude.blank? ? nil : (latitude[0] + latitude[1]/60 + latitude[2]/3600).to_f
+      longitude_decimal = longitude.blank? ? nil : (longitude[0] + longitude[1]/60 + longitude[2]/3600).to_f
+
+      unless latitude_decimal.blank? or longitude_decimal.blank?
+        return "#{latitude_decimal}, #{longitude_decimal}"
+      else
+        return ""
+      end
+    rescue => e
+      Rails.logger.info "image_file.latitude_and_longitude: #{e}"
+      return ""
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################
