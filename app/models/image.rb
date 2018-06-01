@@ -287,9 +287,11 @@ class Image < ActiveRecord::Base
   end
   
   def self.latitude_and_longitude(company, capture_sequence_number, yard_id)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+    
     begin
-      image_source = Image.jpeg_image(company, capture_sequence_number, yard_id)
-      data = Exif::Data.new(image_source)
+      data = Exif::Data.new(open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE))
 
       latitude = data.gps_latitude
       longitude = data.gps_longitude
