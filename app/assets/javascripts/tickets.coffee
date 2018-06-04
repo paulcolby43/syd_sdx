@@ -296,7 +296,8 @@ jQuery ->
   $('input[type=file]').bootstrapFileInput()
 
   ### File upload ###
-  $("#new_image_file").fileupload
+  #$("#new_image_file").fileupload
+  $(".image_file_upload_form").fileupload
     dataType: "script"
     disableImageResize: false
     imageMaxWidth: 1024

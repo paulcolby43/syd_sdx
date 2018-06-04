@@ -1,5 +1,5 @@
 %div{:id => "upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
-  = form_for ImageFile.new do |f|
+  = form_for ImageFile.new, html: {class: 'image_file_upload_form'} do |f|
     .modal-dialog.modal-sm
       .modal-content
         -#
