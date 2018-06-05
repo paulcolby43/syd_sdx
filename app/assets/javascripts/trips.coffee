@@ -145,3 +145,38 @@ jQuery ->
 
   $('.hide_trip_icon').on 'click', ->
     $(this).closest('.panel').remove()
+
+  ### Get User Geolocation ###
+  $('#find_my_location').on 'click', (e) ->
+    output = document.getElementById('out')
+    google_maps_api_key = $(this).data("google-maps-api-key")
+    user_id = $(this).data("user-id")
+    success = (position) ->
+      latitude = position.coords.latitude
+      longitude = position.coords.longitude
+      output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
+      img = new Image
+      img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=19&size=300x300&sensor=false&key=' + google_maps_api_key
+      output.appendChild img
+      $.ajax
+        url: "/users/" + user_id + "/update_latitude_and_longitude"
+        dataType: 'json'
+        data:
+          latitude: latitude
+          longitude: longitude
+        success: (data) ->
+          return
+        error: ->
+          console.log 'Error saving location to user.'
+          return
+    error = ->
+      output.innerHTML = 'Unable to retrieve your location'
+      return
+
+    if !navigator.geolocation
+      output.innerHTML = '<p>Geolocation is not supported by your browser</p>'
+      return
+    output.innerHTML = '<p><i class="fa fa-spinner fa-spin"></i> Locating…</p>'
+    navigator.geolocation.getCurrentPosition success, error
+    return
+  ### End Get User Geolocation ###

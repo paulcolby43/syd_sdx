@@ -113,6 +113,7 @@ Rails.application.routes.draw do
   resources :users do
     member do
       get :confirm_email
+      get :update_latitude_and_longitude
     end
     collection do
       get :resend_confirmation_instructions

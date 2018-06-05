@@ -80,6 +80,12 @@
         %p
           %strong View Images
         %p= "#{@user.view_images? ? 'Yes' : 'No'}"
+      .col-sm-12.col-md-6
+        - unless @user.latitude.blank? and @user.longitude.blank?
+          %p
+            %strong Recent Location
+          .embed-responsive.embed-responsive-16by9
+            %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{@user.latitude},#{@user.longitude}"), :style => "border:0"}
 
     
     .row

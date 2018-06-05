@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180227154846) do
+ActiveRecord::Schema.define(version: 20180605144828) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -218,6 +218,8 @@ ActiveRecord::Schema.define(version: 20180227154846) do
     t.datetime "password_reset_sent_at"
     t.string   "zip"
     t.boolean  "view_images",            default: true
+    t.float    "latitude"
+    t.float    "longitude"
   end
 
 end
