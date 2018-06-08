@@ -192,7 +192,7 @@ jQuery ->
 
   ### Locate Container ###
   $('.task_containers').on 'click', '.locate_container', (e) ->
-
+    e.preventDefault()
     output = $(this).closest('.tab-pane').find('.location_data')[0]
     google_maps_api_key = $(this).data("google-maps-api-key")
     latitude = undefined
@@ -260,7 +260,7 @@ jQuery ->
     if !navigator.geolocation
       output.innerHTML = '<p>Geolocation is not supported by your browser</p>'
       return
-    #output.innerHTML = '<p><i class="fa fa-spinner fa-spin"></i> Locating…</p>'
+    output.innerHTML = '<p><i class="fa fa-spinner fa-spin"></i> Locating…</p>'
     navigator.geolocation.getCurrentPosition success, error
 
     return
