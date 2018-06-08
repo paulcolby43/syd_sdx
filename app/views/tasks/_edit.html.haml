@@ -66,6 +66,12 @@
   
   .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
     %br
+    -#
+      %p
+        %button.btn.btn-primary{class: 'find_my_location', "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id} 
+          %i.fa.fa-map-marker
+          Find my location
+    .location_data
     %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
       - unless task_containers.blank?
         - task_containers.each do |container|
@@ -76,27 +82,34 @@
                   %div.list-group
                     .list-group-item
                       .pull-right 
-                        %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId']}
+                        %a{href: '#', class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
+                          %i.fa.fa-map-marker.fa-lg
+                          %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
+                        &nbsp;
+                        %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
                           %i.fa.fa-trash.fa-lg.text-danger
                           %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                       = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
                       =# Container.find_by_container_id(@containers, container['ContainerId'])
 
     %p
-      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_form" do
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal update_task_form", id: "task_#{task['Id']}_form" do
         =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             =# label_tag "New Container", nil, :class => 'control-label'
             %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+            -#
+              %p= text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
+              %p= text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
               Add Container
               
     %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
-      = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal", id: "task_#{task['Id']}_create_new_container_form" do
+      = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task['Id']}_create_new_container_form" do
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             .row.form-group
@@ -109,6 +122,13 @@
               %div{:class => "col-xs-12"}
                 = label_tag "Tag Number", nil, :class => 'control-label'
                 = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+              -#
+                %div{:class => "col-xs-12"}
+                  = label_tag "Latitude", nil, :class => 'control-label'
+                  = text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
+                %div{:class => "col-xs-12"}
+                  = label_tag "Longitude", nil, :class => 'control-label'
+                  = text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
               %div{:class => "col-xs-12"}
                 = label_tag "Description", nil, :class => 'control-label'
                 = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true

@@ -43,7 +43,7 @@ class Task
       return data["ApiUpdateDispatchTaskDetailsResponse"]
   end
   
-  def self.add_container(auth_token, task_id, container_id)
+  def self.add_container(auth_token, task_id, container_id, latitude, longitude)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/dispatch/containerxlink"
@@ -52,8 +52,10 @@ class Task
           "DispatchTaskId" => task_id,
           "ContainerId" => container_id,
           "IsUpdateRequired" => "true",
-          "MobileUpdateType" => "0", # Add container
-          "EntryDate" => Time.now.utc.iso8601 # Remove the UTC from the end
+          "MobileUpdateType" => "0", # Add container - mobileupdateType is enumerated {0,1,2} for add,update,delete
+          "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
+          "latitude" => latitude,
+          "longitude" => longitude
           }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info "Task.remove_container json encoded payload: #{json_encoded_payload}"
@@ -62,6 +64,31 @@ class Task
       payload: json_encoded_payload)
     
     Rails.logger.info "Task.add_container response: #{response}"
+    data = Hash.from_xml(response)
+    return data["UpdateMobileDispatchContainerXLinkResponse"]
+  end
+  
+  def self.update_container(auth_token, task_id, container_id, latitude, longitude)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/containerxlink"
+    
+    payload = {
+          "DispatchTaskId" => task_id,
+          "ContainerId" => container_id,
+          "IsUpdateRequired" => "true",
+          "MobileUpdateType" => "1", # Update container - mobileupdateType is enumerated {0,1,2} for add,update,delete
+          "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
+          "latitude" => latitude,
+          "longitude" => longitude
+          }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info "Task.update_container json encoded payload: #{json_encoded_payload}"
+
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
+      payload: json_encoded_payload)
+    
+    Rails.logger.info "Task.update_container response: #{response}"
     data = Hash.from_xml(response)
     return data["UpdateMobileDispatchContainerXLinkResponse"]
   end
@@ -100,7 +127,9 @@ class Task
           "DispatchContainerStatus" => 0,
           "Description" => container_params[:description],
           "UserDispatchContainerNumber" => container_params[:container_number],
-          "TagNumber" => container_params[:tag_number]
+          "TagNumber" => container_params[:tag_number],
+          "latitude" => container_params[:latitude],
+          "longitude" => container_params[:longitude]
           }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"

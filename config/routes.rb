@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     member do
       get 'remove_container'
       get 'create_new_container'
+      get 'update_container'
     end
   end
   resources :trips

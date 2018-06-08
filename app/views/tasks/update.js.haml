@@ -1,12 +1,14 @@
 - unless @container_id.blank?
   var container_name = $("#task_#{@task['id']}_container_select option:selected").text();
   - if @update_task_response["Success"] == 'true'
-    $("#task_#{@task['id']}_containers").prepend("<div class='row'><p><div class='col-xs-12 col-sm-12 col-md-12'><div class='panel panel-primary'><div class='list-group'><div class='list-group-item'><div class='pull-right'><a class='remove_container' data-container-id=#{@container_id} data-task-id=#{@task['id']} href='#'> <i class='fa fa-trash fa-lg text-danger'></i> <i class='fa fa-spinner fa-spin fa-lg text-danger' style='display:none;'></i> </a> </div>" + container_name + "</div></div></div></div></p></div>")
+    $("#task_#{@task['id']}_containers").prepend("<div class='row'><p><div class='col-xs-12 col-sm-12 col-md-12'><div class='panel panel-primary'><div class='list-group'><div class='list-group-item'><div class='pull-right'> <a class='locate_container' data-container-id='#{@container_id}' data-task-id='#{@task_id}', style='text-decoration: none;', data-google-maps-api-key='#{ENV["GOOGLE_MAPS_API_KEY"]}', data-user-id='#{current_user.id}', href='#'> <i class='fa fa-map-marker fa-lg'></i> <i class='fa fa-spinner fa-spin fa-lg' style='display:none;'></i> </a> &nbsp; <a class='remove_container' data-container-id=#{@container_id} data-task-id=#{@task['id']} href='#'> <i class='fa fa-trash fa-lg text-danger'></i> <i class='fa fa-spinner fa-spin fa-lg text-danger' style='display:none;'></i> </a> </div>" + container_name + "</div></div></div></div></p></div>")
   -# Clear container select search
   $("#task_#{@task['id']}_container_select").val(null).trigger('change');
 
 -# Update task status color
-$("#task_#{@task['id']}_link").removeClass().addClass( "list-group-item #{@task_status_color}" );
+- unless @task_status_color.blank?
+  $("#task_#{@task['id']}_link").removeClass().addClass( "list-group-item #{@task_status_color}" );
 
 -# Update task status string
-$("#task_#{@task['id']}_status_string").html( "#{@task_status_string}" );
+- unless @task_status_string.blank?
+  $("#task_#{@task['id']}_status_string").html( "#{@task_status_string}" );

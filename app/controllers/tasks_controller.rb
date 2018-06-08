@@ -43,7 +43,8 @@ class TasksController < ApplicationController
       @task_status_string = task_status_string(task_params[:status])
     else
       @container_id = task_params[:container_id]
-      @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id)
+      @task_id = task_params[:id]
+      @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id, task_params[:latitude], task_params[:longitude])
     end
     respond_to do |format|
       format.html {
@@ -91,6 +92,19 @@ class TasksController < ApplicationController
           @error = @create_new_container_response["FailureInformation"]
         end
       }
+    end
+  end
+  
+  def update_container
+    respond_to do |format|
+      format.json { 
+        @update_container_response = Task.update_container(current_user.token, params[:id], params[:container_id], params[:latitude], params[:longitude])
+        if @update_container_response["Success"] == "true"
+          render json: {results: nil}, :status => :ok
+        else
+          render json: {error: 'Error updating container'}, status: :unprocessable_entity
+        end
+        }
     end
   end
 

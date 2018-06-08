@@ -115,6 +115,7 @@ jQuery ->
           console.log 'Error removing container.'
           return
       return
+  ### End Remove Container ###
 
   ### Task status being changed - check if all other tasks in this trip are set to complete, as well as whether previous tasks are completed. ###
   $('.task_status').on 'change', ->
@@ -147,16 +148,24 @@ jQuery ->
     $(this).closest('.panel').remove()
 
   ### Get User Geolocation ###
-  $('#find_my_location').on 'click', (e) ->
-    output = document.getElementById('out')
+  $('.find_my_location').on 'click', (e) ->
+    #output = document.getElementById('out')
+    output = $(this).closest('.tab-pane').find('.location_data')[0]
     google_maps_api_key = $(this).data("google-maps-api-key")
     user_id = $(this).data("user-id")
+    update_task_form = $(this).closest('.tab-pane').find('.update_task_form')
+    new_container_form = $(this).closest('.tab-pane').find('.new_container_form')
     success = (position) ->
       latitude = position.coords.latitude
       longitude = position.coords.longitude
-      output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
+      update_task_form.find('#container_latitude').val latitude
+      new_container_form.find('#container_latitude').val latitude
+      update_task_form.find('#container_longitude').val longitude
+      new_container_form.find('#container_longitude').val longitude
+      #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
+      output.innerHTML = ''
       img = new Image
-      img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=19&size=300x300&sensor=false&key=' + google_maps_api_key
+      img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
       output.appendChild img
       $.ajax
         url: "/users/" + user_id + "/update_latitude_and_longitude"
@@ -180,3 +189,79 @@ jQuery ->
     navigator.geolocation.getCurrentPosition success, error
     return
   ### End Get User Geolocation ###
+
+  ### Locate Container ###
+  $('.task_containers').on 'click', '.locate_container', (e) ->
+
+    output = $(this).closest('.tab-pane').find('.location_data')[0]
+    google_maps_api_key = $(this).data("google-maps-api-key")
+    latitude = undefined
+    longitude = undefined
+
+    user_id = $(this).data("user-id")
+    container_id = $(this).data("container-id")
+    task_id = $(this).data("task-id")
+    map_marker_icon = $(this).find( ".fa-map-marker" )
+    map_marker_icon_spinner = $(this).find( ".fa-spinner" )
+    
+    map_marker_icon_spinner.show()
+    map_marker_icon.hide()
+
+    success = (position) ->
+      map_marker_icon_spinner.hide()
+      map_marker_icon.show()
+      latitude = position.coords.latitude
+      longitude = position.coords.longitude
+      #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
+      output.innerHTML = ''
+      img = new Image
+      img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
+      output.appendChild img
+      update_container_ajax()
+      update_user_ajax()
+    error = ->
+      map_marker_icon_spinner.hide()
+      map_marker_icon.show()
+      output.innerHTML = 'Unable to retrieve your location'
+      return
+
+    update_container_ajax = ->
+      $.ajax
+        url: "/tasks/" + task_id + "/update_container"
+        dataType: 'json'
+        data:
+          container_id: container_id
+          latitude: latitude
+          longitude: longitude
+        success: (data) ->
+          map_marker_icon_spinner.hide()
+          map_marker_icon.show()
+          return
+        error: ->
+          map_marker_icon_spinner.hide()
+          map_marker_icon.show()
+          alert 'Error locating container.'
+          console.log 'Error locating container.'
+          return
+
+    update_user_ajax = ->
+      $.ajax
+        url: "/users/" + user_id + "/update_latitude_and_longitude"
+        dataType: 'json'
+        data:
+          latitude: latitude
+          longitude: longitude
+        success: (data) ->
+          return
+        error: ->
+          console.log 'Error saving location to user.'
+          return
+
+    if !navigator.geolocation
+      output.innerHTML = '<p>Geolocation is not supported by your browser</p>'
+      return
+    #output.innerHTML = '<p><i class="fa fa-spinner fa-spin"></i> Locating…</p>'
+    navigator.geolocation.getCurrentPosition success, error
+
+    return
+  ### End Locate Container ###
