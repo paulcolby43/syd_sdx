@@ -5,9 +5,10 @@
   %li
     %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
       Containers
-  %li
-    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
-      Images
+  -#
+    %li
+      %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
+        Images
 .tab-content
 
   .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
@@ -75,22 +76,54 @@
     %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
       - unless task_containers.blank?
         - task_containers.each do |container|
+          - container_number = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
           %div.row
             %p
               .col-xs-12.col-sm-12.col-md-12
                 %div.panel.panel-primary
-                  %div.list-group
-                    .list-group-item
-                      .pull-right 
-                        %a{href: '#', class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
-                          %i.fa.fa-map-marker.fa-lg
-                          %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
-                        &nbsp;
-                        %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
-                          %i.fa.fa-trash.fa-lg.text-danger
-                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
-                      = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
-                      =# Container.find_by_container_id(@containers, container['ContainerId'])
+                  .panel-body
+                    .pull-right 
+                      %a{href: '#', id: 'container_picture_button', class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
+                        %i.fa.fa-camera
+                      &nbsp;
+                      %a{href: '#', class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
+                        %i.fa.fa-map-marker.fa-lg
+                        %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
+                      &nbsp;
+                      %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
+                        %i.fa.fa-trash.fa-lg.text-danger
+                        %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                    = container_number
+
+                    = form_for ImageFile.new do |f|
+                      = f.hidden_field :user_id, value: current_user.id
+                      = f.hidden_field :yard_id, value: current_yard_id
+                      = f.hidden_field :customer_name
+                      = f.hidden_field :service_request_number
+                      = f.hidden_field :container_number
+                      = f.hidden_field :event_code
+                      = f.hidden_field :event_code_id
+                      %div{:id => 'uploads', :style => 'display:none;'}
+                        %p{id: "upload_button", style: "display:block;"}
+                          = f.file_field :file, name: "image_file[file]", id: "container_#{container['ContainerId']}_file_upload_button", "data-container-id" => container['ContainerId'], :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+                    .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+                      = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+                      Uploading ...
+                    .row.task_pictures{style: 'margin-top: 5px;'}
+                      - Image.api_find_all_by_container_number_and_service_request_number(container_number, task['WorkOrderNumber'], current_user.company, current_yard_id).last(3).each do |image|
+                        .col-xs-4.col-sm-4.col-md-4.col-lg-4
+                          = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
+
+                    .clear
+                    %script{:id => "template-upload", :type => "text/x-tmpl"}
+                      .upload
+                        {%=o.name%}
+                        .progress.progress-striped
+                          .progress-bar{:style => "width: 0%"}
+                    %script{:id => "template-download", :type => "text/x-tmpl"}
+                      .download
+                        {%=o.name%}
+  
 
     %p
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal update_task_form", id: "task_#{task['Id']}_form" do
@@ -100,6 +133,10 @@
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
             =# label_tag "New Container", nil, :class => 'control-label'
             %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+            = hidden_field_tag "task[container_number]"
+            = hidden_field_tag "task[customer]", task['Customer']
+            = hidden_field_tag "task[work_order_number]", task['WorkOrderNumber']
+            = hidden_field_tag "task[type]", task['TaskType']
             -#
               %p= text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
               %p= text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
@@ -112,6 +149,9 @@
       = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task['Id']}_create_new_container_form" do
         .row.form-group
           %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+            = hidden_field_tag "container[customer]", task['Customer']
+            = hidden_field_tag "container[work_order_number]", task['WorkOrderNumber']
+            = hidden_field_tag "container[type]", task['TaskType']
             .row.form-group
               %div{:class => "col-xs-12"}
                 = label_tag "Container Type", nil, :class => 'control-label'
@@ -146,31 +186,9 @@
     
 
   
-
-  .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_images"}
-    %br
-    -#
-      - Image.api_find_all_by_service_request_number(task['WorkOrderNumber'], current_user.company, current_yard_id).each do |image|
-        .thumbnail
-          = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-    = form_for ImageFile.new do |f|
-      = f.hidden_field :user_id, value: current_user.id
-      = f.hidden_field :yard_id, value: current_yard_id
-      = f.hidden_field :customer_name, value: "#{task['Customer']}"
-      =# f.hidden_field :tare_seq_nbr
-      =# f.hidden_field :commodity_name
-      =# f.hidden_field :weight
-      =# f.hidden_field :ticket_number, value: @ticket["TicketNumber"]
-      = f.hidden_field :service_request_number, value: task['WorkOrderNumber']
-      .form-group{:id => "event_code"}
-        .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
-          - current_user.company.image_event_codes.each do |event_code|
-            %label.btn.btn-lg.btn-default.btn-block.event_code_radio
-              = f.radio_button :event_code_id, event_code.id, required: true
-              = event_code.name
-      %div{:id => 'uploads', :style => 'display:block;'}
-        %p{id: "upload_button", style: "display:block;"}
-          = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+  -#
+    .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_images"}
+      %br
       .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
         = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
         Uploading ...
@@ -185,7 +203,46 @@
       %script{:id => "template-download", :type => "text/x-tmpl"}
         .download
           {%=o.name%}
-    -#
-      %p
-        %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Photo"}} 
-          Photo
+      -#
+        - Image.api_find_all_by_service_request_number(task['WorkOrderNumber'], current_user.company, current_yard_id).each do |image|
+          .thumbnail
+            = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+      -#
+        = form_for ImageFile.new do |f|
+          = f.hidden_field :user_id, value: current_user.id
+          = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :customer_name, value: "#{task['Customer']}"
+          =# f.hidden_field :tare_seq_nbr
+          =# f.hidden_field :commodity_name
+          =# f.hidden_field :weight
+          =# f.hidden_field :ticket_number, value: @ticket["TicketNumber"]
+          = f.hidden_field :service_request_number, value: task['WorkOrderNumber']
+          = f.hidden_field :container_number
+          = f.hidden_field :event_code
+          .form-group{:id => "event_code"}
+            .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
+              - current_user.company.image_event_codes.each do |event_code|
+                %label.btn.btn-lg.btn-default.btn-block.event_code_radio
+                  = f.radio_button :event_code_id, event_code.id, required: true
+                  = event_code.name
+          %div{:id => 'uploads', :style => 'display:block;'}
+            %p{id: "upload_button", style: "display:block;"}
+              = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+          .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+            = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+            Uploading ...
+          .task_pictures
+
+          .clear
+          %script{:id => "template-upload", :type => "text/x-tmpl"}
+            .upload
+              {%=o.name%}
+              .progress.progress-striped
+                .progress-bar{:style => "width: 0%"}
+          %script{:id => "template-download", :type => "text/x-tmpl"}
+            .download
+              {%=o.name%}
+      -#
+        %p
+          %a.btn.btn-primary.btn-lg.btn-block{:href => '#',  class: 'task_button', style: 'white-space: normal;', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Photo"}} 
+            Photo

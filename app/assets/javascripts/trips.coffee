@@ -33,9 +33,11 @@ jQuery ->
           current_data.fileupload 'process', data
         ).done ->
           data.submit()
-        $(this).find('.task_pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        #$(this).find('.task_pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         #$('.task_pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
-        $(".picture_loading_spinner").show()
+        #$(".picture_loading_spinner").show()
+        $(this).closest('.panel').find('.task_pictures').prepend('<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive" style="margin-bottom: 0px;"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div>')
+        $(this).closest('.panel').find(".picture_loading_spinner").show()
       else
         alert "" + file.name + " is not a gif, jpeg, or png picture file"
 
@@ -66,11 +68,14 @@ jQuery ->
       data.push tag
       return
   ).on 'select2:select', ->
-    if $(this).find('option:selected').data('select2-tag') == true
-      task_id = $(this).data("task-id")
+    task_id = $(this).data("task-id")
+    task_form = $("#task_" + task_id + "_form")
+    container_number_name = $(this).find('option:selected').text()
+    task_form.find('#task_container_number').val(container_number_name)
+    if $(this).find('option:selected').data('select2-tag') == true # New tag/container being created
       container_number = $(this).find('option:selected').val()
       new_container_div = $("#task_" + task_id + "_create_new_container")
-      task_form = $("#task_" + task_id + "_form")
+      #task_form = $("#task_" + task_id + "_form")
       new_container_div.find('#container_container_number').val(container_number)
       new_container_div.show()
       task_form.hide()
@@ -265,3 +270,23 @@ jQuery ->
 
     return
   ### End Locate Container ###
+
+  ### Container Picture Uploads ###
+  $('.task_containers').on 'click', '.container_picture_button', ->
+    event_code = $(this).data( "event-code" )
+    event_code_id = $(this).data( "event-code-id" )
+    container_number = $(this).data( "container-number" )
+    container_id = $(this).data( "container-id" )
+    customer = $(this).data( "customer" )
+    work_order_number = $(this).data( "work-order-number" )
+    #$('#image_file_event_code_id_' + event_code_id).prop 'checked', true
+    $(this).closest('.panel').find('#image_file_event_code_id').val event_code_id
+    $(this).closest('.panel').find('#image_file_event_code').val event_code
+    $(this).closest('.panel').find('#image_file_container_number').val container_number
+    $(this).closest('.panel').find('#image_file_customer_name').val customer
+    $(this).closest('.panel').find('#image_file_service_request_number').val work_order_number
+
+    #$('input[type=file]').trigger 'click'
+    $(this).closest('.panel').find('#container_' + container_id + '_file_upload_button').trigger 'click'
+    false
+  ### End Container Picture Uploads ###

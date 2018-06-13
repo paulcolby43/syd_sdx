@@ -1,0 +1,86 @@
+.row
+  %p
+  .col-xs-12.col-sm-12.col-md-12
+    .panel.panel-primary
+      .panel-body
+        .pull-right
+          %a#container_picture_button.container_picture_button{"data-container-id" => @container_id, "data-container-number" => @container_number, "data-customer" => @customer, "data-event-code" => @task_type_string, "data-work-order-number" => @work_order_number, :href => "#", :style => "text-decoration: none;"}
+            %i.fa.fa-camera
+           
+          %a.locate_container{"data-container-id" => @container_id, "data-google-maps-api-key" => ENV["GOOGLE_MAPS_API_KEY"], "data-task-id" => @task_id, "data-user-id" => current_user.id, :href => "#", :style => "text-decoration: none;", :title => "Save location"}
+            %i.fa.fa-map-marker.fa-lg
+            %i.fa.fa-spinner.fa-spin.fa-lg{:style => "display:none;"}
+           
+          %a.remove_container{"data-container-id" => @container_id, "data-task-id" => @task_id, :href => "#", :title => "Remove"}
+            %i.fa.fa-trash.fa-lg.text-danger
+            %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{:style => "display:none;"}
+        = @container_number
+        = form_for ImageFile.new do |f|
+          = f.hidden_field :user_id, value: current_user.id
+          = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :customer_name, value: @customer
+          = f.hidden_field :service_request_number, value: @work_order_number
+          = f.hidden_field :container_number, value: @container_number
+          = f.hidden_field :event_code, value: @task_type_string
+          = f.hidden_field :event_code_id
+          %div{:id => 'uploads', :style => 'display:none;'}
+            %p{id: "upload_button", style: "display:block;"}
+              = f.file_field :file, name: "image_file[file]", id: "container_#{@container_id}_file_upload_button", "data-container-id" => @container_id, :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+        .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+          = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+          Uploading ...
+        .row.task_pictures{style: 'margin-top: 5px;'}
+
+        .clear
+        %script{:id => "template-upload", :type => "text/x-tmpl"}
+          .upload
+            {%=o.name%}
+            .progress.progress-striped
+              .progress-bar{:style => "width: 0%"}
+        %script{:id => "template-download", :type => "text/x-tmpl"}
+          .download
+            {%=o.name%}
+
+:javascript
+  jQuery(function() {
+
+    /* File upload */
+    return $(".new_image_file").fileupload({
+      dataType: "script",
+      disableImageResize: false,
+      imageMaxWidth: 1024,
+      imageMaxHeight: 768,
+      imageMinWidth: 800,
+      imageMinHeight: 600,
+      imageCrop: false,
+      add: function(e, data) {
+        var current_data, file, types;
+        file = void 0;
+        types = void 0;
+        types = /(\.|\/)(gif|jpe?g|png|pdf)$/i;
+        file = data.files[0];
+        if (types.test(file.type) || types.test(file.name)) {
+          data.context = $(tmpl("template-upload", file));
+          current_data = $(this);
+          data.process(function() {
+            return current_data.fileupload('process', data);
+          }).done(function() {
+            return data.submit();
+          });
+          $(this).closest('.panel').find('.task_pictures').prepend('<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive" style="margin-bottom: 0px;"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div>');
+          return $(this).closest('.panel').find(".picture_loading_spinner").show();
+        } else {
+          return alert("" + file.name + " is not a gif, jpeg, or png picture file");
+        }
+      },
+      progress: function(e, data) {
+        var progress;
+        if (data.context) {
+          progress = parseInt(data.loaded / data.total * 100, 10);
+          return data.context.find('.progress-bar').css('width', progress + '%');
+        }
+      }
+    });
+
+    /* End file upload */
+  });

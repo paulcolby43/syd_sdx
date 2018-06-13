@@ -6,8 +6,15 @@ class ImageBlobWorker
     image_file = ImageFile.find(image_file_id)
     image_file.update_attribute(:process, true)
     image_file.file.recreate_versions!
-    event_code = image_file.event_code
-    leads_online_string = "#{event_code.camera_class}#{event_code.camera_position}"
+    unless image_file.event_code_id.blank?
+      event_code = EventCode.find(image_file.event_code_id)
+      event_code_name = event_code.name
+      leads_online_string = "#{event_code.camera_class}#{event_code.camera_position}"
+    else
+      event_code_name = image_file.event_code
+      leads_online_string = ""
+    end
+    
 
     # Create blob
     if image_file.file.content_type.start_with? 'image'
@@ -31,7 +38,7 @@ class ImageBlobWorker
                 <TABLE>images</TABLE>
                 <BLOB>#{Base64.encode64(large_image_blob_data)}</BLOB>
                 <TICKET_NBR>#{image_file.ticket_number}</TICKET_NBR>
-                <EVENT_CODE>#{event_code.name}</EVENT_CODE>
+                <EVENT_CODE>#{event_code_name}</EVENT_CODE>
                 <LEADSONLINE>#{leads_online_string}</LEADSONLINE>
                 <LOL_STORE_ID>#{image_file.user.company.leads_online_store_id}</LOL_STORE_ID>
                 <FILE_NAME>#{File.basename(image_file.file_url)}</FILE_NAME>

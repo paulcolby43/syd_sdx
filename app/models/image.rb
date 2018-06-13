@@ -278,6 +278,47 @@ class Image < ActiveRecord::Base
     end
   end
   
+  # Get all jpegger images for this company with this ticket number
+  def self.api_find_all_by_container_number_and_service_request_number(container_number, service_request_number, company, yard_id)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>select * from images where container_nbr='#{container_number}' and service_req_nbr='#{service_request_number}' and yardid='#{yard_id}'</SQL><ROWS>1000</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+
+    results = ""
+    while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
+      results = results + response
+#      puts response
+      break if (response.include?("</RESULT>"))
+    end
+    
+    ssl_client.close
+    
+#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
+    data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
+    
+    unless data["RESULT"]["ROW"].blank?
+      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["RESULT"]["ROW"]]
+      else
+        return data["RESULT"]["ROW"]
+      end
+    else
+      return [] # No images found
+    end
+    
+  end
+  
   def self.jpeg_image_data_uri(jpeg_image)
     unless jpeg_image.blank?
       "data:image/jpg;base64, #{Base64.encode64(jpeg_image)}"

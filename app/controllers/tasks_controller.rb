@@ -43,6 +43,10 @@ class TasksController < ApplicationController
       @task_status_string = task_status_string(task_params[:status])
     else
       @container_id = task_params[:container_id]
+      @container_number = task_params[:container_number]
+      @customer = task_params[:customer]
+      @work_order_number = task_params[:work_order_number]
+      @task_type_string = task_type_string(task_params[:type])
       @task_id = task_params[:id]
       @update_task_response = Task.add_container(current_user.token, task_params[:id], @container_id, task_params[:latitude], task_params[:longitude])
     end
@@ -82,9 +86,12 @@ class TasksController < ApplicationController
   def create_new_container
     respond_to do |format|
       format.js {
-        @create_new_container_response = Task.create_new_container(current_user.token, params[:id], params[:container])
+        @task_id = params[:id]
+        @customer = params[:container][:customer]
+        @work_order_number = params[:container][:work_order_number]
+        @task_type_string = task_type_string(params[:container][:type])
+        @create_new_container_response = Task.create_new_container(current_user.token, @task_id, params[:container])
         if @create_new_container_response["Success"] == "true"
-          @task_id = params[:id]
           @container_number = params[:container][:container_number]
           # Get the newly created container's ID from response
           @container_id = @create_new_container_response["ContainerId"]
@@ -113,6 +120,6 @@ class TasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def task_params
-      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container_id, :trip_id)
+      params.require(:task).permit(:id, :starting_mileage, :ending_mileage, :notes, :status, :container_id, :container_number, :trip_id, :customer, :work_order_number, :type)
     end
 end
