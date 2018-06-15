@@ -76,7 +76,9 @@
     %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
       - unless task_containers.blank?
         - task_containers.each do |container|
-          - container_number = Container.find_by_container_id(@containers, container['ContainerId'])['UserDispatchContainerNumber']
+          - container_record = Container.find_by_container_id(@containers, container['ContainerId'])
+          - container_number = container_record['UserDispatchContainerNumber']
+          =# Container.find_by_container_id(@containers, container['ContainerId'])
           %div.row
             %p
               .col-xs-12.col-sm-12.col-md-12
@@ -125,7 +127,9 @@
                     %script{:id => "template-download", :type => "text/x-tmpl"}
                       .download
                         {%=o.name%}
-  
+                  .panel-footer
+                    = "#{container_record['Latitude']}, #{container_record['Longitude']}"
+                    
 
     %p
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal update_task_form", id: "task_#{task['Id']}_form" do

@@ -199,6 +199,7 @@ jQuery ->
   $('.task_containers').on 'click', '.locate_container', (e) ->
     e.preventDefault()
     output = $(this).closest('.tab-pane').find('.location_data')[0]
+    container_footer = $(this).closest('.panel').find('.panel-footer')[0]
     google_maps_api_key = $(this).data("google-maps-api-key")
     latitude = undefined
     longitude = undefined
@@ -219,6 +220,7 @@ jQuery ->
       longitude = position.coords.longitude
       #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
       output.innerHTML = ''
+      container_footer.innerHTML = latitude.toFixed(6) + ', ' + longitude.toFixed(6)
       img = new Image
       img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
       output.appendChild img
