@@ -1,0 +1,19 @@
+=# render partial: "shared/navbars/show_trip_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
+-#@title="Container #{@container['ContainerNumber']}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container  
+    - unless @container.blank?
+      = @container
+      %p= @container['UserDispatchContainerNumber']
+      %p= @container['TagNumber']
+      %p= @container['WorkOrderNumber']
+      %p= @container['Description']
+      - unless @container['Latitude'].blank? or @container['Longitude'].blank?
+        %p= "Latitude: #{@container['Latitude']}°, Longitude: #{@container['Longitude']}°"
+        .embed-responsive.embed-responsive-16by9
+          %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{@container['Latitude']}, #{@container['Longitude']}"), :style => "border:0"}
+    - else
+      %p Not found
+
+=# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}

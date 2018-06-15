@@ -227,6 +227,11 @@ class Ability
       can :show, :tasks
       can :edit, :tasks
       
+      # Containers
+      ############
+      can :show, :containers
+      can :edit, :containers
+      
     # End admin user role
     
     elsif user.basic?
@@ -297,6 +302,11 @@ class Ability
         ############
         can :show, :tasks
         can :edit, :tasks
+        
+        # Containers
+        ############
+        can :show, :containers
+        can :edit, :containers
       end
       
       # Images
