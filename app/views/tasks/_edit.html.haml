@@ -98,7 +98,7 @@
                       %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
                         %i.fa.fa-trash.fa-lg.text-danger
                         %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
-                    = link_to container_number, container_path(container['ContainerId'])
+                    = link_to container_number, container_path(container['ContainerId'], work_order_number: task['WorkOrderNumber'])
 
                     = form_for ImageFile.new do |f|
                       = f.hidden_field :user_id, value: current_user.id

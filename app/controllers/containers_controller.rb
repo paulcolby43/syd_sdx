@@ -7,7 +7,7 @@ class ContainersController < ApplicationController
     authorize! :show, :containers
     @container = Container.find_by_id(current_user.token, params[:id])
     @container_number = @container['UserDispatchContainerNumber']
-    @work_order_number = @container['WorkOrderNumber']
+    @work_order_number = params[:work_order_number]
     @images = Image.api_find_all_by_container_number_and_service_request_number(@container_number, @work_order_number, current_user.company, current_yard_id)
   end
   

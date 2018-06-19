@@ -3,17 +3,38 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container  
-    - unless @container.blank?
-      = @container
-      %p= @container['UserDispatchContainerNumber']
-      %p= @container['TagNumber']
-      %p= @container['WorkOrderNumber']
-      %p= @container['Description']
-      - unless @container['Latitude'].blank? or @container['Longitude'].blank?
-        %p= "Latitude: #{@container['Latitude']}°, Longitude: #{@container['Longitude']}°"
-        .embed-responsive.embed-responsive-16by9
-          %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{@container['Latitude']}, #{@container['Longitude']}"), :style => "border:0"}
-    - else
-      %p Not found
+    %div.row
+      .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
+        - unless @container.blank?
+          .panel.panel-default
+            .panel-heading
+              = @container['UserDispatchContainerNumber']
+            .panel-body
+              = @container['TagNumber']
+              %br
+              = @container['WorkOrderNumber']
+              %br
+              = @container['Description']
+              %br
+              - unless (@container['Latitude'].blank? or @container['Longitude'].blank?) or (@container['Latitude'] == '0' or @container['Longitude'] == '0')
+                .embed-responsive.embed-responsive-16by9
+                  %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{@container['Latitude']}, #{@container['Longitude']}"), :style => "border:0"}
+            - unless (@container['Latitude'].blank? or @container['Longitude'].blank?) or (@container['Latitude'] == '0' or @container['Longitude'] == '0')
+              .panel-footer
+                = "Latitude: #{@container['Latitude']}°, Longitude: #{@container['Longitude']}°"
+        - else
+          %p Not found
+    %div.row
+      .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
+        %hr
+        - @images.each_slice(3) do |images|
+          .row
+            - images.each do |image|
+              .col-xs-12.col-sm-4.col-md-4
+                %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                -#
+                  .text-center
+                    %small.text-muted= image['EVENT_CODE']
 
 =# render partial: "shared/pack_footer_navbar", locals: {title: "Pack List"}
