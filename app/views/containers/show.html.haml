@@ -10,12 +10,15 @@
             .panel-heading
               = @container['UserDispatchContainerNumber']
             .panel-body
-              = @container['TagNumber']
-              %br
-              = @container['WorkOrderNumber']
-              %br
-              = @container['Description']
-              %br
+              - unless @container['TagNumber'].blank?
+                = @container['TagNumber']
+                %br
+              - unless @container['WorkOrderNumber'].blank?
+                = @container['WorkOrderNumber']
+                %br
+              - unless @container['Description'].blank?
+                = @container['Description']
+                %br
               - unless (@container['Latitude'].blank? or @container['Longitude'].blank?) or (@container['Latitude'] == '0' or @container['Longitude'] == '0')
                 .embed-responsive.embed-responsive-16by9
                   %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{@container['Latitude']}, #{@container['Longitude']}"), :style => "border:0"}
