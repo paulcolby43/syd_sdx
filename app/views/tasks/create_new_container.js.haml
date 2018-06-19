@@ -2,7 +2,8 @@
   $("#task_#{@task_id}_create_new_container").hide();
   $("#task_#{@task_id}_form").show();
   -# $("#task_#{@task_id}_containers").prepend("<div class='row'><p><div class='col-xs-12 col-sm-12 col-md-12'><div class='panel panel-primary'><div class='list-group'><div class='list-group-item'><div class='pull-right'> <a class='locate_container' data-container-id='#{@container_id}' data-task-id='#{@task_id}', style='text-decoration: none;', data-google-maps-api-key='#{ENV["GOOGLE_MAPS_API_KEY"]}', data-user-id='#{current_user.id}', href='#'> <i class='fa fa-map-marker fa-lg'></i> <i class='fa fa-spinner fa-spin fa-lg' style='display:none;'></i> </a> &nbsp; <a class='remove_container' data-container-id='#{@container_id}' data-task-id='#{@task_id}' href='#'> <i class='fa fa-trash fa-lg text-danger'></i> <i class='fa fa-spinner fa-spin fa-lg text-danger' style='display:none;'></i> </a> </div> #{@container_number} </div></div></div></div></p></div>")
-  $("#task_#{@task_id}_containers").prepend("#{j render partial: 'tasks/container', locals: {}}")
+  $("#task_#{@task_id}_containers").append("#{j render partial: 'tasks/container', locals: {}}")
+  $("#task_#{@task_id}_containers").find("#container_#{@container_id}_locate_button").trigger('click');
 
   $("#task_#{@task_id}_create_new_container_form").find("input[type=text]").val("");
   $("#task_#{@task_id}_container_select").val(null).trigger('change');

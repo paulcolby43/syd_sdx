@@ -4,11 +4,11 @@
     .panel.panel-primary
       .panel-body
         .pull-right
-          %a#container_picture_button.container_picture_button{"data-container-id" => @container_id, "data-container-number" => @container_number, "data-customer" => @customer, "data-event-code" => @task_type_string, "data-work-order-number" => @work_order_number, :href => "#", :style => "text-decoration: none;"}
+          %a.container_picture_button{id: "container_#{@container_id}_picture_button", "data-container-id" => @container_id, "data-container-number" => @container_number, "data-customer" => @customer, "data-event-code" => @task_type_string, "data-work-order-number" => @work_order_number, :href => "#", :style => "text-decoration: none;"}
             %i.fa.fa-camera.fa-lg
           &nbsp;
           &nbsp;
-          %a.locate_container{"data-container-id" => @container_id, "data-google-maps-api-key" => ENV["GOOGLE_MAPS_API_KEY"], "data-task-id" => @task_id, "data-user-id" => current_user.id, :href => "#", :style => "text-decoration: none;", :title => "Save location"}
+          %a.locate_container{id: "container_#{@container_id}_locate_button", "data-container-id" => @container_id, "data-google-maps-api-key" => ENV["GOOGLE_MAPS_API_KEY"], "data-task-id" => @task_id, "data-user-id" => current_user.id, :href => "#", :style => "text-decoration: none;", :title => "Save location"}
             %i.fa.fa-map-marker.fa-lg
             %i.fa.fa-spinner.fa-spin.fa-lg{:style => "display:none;"}
           &nbsp;
@@ -25,6 +25,9 @@
           = f.hidden_field :container_number, value: @container_number
           = f.hidden_field :event_code, value: @task_type_string
           = f.hidden_field :event_code_id
+          = f.hidden_field :container_id, value: @container_id
+          = f.hidden_field :task_id, value: @task_id
+          = f.hidden_field :pin_image_location_to_container, value: false
           %div{:id => 'uploads', :style => 'display:none;'}
             %p{id: "upload_button", style: "display:block;"}
               = f.file_field :file, name: "image_file[file]", id: "container_#{@container_id}_file_upload_button", "data-container-id" => @container_id, :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
@@ -43,6 +46,10 @@
           .download
             {%=o.name%}
       .panel-footer
+        -# %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+        %a.btn.btn-primary.btn-xs.pin_image{"data-placement" => 'right', "data-html" => "false", "data-toggle" => "tooltip", :role => "button", :tabindex => "0", title: "Click to upload saved picture and store it's location data to this container."}
+          %i.fa.fa-map-pin
+          %i.fa.fa-image
 
 :javascript
   jQuery(function() {
@@ -87,3 +94,5 @@
 
     /* End file upload */
   });
+
+  $('[data-toggle="tooltip"]').tooltip();

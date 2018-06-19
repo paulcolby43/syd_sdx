@@ -85,15 +85,16 @@
                 %div.panel.panel-primary
                   .panel-body
                     .pull-right 
-                      %a{href: '#', id: 'container_picture_button', class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
+                      %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
                         %i.fa.fa-camera.fa-lg
                       &nbsp;
                       &nbsp;
-                      %a{href: '#', class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
-                        %i.fa.fa-map-marker.fa-lg
-                        %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
-                      &nbsp;
-                      &nbsp;
+                      - if (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
+                        %a{href: '#', id: "container_#{container['ContainerId']}_locate_button", class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
+                          %i.fa.fa-map-marker.fa-lg
+                          %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
+                        &nbsp;
+                        &nbsp;
                       %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
                         %i.fa.fa-trash.fa-lg.text-danger
                         %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
@@ -128,7 +129,13 @@
                       .download
                         {%=o.name%}
                   .panel-footer
-                    = "#{container_record['Latitude']}, #{container_record['Longitude']}"
+                    - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
+                      %a{href: "http://www.google.com/maps/place/#{container_record['Latitude']},#{container_record['Longitude']}", target: '_blank'}
+                        = "#{container_record['Latitude']}, #{container_record['Longitude']}"
+                    - else
+                      %a.btn.btn-primary.btn-xs.pin_image{"data-placement" => 'right', "data-html" => "false", "data-toggle" => "tooltip", :role => "button", :tabindex => "0", title: "Click to upload saved picture and store it's location data to this container."}
+                        %i.fa.fa-map-pin
+                        %i.fa.fa-image
                     
 
     %p

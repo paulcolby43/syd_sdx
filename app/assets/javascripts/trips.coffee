@@ -197,80 +197,92 @@ jQuery ->
 
   ### Locate Container ###
   $('.task_containers').on 'click', '.locate_container', (e) ->
-    e.preventDefault()
-    output = $(this).closest('.tab-pane').find('.location_data')[0]
-    container_footer = $(this).closest('.panel').find('.panel-footer')[0]
-    google_maps_api_key = $(this).data("google-maps-api-key")
-    latitude = undefined
-    longitude = undefined
-
-    user_id = $(this).data("user-id")
+    confirm1 = confirm("We will drop a pin for this container where you're currently located.")
     container_id = $(this).data("container-id")
-    task_id = $(this).data("task-id")
-    map_marker_icon = $(this).find( ".fa-map-marker" )
-    map_marker_icon_spinner = $(this).find( ".fa-spinner" )
-    
-    map_marker_icon_spinner.show()
-    map_marker_icon.hide()
+    picture_upload_button = $(this).closest('.panel').find('#container_' + container_id + '_picture_button')
+    locate_button = $(this).closest('.panel').find('#container_' + container_id + '_locate_button')
+    if confirm1
+      e.preventDefault()
+      output = $(this).closest('.tab-pane').find('.location_data')[0]
+      container_footer = $(this).closest('.panel').find('.panel-footer')[0]
+      google_maps_api_key = $(this).data("google-maps-api-key")
+      latitude = undefined
+      longitude = undefined
+      user_id = $(this).data("user-id")
+      
+      task_id = $(this).data("task-id")
+      map_marker_icon = $(this).find( ".fa-map-marker" )
+      map_marker_icon_spinner = $(this).find( ".fa-spinner" )
 
-    success = (position) ->
-      map_marker_icon_spinner.hide()
-      map_marker_icon.show()
-      latitude = position.coords.latitude
-      longitude = position.coords.longitude
-      #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
-      output.innerHTML = ''
-      container_footer.innerHTML = latitude.toFixed(6) + ', ' + longitude.toFixed(6)
-      img = new Image
-      img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
-      output.appendChild img
-      update_container_ajax()
-      update_user_ajax()
-    error = ->
-      map_marker_icon_spinner.hide()
-      map_marker_icon.show()
-      output.innerHTML = 'Unable to retrieve your location'
+      map_marker_icon_spinner.show()
+      map_marker_icon.hide()
+
+      success = (position) ->
+        map_marker_icon_spinner.hide()
+        map_marker_icon.show()
+        latitude = position.coords.latitude
+        longitude = position.coords.longitude
+        #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
+        output.innerHTML = ''
+        container_footer.innerHTML = latitude.toFixed(6) + ', ' + longitude.toFixed(6)
+        img = new Image
+        img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
+        output.appendChild img
+        update_container_ajax()
+        update_user_ajax()
+      error = ->
+        map_marker_icon_spinner.hide()
+        map_marker_icon.show()
+        output.innerHTML = 'Unable to retrieve your location'
+        return
+
+      update_container_ajax = ->
+        $.ajax
+          url: "/tasks/" + task_id + "/update_container"
+          dataType: 'json'
+          data:
+            container_id: container_id
+            latitude: latitude
+            longitude: longitude
+          success: (data) ->
+            map_marker_icon_spinner.hide()
+            map_marker_icon.show()
+            return
+          error: ->
+            map_marker_icon_spinner.hide()
+            map_marker_icon.show()
+            alert 'Error locating container.'
+            console.log 'Error locating container.'
+            return
+
+      update_user_ajax = ->
+        $.ajax
+          url: "/users/" + user_id + "/update_latitude_and_longitude"
+          dataType: 'json'
+          data:
+            latitude: latitude
+            longitude: longitude
+          success: (data) ->
+            return
+          error: ->
+            console.log 'Error saving location to user.'
+            return
+
+      if !navigator.geolocation
+        output.innerHTML = '<p>Geolocation is not supported by your browser</p>'
+        return
+      output.innerHTML = '<p><i class="fa fa-spinner fa-spin"></i> Locating…</p>'
+      navigator.geolocation.getCurrentPosition success, error
+
       return
-
-    update_container_ajax = ->
-      $.ajax
-        url: "/tasks/" + task_id + "/update_container"
-        dataType: 'json'
-        data:
-          container_id: container_id
-          latitude: latitude
-          longitude: longitude
-        success: (data) ->
-          map_marker_icon_spinner.hide()
-          map_marker_icon.show()
-          return
-        error: ->
-          map_marker_icon_spinner.hide()
-          map_marker_icon.show()
-          alert 'Error locating container.'
-          console.log 'Error locating container.'
-          return
-
-    update_user_ajax = ->
-      $.ajax
-        url: "/users/" + user_id + "/update_latitude_and_longitude"
-        dataType: 'json'
-        data:
-          latitude: latitude
-          longitude: longitude
-        success: (data) ->
-          return
-        error: ->
-          console.log 'Error saving location to user.'
-          return
-
-    if !navigator.geolocation
-      output.innerHTML = '<p>Geolocation is not supported by your browser</p>'
+    else
+      # console.log 'not dropping pin', 'prompt for picture'
+      # picture_upload_button.trigger 'click'
+      # alert "Click this container's camera icon to upload a picture"
+      picture_upload_button.hide()
+      locate_button.hide()
+      $(this).closest('.panel').find('.pin_image').tooltip('show')
       return
-    output.innerHTML = '<p><i class="fa fa-spinner fa-spin"></i> Locating…</p>'
-    navigator.geolocation.getCurrentPosition success, error
-
-    return
   ### End Locate Container ###
 
   ### Container Picture Uploads ###
@@ -281,6 +293,7 @@ jQuery ->
     container_id = $(this).data( "container-id" )
     customer = $(this).data( "customer" )
     work_order_number = $(this).data( "work-order-number" )
+    file_upload_button = $(this).closest('.panel').find('#container_' + container_id + '_file_upload_button')
     #$('#image_file_event_code_id_' + event_code_id).prop 'checked', true
     $(this).closest('.panel').find('#image_file_event_code_id').val event_code_id
     $(this).closest('.panel').find('#image_file_event_code').val event_code
@@ -289,6 +302,16 @@ jQuery ->
     $(this).closest('.panel').find('#image_file_service_request_number').val work_order_number
 
     #$('input[type=file]').trigger 'click'
-    $(this).closest('.panel').find('#container_' + container_id + '_file_upload_button').trigger 'click'
-    false
+    file_upload_button.trigger 'click'
+    return
   ### End Container Picture Uploads ###
+
+  ### Container Picture Uploads and Store Location Meta Data ###
+  $('.task_containers').on 'click', '.pin_image', ->
+    # console.log 'pin image click'
+    $(this).closest('.panel').find('#image_file_pin_image_location_to_container').val true
+    $(this).closest('.panel').find('.container_picture_button').trigger 'click'
+    return
+  ### End Container Picture Uploads ###
+
+  $('[data-toggle="tooltip"]').tooltip()
