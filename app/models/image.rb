@@ -203,7 +203,8 @@ class Image < ActiveRecord::Base
     ssl_client.close
     
     Rails.logger.debug "*********** Image.api_find_all_by_receipt_number response: #{response}"
-    data= Hash.from_xml(response) # Convert xml response to a hash
+#    data= Hash.from_xml(response) # Convert xml response to a hash
+    data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
@@ -236,7 +237,8 @@ class Image < ActiveRecord::Base
     
     Rails.logger.debug "***********Image.api_find_first_by_ticket_number_and_event_code response: #{response}"
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
-    data= Hash.from_xml(response) # Convert xml response to a hash
+#    data= Hash.from_xml(response) # Convert xml response to a hash
+    data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]
@@ -265,7 +267,8 @@ class Image < ActiveRecord::Base
     ssl_client.close
     
     Rails.logger.debug "*********** Image.api_find_all_by_service_request_number response: #{response}"
-    data= Hash.from_xml(response) # Convert xml response to a hash
+#    data= Hash.from_xml(response) # Convert xml response to a hash
+    data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
