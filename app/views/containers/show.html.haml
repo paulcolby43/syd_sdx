@@ -1,5 +1,5 @@
-=# render partial: "shared/navbars/show_trip_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
--#@title="Container #{@container['ContainerNumber']}"
+= render partial: "shared/navbars/show_container_navbar", locals: {title: "#{@container['UserDispatchContainerNumber']}"}
+@title="Container #{@container['UserDispatchContainerNumber']}"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container  
