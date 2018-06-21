@@ -3,7 +3,9 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %btn.btn.btn-primary{:onclick => "getLocation()"} Watch Position
+    %btn.btn.btn-primary#watch_me{:onclick => "getLocation()"} 
+      %i.fa.fa-location-arrow
+      Watch Position
     %p#demo
     :javascript
       var x = document.getElementById("demo");
@@ -16,8 +18,9 @@
           }
 
       function showPosition(position) {
-          x.innerHTML="Latitude: " + position.coords.latitude + 
-          "<br>Longitude: " + position.coords.longitude;
+          x.innerHTML="Lat: " + position.coords.latitude + 
+          "<br>Long: " + position.coords.longitude;
+          console.log("position changed");
       }
 
     -#
