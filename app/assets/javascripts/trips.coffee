@@ -276,11 +276,6 @@ jQuery ->
 
       return
     else
-      # console.log 'not dropping pin', 'prompt for picture'
-      # picture_upload_button.trigger 'click'
-      # alert "Click this container's camera icon to upload a picture"
-      # picture_upload_button.hide()
-      # locate_button.hide()
       $(this).closest('.panel').find('.pin_image').tooltip('show')
       return
   ### End Locate Container ###
@@ -315,3 +310,17 @@ jQuery ->
   ### End Container Picture Uploads ###
 
   $('[data-toggle="tooltip"]').tooltip()
+
+
+  ### Track user's location ###
+  $('#track_location').on 'click', (e) ->
+    x = document.getElementById('demo')
+    if navigator.geolocation
+      navigator.geolocation.watchPosition showPosition
+    else
+      x.innerHTML = 'Geolocation is not supported by this browser.'
+    return
+
+    showPosition = (position) ->
+      x.innerHTML = 'Latitude: ' + position.coords.latitude + '<br>Longitude: ' + position.coords.longitude
+      return

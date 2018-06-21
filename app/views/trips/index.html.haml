@@ -3,6 +3,27 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    %btn.btn.btn-primary{:onclick => "getLocation()"} Watch Position
+    %p#demo
+    :javascript
+      var x = document.getElementById("demo");
+
+      function getLocation() {
+          if (navigator.geolocation) {
+              navigator.geolocation.watchPosition(showPosition);
+          } else { 
+              x.innerHTML = "Geolocation is not supported by this browser.";}
+          }
+
+      function showPosition(position) {
+          x.innerHTML="Latitude: " + position.coords.latitude + 
+          "<br>Longitude: " + position.coords.longitude;
+      }
+
+    -#
+      %a.btn.btn-primary#track_location Track location
+      %p#demo
+
     -#
       - @containers.each do |container|
         .well
