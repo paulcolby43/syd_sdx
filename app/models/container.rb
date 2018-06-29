@@ -64,4 +64,14 @@ class Container
     end
   end
   
+  def self.latitude_and_longitude_by_container_id(containers, container_id)
+    # Find container within array of hashes
+    container = containers.find {|container| container['Id'] == container_id}
+    unless container.blank? or ((container['Latitude'].blank? or container['Latitude'] == '0') and (container['Longitude'].blank? or container['Longitude'] == '0'))
+      return {lat: container['Latitude'].to_f, lng: container['Longitude'].to_f, number: container['UserDispatchContainerNumber']}
+    else
+      nil
+    end
+  end
+  
 end

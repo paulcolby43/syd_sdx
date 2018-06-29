@@ -75,6 +75,8 @@
     .location_data
     %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
       - unless task_containers.blank?
+        %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
+        =# task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe
         - task_containers.each do |container|
           - container_record = Container.find_by_container_id(@containers, container['ContainerId'])
           - container_number = container_record['UserDispatchContainerNumber']

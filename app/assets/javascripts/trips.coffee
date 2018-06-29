@@ -205,7 +205,7 @@ jQuery ->
       e.preventDefault()
       output = $(this).closest('.tab-pane').find('.location_data')[0]
       container_footer = $(this).closest('.panel').find('.panel-footer')[0]
-      google_maps_api_key = $(this).data("google-maps-api-key")
+      #google_maps_api_key = $(this).data("google-maps-api-key")
       latitude = undefined
       longitude = undefined
       user_id = $(this).data("user-id")
@@ -225,9 +225,9 @@ jQuery ->
         #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
         output.innerHTML = ''
         container_footer.innerHTML = latitude.toFixed(6) + ', ' + longitude.toFixed(6)
-        img = new Image
-        img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
-        output.appendChild img
+        #img = new Image
+        #img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
+        #output.appendChild img
         update_container_ajax()
         update_user_ajax()
       error = ->
@@ -314,7 +314,9 @@ jQuery ->
 
   ### Track user's location ###
   $('#track_location').on 'click', (e) ->
+
     x = document.getElementById('demo')
+
     if navigator.geolocation
       navigator.geolocation.watchPosition showPosition
     else
@@ -322,5 +324,6 @@ jQuery ->
     return
 
     showPosition = (position) ->
-      x.innerHTML = 'Latitude: ' + position.coords.latitude + '<br>Longitude: ' + position.coords.longitude
+      x.innerHTML = 'Lat: ' + position.coords.latitude + '<br>Long: ' + position.coords.longitude
+      console.log 'position changed'
       return
