@@ -6,15 +6,24 @@ class CustomersController < ApplicationController
   # GET /customers.json
   def index
     authorize! :index, :customers
+    @yard_filter = "#{params[:yard_filter].blank? ? 'all_yards' : params[:yard_filter]}" # Default yard filter to all yards
     unless params[:q].blank?
-      search = Customer.search(current_user.token, current_yard_id, params[:q])
+      if @yard_filter == 'all_yards'
+        @search = Customer.search(current_user.token, current_yard_id, params[:q])
+      else
+        @search = Customer.search_by_yard(current_user.token, current_yard_id, params[:q])
+      end
     else
-      search = Customer.all(current_user.token, current_yard_id)
+      if @yard_filter == 'all_yards'
+        @search = Customer.all(current_user.token, current_yard_id)
+      else
+        @search = Customer.all_by_yard(current_user.token, current_yard_id)
+      end
     end
     respond_to do |format|
       format.html {
-        unless search.blank?
-          @customers = Kaminari.paginate_array(search).page(params[:page]).per(10)
+        unless @search.blank?
+          @customers = Kaminari.paginate_array(@search).page(params[:page]).per(10)
         else
           redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
             sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
@@ -25,8 +34,8 @@ class CustomersController < ApplicationController
 #        @customers = Kaminari.paginate_array(results).page(params[:page]).per(10)
 #        render json: @customers.map{|c| c['Id']}
 #        @customers = results.map {|customer| ["#{customer['FirstName']} #{customer['LastName']}", customer['Id']]}
-        unless search.blank?
-          @customers = search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']} #{customer['Company']}"} }
+        unless @search.blank?
+          @customers = @search.collect{ |customer| {id: customer['Id'], text: "#{customer['FirstName']} #{customer['LastName']} #{customer['Company']}"} }
         else
           @customers = nil
         end
@@ -34,8 +43,8 @@ class CustomersController < ApplicationController
         render json: {results: @customers}
       }
       format.js {
-        unless search.blank?
-          @customers = Kaminari.paginate_array(search).page(params[:page]).per(10)
+        unless @search.blank?
+          @customers = Kaminari.paginate_array(@search).page(params[:page]).per(10)
         else
           redirect_to new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob],
             sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip])
