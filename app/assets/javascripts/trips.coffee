@@ -99,6 +99,9 @@ jQuery ->
     task_id = $(this).data("task-id")
     trash_icon = $(this).find( ".fa-trash" )
     trash_icon_spinner = $(this).find( ".fa-spinner" )
+    map = $(this).closest('.task_containers').find('#task_' + task_id + '_container_map')
+    location_data = $(this).closest('.containers_tab').find('.location_data')
+    add_container_form = $(this).closest('.containers_tab').find('#task_' + task_id + '_form')
     
     confirm1 = confirm('Are you sure you want to remove this container?')
     if confirm1
@@ -112,6 +115,9 @@ jQuery ->
           container_id: container_id
         success: (data) ->
           trash_icon.closest('.row').remove()
+          map.hide()
+          location_data.hide()
+          add_container_form.show()
           return
         error: ->
           trash_icon_spinner.hide()
@@ -201,16 +207,19 @@ jQuery ->
     container_id = $(this).data("container-id")
     picture_upload_button = $(this).closest('.panel').find('#container_' + container_id + '_picture_button')
     locate_button = $(this).closest('.panel').find('#container_' + container_id + '_locate_button')
+    task_id = $(this).data("task-id")
+    add_container_form = $(this).closest('.containers_tab').find('#task_' + task_id + '_form')
+    location_data = $(this).closest('.containers_tab').find('.location_data')
+    
     if confirm1
       e.preventDefault()
       output = $(this).closest('.tab-pane').find('.location_data')[0]
       container_footer = $(this).closest('.panel').find('.panel-footer')[0]
-      #google_maps_api_key = $(this).data("google-maps-api-key")
+      google_maps_api_key = $(this).data("google-maps-api-key")
       latitude = undefined
       longitude = undefined
       user_id = $(this).data("user-id")
       
-      task_id = $(this).data("task-id")
       map_marker_icon = $(this).find( ".fa-map-marker" )
       map_marker_icon_spinner = $(this).find( ".fa-spinner" )
 
@@ -220,14 +229,16 @@ jQuery ->
       success = (position) ->
         map_marker_icon_spinner.hide()
         map_marker_icon.show()
+        location_data.show()
         latitude = position.coords.latitude
         longitude = position.coords.longitude
         #output.innerHTML = '<p>Latitude is ' + latitude + '° <br>Longitude is ' + longitude + '°</p>'
         output.innerHTML = ''
         container_footer.innerHTML = latitude.toFixed(6) + ', ' + longitude.toFixed(6)
-        #img = new Image
+        img = new Image
         #img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=18&size=250x250&sensor=false&key=' + google_maps_api_key
-        #output.appendChild img
+        img.src = 'https://maps.googleapis.com/maps/api/staticmap?center=' + latitude + ',' + longitude + '&zoom=19&size=260x150&sensor=false&key=' + google_maps_api_key + '&markers=color:red%7C' + latitude + ',' + longitude
+        output.appendChild img
         update_container_ajax()
         update_user_ajax()
       error = ->
@@ -245,6 +256,7 @@ jQuery ->
             latitude: latitude
             longitude: longitude
           success: (data) ->
+            add_container_form.hide()
             map_marker_icon_spinner.hide()
             map_marker_icon.show()
             return
