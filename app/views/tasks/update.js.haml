@@ -3,6 +3,7 @@
   - if @update_task_response["Success"] == 'true'
     $("#task_#{@task_id}_containers").append("#{j render partial: 'tasks/container', locals: {}}");
     $("#task_#{@task_id}_containers").find("#container_#{@container_id}_locate_button").trigger('click');
+    $("#task_#{@task_id}_form").hide();
   -# Clear container select search
   $("#task_#{@task['id']}_container_select").val(null).trigger('change');
 

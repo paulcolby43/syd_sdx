@@ -208,7 +208,6 @@ jQuery ->
     picture_upload_button = $(this).closest('.panel').find('#container_' + container_id + '_picture_button')
     locate_button = $(this).closest('.panel').find('#container_' + container_id + '_locate_button')
     task_id = $(this).data("task-id")
-    add_container_form = $(this).closest('.containers_tab').find('#task_' + task_id + '_form')
     location_data = $(this).closest('.containers_tab').find('.location_data')
     
     if confirm1
@@ -256,7 +255,6 @@ jQuery ->
             latitude: latitude
             longitude: longitude
           success: (data) ->
-            add_container_form.hide()
             map_marker_icon_spinner.hide()
             map_marker_icon.show()
             return
