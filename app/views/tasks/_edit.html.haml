@@ -5,7 +5,7 @@
   - if task['TaskType'] == '0' or task['TaskType'] == '1'
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
-        Containers
+        Container
   -#
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
@@ -18,8 +18,12 @@
       %strong= "To:"
       .pull-right
         - unless task['ToLocation'].blank?
-          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-            = "#{task['ToLocation']}"
+          -#
+            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+              = "#{task['ToLocation']}"
+          %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber'])}
+            %i.fa.fa-map
+            = task['ToLocation']
         - else
           %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
             7100 30th Ave N

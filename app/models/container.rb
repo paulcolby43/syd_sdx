@@ -74,4 +74,12 @@ class Container
     end
   end
   
+  def self.latitude_and_longitude(container)
+    unless container.blank? or ((container['Latitude'].blank? or container['Latitude'] == '0') and (container['Longitude'].blank? or container['Longitude'] == '0'))
+      return {lat: container['Latitude'].to_f, lng: container['Longitude'].to_f, number: container['UserDispatchContainerNumber']}
+    else
+      nil
+    end
+  end
+  
 end
