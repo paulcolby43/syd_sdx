@@ -48,6 +48,8 @@ class ReportsController < ApplicationController
               @check_payment_tickets << ticket
             elsif accounts_payable['PaymentMethod'] == "3"
               @ezcash_payment_tickets << ticket
+            else
+              @cash_payment_tickets << ticket
             end
           end
         end
