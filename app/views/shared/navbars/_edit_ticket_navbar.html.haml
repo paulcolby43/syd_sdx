@@ -3,13 +3,14 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          - unless @ticket["TicketItemCollection"].blank?
-            = link_to 'javascript:history.back()' do
-              Cancel
-          - else
-            -#
-              %a{href: '', :onclick => "$('#edit_ticket_form').submit()"}
-                Void
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            - unless @ticket["TicketItemCollection"].blank?
+              = link_to 'javascript:history.back()' do
+                Cancel
+            - else
+              -#
+                %a{href: '', :onclick => "$('#edit_ticket_form').submit()"}
+                  Void
         .col-xs-4.col-sm-4
           - unless mobile_device?
             - if @ticket['Status'] == '2' or @ticket['Status'].blank?
@@ -19,5 +20,6 @@
             - elsif @ticket['Status'] == '3'
           = title
         .col-xs-4.col-sm-4
-          - unless total.blank?
-            #total= total
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            - unless total.blank?
+              #total= total
