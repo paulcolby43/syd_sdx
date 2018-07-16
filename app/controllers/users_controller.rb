@@ -134,7 +134,8 @@ class UsersController < ApplicationController
           if @user.update(user_params)
             format.html { 
               flash[:success] = "User was successfully updated."
-              redirect_to @user
+#              redirect_to @user
+              redirect_to root_path
             }
             format.json { render :show, status: :ok, location: @user }
           else
