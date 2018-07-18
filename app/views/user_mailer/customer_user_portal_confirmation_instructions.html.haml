@@ -13,6 +13,10 @@
 
 %p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)
 
+%p 
+  By setting up an account at Scrap Yard Dog you are agreeing to our 
+  = link_to "Terms of Service", welcome_tos_url
+
 %p
   Please call your representative at
   = "#{@user.company.name}"
@@ -23,11 +27,12 @@
 %p
   = link_to 'TranAct', 'http://tranact.com'
   •
-  = link_to 'Facebook', 'https://www.facebook.com/TranAct.ScrapDragonSoftware'
+  = link_to 'Scrap Dragon', 'https://scrapdragon.com'
+  •
+  = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
   •
   = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'
 
-%p By setting up an account at Scrap Yard Dog you are agreeing to our Terms of Service
 
 -#
   %p 
