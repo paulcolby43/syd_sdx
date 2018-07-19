@@ -6,6 +6,10 @@
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
         Container
+  - if task['TaskType'] == '1'
+    %li
+      %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature", :data => {:toggle => "tab"}}
+        Signature
   -#
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
@@ -200,3 +204,7 @@
               = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Container"}) do
                 Create Container
               = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show();"
+
+  - if task['TaskType'] == '1' 
+    .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
+      = render partial: "tasks/signature", locals: {task: task, task_containers: task_containers, containers: @containers}

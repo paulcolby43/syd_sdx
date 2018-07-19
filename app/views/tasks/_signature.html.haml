@@ -1,0 +1,38 @@
+- unless task_containers.blank?
+  - last_container_record = Container.find_by_container_id(containers, task_containers.last['ContainerId'])
+  - last_container_number = last_container_record['UserDispatchContainerNumber']
+= form_for ImageFile.new, remote: true do |f|
+  = f.hidden_field :user_id, value: current_user.id
+  = f.hidden_field :yard_id, value: current_yard_id
+  = f.hidden_field :container_number, value: last_container_number
+  =# f.hidden_field :event_code, value: 'SIGNATURE CAPTURE'
+  = f.hidden_field :event_code_id, value: current_user.company.signature_event_code_id
+  = f.hidden_field :customer_name, value: task['Customer']
+  = f.hidden_field :service_request_number, value: task['WorkOrderNumber']
+  =# f.hidden_field :contract_verbiage, value: @contract.verbiage unless @contract.blank?
+  = f.hidden_field :contract_verbiage, value: "I agree"
+  %h3
+    -#
+      - unless @contract.blank?
+        = @contract.verbiage.html_safe
+    - unless current_user.company.signature_verbiage.blank?
+      = current_user.company.signature_verbiage.html_safe
+  .form-group
+    .sigPad
+      %div.sigNav
+        .clearButton
+          %a{href: "#clear", class: 'pull-right'} Clear signature
+      .sig.sigWrapper
+        .typed
+        %canvas.pad{height: "165", width: "598"}
+        %input.output{name: "output", type: "hidden"}/
+  %hr
+  %p
+    = button_tag(:type => 'submit', :class => 'btn btn-primary', id: "new_image_file_submit", data: { disable_with: "Please wait..." }) do
+      Accept
+
+:javascript
+
+  $(document).ready(function() {
+    $('.sigPad').signaturePad({drawOnly:true, lineWidth: 0, validateFields: false});
+  });

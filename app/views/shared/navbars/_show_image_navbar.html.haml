@@ -3,8 +3,9 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          %a{href: 'javascript:history.back()'}
-            Back
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            %a{href: 'javascript:history.back()'}
+              Back
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4

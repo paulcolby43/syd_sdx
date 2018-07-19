@@ -127,7 +127,11 @@ class ImageFileUploader < CarrierWave::Uploader::Base
 #      txt.stroke = "#000000"
 #      txt.fill = "#F3F315"
       txt.font_weight = Magick::LighterWeight
-      caption = "#{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} \\n Customer: #{model.customer_name}"
+      if model.container_number.blank?
+        caption = "#{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} \\n Customer: #{model.customer_name}"
+      else
+        caption = "#{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Container: #{model.container_number} \\n Customer: #{model.customer_name}"
+      end
       source.annotate(txt, 0, 0, 0, 0, caption)
     end
   end
@@ -190,7 +194,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     def should_process_caption?(file)
       unless model.event_code_id.blank?
         event_code = EventCode.find(model.event_code_id)
-        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and event_code.name != "SIGNATURE CAPTURE"
+        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and event_code.name != "SIGNATURE CAPTURE" and event_code.name != "Signature"
       else
         (model.class.name == "ImageFile" or model.class.name == "ShipmentFile")
       end
@@ -199,7 +203,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     def should_process_contract?(file)
       unless model.event_code_id.blank?
         event_code = EventCode.find(model.event_code_id)
-        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and event_code.name == "SIGNATURE CAPTURE"
+        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and (event_code.name == "SIGNATURE CAPTURE" or event_code.name == "Signature")
       else
         (model.class.name == "ImageFile" or model.class.name == "ShipmentFile")
       end
