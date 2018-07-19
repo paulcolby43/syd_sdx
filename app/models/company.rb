@@ -98,7 +98,7 @@ class Company < ActiveRecord::Base
   end
   
   def signature_event_code
-    event_codes.where(name: "Signature").first
+    event_codes.where(name: ["Signature", "SIGNATURE", "SIGNATURE CAPTURE"]).first
   end
   
   def container_event_code
