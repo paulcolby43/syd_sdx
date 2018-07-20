@@ -131,7 +131,7 @@
                       .row.task_pictures{style: 'margin-top: 5px;'}
                         - Image.api_find_all_by_container_number_and_service_request_number(container_number, task['WorkOrderNumber'], current_user.company, current_yard_id).last(3).each do |image|
                           .col-xs-4.col-sm-4.col-md-4.col-lg-4
-                            = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
+                            = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
 
                       .clear
                       %script{:id => "template-upload", :type => "text/x-tmpl"}
