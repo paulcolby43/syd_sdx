@@ -112,7 +112,7 @@ class Shipment < ActiveRecord::Base
     ssl_client.close
     
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
-    data= Hash.from_xml(response) # Convert xml response to a hash
+    data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
