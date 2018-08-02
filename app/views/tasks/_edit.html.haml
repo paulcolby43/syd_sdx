@@ -83,16 +83,16 @@
       .location_data
         
       %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
-        -#
-          - unless task_containers.blank?
-            -# %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
-            - task_containers.each do |container|
-              - container_record = Container.find_by_container_id(@containers, container['ContainerId'])
-              - container_number = container_record['UserDispatchContainerNumber']
-              =# Container.find_by_container_id(@containers, container['ContainerId'])
-              - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
-                .embed-responsive.embed-responsive-16by9{id: "task_#{task['Id']}_container_map"}
-                  %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{container_record['Latitude']}, #{container_record['Longitude']}"), :style => "border:0"}
+        - unless task_containers.blank?
+          -# %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
+          - task_containers.each do |container|
+            - container_record = Container.find_by_container_id(@containers, container['ContainerId'])
+            - container_number = container_record['UserDispatchContainerNumber']
+            =# Container.find_by_container_id(@containers, container['ContainerId'])
+            - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
+              .embed-responsive.embed-responsive-16by9{id: "task_#{task['Id']}_container_map"}
+                %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{container_record['Latitude']}, #{container_record['Longitude']}"), :style => "border:0"}
+            -#
               %div.row
                 %p
                   .col-xs-12.col-sm-12.col-md-12
@@ -142,14 +142,14 @@
                         %script{:id => "template-download", :type => "text/x-tmpl"}
                           .download
                             {%=o.name%}
-                    .panel-footer
-                      - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
-                        %a{href: "http://www.google.com/maps/place/#{container_record['Latitude']},#{container_record['Longitude']}", target: '_blank'}
-                          = "#{container_record['Latitude']}, #{container_record['Longitude']}"
-                      - else
-                        %a.btn.btn-primary.btn-xs.pin_image{"data-placement" => 'right', "data-html" => "false", "data-toggle" => "tooltip", :role => "button", :tabindex => "0", title: "Click to upload saved picture and store it's location data to this container."}
-                          %i.fa.fa-map-pin
-                          %i.fa.fa-image
+                      .panel-footer
+                        - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
+                          %a{href: "http://www.google.com/maps/place/#{container_record['Latitude']},#{container_record['Longitude']}", target: '_blank'}
+                            = "#{container_record['Latitude']}, #{container_record['Longitude']}"
+                        - else
+                          %a.btn.btn-primary.btn-xs.pin_image{"data-placement" => 'right', "data-html" => "false", "data-toggle" => "tooltip", :role => "button", :tabindex => "0", title: "Click to upload saved picture and store it's location data to this container."}
+                            %i.fa.fa-map-pin
+                            %i.fa.fa-image
 
 
       %p
