@@ -17,61 +17,62 @@
       - @containers.each do |container|
         .well
           = container
-    - unless @trips.blank?
-      #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-        - @trips.each_with_index do |trip, index|
-          .panel.panel-default
-            .panel-heading{id: "trip_#{index}", :role => "tab"}
-              .pull-right
-                &nbsp;
-                %a{href: nil, class: 'hide_trip_icon'}
-                  %i.fa.fa-times-circle
-              %h4.panel-title
-                %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
-                  = "#{trip['TripNumber']}"
-                  = Trip.tasks(trip).first['Customer']
-                  %small
-                    .text-muted
-                      %br
-                      = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
-                      - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
-                        = " - "
-                        = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
-                      %br
-                      - Trip.workorders(trip).each do |workorder|
-                        = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
-                %br
-                %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
-                  %i.fa.fa-sticky-note-o
-                  Notes
-            .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
-              %ul.list-group
-                - Trip.tasks(trip).each do |task|
-                  %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
-                    = task['Sequence']
-                    = task_type_string(task['TaskType'])
+    -#
+      - unless @trips.blank?
+        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          - @trips.each_with_index do |trip, index|
+            .panel.panel-default
+              .panel-heading{id: "trip_#{index}", :role => "tab"}
+                .pull-right
+                  &nbsp;
+                  %a{href: nil, class: 'hide_trip_icon'}
+                    %i.fa.fa-times-circle
+                %h4.panel-title
+                  %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
+                    = "#{trip['TripNumber']}"
+                    = Trip.tasks(trip).first['Customer']
                     %small
-                      .text-muted 
-                        - unless task['ToLocation'].blank?
-                          = task['ToLocation']
-                        - else
-                          7100 30th Ave N
+                      .text-muted
                         %br
-                        %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
-                  / Modal
-                  .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
-                    .modal-dialog{class: "#{mobile_device? ? '' : 'modal-lg'}", :role => "document"}
-                      .modal-content
-                        .modal-body
-                          %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-                            %span{"aria-hidden" => "true"} ×
+                        = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                        - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
+                          = " - "
+                          = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                        %br
+                        - Trip.workorders(trip).each do |workorder|
+                          = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
+                  %br
+                  %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
+                    %i.fa.fa-sticky-note-o
+                    Notes
+              .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
+                %ul.list-group
+                  - Trip.tasks(trip).each do |task|
+                    %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
+                      = task['Sequence']
+                      = task_type_string(task['TaskType'])
+                      %small
+                        .text-muted 
+                          - unless task['ToLocation'].blank?
+                            = task['ToLocation']
+                          - else
+                            7100 30th Ave N
                           %br
-                          = render partial: "tasks/edit", locals: {task: task, workorder: Trip.workorders(trip).find {|workorder| workorder['Id'] == task['WorkOrderId']}, task_containers: Task.containers(task)}
-                        .modal-footer
-                          %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+                          %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
+                    / Modal
+                    .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                      .modal-dialog{class: "#{mobile_device? ? '' : 'modal-lg'}", :role => "document"}
+                        .modal-content
+                          .modal-body
+                            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                              %span{"aria-hidden" => "true"} ×
+                            %br
+                            = render partial: "tasks/edit", locals: {task: task, workorder: Trip.workorders(trip).find {|workorder| workorder['Id'] == task['WorkOrderId']}, task_containers: Task.containers(task)}
+                          .modal-footer
+                            %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
 
-    - else
-      %p.text-center No trips found
+      - else
+        %p.text-center No trips found
 
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}
 
