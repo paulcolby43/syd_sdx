@@ -124,14 +124,13 @@
                         %div{:id => 'uploads', :style => 'display:none;'}
                           %p{id: "upload_button", style: "display:block;"}
                             = f.file_field :file, name: "image_file[file]", id: "container_#{container['ContainerId']}_file_upload_button", "data-container-id" => container['ContainerId'], :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
-                      -#
-                        .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
-                          = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
-                          Uploading ...
-                        .row.task_pictures{style: 'margin-top: 5px;'}
-                          - Image.api_find_all_by_container_number_and_service_request_number(container_number, task['WorkOrderNumber'], current_user.company, current_yard_id).last(3).each do |image|
-                            .col-xs-4.col-sm-4.col-md-4.col-lg-4
-                              = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
+                      .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+                        = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+                        Uploading ...
+                      .row.task_pictures{style: 'margin-top: 5px;'}
+                        - Image.api_find_all_by_container_number_and_service_request_number(container_number, task['WorkOrderNumber'], current_user.company, current_yard_id).last(3).each do |image|
+                          .col-xs-4.col-sm-4.col-md-4.col-lg-4
+                            = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
 
                       .clear
                       %script{:id => "template-upload", :type => "text/x-tmpl"}
