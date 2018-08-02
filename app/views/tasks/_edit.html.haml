@@ -112,18 +112,19 @@
                           %i.fa.fa-trash.fa-lg.text-danger
                           %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                       = link_to "<i class='fa fa-cube'/></i> #{container_number}".html_safe, container_path(container['ContainerId'], work_order_number: task['WorkOrderNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{container_number}"}, class: 'trip_button'
+
+                      = form_for ImageFile.new do |f|
+                        = f.hidden_field :user_id, value: current_user.id
+                        = f.hidden_field :yard_id, value: current_yard_id
+                        = f.hidden_field :customer_name
+                        = f.hidden_field :service_request_number
+                        = f.hidden_field :container_number
+                        = f.hidden_field :event_code
+                        = f.hidden_field :event_code_id
+                        %div{:id => 'uploads', :style => 'display:none;'}
+                          %p{id: "upload_button", style: "display:block;"}
+                            = f.file_field :file, name: "image_file[file]", id: "container_#{container['ContainerId']}_file_upload_button", "data-container-id" => container['ContainerId'], :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
                       -#
-                        = form_for ImageFile.new do |f|
-                          = f.hidden_field :user_id, value: current_user.id
-                          = f.hidden_field :yard_id, value: current_yard_id
-                          = f.hidden_field :customer_name
-                          = f.hidden_field :service_request_number
-                          = f.hidden_field :container_number
-                          = f.hidden_field :event_code
-                          = f.hidden_field :event_code_id
-                          %div{:id => 'uploads', :style => 'display:none;'}
-                            %p{id: "upload_button", style: "display:block;"}
-                              = f.file_field :file, name: "image_file[file]", id: "container_#{container['ContainerId']}_file_upload_button", "data-container-id" => container['ContainerId'], :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
                         .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
                           = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
                           Uploading ...
@@ -132,15 +133,15 @@
                             .col-xs-4.col-sm-4.col-md-4.col-lg-4
                               = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
 
-                        .clear
-                        %script{:id => "template-upload", :type => "text/x-tmpl"}
-                          .upload
-                            {%=o.name%}
-                            .progress.progress-striped
-                              .progress-bar{:style => "width: 0%"}
-                        %script{:id => "template-download", :type => "text/x-tmpl"}
-                          .download
-                            {%=o.name%}
+                      .clear
+                      %script{:id => "template-upload", :type => "text/x-tmpl"}
+                        .upload
+                          {%=o.name%}
+                          .progress.progress-striped
+                            .progress-bar{:style => "width: 0%"}
+                      %script{:id => "template-download", :type => "text/x-tmpl"}
+                        .download
+                          {%=o.name%}
                     .panel-footer
                       - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
                         %a{href: "http://www.google.com/maps/place/#{container_record['Latitude']},#{container_record['Longitude']}", target: '_blank'}
