@@ -83,64 +83,65 @@
       .location_data
         
       %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
-        - unless task_containers.blank?
-          -# %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
-          - task_containers.each do |container|
-            - container_record = Container.find_by_container_id(@containers, container['ContainerId'])
-            - container_number = container_record['UserDispatchContainerNumber']
-            =# Container.find_by_container_id(@containers, container['ContainerId'])
-            - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
-              .embed-responsive.embed-responsive-16by9{id: "task_#{task['Id']}_container_map"}
-                %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{container_record['Latitude']}, #{container_record['Longitude']}"), :style => "border:0"}
-            %div.row
-              %p
-                .col-xs-12.col-sm-12.col-md-12
-                  %div.panel.panel-primary
-                    .panel-body
-                      .pull-right 
-                        %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
-                          %i.fa.fa-camera.fa-lg
-                        &nbsp;
-                        &nbsp;
-                        - if (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
-                          %a{href: '#', id: "container_#{container['ContainerId']}_locate_button", class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
-                            %i.fa.fa-map-marker.fa-lg
-                            %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
+        -#
+          - unless task_containers.blank?
+            -# %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
+            - task_containers.each do |container|
+              - container_record = Container.find_by_container_id(@containers, container['ContainerId'])
+              - container_number = container_record['UserDispatchContainerNumber']
+              =# Container.find_by_container_id(@containers, container['ContainerId'])
+              - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
+                .embed-responsive.embed-responsive-16by9{id: "task_#{task['Id']}_container_map"}
+                  %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{container_record['Latitude']}, #{container_record['Longitude']}"), :style => "border:0"}
+              %div.row
+                %p
+                  .col-xs-12.col-sm-12.col-md-12
+                    %div.panel.panel-primary
+                      .panel-body
+                        .pull-right 
+                          %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
+                            %i.fa.fa-camera.fa-lg
                           &nbsp;
                           &nbsp;
-                        %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
-                          %i.fa.fa-trash.fa-lg.text-danger
-                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
-                      = link_to "<i class='fa fa-cube'/></i> #{container_number}".html_safe, container_path(container['ContainerId'], work_order_number: task['WorkOrderNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{container_number}"}, class: 'trip_button'
+                          - if (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
+                            %a{href: '#', id: "container_#{container['ContainerId']}_locate_button", class: 'locate_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
+                              %i.fa.fa-map-marker.fa-lg
+                              %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
+                            &nbsp;
+                            &nbsp;
+                          %a{href: '#', class: 'remove_container', "data-task-id" => task['Id'], "data-container-id" => container['ContainerId'], title: "Remove"}
+                            %i.fa.fa-trash.fa-lg.text-danger
+                            %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                        = link_to "<i class='fa fa-cube'/></i> #{container_number}".html_safe, container_path(container['ContainerId'], work_order_number: task['WorkOrderNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{container_number}"}, class: 'trip_button'
 
-                      = form_for ImageFile.new do |f|
-                        = f.hidden_field :user_id, value: current_user.id
-                        = f.hidden_field :yard_id, value: current_yard_id
-                        = f.hidden_field :customer_name
-                        = f.hidden_field :service_request_number
-                        = f.hidden_field :container_number
-                        = f.hidden_field :event_code
-                        = f.hidden_field :event_code_id
-                        %div{:id => 'uploads', :style => 'display:none;'}
-                          %p{id: "upload_button", style: "display:block;"}
-                            = f.file_field :file, name: "image_file[file]", id: "container_#{container['ContainerId']}_file_upload_button", "data-container-id" => container['ContainerId'], :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
-                      .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
-                        = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
-                        Uploading ...
-                      .row.task_pictures{style: 'margin-top: 5px;'}
-                        - Image.api_find_all_by_container_number_and_service_request_number(container_number, task['WorkOrderNumber'], current_user.company, current_yard_id).last(3).each do |image|
-                          .col-xs-4.col-sm-4.col-md-4.col-lg-4
-                            = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
+                        = form_for ImageFile.new do |f|
+                          = f.hidden_field :user_id, value: current_user.id
+                          = f.hidden_field :yard_id, value: current_yard_id
+                          = f.hidden_field :customer_name
+                          = f.hidden_field :service_request_number
+                          = f.hidden_field :container_number
+                          = f.hidden_field :event_code
+                          = f.hidden_field :event_code_id
+                          %div{:id => 'uploads', :style => 'display:none;'}
+                            %p{id: "upload_button", style: "display:block;"}
+                              = f.file_field :file, name: "image_file[file]", id: "container_#{container['ContainerId']}_file_upload_button", "data-container-id" => container['ContainerId'], :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+                        .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+                          = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+                          Uploading ...
+                        .row.task_pictures{style: 'margin-top: 5px;'}
+                          - Image.api_find_all_by_container_number_and_service_request_number(container_number, task['WorkOrderNumber'], current_user.company, current_yard_id).last(3).each do |image|
+                            .col-xs-4.col-sm-4.col-md-4.col-lg-4
+                              = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
 
-                      .clear
-                      %script{:id => "template-upload", :type => "text/x-tmpl"}
-                        .upload
-                          {%=o.name%}
-                          .progress.progress-striped
-                            .progress-bar{:style => "width: 0%"}
-                      %script{:id => "template-download", :type => "text/x-tmpl"}
-                        .download
-                          {%=o.name%}
+                        .clear
+                        %script{:id => "template-upload", :type => "text/x-tmpl"}
+                          .upload
+                            {%=o.name%}
+                            .progress.progress-striped
+                              .progress-bar{:style => "width: 0%"}
+                        %script{:id => "template-download", :type => "text/x-tmpl"}
+                          .download
+                            {%=o.name%}
                     .panel-footer
                       - unless (container_record['Latitude'].blank? or container_record['Latitude'] == '0') and (container_record['Longitude'].blank? or container_record['Longitude'] == '0')
                         %a{href: "http://www.google.com/maps/place/#{container_record['Latitude']},#{container_record['Longitude']}", target: '_blank'}
@@ -203,7 +204,7 @@
               = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Container"}) do
                 Create Container
               = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show();"
-  -#
-    - if task['TaskType'] == '1' 
-      .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
-        = render partial: "tasks/signature", locals: {task: task, task_containers: task_containers, containers: @containers}
+
+  - if task['TaskType'] == '1' 
+    .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
+      = render partial: "tasks/signature", locals: {task: task, task_containers: task_containers, containers: @containers}
