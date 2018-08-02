@@ -14,65 +14,65 @@
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
         Images
--#
-  .tab-content
-    .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
+.tab-content
+  .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
+    %br
+    %div
+      %strong= "To:"
+      .pull-right
+        - unless task['ToLocation'].blank?
+          -#
+            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+              = "#{task['ToLocation']}"
+          %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber'])}
+            %i.fa.fa-map
+            = task['ToLocation']
+        - else
+          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+            7100 30th Ave N
       %br
-      %div
-        %strong= "To:"
-        .pull-right
-          - unless task['ToLocation'].blank?
-            -#
-              %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-                = "#{task['ToLocation']}"
-            %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber'])}
-              %i.fa.fa-map
-              = task['ToLocation']
-          - else
-            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
-              7100 30th Ave N
-        %br
-        %strong= "Phone:"
-        .pull-right
-          - unless workorder.blank? or workorder['Phone'].blank?
-            %a{href: "tel:#{workorder['Phone']}"}
-              = workorder['Phone']
-      %div
-        %strong= "Type:"
-        .pull-right
-          = task_type_string(task['TaskType'])
-        %br
-        %strong= "Work Order:"
-        .pull-right
-          = task['WorkOrderNumber']
-        %br
-        %strong= "Customer:"
-        .pull-right
-          = task['Customer']
-        %br 
-        %br
-        = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
-          =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
-          = hidden_field_tag "task[id]", task['Id']
-          .row.form-group
-            %div{:class => "col-xs-6"}
-              = label_tag "Start Mileage", nil, :class => 'control-label'
-              = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
-            %div{:class => "col-xs-6"}
-              = label_tag "End Mileage", nil, :class => 'control-label'
-              = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-12"}
-              = label_tag "Notes", nil, :class => 'control-label'
-              = text_area_tag "task[notes]", task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-12"}
-              = label_tag "Status", nil, :class => 'control-label'
-              = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), "data-sequence-number" => task['Sequence'], :class => "form-control input-lg task_status"
-          .row.form-group
-            %div{:class => "col-sm-12 col-md-12"}
-              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
-                Save
+      %strong= "Phone:"
+      .pull-right
+        - unless workorder.blank? or workorder['Phone'].blank?
+          %a{href: "tel:#{workorder['Phone']}"}
+            = workorder['Phone']
+    %div
+      %strong= "Type:"
+      .pull-right
+        = task_type_string(task['TaskType'])
+      %br
+      %strong= "Work Order:"
+      .pull-right
+        = task['WorkOrderNumber']
+      %br
+      %strong= "Customer:"
+      .pull-right
+        = task['Customer']
+      %br 
+      %br
+      = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
+        =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
+        = hidden_field_tag "task[id]", task['Id']
+        .row.form-group
+          %div{:class => "col-xs-6"}
+            = label_tag "Start Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
+          %div{:class => "col-xs-6"}
+            = label_tag "End Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Notes", nil, :class => 'control-label'
+            = text_area_tag "task[notes]", task['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Status", nil, :class => 'control-label'
+            = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), "data-sequence-number" => task['Sequence'], :class => "form-control input-lg task_status"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+              Save
+  -#
     - if task['TaskType'] == '0' or task['TaskType'] == '1'
       .tab-pane.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
         %br
