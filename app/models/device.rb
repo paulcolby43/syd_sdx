@@ -34,7 +34,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -87,7 +87,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -117,7 +117,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -161,7 +161,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -186,7 +186,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -225,7 +225,7 @@ class Device < ActiveRecord::Base
       <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:ns1='urn:TUDIntf' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
          <SOAP-ENV:Body>
             <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-               <Host xsi:type='xs:string'>127.0.0.1</Host>
+               <Host xsi:type='xs:string'>192.168.111.199</Host>
                <Port xsi:type='xs:int'>3333</Port>
                <Trigger xsi:type='xs:string'>
                 <CAPTURE>
@@ -411,7 +411,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -437,7 +437,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -463,7 +463,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -489,7 +489,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
@@ -513,7 +513,7 @@ class Device < ActiveRecord::Base
     xml_string = "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/' xmlns:tns='http://tempuri.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
       <SOAP-ENV:Body>
          <mns:JpeggerTrigger xmlns:mns='urn:JpeggerTriggerIntf-IJpeggerTrigger' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-            <Host xsi:type='xs:string'>127.0.0.1</Host>
+            <Host xsi:type='xs:string'>192.168.111.199</Host>
             <Port xsi:type='xs:int'>3333</Port>
             <Trigger xsi:type='xs:string'>
                <CAPTURE>
