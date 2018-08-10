@@ -391,6 +391,11 @@ class Ability
       can :show, :pack_shipments
       can :pictures, :pack_shipments
       
+      # Commodities
+      ############
+      can :customer_index, :commodities
+      can :customer_show, :commodities
+      
     # End customer user role
     end 
     

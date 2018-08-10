@@ -129,6 +129,10 @@ Rails.application.routes.draw do
       put 'update_price'
       get :price
       get :unit_of_measure_weight_conversion
+      get :customer_show
+    end
+    collection do
+      get :customer_index
     end
   end
   
