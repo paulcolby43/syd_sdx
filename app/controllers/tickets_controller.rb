@@ -129,10 +129,10 @@ class TicketsController < ApplicationController
     end
     
     @combolists = Vehicle.combolists(current_user.token)
-    @vehicle_makes = @combolists.blank? ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
-    @vehicle_models = @combolists.blank? ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
-    @body_styles = @combolists.blank? ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
-    @vehicle_colors = @combolists.blank? ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    @vehicle_makes = (@combolists.blank? or @combolists["VehicleMakes"].blank?) ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
+    @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
+    @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+    @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
   end
 
   # PATCH/PUT /tickets/1
