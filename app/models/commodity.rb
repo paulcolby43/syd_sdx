@@ -309,4 +309,12 @@ class Commodity
     return data["GetConversionFactorResponse"]
   end
   
+  def self.all_by_type_grouped_for_select(types, commodities)
+    types.map{|type| Commodity.by_type_grouped_for_select(type, commodities)}
+  end
+  
+  def self.by_type_grouped_for_select(type, commodities)
+    [type['ReportDescription'], commodities.select{|c| c['Type'] == type['CodeValue'] }.sort_by {|c| c['PrintDescription']}.collect { |c| [ c['PrintDescription'], c['Id'] ] }]
+  end
+  
 end
