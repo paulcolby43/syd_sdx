@@ -12,7 +12,7 @@
     .panel-body
       = hidden_field_tag "ticket[line_items][][id]", id
       = hidden_field_tag "ticket[line_items][][status]", nil
-      = select_tag "ticket[line_items][][commodity]", "", class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket_id, "data-item-id" => id
+      = select_tag "ticket[line_items][][commodity]", "", class: "form-control input-lg item_select", prompt: '-- Choose an item --', required: true, "data-ticket-id" => @ticket_id, "data-item-id" => id
       %br
       %div.input-group.gross_input_group
       %br
