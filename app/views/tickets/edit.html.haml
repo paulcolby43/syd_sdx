@@ -87,7 +87,8 @@
                     .panel-body
                       = hidden_field_tag "ticket[line_items][][id]", line_item['Id']
                       = hidden_field_tag "ticket[line_items][][status]", line_item['Status']
-                      = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, line_item['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                      =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, line_item['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                      = select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, line_item['CommodityId']), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true
                       %br
                       %div.input-group.gross_input_group
                         - current_user.scale_devices.each do |scale_device|
@@ -207,7 +208,8 @@
                   .panel-body
                     = hidden_field_tag "ticket[line_items][][id]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Id']
                     = hidden_field_tag "ticket[line_items][][status]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Status']
-                    = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                    =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
+                    = select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, @ticket["TicketItemCollection"]["ApiTicketItem"]['CommodityId']), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true
                     %br
                     %div.input-group.gross_input_group
                       - current_user.scale_devices.each do |scale_device|
@@ -325,7 +327,8 @@
                 .panel-body
                   = hidden_field_tag "ticket[line_items][][id]", new_item_id
                   = hidden_field_tag "ticket[line_items][][status]", nil
-                  = select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
+                  =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
+                  = select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   %br
                   %div.input-group.gross_input_group
                     - current_user.scale_devices.each do |scale_device|
