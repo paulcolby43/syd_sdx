@@ -281,7 +281,7 @@ class TicketsController < ApplicationController
         else
           flash[:danger] = 'Error voiding ticket.'
         end
-        redirect_to tickets_path(status: ticket_params[:status])
+        redirect_to tickets_path(status: params[:status])
       }
     end
   end
