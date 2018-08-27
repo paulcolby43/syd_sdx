@@ -8,9 +8,7 @@
               = link_to 'javascript:history.back()' do
                 Cancel
             - else
-              -#
-                %a{href: '', :onclick => "$('#edit_ticket_form').submit()"}
-                  Void
+              = link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], ticket: @ticket), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'text-danger'
         .col-xs-4.col-sm-4
           - unless mobile_device?
             - if @ticket['Status'] == '2' or @ticket['Status'].blank?

@@ -170,6 +170,10 @@ class TicketsController < ApplicationController
       elsif params[:close_ticket]
         @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description])
       ### End Close Ticket ###
+      ### Close Ticket ###
+      elsif params[:void_ticket]
+        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 5, ticket_params[:description])
+      ### End Close Ticket ###
       ### Pay Ticket ###
       elsif params[:pay_ticket]
         Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
@@ -258,11 +262,27 @@ class TicketsController < ApplicationController
 
   # DELETE /tickets/1
   # DELETE /tickets/1.json
+#  def destroy
+#    @ticket.destroy
+#    respond_to do |format|
+#      format.html { redirect_to tickets_url, notice: 'Ticket was successfully destroyed.' }
+#      format.json { head :no_content }
+#    end
+#  end
+  
+  # DELETE /tickets/1
+  # DELETE /tickets/1.json
   def destroy
-    @ticket.destroy
+    authorize! :void, :tickets
     respond_to do |format|
-      format.html { redirect_to tickets_url, notice: 'Ticket was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html {
+        if Ticket.void(current_user.token, current_yard_id, params[:ticket])
+          flash[:success] = 'Ticket was successfully voided.'
+        else
+          flash[:danger] = 'Error voiding ticket.'
+        end
+        redirect_to tickets_path(status: ticket_params[:status])
+      }
     end
   end
   

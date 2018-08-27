@@ -303,6 +303,32 @@ class Ticket
       return data["SaveTicketResponse"]["Success"]
   end
   
+  # Update an existing ticket
+  def self.void(auth_token, yard_id, ticket)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
+      payload: {
+        "TicketHead" => {
+          "Id" => ticket['Id'],
+          "Description" => ticket['Description'],
+          "YardId" => yard_id,
+          "CustomerId" => ticket['CustomerId'],
+          "PayToId" => ticket['CustomerId'],
+          "Status" => 5,
+          "CurrencyId" => user.user_setting.currency_id,
+          "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
+          "DateClosed" =>  Time.now.utc,
+          "DateCreated" => Time.now.utc
+          }
+        })
+      
+      Rails.logger.info "Ticket void response: #{response}"
+      data= Hash.from_xml(response)
+      return data["SaveTicketResponse"]["Success"]
+  end
+  
   # Add a line item to a ticket
   def self.add_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
     require 'json'
