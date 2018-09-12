@@ -12,7 +12,7 @@ class PasswordResetsController < ApplicationController
       else
         flash[:danger] = "Email address not found."
       end
-      redirect_to root_path
+      redirect_to login_path
     end
   end
   
