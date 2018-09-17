@@ -57,7 +57,15 @@ class TicketsController < ApplicationController
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
     @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
+    unless @ticket["TicketItemCollection"].blank?
+      unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} 
+      else
+        if @ticket["TicketItemCollection"]["ApiTicketItem"]["Status"] == '0'
+          @line_items = [@ticket["TicketItemCollection"]["ApiTicketItem"]]
+        end
+      end
+    end
     
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
@@ -116,7 +124,15 @@ class TicketsController < ApplicationController
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
+    unless @ticket["TicketItemCollection"].blank?
+      unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
+      else
+        if @ticket["TicketItemCollection"]["ApiTicketItem"]["Status"] == '0'
+          @line_items = [@ticket["TicketItemCollection"]["ApiTicketItem"]]
+        end
+      end
+    end
     @commodity_types = Commodity.types(current_user.token, current_yard_id)
     @commodities = Commodity.all(current_user.token, current_yard_id)
     @commodities_grouped_by_type_for_select = Commodity.all_by_type_grouped_for_select(@commodity_types, @commodities)

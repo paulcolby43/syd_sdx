@@ -68,8 +68,10 @@
             .panel-body
               = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
               = hidden_field_tag "ticket[description]", "#{@ticket['Description'].blank? ? "" : @ticket['Description']}"
-      - unless @ticket["TicketItemCollection"].blank?
-        - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      -# unless @ticket["TicketItemCollection"].blank?
+      - unless @line_items.blank?
+        -# unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        - unless false
           / Multiple ticket line items
           %div.ticket_input_fields_wrap
             #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
