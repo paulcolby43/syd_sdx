@@ -13,7 +13,8 @@
     - else
       - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
         #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-          - @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+          -# @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
+          - @line_items.each do |line_item|
             .panel.panel-default.line-item
               %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                 %h4.panel-title
