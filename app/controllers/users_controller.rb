@@ -14,7 +14,7 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @portal_customers = @user.portal_customers
-    @dragon_roles = @user.access_token.roles
+    @dragon_roles = @user.access_token.roles unless @user.access_token.blank?
   end
 
   # GET /users/new
@@ -155,7 +155,10 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
+      format.html { 
+        flash[:success] = 'User was successfully destroyed.'
+        redirect_to users_url 
+        }
       format.json { head :no_content }
     end
   end
