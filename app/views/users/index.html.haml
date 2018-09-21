@@ -18,6 +18,11 @@
                         = "#{user.first_name} #{user.last_name}"
                       - else
                         = user.username
+                      - if user.inactive?
+                        %span
+                          %small.text-danger
+                            %i.fa.fa-warning
+                            Inactive
                       .pull-right
                         &nbsp;
                         %i.fa.fa-chevron-right.fa-lg

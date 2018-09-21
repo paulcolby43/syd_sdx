@@ -381,7 +381,7 @@ class User < ActiveRecord::Base
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{token}", :content_type => 'application/json'})
       data= Hash.from_xml(response)
-      Rails.logger.info data
+      Rails.logger.info "Dragon Roles call response: #{data}"
       unless data["ArrayOfUserRoleInformation"].blank? or data["ArrayOfUserRoleInformation"]["UserRoleInformation"].blank?
         if data["ArrayOfUserRoleInformation"]["UserRoleInformation"].is_a? Hash # Only one result returned, so put it into an array
           return [data["ArrayOfUserRoleInformation"]["UserRoleInformation"]]
@@ -424,6 +424,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def inactive?
+    not active?
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -434,11 +438,15 @@ class User < ActiveRecord::Base
     user = User.where(username: login.downcase, dragon_account_number: account_number).first || User.where(email: login.downcase, dragon_account_number: account_number).first unless account_number.blank?
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
-      response = user.update_scrap_dragon_token(pass)
-      if response == 'success'
-        # Update user's dragon roles
-        user.access_token.update_attribute(:roles, user.dragon_role_names)
-        return user 
+      if user.active?
+        response = user.update_scrap_dragon_token(pass)
+        if response == 'success'
+          # Update user's dragon roles
+          user.access_token.update_attribute(:roles, user.dragon_role_names)
+          return user 
+        end
+      else
+        return nil
       end
     else
       company = Company.where(account_number: account_number).first

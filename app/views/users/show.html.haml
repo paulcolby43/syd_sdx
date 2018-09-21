@@ -6,6 +6,16 @@
     .row
       .col-sm-12.col-md-6
         %p
+          %strong Portal Status
+          - if @user.active
+            %span.lead.text-success Active
+          - else
+            %span.lead.text-danger 
+              %i.fa.fa-warning
+              Inactive
+    .row
+      .col-sm-12.col-md-6
+        %p
           %strong User Type
           %br
           = @user.role.titleize
