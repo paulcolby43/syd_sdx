@@ -434,11 +434,15 @@ class User < ActiveRecord::Base
     user = User.where(username: login.downcase, dragon_account_number: account_number).first || User.where(email: login.downcase, dragon_account_number: account_number).first unless account_number.blank?
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
-      response = user.update_scrap_dragon_token(pass)
-      if response == 'success'
-        # Update user's dragon roles
-        user.access_token.update_attribute(:roles, user.dragon_role_names)
-        return user 
+      if user.active?
+        response = user.update_scrap_dragon_token(pass)
+        if response == 'success'
+          # Update user's dragon roles
+          user.access_token.update_attribute(:roles, user.dragon_role_names)
+          return user 
+        end
+      else
+        return nil
       end
     else
       company = Company.where(account_number: account_number).first
