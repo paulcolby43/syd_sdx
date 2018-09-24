@@ -424,6 +424,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def inactive?
+    not active?
+  end
+  
   #############################
   #     Class Methods         #
   #############################
