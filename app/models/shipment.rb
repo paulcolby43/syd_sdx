@@ -116,7 +116,7 @@ class Shipment < ActiveRecord::Base
 #      puts response
       break if (response.include?("</RESULT>"))
     end
-    puts response
+    puts results
     
     ssl_client.close
     
