@@ -111,7 +111,7 @@ class Shipment < ActiveRecord::Base
 #    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     
     results = ""
-    while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
+    while response = ssl_client.sysread(2000) # Read 1000 bytes at a time
       results = results + response
 #      puts response
       break if (response.include?("</RESULT>"))
