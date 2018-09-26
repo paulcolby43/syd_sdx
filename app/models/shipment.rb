@@ -108,15 +108,7 @@ class Shipment < ActiveRecord::Base
     ssl_client.connect
     ssl_client.sync_close = true
     ssl_client.puts command
-#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
-    
-    results = ""
-    while response = ssl_client.sysread(2000) # Read 1000 bytes at a time
-      results = results + response
-#      puts response
-      break if (response.include?("</RESULT>"))
-    end
-    
+    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
