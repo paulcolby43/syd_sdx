@@ -193,7 +193,7 @@ class User < ActiveRecord::Base
   end
   
   def create_user_settings
-    UserSetting.create(user_id: id, show_thumbnails: customer? ? true : false)
+    UserSetting.create(user_id: id, show_thumbnails: customer? ? true : false, currency_id: "24EA72A0-3650-431E-87E6-35CA5BD6DAB5")
   end
   
   def create_company
