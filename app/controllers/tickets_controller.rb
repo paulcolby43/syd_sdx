@@ -7,6 +7,7 @@ class TicketsController < ApplicationController
   def index
     authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
+    @currencies = Ticket.currencies(current_user.token)
 #    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
@@ -57,7 +58,15 @@ class TicketsController < ApplicationController
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
     @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
+    unless @ticket["TicketItemCollection"].blank?
+      unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} 
+      else
+        if @ticket["TicketItemCollection"]["ApiTicketItem"]["Status"] == '0'
+          @line_items = [@ticket["TicketItemCollection"]["ApiTicketItem"]]
+        end
+      end
+    end
     
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
@@ -116,7 +125,15 @@ class TicketsController < ApplicationController
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
-    @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
+    unless @ticket["TicketItemCollection"].blank?
+      unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+        @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} unless @ticket["TicketItemCollection"].blank?
+      else
+        if @ticket["TicketItemCollection"]["ApiTicketItem"]["Status"] == '0'
+          @line_items = [@ticket["TicketItemCollection"]["ApiTicketItem"]]
+        end
+      end
+    end
     @commodity_types = Commodity.types(current_user.token, current_yard_id)
     @commodities = Commodity.all(current_user.token, current_yard_id)
     @commodities_grouped_by_type_for_select = Commodity.all_by_type_grouped_for_select(@commodity_types, @commodities)
@@ -131,10 +148,10 @@ class TicketsController < ApplicationController
     end
     
     @combolists = Vehicle.combolists(current_user.token)
-    @vehicle_makes = @combolists.blank? ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
-    @vehicle_models = @combolists.blank? ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
-    @body_styles = @combolists.blank? ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
-    @vehicle_colors = @combolists.blank? ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    @vehicle_makes = (@combolists.blank? or @combolists["VehicleMakes"].blank?) ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
+    @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
+    @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+    @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
   end
 
   # PATCH/PUT /tickets/1
@@ -169,6 +186,10 @@ class TicketsController < ApplicationController
       ### Close Ticket ###
       elsif params[:close_ticket]
         @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description])
+      ### End Close Ticket ###
+      ### Close Ticket ###
+      elsif params[:void_ticket]
+        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 5, ticket_params[:description])
       ### End Close Ticket ###
       ### Pay Ticket ###
       elsif params[:pay_ticket]
@@ -258,11 +279,27 @@ class TicketsController < ApplicationController
 
   # DELETE /tickets/1
   # DELETE /tickets/1.json
+#  def destroy
+#    @ticket.destroy
+#    respond_to do |format|
+#      format.html { redirect_to tickets_url, notice: 'Ticket was successfully destroyed.' }
+#      format.json { head :no_content }
+#    end
+#  end
+  
+  # DELETE /tickets/1
+  # DELETE /tickets/1.json
   def destroy
-    @ticket.destroy
+    authorize! :void, :tickets
     respond_to do |format|
-      format.html { redirect_to tickets_url, notice: 'Ticket was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html {
+        if Ticket.void(current_user.token, current_yard_id, params[:ticket])
+          flash[:success] = 'Ticket was successfully voided.'
+        else
+          flash[:danger] = 'Error voiding ticket.'
+        end
+        redirect_to tickets_path(status: params[:status])
+      }
     end
   end
   
