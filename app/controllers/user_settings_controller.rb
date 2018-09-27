@@ -54,7 +54,11 @@ class UserSettingsController < ApplicationController
       if @user_setting.update(user_setting_params)
         format.html { 
           flash[:success] = 'User setting was successfully updated.'
-          redirect_to root_path
+          if params[:status].blank?
+            redirect_to root_path
+          else
+            redirect_to :back
+          end
           }
 #        format.html { redirect_to @user_setting, notice: 'User setting was successfully updated.' }
         format.json { render :show, status: :ok, location: @user_setting }
