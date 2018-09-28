@@ -38,6 +38,7 @@ class Ability
       can :show, :tickets
       can :edit, :tickets
       can :send_to_leads_online, :tickets
+      can :void, :tickets
       
       # Customers
       ############
