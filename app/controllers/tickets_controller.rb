@@ -293,7 +293,7 @@ class TicketsController < ApplicationController
     authorize! :void, :tickets
     respond_to do |format|
       format.html {
-        if Ticket.void(current_user.token, current_yard_id, params[:ticket])
+        if Ticket.void(current_user.token, current_yard_id, params[:ticket]) == 'true'
           flash[:success] = 'Ticket was successfully voided.'
         else
           flash[:danger] = 'Error voiding ticket.'
