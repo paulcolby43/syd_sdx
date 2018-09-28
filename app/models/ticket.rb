@@ -324,7 +324,7 @@ class Ticket
           }
         })
       
-      Rails.logger.info "Ticket void response: #{response}"
+#      Rails.logger.info "Ticket void response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
