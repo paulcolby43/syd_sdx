@@ -108,6 +108,7 @@ class Image < ActiveRecord::Base
   
   # Get all jpegger images for this company with this ticket number
   def self.api_find_all_by_ticket_number(ticket_number, company, yard_id)
+    Rails.logger.debug "********** Made it into Image.api_find_all_by_ticket_number"
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
@@ -132,7 +133,7 @@ class Image < ActiveRecord::Base
     
     ssl_client.close
     
-    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
+#    Rails.logger.debug "***********Image.api_find_all_by_ticket_number results #{results}"
     data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
     unless data["RESULT"]["ROW"].blank?
