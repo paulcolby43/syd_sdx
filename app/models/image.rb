@@ -108,7 +108,6 @@ class Image < ActiveRecord::Base
   
   # Get all jpegger images for this company with this ticket number
   def self.api_find_all_by_ticket_number(ticket_number, company, yard_id)
-    Rails.logger.debug "********** Made it into Image.api_find_all_by_ticket_number"
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
