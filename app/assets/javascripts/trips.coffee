@@ -12,7 +12,8 @@ jQuery ->
     return
 
   ### File upload ###
-  $(".new_image_file").fileupload
+  #$(".new_image_file").fileupload
+  $(".new_task_image_file").fileupload
     dataType: "script"
     disableImageResize: false
     imageMaxWidth: 1024
