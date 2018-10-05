@@ -113,7 +113,7 @@
                           %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                       = link_to "<i class='fa fa-cube'/></i> #{container_number}".html_safe, container_path(container['ContainerId'], work_order_number: task['WorkOrderNumber']), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{container_number}"}, class: 'trip_button'
 
-                      = form_for ImageFile.new do |f|
+                      = form_for ImageFile.new, html: {class: 'new_task_image_file'} do |f|
                         = f.hidden_field :user_id, value: current_user.id
                         = f.hidden_field :yard_id, value: current_yard_id
                         = f.hidden_field :customer_name
