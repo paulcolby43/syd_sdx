@@ -23,6 +23,11 @@
             %th Date Shipped
             %th Shipment
             %th Description
+            %th Order
+            %th Booking
+            %th Seal
+            %th Gross
+            %th Tare
             %th Net
             -#
               %th Details
@@ -32,8 +37,18 @@
               %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y %l:%M:%S%P")
               %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
               %td= pack_shipment['ContractDescription']
+              %td= pack_shipment['OrderNumber']
+              %td= pack_shipment['BookingNumber']
+              %td= pack_shipment['SealNumber']
+              %td= "#{pack_shipment['GrossWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
+              %td= "#{pack_shipment['TareWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
               %td= "#{pack_shipment['NetWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
           %tr
+            %td
+            %td
+            %td
+            %td
+            %td
             %td
             %td
             %td
