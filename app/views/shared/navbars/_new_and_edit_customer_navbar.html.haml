@@ -3,15 +3,15 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to 'javascript:history.back()' do
-            Cancel
-          -#
-            %a{href: customers_path}
-              %i.fa.fa-close
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to 'javascript:history.back()' do
+              %i.fa.fa-chevron-left
+              Cancel
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title
           - else
             = truncate(title, length: 8)
         .col-xs-4.col-sm-4
-          = link_to 'Save', '', id: 'save_customer_navbar_link', data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i>"}, class: 'customer_button'
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            = link_to 'Save', '', id: 'save_customer_navbar_link', data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i> Save"}, class: 'customer_button'

@@ -3,12 +3,15 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to pack_shipments_path do
-            Done
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to pack_shipments_path do
+              %i.fa.fa-chevron-left
+              Done
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          - unless total.blank?
-            #net_total{style: "display: inline;"}
-              = total
-            #pack_list_unit_of_measure{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            - unless total.blank?
+              #net_total{style: "display: inline;"}
+                = total
+              #pack_list_unit_of_measure{style: "display: inline;"}= @pack_shipment['UnitOfMeasure']

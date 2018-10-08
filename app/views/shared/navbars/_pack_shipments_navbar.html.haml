@@ -3,8 +3,10 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to root_path do
-            = "Home"
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to root_path do
+              %i.fa.fa-chevron-left
+              = "Home"
         .col-xs-4.col-sm-4
           %i.fa.fa-truck.fa-lg
           = title unless mobile_device?

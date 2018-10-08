@@ -8,6 +8,7 @@
               = link_to 'javascript:history.back()' do
                 Back
             = link_to root_path do
+              %i.fa.fa-chevron-left
               Home
         .col-xs-4.col-sm-4
           -#
@@ -21,9 +22,9 @@
         .col-xs-4.col-sm-4
           - unless current_user.customer?
             %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
-              %a{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' Ticket'}"}} 
+              %a{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"}} 
                 %i.fa.fa-ticket.fa-lg
-                = "Ticket" unless mobile_device?
+                = "Ticket"
               -#
                 %a{href: customers_path, class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
                   %i.fa.fa-ticket.fa-lg

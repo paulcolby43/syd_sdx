@@ -6,6 +6,7 @@
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
             = link_to 'javascript:history.back()' do
               %i.fa.fa-chevron-left
+              Back
             -#
               = link_to root_path do
                 = "Home"
@@ -16,3 +17,4 @@
           %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
             = link_to 'javascript:location.reload();', data: {disable_with: "<i class='fa fa-refresh fa-spin'></i>"} do
               %i.fa.fa-refresh
+              Refresh

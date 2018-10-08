@@ -3,8 +3,10 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to 'javascript:history.back()' do
-            Cancel
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to 'javascript:history.back()' do
+              %i.fa.fa-chevron-left
+              Cancel
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title

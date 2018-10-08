@@ -3,8 +3,9 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to :back do
-            Back
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to :back do
+              Back
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4

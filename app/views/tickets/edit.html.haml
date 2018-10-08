@@ -411,31 +411,60 @@
         - unless @ticket['Status'] == '3'
           %div.col-xs-3.col-sm-3
             = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
-            %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
-              %i.fa.fa-plus
-              = 'Item' unless mobile_device?
-        %div.col-xs-3.col-sm-3
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Hold"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
-            %i.fa.fa-check.fa-lg
-            - if @ticket['Status'] == '2'
-              = 'Hold' unless mobile_device?
+            - unless mobile_device?
+              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+                %i.fa.fa-plus
+                Item
             - else
-              = 'Save' unless mobile_device?
+              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+                %i.fa.fa-plus
+                Item
         %div.col-xs-3.col-sm-3
+          - unless mobile_device?
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Hold"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
+              %i.fa.fa-check.fa-lg
+              - if @ticket['Status'] == '2'
+                = 'Hold' unless mobile_device?
+              - else
+                = 'Save' unless mobile_device?
+          - else
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Hold"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
+              %i.fa.fa-check.fa-lg
+              - if @ticket['Status'] == '2'
+                Hold
+              - else
+                Save
+        %div.col-xs-3.col-sm-3
+          - unless mobile_device?
+            - if @ticket['Status'] == '2'
+              = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-default btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
+                %i.fa.fa-folder.fa-lg
+                = 'Close' unless mobile_device?
+            - if @ticket['Status'] == '1'
+              %a.btn.btn-success.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                = 'Pay' unless mobile_device?
+          - else
+            - if @ticket['Status'] == '2'
+              = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-default btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
+                %i.fa.fa-folder.fa-lg
+                Close
+            - if @ticket['Status'] == '1'
+              %a.btn.btn-success.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                Pay
+        - unless mobile_device? 
           - if @ticket['Status'] == '2'
-            = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-default btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
-              %i.fa.fa-folder.fa-lg
-              = 'Close' unless mobile_device?
-          - if @ticket['Status'] == '1'
-            %a.btn.btn-success.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
-              %i.fa.fa-dollar.fa-lg
-              = 'Pay' unless mobile_device?
-            
-        - if @ticket['Status'] == '2'
-          %div.col-xs-3.col-sm-3
-            %a.btn.btn-success.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
-              %i.fa.fa-dollar.fa-lg
-              = 'Pay' unless mobile_device?
+            %div.col-xs-3.col-sm-3
+              %a.btn.btn-success.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                = 'Pay' unless mobile_device?
+        - else
+          - if @ticket['Status'] == '2'
+            %div.col-xs-3.col-sm-3
+              %a.btn.btn-success.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+                %i.fa.fa-dollar.fa-lg
+                Pay
         = render partial: "payment_modal"
             
     %hr
