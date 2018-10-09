@@ -17,90 +17,41 @@
           #details.text-muted.pull-right
             =# number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
     %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
-      %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
-        %thead
-          %tr
-            %th Date Shipped
-            %th Shipment
-            %th Description
-            %th Order
-            %th Booking
-            %th Seal
-            %th Gross
-            %th Tare
-            %th Net
-            -#
-              %th Details
-        %tbody
-          - pack_shipments.sort_by{|pack_shipment| pack_shipment['DateShipped']}.reverse.each do |pack_shipment|
-            %tr
-              %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y %l:%M:%S%P")
-              %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
-              %td= pack_shipment['ContractDescription']
-              %td= pack_shipment['OrderNumber']
-              %td= pack_shipment['BookingNumber']
-              %td= pack_shipment['SealNumber']
-              %td= "#{pack_shipment['GrossWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
-              %td= "#{pack_shipment['TareWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
-              %td= "#{pack_shipment['NetWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
-          %tr
-            %td
-            %td
-            %td
-            %td
-            %td
-            %td
-            %td
-            %td
-            %td
-              %strong= "#{pack_shipments.map { |ps| ps['NetWeight'].to_d }.sum.round(3)}"
--#
-  - @pack_shipments.group_by{ |t| "#{t['FirstName']} #{t['LastName']}"}.each_with_index do |(ticket_group, tickets), index|
-    %div.panel.panel-default
-      %div.panel-heading
-        %h3.panel-title
-          %a.group{"aria-controls" => "collapse#{index}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse#{index}", :role => "button"}
-            = ticket_group
-            = "No name" if ticket_group.blank?
-            #details.text-muted.pull-right
-              = number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
-      %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
-        %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
+      .table-responsive
+        %table.table.table-striped.table-hover{"data-provides" => "rowlink"}
           %thead
             %tr
-              %th
-                Date
-              %th
-                Ticket
-              %th
-                Amount
-              - unless @status == '1' # Don't show for closed tickets
-                %th
-                  Method
+              %th Date
+              %th Shipment
+              %th Description
+              %th Order
+              %th Booking
+              %th Seal
+              %th Gross
+              %th Tare
+              %th Net
               -#
-                %td
-                  %strong Ticket record
+                %th Details
           %tbody
-            - tickets.each do |ticket|
+            - pack_shipments.sort_by{|pack_shipment| pack_shipment['DateShipped']}.reverse.each do |pack_shipment|
               %tr
-                %td= ticket["DateClosed"].to_date.strftime("%m/%d/%y")
-                %td
-                  = link_to ticket["TicketNumber"], ticket_path(ticket['Id'], status: ticket['Status'])
-                  =# ticket["TicketNumber"]
-                %td
-                  = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
-                  =# "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
-                - unless @status == '1'  # Don't show for closed tickets
-                  %td
-                    = "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}" 
-                -# %td= ticket
-            -#
-              %tr
-                %td
-                %td
-                %td
-                  %strong= number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
-  .pull-right
-    %p.lead
-      %strong Total
-      = number_to_currency(@line_items_total)
+                %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y")
+                %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
+                %td= pack_shipment['ContractDescription']
+                %td= pack_shipment['OrderNumber']
+                %td= pack_shipment['BookingNumber']
+                %td= pack_shipment['SealNumber']
+                %td= "#{pack_shipment['GrossWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
+                %td= "#{pack_shipment['TareWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
+                %td= "#{pack_shipment['NetWeight'].to_d.round(3)} #{pack_shipment['UnitOfMeasure']}"
+            %tr
+              %td
+              %td
+              %td
+              %td
+              %td
+              %td
+              %td
+              %td
+              %td
+                %strong= "#{pack_shipments.map { |ps| ps['NetWeight'].to_d }.sum.round(3)}"

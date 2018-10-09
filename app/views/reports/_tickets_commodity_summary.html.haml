@@ -44,80 +44,81 @@
               =# "#{line_items.map { |i| i['NetWeight'].to_d }.sum.round}LB"
               = number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
       %div.panel-collapse.collapse.in{:id => "collapse#{index}", "aria-labelledby" => "headingOne", :role => "tabpanel"}
-        %table.table.table-striped.table-responsive.table-hover{"data-provides" => "rowlink"}
-          %thead
-            %tr
-              %td 
-                %strong Date
-              %td 
-                %strong Description
-              %td 
-                %strong Ticket
-              %td 
-                %strong Job
-              %td 
-                %strong BOL
-              %td 
-                %strong PO
-              %td 
-                %strong Customer
-              %td 
-                %strong Customer Ref #
-              -#
+        .table-responsive
+          %table.table.table-striped.table-hover{"data-provides" => "rowlink"}
+            %thead
+              %tr
                 %td 
-                  %strong Customer Ship
-              %td 
-                %strong Gross
-              %td 
-                %strong Tare
-              %td
-                %strong Net
-              %td
-                %strong Price
-              %td 
-                %strong Amount
-          %tbody
-            - line_items.each do |line_item|
+                  %strong Date
+                %td 
+                  %strong Description
+                %td 
+                  %strong Ticket
+                %td 
+                  %strong Job
+                %td 
+                  %strong BOL
+                %td 
+                  %strong PO
+                %td 
+                  %strong Customer
+                %td 
+                  %strong Customer Ref #
+                -#
+                  %td 
+                    %strong Customer Ship
+                %td 
+                  %strong Gross
+                %td 
+                  %strong Tare
+                %td
+                  %strong Net
+                %td
+                  %strong Price
+                %td 
+                  %strong Amount
+            %tbody
+              - line_items.each do |line_item|
+                %tr
+                  %td
+                    =# line_item["DateCreated"].to_date.strftime("%m/%d/%y")
+                    = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["DateCreated"].to_date.strftime("%m/%d/%y")
+                  %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue 'N/A'
+                  %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'], yard_id: @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["YardId"])
+                  %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue 'N/A'
+                  %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue 'N/A'
+                  %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue 'N/A'
+                  %td
+                    - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
+                      = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
+                    - else
+                      = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
+                  %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue 'N/A'
+                  -#
+                    %td= "#{DateTime.parse(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]) rescue '2000-01-01'}".to_date.strftime("%m/%d/%y")
+                  %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                  %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                  %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                  %td= "#{number_to_currency(line_item['Price'])} / #{line_item['UnitOfMeasure']}"
+                  %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
+                  -#
+                    %td= line_item
               %tr
                 %td
-                  =# line_item["DateCreated"].to_date.strftime("%m/%d/%y")
-                  = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["DateCreated"].to_date.strftime("%m/%d/%y")
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue 'N/A'
-                %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'], yard_id: @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["YardId"])
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue 'N/A'
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue 'N/A'
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue 'N/A'
                 %td
-                  - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
-                    = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
-                  - else
-                    = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue 'N/A'
-                -#
-                  %td= "#{DateTime.parse(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]) rescue '2000-01-01'}".to_date.strftime("%m/%d/%y")
-                %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
-                %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
-                %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} "
-                %td= "#{number_to_currency(line_item['Price'])} / #{line_item['UnitOfMeasure']}"
-                %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
-                -#
-                  %td= line_item
-            %tr
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-                %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
-              %td
-              %td
-                %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+                %td
+                %td
+                %td
+                %td
+                %td
+                %td
+                %td
+                %td
+                %td
+                  %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
+                %td
+                %td
+                  %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
 
 
 %hr

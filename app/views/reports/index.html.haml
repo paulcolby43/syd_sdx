@@ -4,7 +4,10 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h2.text-center
-      = link_to "Scrap Dragon Xtreme", 'http://www.scrapdragon.com', target: '_blank'
+      - unless mobile_device?
+        = link_to "Scrap Dragon Xtreme", 'http://www.scrapdragon.com', target: '_blank'
+      - else
+        = link_to "SDX", 'http://www.scrapdragon.com', target: '_blank'
       Portal
     -#
       - unless @tickets.blank? and @line_items.blank?
@@ -14,21 +17,48 @@
               %i.fa.fa-download
               CSV
     - if params[:q].blank?
-      %p
-        = form_tag reports_path, :method => 'get', :class => "form-inline" do
-          =# hidden_field_tag 'report[type]', @type
-          - if current_user.company.include_shipments?
-            = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
-          - else
-            = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
-          = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control input-lg"
-          .form-group
-            = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
-          To
-          .form-group
-            = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}) do
-            %i.fa.fa-search
+      = form_tag reports_path, :method => 'get', :class => "form-inline" do
+        =# hidden_field_tag 'report[type]', @type
+        - if mobile_device?
+          .row
+            %p
+              .col-xs-5
+                - if current_user.company.include_shipments?
+                  = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed', '1'],['Paid', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+                - else
+                  = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+              .col-xs-7
+                = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control input-lg"
+          .row
+            %p
+              .col-xs-5
+                = label_tag "Start", nil, :class => 'control-label'
+                = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+              .col-xs-5
+                = label_tag "End", nil, :class => 'control-label'
+                = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+          .row
+            %p
+              .col-xs-2
+                = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+                  %i.fa.fa-search
+                  Search
+        - else
+          %p
+            - if current_user.company.include_shipments?
+              = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+            - else
+              = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+            = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control input-lg"
+
+            .form-group
+              = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            To
+            .form-group
+              = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+              %i.fa.fa-search
+              Search
 
     - unless @tickets.blank? and @pack_shipments.blank?
       - unless @status == 'shipments'
