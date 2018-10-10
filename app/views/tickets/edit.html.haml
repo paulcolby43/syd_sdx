@@ -479,7 +479,8 @@
     - @images_array.each_slice(6) do |images|
       .row
         - images.each do |image|
-          - if current_user.view_images?
+          -# if current_user.view_images?
+          - unless image['HIDDEN'] == '1' or not current_user.view_images?
             .col-xs-12.col-sm-2.col-md-2
               .thumbnail
                 %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
