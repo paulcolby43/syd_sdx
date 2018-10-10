@@ -46,7 +46,7 @@
       %span.pull-right
         = form_tag user_setting_path(current_user.user_setting), method: 'put', :class => "form-horizontal" do
           = hidden_field_tag :status, @status
-          = select_tag "user_setting[currency_id]", options_for_select(@currencies.map{ |currency| [currency['Description'], currency['Id']]}, current_user.currency_id ), :class => "form-control input-lg", onchange: "this.form.submit();"
+          = select_tag "user_setting[currency_id]", options_for_select(@currencies.map{ |currency| ["#{mobile_device? ? currency['Code'] : currency['Description']}", currency['Id']]}, current_user.currency_id ), :class => "form-control input-lg", onchange: "this.form.submit();"
             
       %p
         = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
