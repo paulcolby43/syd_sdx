@@ -8,14 +8,21 @@ class TicketsController < ApplicationController
     authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
     @currencies = Ticket.currencies(current_user.token)
+    @start_date = params[:start_date]
+    @end_date = params[:end_date]
 #    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
     unless params[:q].blank?
       results = Ticket.search(@status.to_i, current_user.token, current_yard_id, params[:q])
     else
-      results = Ticket.all_by_status_and_yard(@status.to_i, current_user.token, current_yard_id) unless current_user.customer?
-      if current_user.customer?
+      unless current_user.customer?
+        if @start_date.blank? and @end_date.blank?
+          results = Ticket.all_by_status_and_yard(@status.to_i, current_user.token, current_yard_id)
+        else
+          results = Ticket.all_by_date_and_status_and_yard(@status.to_i, current_user.token, current_yard_id, @start_date, @end_date)
+        end
+      else
         results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, current_user.customer_guid)
         current_user.portal_customers.each do |portal_customer|
           portal_customer_results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, portal_customer.customer_guid)

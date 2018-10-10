@@ -11,11 +11,6 @@
           %a{href: tickets_path(status: 1), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Closed'}"}}
             %i.fa.fa-folder.fa-lg
             = "Closed" unless mobile_device?
-          -#
-            %a{href: customers_path, :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Customers'}"}}
-              %i.fa.fa-users.fa-lg
-              = "Customers" unless mobile_device?
-          -#
           %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
             %i.fa.fa-dollar
             = "Paid" unless mobile_device?
@@ -29,10 +24,6 @@
           %a{href: tickets_path(status: 3), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
             %i.fa.fa-dollar
             = "Paid" unless mobile_device?
-          -#
-            %a{href: customers_path, :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Customers'}"}}
-              %i.fa.fa-users.fa-lg
-              = "Customers" unless mobile_device?
         - elsif @status == '3'
           %a{href: tickets_path(status: 2), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Held'}"}}
             %i.fa.fa-folder-open-o.fa-lg
@@ -47,15 +38,39 @@
         = form_tag user_setting_path(current_user.user_setting), method: 'put', :class => "form-horizontal" do
           = hidden_field_tag :status, @status
           = select_tag "user_setting[currency_id]", options_for_select(@currencies.map{ |currency| ["#{mobile_device? ? currency['Code'] : currency['Description']}", currency['Id']]}, current_user.currency_id ), :class => "form-control input-lg", onchange: "this.form.submit();"
-            
-      %p
+      
+      - unless mobile_device?
         = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
-          .input-group
+          = hidden_field_tag :status, @status
+          %p
+            .form-group
+              = text_field_tag :start_date, nil, :placeholder => "Start Date", value: "#{(@start_date.blank? or params[:q].present?) ? nil : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            To
+            .form-group
+              = text_field_tag :end_date, nil, :placeholder => "End Date", value: "#{(@end_date.blank? or params[:q].present?) ? nil : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+          %p
             = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
-            = hidden_field_tag :status, @status
-            %span.input-group-btn
-              %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
-                %i.fa.fa-search
+            %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+              %i.fa.fa-search
+              Search
+            -#
+              .pull-right
+                = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+                  .input-group
+                    = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
+                    = hidden_field_tag :status, @status
+                    %span.input-group-btn
+                      %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+                        %i.fa.fa-search
+      - else
+        %p
+          = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+            .input-group
+              = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
+              = hidden_field_tag :status, @status
+              %span.input-group-btn
+                %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+                  %i.fa.fa-search
     - unless @tickets.blank?
       %div{id: "tickets"}
         - @tickets.each do |ticket|
