@@ -45,7 +45,7 @@ class TicketsController < ApplicationController
       end
 #      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
 #      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
-      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(2)
+      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
     end
