@@ -16,49 +16,60 @@
             %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-lg btn-default'}
               %i.fa.fa-download
               CSV
-    - if params[:q].blank?
-      = form_tag reports_path, :method => 'get', :class => "form-inline" do
-        =# hidden_field_tag 'report[type]', @type
-        - if mobile_device?
-          .row
-            %p
-              .col-xs-5
-                - if current_user.company.include_shipments?
-                  = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed', '1'],['Paid', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
-                - else
-                  = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
-              .col-xs-7
-                = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control input-lg"
-          .row
-            %p
-              .col-xs-5
-                = label_tag "Start", nil, :class => 'control-label'
-                = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
-              .col-xs-5
-                = label_tag "End", nil, :class => 'control-label'
-                = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
-          .row
-            %p
-              .col-xs-2
-                = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
-                  %i.fa.fa-search
-                  Search
-        - else
+    -# if params[:q].blank?
+    = form_tag reports_path, :method => 'get', :class => "form-inline" do
+      =# hidden_field_tag 'report[type]', @type
+      - if mobile_device?
+        .row
           %p
-            - if current_user.company.include_shipments?
-              = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
-            - else
-              = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+            .col-xs-5
+              - if current_user.company.include_shipments?
+                = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed', '1'],['Paid', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+              - else
+                = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+            .col-xs-7
+              - unless @status == 'shipments'
+                = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control input-lg"
+        .row
+          %p
+            .col-xs-6
+              = label_tag "Start", nil, :class => 'control-label'
+              = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            .col-xs-6
+              = label_tag "End", nil, :class => 'control-label'
+              = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+        .row
+          %p
+            - unless @status == 'shipments'
+              .col-xs-6
+                = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
+            .col-xs-6
+              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+                %i.fa.fa-search
+                Search
+            
+      - else
+        %p
+          - if current_user.company.include_shipments?
+            = select_tag 'report[status]', options_for_select([['Shipments', 'shipments'], ['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+          - else
+            = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control input-lg"
+          - unless @status == 'shipments'
             = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control input-lg"
 
-            .form-group
-              = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
-            To
-            .form-group
-              = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
-            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
-              %i.fa.fa-search
-              Search
+          .form-group
+            =# text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? (params[:q].present? ? nil : Date.today) : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{params[:q].present? ? nil : (@start_date.blank? ? Date.today : @start_date)}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+          To
+          .form-group
+            =# text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? (params[:q].present? ? nil : Date.today) : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{params[:q].present? ? nil : (@end_date.blank? ? Date.today : @end_date)}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+        %p
+          - unless @status == 'shipments'
+            = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+            %i.fa.fa-search
+            Search
 
     - unless @tickets.blank? and @pack_shipments.blank?
       - unless @status == 'shipments'

@@ -9,8 +9,8 @@ class ReportsController < ApplicationController
     authorize! :index, :reports
     @status = "#{report_params[:status].blank? ? '1' : report_params[:status]}" # Default status to 1 (closed tickets)
     @type = report_params[:type] || 'commodity_summary' # Default to commodity summary
-    @start_date = report_params[:start_date] ||= Date.today.to_s # Default to today
-    @end_date = report_params[:end_date] ||= Date.today.to_s # Default to today
+    @start_date = report_params[:start_date].blank? ? Date.today.to_s : report_params[:start_date]# Default to today
+    @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
     unless @status == 'shipments'
       # Tickets report
       if current_user.customer?

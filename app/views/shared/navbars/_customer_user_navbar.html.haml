@@ -42,12 +42,12 @@
             %li{:class => "#{(params[:controller] == 'reports') and (@type == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
             %li{:class => "#{(params[:controller] == 'reports') and (@type == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
 
-        -# %form.navbar-form.navbar-left
-        = form_tag reports_path, id: 'ticket_search_form', method: 'get', :class => "navbar-form navbar-left", role: 'search' do |f|
-          .form-group
-            = search_field_tag :q, params[:q], :placeholder => "Ticket Search", class: "form-control"
-          %button.btn.btn-default{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
-            %i.fa.fa-search
+        -# 
+          = form_tag reports_path, id: 'ticket_search_form', method: 'get', :class => "navbar-form navbar-left", role: 'search' do |f|
+            .form-group
+              = search_field_tag :q, params[:q], :placeholder => "Ticket Search", class: "form-control"
+            %button.btn.btn-default{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
 
           
       %ul.nav.navbar-nav.navbar-right
