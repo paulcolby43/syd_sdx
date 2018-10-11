@@ -10,6 +10,8 @@ class TicketsController < ApplicationController
     @currencies = Ticket.currencies(current_user.token)
     @start_date = params[:start_date]
     @end_date = params[:end_date]
+    @sort_column = params[:sort_column] ||= 'DateCreated'
+    @sort_direction = params[:sort_direction] ||= 'Ascending'
 #    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
@@ -23,18 +25,27 @@ class TicketsController < ApplicationController
           results = Ticket.all_by_date_and_status_and_yard(@status.to_i, current_user.token, current_yard_id, @start_date, @end_date)
         end
       else
-        results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, current_user.customer_guid)
-        current_user.portal_customers.each do |portal_customer|
-          portal_customer_results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, portal_customer.customer_guid)
-          results = [] if results.blank? # Create an empty array to add to if there are no results yet
-          results = results + portal_customer_results unless portal_customer_results.blank?
+        if @start_date.blank? and @end_date.blank?
+          results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, current_user.customer_guid)
+        else
+          results = Ticket.all_by_date_and_customers(@status.to_i, current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) 
+#          current_user.portal_customers.each do |portal_customer|
+#            portal_customer_results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, portal_customer.customer_guid)
+#            results = [] if results.blank? # Create an empty array to add to if there are no results yet
+#            results = results + portal_customer_results unless portal_customer_results.blank?
+#          end
         end
       end
     end
     unless results.blank?
-      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
-      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
-      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
+      if @sort_direction == 'Descending'
+        results = results.sort_by{|ticket| ticket["#{@sort_column}"]}.reverse
+      else
+        results = results.sort_by{|ticket| ticket["#{@sort_column}"]}
+      end
+#      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
+#      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
+      @tickets = Kaminari.paginate_array(results).page(params[:page]).per(2)
     else
       @tickets = []
     end

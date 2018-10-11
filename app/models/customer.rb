@@ -310,25 +310,4 @@ class Customer
     end
   end
   
-#  def self.paid_tickets_total(auth_token, yard_id, customer_id)
-#    paid_tickets = Ticket.search(3, auth_token, yard_id, company_name)
-#    paid_tickets = Customer.paid_tickets(auth_token, yard_id, customer_id)
-#    total = 0
-#    paid_tickets.each do |paid_ticket|
-#      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
-#    end
-#    return total
-#  end
-#  
-#  #  def paid_tickets_total_this_week(auth_token, yard_id, customer_id)
-#  def self.paid_tickets_total_this_week(auth_token, yard_id, company_name)
-#    paid_tickets = Ticket.search_this_week(3, auth_token, yard_id, company_name)
-#    total = 0
-#    Rails.logger.info paid_tickets.count
-#    paid_tickets.each do |paid_ticket|
-#      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
-#    end
-#    return total
-#  end
-  
 end

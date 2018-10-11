@@ -8,8 +8,8 @@
               = ticket["TicketNumber"]
               - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                 = "#{ticket['FirstName']} #{ticket['LastName']}"
-              - else
-                = ticket["Company"]
+              %br
+              %small= ticket["Company"]
               .pull-right
                 = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
                 %i.fa.fa-chevron-right.fa-lg
@@ -21,8 +21,8 @@
               = ticket["TicketNumber"]
               - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                 = "#{ticket['FirstName']} #{ticket['LastName']}"
-              - else
-                = ticket["Company"]
+              %br
+              %small= ticket["Company"]
           - if @status == '1' or @status == '3'
             %div.list-group-item
               = ticket["DateCreated"].to_date.strftime("%m/%d/%y")

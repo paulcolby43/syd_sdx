@@ -49,6 +49,13 @@
             .form-group
               = text_field_tag :end_date, nil, :placeholder => "End Date", value: "#{(@end_date.blank? or params[:q].present?) ? nil : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
           %p
+            .form-group
+              = label_tag "Sort by", nil, :class => 'control-label'
+              = select_tag :sort_column, options_for_select([['Company', 'Company'], ['Date', 'DateCreated'], ['Ticket', 'TicketNumber']], @sort_column ), :class => "form-control input-lg"
+            .form-group
+              = label_tag "Direction", nil, :class => 'control-label'
+              = select_tag :sort_direction, options_for_select(['Ascending', 'Descending'], @sort_direction ), :class => "form-control input-lg"
+          %p
             = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
             %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
               %i.fa.fa-search
@@ -90,8 +97,8 @@
                       = ticket["TicketNumber"]
                       - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                         = "#{ticket['FirstName']} #{ticket['LastName']}"
-                      - else
-                        = ticket["Company"]
+                      %br
+                      %small= ticket["Company"]
                   - else
                     %a{href: ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
                       .pull-right
@@ -103,8 +110,8 @@
                       = ticket["TicketNumber"]
                       - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                         = "#{ticket['FirstName']} #{ticket['LastName']}"
-                      - else
-                        = ticket["Company"]
+                      %br
+                      %small= ticket["Company"]
                   - if @status == '1' or @status == '3'
                     %div.list-group-item
                       = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
@@ -123,7 +130,7 @@
         .text-center
           %div{id: 'endless_page'}
             %p= image_tag("ajax-loader.gif", :id => "more_tickets_spinner", :alt => "Loading ...", style: "display:none;")
-            %p= link_to 'Load more ...', tickets_path(:page => @tickets.next_page, :q => params[:q], :status => params[:status]), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
+            %p= link_to 'Load more ...', tickets_path(page: @tickets.next_page, q: params[:q], status: @status, start_date: @start_date, end_date: @end_date, sort_column: @sort_column, sort_direction: @sort_direction), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
     - else
       %p.text-center No tickets found            
     
