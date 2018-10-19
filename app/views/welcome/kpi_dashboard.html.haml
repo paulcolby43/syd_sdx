@@ -1,0 +1,57 @@
+.jumbotron{style: 'background-color: white;'}
+  .container
+    .row
+      .col-xs-12.col-sm-4
+        .panel.panel-danger
+          .panel-heading
+            Today's Held Tickets
+          - unless @held_tickets_today.blank?
+            %table.table
+              - @held_tickets_today.each do |ticket|
+                %tr
+                  %td= ticket['TicketNumber']
+                  %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+          - else
+            .panel-body None
+      .col-xs-12.col-sm-4
+        .panel.panel-success
+          .panel-heading
+            Today's Paid Tickets
+          - unless @paid_tickets_today.blank?
+            %table.table
+              - @paid_tickets_today.each do |ticket|
+                %tr
+                  %td= ticket['TicketNumber']
+                  %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+          - else
+            .panel-body None
+      .col-xs-12.col-sm-4
+        .panel.panel-default
+          .panel-heading
+            Average Time in Yard
+          .panel-body No data
+    .row
+      .col-xs-12.col-sm-4
+        .panel.panel-info
+          .panel-heading
+            Today's Held Shipments
+          - unless @held_shipments_today.blank?
+            %table.table
+              - @held_shipments_today.each do |shipment|
+                %tr
+                  %td= shipment['ShipmentNumber']
+                  %td= shipment['CustomerName']
+          - else
+            .panel-body None
+      .col-xs-12.col-sm-4
+        .panel.panel-warning
+          .panel-heading
+            Today's Sent Shipments
+          - unless @paid_tickets_today.blank?
+            %table.table
+              - @held_shipments_today.each do |shipment|
+                %tr
+                  %td= shipment['ShipmentNumber']
+                  %td= shipment['CustomerName']
+          - else
+            .panel-body None
