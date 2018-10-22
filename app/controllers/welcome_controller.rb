@@ -18,11 +18,11 @@ class WelcomeController < ApplicationController
         session[:yard_id] = params[:yard_id]
         session[:yard_name] = @yard['Name']
       end
-      @held_tickets_today = Ticket.all_last_90_days(2, current_user.token, current_yard_id).last(20)
-      @paid_tickets_today = Ticket.all_last_90_days(3, current_user.token, current_yard_id).last(20)
+      @held_tickets_today = Ticket.all_last_90_days(2, current_user.token, current_yard_id).last(10)
+      @paid_tickets_today = Ticket.all_last_90_days(3, current_user.token, current_yard_id).last(10)
 
-      @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(20)
-      @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, (Date.today - 4.months), Date.today).last(20)
+      @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(10)
+      @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, (Date.today - 4.months), Date.today).last(10)
     else
       flash[:danger] = 'You do not have access to that page.'
       redirect_to root_path
