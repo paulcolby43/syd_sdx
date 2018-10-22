@@ -10,3 +10,13 @@ jQuery ->
       $.rails.enableElement $(this)
       return
     return
+
+  # Full screen mode
+  $('#full_screen_button').on 'click', ->
+    dashboard_elem = document.getElementById('kpi_dashboard')
+    if dashboard_elem && dashboard_elem.requestFullscreen
+      dashboard_elem.requestFullscreen()
+    else if dashboard_elem && dashboard_elem.mozRequestFullScreen
+      dashboard_elem.mozRequestFullScreen()
+    else if dashboard_elem && dashboard_elem.webkitRequestFullscreen
+      dashboard_elem.webkitRequestFullscreen()

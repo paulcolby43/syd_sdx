@@ -108,5 +108,6 @@
               %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
             - if current_user.admin?
               %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'Users', users_path
+              %li= link_to "KPI Dashboard", welcome_kpi_dashboard_path, target: '_blank'
             %li{:class => "#{( current_page? user_settings_path) ? 'active' : ''}"}= link_to 'Settings', user_setting_path(current_user.user_setting)
         %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }

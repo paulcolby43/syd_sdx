@@ -6,7 +6,7 @@ class PackShipmentsController < ApplicationController
   def index
     authorize! :index, :pack_shipments
 #    @query_string = params[:q].blank? ? '' : "%#{params[:q]}%"
-    @pack_shipments = Kaminari.paginate_array(PackShipment.all(current_user.token, current_yard_id)).page(params[:page]).per(10)
+    @pack_shipments = Kaminari.paginate_array(PackShipment.all_held(current_user.token, current_yard_id)).page(params[:page]).per(10)
   end
 
   # GET /pack_shipments/1

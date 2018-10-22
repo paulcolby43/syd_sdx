@@ -1,0 +1,19 @@
+- if mobile_device?
+  .container-fluid{style: 'margin-top: -50px;'}
+- else
+  .navbar.navbar-default.navbar-fixed-top{ role: 'navigation' }
+    .container-fluid
+      .navbar-header
+        %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
+          %span.sr-only= t('.toggle_navigation')
+          %span.icon-bar
+          %span.icon-bar
+          %span.icon-bar
+        %a{class: 'navbar-brand logo-nav', :href => root_path}
+          KPI Dashboard
+      %ul.nav.navbar-nav
+        %li
+          .navbar-btn
+            %a{href: '#', id: 'full_screen_button', class: 'btn btn-default', type: 'button', title: 'Remove Navbar and Enter Full Screen'}
+              %i.fa.fa-arrows-alt
+              Full Screen

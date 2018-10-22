@@ -1,10 +1,19 @@
-.jumbotron{style: 'background-color: white;'}
+=# render 'shared/navbars/kpi_dashboard_navbar'
+
+.jumbotron{id: 'kpi_dashboard', style: 'background-color: white;'}
   .container
     .row
-      .col-xs-12.col-sm-4
+      .pull-right
+        .col-xs-12.col-sm-4
+          = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
+            %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
+    .row
+      .col-xs-12.col-sm-3
         .panel.panel-danger
           .panel-heading
             Today's Held Tickets
+            %br
+            %small.text-muted= "Total: #{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
           - unless @held_tickets_today.blank?
             %table.table
               - @held_tickets_today.each do |ticket|
@@ -13,10 +22,12 @@
                   %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
           - else
             .panel-body None
-      .col-xs-12.col-sm-4
+      .col-xs-12.col-sm-3
         .panel.panel-success
           .panel-heading
             Today's Paid Tickets
+            %br
+            %small.text-muted= "Total: #{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
           - unless @paid_tickets_today.blank?
             %table.table
               - @paid_tickets_today.each do |ticket|
@@ -25,16 +36,13 @@
                   %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
           - else
             .panel-body None
-      .col-xs-12.col-sm-4
-        .panel.panel-default
-          .panel-heading
-            Average Time in Yard
-          .panel-body No data
-    .row
-      .col-xs-12.col-sm-4
+      
+      .col-xs-12.col-sm-3
         .panel.panel-info
           .panel-heading
             Today's Held Shipments
+            %br
+            %small.text-muted= "Total: #{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
           - unless @held_shipments_today.blank?
             %table.table
               - @held_shipments_today.each do |shipment|
@@ -43,15 +51,23 @@
                   %td= shipment['CustomerName']
           - else
             .panel-body None
-      .col-xs-12.col-sm-4
+      .col-xs-12.col-sm-3
         .panel.panel-warning
           .panel-heading
             Today's Sent Shipments
-          - unless @paid_tickets_today.blank?
+            %br
+            %small.text-muted= "Total: #{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
+          - unless @closed_shipments_today.blank?
             %table.table
-              - @held_shipments_today.each do |shipment|
+              - @closed_shipments_today.each do |shipment|
                 %tr
                   %td= shipment['ShipmentNumber']
                   %td= shipment['CustomerName']
           - else
             .panel-body None
+
+:javascript
+  // Refresh page every 5 minutes
+  setInterval(function(){
+   window.location.reload(1);
+  }, 300000);
