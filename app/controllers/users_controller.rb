@@ -20,6 +20,8 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    flash[:danger] = "You can create users through your Scrap Dragon client."
+    redirect_to users_path
   end
 
   # GET /users/1/edit
