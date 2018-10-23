@@ -49,12 +49,12 @@ jQuery ->
         html += '<div>' + weather.city + ', ' + weather.region + '</div>'
         $('#weather').html html
         i = 0
-        forecast_html = '<ul class=list-inline>'
+        forecast_html = '<h4><ul class=list-inline>'
         #while i < weather.forecast.length
         while i < 2
-          forecast_html += '<li>' + weather.forecast[i+1].day + ': ' + weather.forecast[i+1].high + '<br>' + '<i class="weather-icon icon-' + weather.forecast[i+1].code + '"></i> </li>'
+          forecast_html += '<li>' + weather.forecast[i+1].day + ': ' + weather.forecast[i+1].high + '&deg;' + '<br>' + '<i class="weather-icon icon-' + weather.forecast[i+1].code + '"></i> </li>'
           i++
-        forecast_html += '</ul>'
+        forecast_html += '</ul></h4>'
         $('#forecast').html forecast_html
         return
       error: (error) ->
