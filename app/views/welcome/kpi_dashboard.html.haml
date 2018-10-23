@@ -54,6 +54,13 @@
                 Forecast
               .panel-body
                 #forecast{style: 'background-color: #303030; color: white;'}
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading{style: 'background-color: gray;'}
+                New York
+              .panel-body
+                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
+
 
         .col-xs-6
           .col-xs-12
@@ -83,41 +90,38 @@
                       %td= "#{shipment['NetWeight']}#{shipment['UnitOfMeasure']}"
               - else
                 .panel-body None
-    .row
-      .col-xs-12
-        
-            
-        
+    -#    
+      .row
+        .col-xs-12
 
-    .row
-      .col-xs-12
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading{style: 'background-color: gray;'}
-              San Francisco
-            .panel-body
-              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FLos_Angeles", :width => "100%"}
-              -#
-                %iframe{:frameborder => "0", :height => "140", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FLos_Angeles", :width => "100%"}
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading{style: 'background-color: gray;'}
-              Denver
-            .panel-body
-              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FDenver", :width => "100%"}
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading{style: 'background-color: gray;'}
-              Chicago
-            .panel-body
-              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FChicago", :width => "100%"}
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading{style: 'background-color: gray;'}
-              New York
-            .panel-body
-              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
-
+      .row
+        .col-xs-12
+          .col-xs-12.col-sm-3
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading{style: 'background-color: gray;'}
+                San Francisco
+              .panel-body
+                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FLos_Angeles", :width => "100%"}
+                -#
+                  %iframe{:frameborder => "0", :height => "140", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FLos_Angeles", :width => "100%"}
+          .col-xs-12.col-sm-3
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading{style: 'background-color: gray;'}
+                Denver
+              .panel-body
+                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FDenver", :width => "100%"}
+          .col-xs-12.col-sm-3
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading{style: 'background-color: gray;'}
+                Chicago
+              .panel-body
+                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FChicago", :width => "100%"}
+          .col-xs-12.col-sm-3
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading{style: 'background-color: gray;'}
+                New York
+              .panel-body
+                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
 
 :javascript
   // Refresh page every 5 minutes
