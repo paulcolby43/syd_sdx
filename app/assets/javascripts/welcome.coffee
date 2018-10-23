@@ -21,23 +21,7 @@ jQuery ->
     else if dashboard_elem && dashboard_elem.webkitRequestFullscreen
       dashboard_elem.webkitRequestFullscreen()
 
-  #$(document).ready ->
-  #  $.simpleWeather
-  #    location: 'Austin, TX'
-  #    woeid: ''
-  #    unit: 'f'
-  #    success: (weather) ->
-  #      html = '<h2><i class="icon-' + weather.code + '"></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h2>'
-  #      html += '<ul><li>' + weather.city + ', ' + weather.region + '</li>'
-  #      html += '<li class="currently">' + weather.currently + '</li>'
-  #      html += '<li>' + weather.wind.direction + ' ' + weather.wind.speed + ' ' + weather.units.speed + '</li></ul>'
-  #      $('#weather').html html
-  #      return
-  #    error: (error) ->
-  #      $('#weather').html '<p>' + error + '</p>'
-  #      return
-  #  return
-
+  ### Start weather pieces ###
   loadWeather = (location, woeid) ->
     $.simpleWeather
       location: location
@@ -69,7 +53,6 @@ jQuery ->
     $('.js-geolocation').hide()
 
   ### Where in the world are you? ###
-
   $('.js-geolocation').on 'click', ->
     navigator.geolocation.getCurrentPosition (position) ->
       loadWeather position.coords.latitude + ',' + position.coords.longitude
@@ -82,3 +65,4 @@ jQuery ->
     loadWeather zipcode, ''
     #@params location, woeid
     return
+  ### End weather pieces ###
