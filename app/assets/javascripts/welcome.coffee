@@ -44,7 +44,7 @@ jQuery ->
       woeid: woeid
       unit: 'f'
       success: (weather) ->
-        html = '<h4><i class="icon-' + weather.code + '"></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h4>'
+        html = '<h4><i class="weather-icon icon-' + weather.code + '"></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h4>'
         html += '<div>' + weather.currently + '</div>'
         html += '<div>' + weather.city + ', ' + weather.region + '</div>'
         $('#weather').html html
@@ -52,7 +52,7 @@ jQuery ->
         forecast_html = '<ul class=list-inline>'
         #while i < weather.forecast.length
         while i < 2
-          forecast_html += '<li>' + weather.forecast[i+1].day + ': ' + weather.forecast[i+1].high + '<br>' + '<i class="icon-' + weather.forecast[i+1].code + '"></i> </li>'
+          forecast_html += '<li>' + weather.forecast[i+1].day + ': ' + weather.forecast[i+1].high + '<br>' + '<i class="weather-icon icon-' + weather.forecast[i+1].code + '"></i> </li>'
           i++
         forecast_html += '</ul>'
         $('#forecast').html forecast_html

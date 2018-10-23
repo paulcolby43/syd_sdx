@@ -41,6 +41,7 @@ body { padding-top: 30px; }
   height: 44px; 
 }
 
+/* Start Weather Icons */
 @font-face {
     font-family: 'weather';
     src:url('artill_weather_icons_02/artill_clean_icons.otf');
@@ -60,7 +61,7 @@ body { padding-top: 30px; }
   text-transform: uppercase;
 }
 
-i {
+.weather-icon {
   color: #fff;
   font-family: weather;
   font-size: 150px;
@@ -117,3 +118,5 @@ i {
 .icon-45:before { content: "S"; }
 .icon-46:before { content: "U"; }
 .icon-47:before { content: "S"; }
+
+/* End Weather Icons */
