@@ -3,110 +3,121 @@
 .jumbotron{id: 'kpi_dashboard', style: 'background-color: black;'}
   .container-fluid
     .row
-      .pull-right
-        .col-xs-12.col-sm-4
-          = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
-            %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
+      .col-xs-12
+        .pull-right
+          .col-xs-12.col-sm-4
+            = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
+              %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
     .row
       .col-xs-12
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading
-              Held Today
-              %h3
-                = "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
-                %br
-                Tickets
+        .col-xs-6
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Held Today
+                %h3
+                  = "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
+                  %br
+                  Tickets
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Paid Today
+                %h3
+                  = "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
+                  %br
+                  Tickets
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Held Today
+                %h3
+                  = "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
+                  %br
+                  Shipments
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Sent Today
+                %h3
+                  = "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
+                  %br
+                  Shipments
+          .col-xs-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Weather
+                #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
+          .col-xs-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Forecast
+              .panel-body
+                #forecast{style: 'background-color: #303030; color: white;'}
 
-            -#
+        .col-xs-6
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Daily Tickets
               - unless @held_tickets_today.blank?
                 %table.table
                   - @held_tickets_today.each do |ticket|
                     %tr
                       %td= ticket['TicketNumber']
+                      %td= ticket['Company']
                       %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
               - else
                 .panel-body None
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading
-              Paid Today
-              %h3
-                = "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
-                %br
-                Tickets
-            -#
-              - unless @paid_tickets_today.blank?
-                %table.table
-                  - @paid_tickets_today.each do |ticket|
-                    %tr
-                      %td= ticket['TicketNumber']
-                      %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
-              - else
-                .panel-body None  
-        .col-xs-12.col-sm-6
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading
-              Daily Tickets
-            - unless @held_tickets_today.blank?
-              %table.table
-                - @held_tickets_today.each do |ticket|
-                  %tr
-                    %td= ticket['TicketNumber']
-                    %td= ticket['Company']
-                    %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
-            - else
-              .panel-body None
-    .row
-      .col-xs-12
-        .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading
-              Held Today
-              %h3
-                = "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
-                %br
-                Shipments
-            -#
-              - unless @held_shipments_today.blank?
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                Daily Shipments
+              - unless @closed_shipments_today.blank?
                 %table.table
                   - @held_shipments_today.each do |shipment|
                     %tr
                       %td= shipment['ShipmentNumber']
                       %td= shipment['CustomerName']
+                      %td= shipment['ContractDescription']
+                      %td= "#{shipment['NetWeight']}#{shipment['UnitOfMeasure']}"
               - else
                 .panel-body None
+    .row
+      .col-xs-12
+        
+            
+        
+
+    .row
+      .col-xs-12
         .col-xs-12.col-sm-3
           .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading
-              Sent Today
-              %h3
-                = "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
-                %br
-                Shipments
-            -#
-              - unless @closed_shipments_today.blank?
-                %table.table
-                  - @closed_shipments_today.each do |shipment|
-                    %tr
-                      %td= shipment['ShipmentNumber']
-                      %td= shipment['CustomerName']
-              - else
-                .panel-body None
-        .col-xs-12.col-sm-6
+            .panel-heading{style: 'background-color: gray;'}
+              San Francisco
+            .panel-body
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FLos_Angeles", :width => "100%"}
+              -#
+                %iframe{:frameborder => "0", :height => "140", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FLos_Angeles", :width => "100%"}
+        .col-xs-12.col-sm-3
           .panel{style: 'background-color: #303030; color: white;'}
-            .panel-heading
-              Daily Shipments
-            - unless @closed_shipments_today.blank?
-              %table.table
-                - @held_shipments_today.each do |shipment|
-                  %tr
-                    %td= shipment['ShipmentNumber']
-                    %td= shipment['CustomerName']
-                    %td= shipment['ContractDescription']
-                    %td= "#{shipment['NetWeight']}#{shipment['UnitOfMeasure']}"
-            - else
-              .panel-body None
+            .panel-heading{style: 'background-color: gray;'}
+              Denver
+            .panel-body
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FDenver", :width => "100%"}
+        .col-xs-12.col-sm-3
+          .panel{style: 'background-color: #303030; color: white;'}
+            .panel-heading{style: 'background-color: gray;'}
+              Chicago
+            .panel-body
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FChicago", :width => "100%"}
+        .col-xs-12.col-sm-3
+          .panel{style: 'background-color: #303030; color: white;'}
+            .panel-heading{style: 'background-color: gray;'}
+              New York
+            .panel-body
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
+
 
 :javascript
   // Refresh page every 5 minutes
