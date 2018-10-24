@@ -39,6 +39,8 @@
                   = "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
                   %br
                   Shipments
+                  %br
+                  %span.text-danger= @held_shipments_today_total_net.round(3)
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -47,6 +49,8 @@
                   = "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
                   %br
                   Shipments
+                  %br
+                  %span.text-danger= @closed_shipments_today_total_net.round(3)
           .col-xs-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading

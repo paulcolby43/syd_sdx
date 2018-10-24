@@ -34,6 +34,16 @@ class WelcomeController < ApplicationController
       @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(5)
       @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, (Date.today - 4.months), Date.today).last(5)
       
+      @held_shipments_today_total_net = 0
+      @held_shipments_today.each do |shipment|
+        @held_shipments_today_total_net = @held_shipments_today_total_net + shipment['NetWeight'].to_d
+      end
+      
+      @closed_shipments_today_total_net = 0
+      @closed_shipments_today.each do |shipment|
+        @closed_shipments_today_total_net = @closed_shipments_today_total_net + shipment['NetWeight'].to_d
+      end
+      
 #      @accounts_payable_items = AccountsPayable.all(current_user.token, @paid_tickets_today.last["YardId"], @paid_tickets_today.last['Id'])
 #      @apcashier = Apcashier.find_by_id(current_user.token, @paid_tickets_today.last["YardId"], @accounts_payable_items.first['CashierId'])
     else
