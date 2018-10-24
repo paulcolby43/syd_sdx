@@ -20,9 +20,22 @@ class WelcomeController < ApplicationController
       end
       @held_tickets_today = Ticket.all_last_90_days(2, current_user.token, current_yard_id).last(5)
       @paid_tickets_today = Ticket.all_last_90_days(3, current_user.token, current_yard_id).last(5)
+      
+      @held_tickets_today_total = 0
+      @held_tickets_today.each do |ticket|
+        @held_tickets_today_total = @held_tickets_today_total + (ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) 
+      end
+      
+      @paid_tickets_today_total = 0
+      @paid_tickets_today.each do |ticket|
+        @paid_tickets_today_total = @paid_tickets_today_total + (ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) 
+      end
 
       @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(5)
       @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, (Date.today - 4.months), Date.today).last(5)
+      
+#      @accounts_payable_items = AccountsPayable.all(current_user.token, @paid_tickets_today.last["YardId"], @paid_tickets_today.last['Id'])
+#      @apcashier = Apcashier.find_by_id(current_user.token, @paid_tickets_today.last["YardId"], @accounts_payable_items.first['CashierId'])
     else
       flash[:danger] = 'You do not have access to that page.'
       redirect_to root_path
