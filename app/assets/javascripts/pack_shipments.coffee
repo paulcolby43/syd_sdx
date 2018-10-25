@@ -19,8 +19,8 @@ jQuery ->
 
   $(document).on 'ready page:load', ->
     # Open pack tag number search by default on page load
-    $('.shipment_pack_select').select2('open')
-    $('.shipment_pack_select').click()
+    #$('.shipment_pack_select').select2('open')
+    #$('.shipment_pack_select').click()
 
   ### Remove pack from pack list ###
   $('#current_packs').on 'click', '.remove_pack', (e) ->
