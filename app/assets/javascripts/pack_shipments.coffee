@@ -248,3 +248,61 @@ jQuery ->
   ### Pack shipment picture event code chosen ###
   $(".event_code_radio").on 'click', ->
     $('#upload_button').show()
+
+  ### Start Barcode Scanner ###
+  order_by_occurrence = (arr) ->
+    counts = {}
+    arr.forEach (value) ->
+      if !counts[value]
+        counts[value] = 0
+      counts[value]++
+      return
+    Object.keys(counts).sort (curKey, nextKey) ->
+      counts[curKey] < counts[nextKey]
+
+  load_quagga = ->
+    if $('#barcode-scanner').length > 0 and navigator.mediaDevices and typeof navigator.mediaDevices.getUserMedia == 'function'
+      last_result = []
+      if Quagga.initialized == undefined
+        Quagga.onDetected (result) ->
+          last_code = result.codeResult.code
+          last_result.push last_code
+          if last_result.length > 20
+            code = order_by_occurrence(last_result)[0]
+            last_result = []
+            #Quagga.stop()
+            console.log code
+            $('.select2-search__field').val(code).trigger 'keyup'
+            #$.ajax
+            #  # type: 'POST'
+            #  type: 'GET'
+            #  # url: '/products/get_barcode'
+            #  url: '/pack_shipments'
+            #  data: upc: code
+          return
+      Quagga.init {
+        inputStream:
+          name: 'Live'
+          type: 'LiveStream'
+          numOfWorkers: navigator.hardwareConcurrency
+          target: document.querySelector('#barcode-scanner')
+        decoder: readers: [
+          'ean_reader'
+          'ean_8_reader'
+          'code_39_reader'
+          'code_39_vin_reader'
+          'codabar_reader'
+          'upc_reader'
+          'upc_e_reader'
+        ]
+      }, (err) ->
+        if err
+          console.log err
+          return
+        Quagga.initialized = true
+        Quagga.start()
+        return
+    return
+
+  $(document).on 'ready page:load', load_quagga
+  ### End Barcode Scanner ###

@@ -32,4 +32,5 @@
 //= require nested_form_fields
 //= require raphael
 //= require morris
+//= require quagga
 //= require_tree .
