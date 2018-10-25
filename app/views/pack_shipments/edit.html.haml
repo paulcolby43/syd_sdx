@@ -20,8 +20,6 @@
           = "Container Number: #{@pack_shipment['ContainerNumber']}"
           %br
           = "Vehicle Number: #{@pack_shipment['DeliveryVehicleIdNumber']}"
-
-    #barcode-scanner.pull-right     
   
     %ul.nav.nav-tabs
       %li.active
@@ -51,6 +49,19 @@
     .tab-content
       .tab-pane.active{:id => "pack_details"}
         %br
+        %a.btn.btn-default{id: 'open_barcode_scanner_button', href: "#barcode_scanner_modal", "data-target" => "#barcode_scanner_modal", "data-toggle" => "modal"}
+          %i.fa.fa-barcode
+          Barcode Scanner
+        .modal.fade{id: "barcode_scanner_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+          .modal-dialog.modal-sm{:role => "document"}
+            .modal-content
+              .modal-body
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                  %span{"aria-hidden" => "true"} ×
+                %br
+                #barcode-scanner     
+              .modal-footer
+                %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
         %div#add_contract_items
         %div.row
           .col-xs-12.col-sm-6.col-md-4

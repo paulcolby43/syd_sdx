@@ -270,9 +270,12 @@ jQuery ->
           if last_result.length > 20
             code = order_by_occurrence(last_result)[0]
             last_result = []
-            #Quagga.stop()
             console.log code
-            $('.select2-search__field').val(code).trigger 'keyup'
+            $('#barcode_scanner_modal').modal('hide')
+            $('.shipment_pack_select').select2('open')
+            $('.shipment_pack_select').click()
+            $('.select2-search__field:first').val(code).trigger 'keyup'
+            Quagga.stop()
             #$.ajax
             #  # type: 'POST'
             #  type: 'GET'
@@ -304,5 +307,8 @@ jQuery ->
         return
     return
 
-  $(document).on 'ready page:load', load_quagga
+  #$(document).on 'ready page:load', load_quagga
+  $('#pack_details').on 'click', '#open_barcode_scanner_button', (e) ->
+    load_quagga()
+  
   ### End Barcode Scanner ###
