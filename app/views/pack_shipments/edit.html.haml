@@ -10,16 +10,20 @@
           %i.fa.fa-photo.fa-lg
           Pictures
       %p  
-        %small
-          = "Shipment: #{@pack_shipment['ShipmentNumber']}"
-          %br
-          = "Pack List: #{@pack_list['PackListNumber']}"
-          %br
-          = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateCreated'].to_date.strftime('%-m/%-d/%Y')}"
-          %br
-          = "Container Number: #{@pack_shipment['ContainerNumber']}"
-          %br
-          = "Vehicle Number: #{@pack_shipment['DeliveryVehicleIdNumber']}"
+        %a.btn.btn-default{"data-content" => "#{render partial: 'pack_shipment_info', locals: {pack_shipment: @pack_shipment, pack_list: @pack_list}}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Info"}
+          %i.fa.fa-info-circle
+          Info
+        -#
+          %small
+            = "Shipment: #{@pack_shipment['ShipmentNumber']}"
+            %br
+            = "Pack List: #{@pack_list['PackListNumber']}"
+            %br
+            = "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateCreated'].to_date.strftime('%-m/%-d/%Y')}"
+            %br
+            = "Container Number: #{@pack_shipment['ContainerNumber']}"
+            %br
+            = "Vehicle Number: #{@pack_shipment['DeliveryVehicleIdNumber']}"
   
     %ul.nav.nav-tabs
       %li.active

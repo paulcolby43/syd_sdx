@@ -1,0 +1,9 @@
+= "Shipment: #{@pack_shipment['ShipmentNumber']}"
+%br
+= "Pack List: #{@pack_list['PackListNumber']}"
+%br
+= "#{@pack_shipment['ContractDescription']} #{@pack_shipment['DateCreated'].to_date.strftime('%-m/%-d/%Y')}"
+%br
+= "Container Number: #{@pack_shipment['ContainerNumber']}"
+%br
+= "Vehicle Number: #{@pack_shipment['DeliveryVehicleIdNumber']}"
