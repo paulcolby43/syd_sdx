@@ -21,12 +21,9 @@
       %strong= "To:"
       .pull-right
         - unless task['ToLocation'].blank?
-          -#
-            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-              = "#{task['ToLocation']}"
-          %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber'])}
+          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
             %i.fa.fa-map
-            = task['ToLocation']
+            = "#{task['ToLocation']}"
         - else
           %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
             7100 30th Ave N
@@ -48,6 +45,10 @@
       %strong= "Customer:"
       .pull-right
         = task['Customer']
+      %br
+      %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
+        %i.fa.fa-map-marker
+        Containers
       %br 
       %br
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do

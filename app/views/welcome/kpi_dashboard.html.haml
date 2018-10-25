@@ -20,7 +20,7 @@
                   %br
                   Tickets
                   %br
-                  %span.text-danger= number_to_currency(@held_tickets_today_total)
+                  %span.text-success= number_to_currency(@held_tickets_today_total)
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -30,7 +30,7 @@
                   %br
                   Tickets
                   %br
-                  %span.text-danger= number_to_currency(@paid_tickets_today_total)
+                  %span.text-success= number_to_currency(@paid_tickets_today_total)
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -40,7 +40,7 @@
                   %br
                   Shipments
                   %br
-                  %span.text-danger= @held_shipments_today_total_net.round(3)
+                  %span.text-success= @held_shipments_today_total_net.round(3)
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -50,7 +50,7 @@
                   %br
                   Shipments
                   %br
-                  %span.text-danger= @closed_shipments_today_total_net.round(3)
+                  %span.text-success= @closed_shipments_today_total_net.round(3)
           .col-xs-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
