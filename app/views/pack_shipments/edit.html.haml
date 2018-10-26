@@ -60,13 +60,13 @@
         %a.btn.btn-default{id: 'open_barcode_scanner_button', href: "#barcode_scanner_modal", "data-target" => "#barcode_scanner_modal", "data-toggle" => "modal"}
           %i.fa.fa-barcode
           Scan Barcode
-        .modal.fade{id: "barcode_scanner_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+        .modal.fade{id: "barcode_scanner_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
           .modal-dialog.modal-sm{:role => "document"}
             .modal-content
-              .modal-body
-                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-                  %span{"aria-hidden" => "true"} ×
+              .modal-header
+                = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
                 %br
+              .modal-body
                 #barcode-scanner
                 -#
                   #result_strip
