@@ -121,12 +121,26 @@ body { padding-top: 30px; }
 /* End Weather Icons */
 
 /* Start Barcode Scanner */
-#barcode-scanner canvas.drawingBuffer, #barcode-scanner video.drawingBuffer {
+/*#barcode-scanner canvas.drawingBuffer, #barcode-scanner video.drawingBuffer {
   display: none;
-}
+}*/
 
 #barcode-scanner canvas, #barcode-scanner video {
   width: 100%;
   height: auto;
 }
+
+/*.drawingBuffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}*/
+
+canvas.drawing, canvas.drawingBuffer {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+
 /* End Barcode Scanner */
