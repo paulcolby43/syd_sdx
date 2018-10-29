@@ -1002,7 +1002,7 @@ jQuery ->
             console.log code
             $('#vin_number').val(code)
             #$('.vin_search_button').trigger 'keyup'
-            $('.vin_search_button').click()
+            #$('.vin_search_button').click()
             Quagga.stop()
             $('#vin-barcode-scanner').empty()
           return
@@ -1013,13 +1013,8 @@ jQuery ->
           numOfWorkers: navigator.hardwareConcurrency
           target: document.querySelector('#vin-barcode-scanner')
         decoder: readers: [
-          'ean_reader'
-          'ean_8_reader'
           'code_39_reader'
           'code_39_vin_reader'
-          'codabar_reader'
-          'upc_reader'
-          'upc_e_reader'
         ]
       }, (err) ->
         if err
