@@ -125,7 +125,12 @@ body { padding-top: 30px; }
   display: none;
 }*/
 
-#barcode-scanner canvas, #barcode-scanner video {
+#pack-barcode-scanner canvas, #pack-barcode-scanner video {
+  width: 100%;
+  height: auto;
+}
+
+#vin-barcode-scanner canvas, #vin-barcode-scanner video {
   width: 100%;
   height: auto;
 }

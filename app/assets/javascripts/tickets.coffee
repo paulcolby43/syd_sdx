@@ -946,3 +946,91 @@ jQuery ->
       search_button = modal.find('.vin_search_button')
       search_button.click()
     return
+
+  ### Start VIN Barcode Scanner ###
+  order_by_occurrence = (arr) ->
+    counts = {}
+    arr.forEach (value) ->
+      if !counts[value]
+        counts[value] = 0
+      counts[value]++
+      return
+    Object.keys(counts).sort (curKey, nextKey) ->
+      counts[curKey] < counts[nextKey]
+
+  load_vin_barcode_scanner = ->
+    if $('#vin-barcode-scanner').length > 0 and navigator.mediaDevices and typeof navigator.mediaDevices.getUserMedia == 'function'
+      last_result = []
+      if Quagga.initialized == undefined
+        Quagga.onProcessed (result) ->
+          drawingCtx = Quagga.canvas.ctx.overlay
+          drawingCanvas = Quagga.canvas.dom.overlay
+          if result
+            if result.boxes
+              drawingCtx.clearRect 0, 0, parseInt(drawingCanvas.getAttribute('width')), parseInt(drawingCanvas.getAttribute('height'))
+              result.boxes.filter((box) ->
+                box != result.box
+              ).forEach (box) ->
+                Quagga.ImageDebug.drawPath box, {
+                  x: 0
+                  y: 1
+                }, drawingCtx,
+                  color: 'green'
+                  lineWidth: 3
+                return
+            if result.box
+              Quagga.ImageDebug.drawPath result.box, {
+                x: 0
+                y: 1
+              }, drawingCtx,
+                color: '#00F'
+                lineWidth: 3
+            if result.codeResult and result.codeResult.code
+              Quagga.ImageDebug.drawPath result.line, {
+                x: 'x'
+                y: 'y'
+              }, drawingCtx,
+                color: 'red'
+                lineWidth: 4
+          return
+        Quagga.onDetected (result) ->
+          last_code = result.codeResult.code
+          last_result.push last_code
+          if last_result.length > 20
+            code = order_by_occurrence(last_result)[0]
+            last_result = []
+            console.log code
+            $('#vin_number').val(code)
+            #$('.vin_search_button').trigger 'keyup'
+            $('.vin_search_button').click()
+            Quagga.stop()
+            $('#vin-barcode-scanner').empty()
+          return
+      Quagga.init {
+        inputStream:
+          name: 'Live'
+          type: 'LiveStream'
+          numOfWorkers: navigator.hardwareConcurrency
+          target: document.querySelector('#vin-barcode-scanner')
+        decoder: readers: [
+          'ean_reader'
+          'ean_8_reader'
+          'code_39_reader'
+          'code_39_vin_reader'
+          'codabar_reader'
+          'upc_reader'
+          'upc_e_reader'
+        ]
+      }, (err) ->
+        if err
+          console.log err
+          return
+        Quagga.initialized = true
+        Quagga.start()
+        return
+    return
+
+  $('.car_details').on 'click', '#open_vin_barcode_scanner_button', (e) ->
+    load_vin_barcode_scanner()
+  
+  ### End VIN Barcode Scanner ###

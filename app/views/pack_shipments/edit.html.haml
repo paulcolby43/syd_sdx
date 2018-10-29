@@ -3,10 +3,6 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    #result_strip
-      %ul.thumbnails
-    #interactive.viewport
-
     %h3
       = "#{@pack_shipment['CustomerName']}"
       .pull-right
@@ -57,7 +53,7 @@
     .tab-content
       .tab-pane.active{:id => "pack_details"}
         %br
-        %a.btn.btn-default{id: 'open_barcode_scanner_button', href: "#barcode_scanner_modal", "data-target" => "#barcode_scanner_modal", "data-toggle" => "modal"}
+        %a.btn.btn-default{id: 'open_pack_barcode_scanner_button', href: "#barcode_scanner_modal", "data-target" => "#barcode_scanner_modal", "data-toggle" => "modal"}
           %i.fa.fa-barcode
           Scan Barcode
         .modal.fade{id: "barcode_scanner_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
@@ -67,7 +63,7 @@
                 = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
                 %br
               .modal-body
-                #barcode-scanner
+                #pack-barcode-scanner
                 -#
                   #result_strip
                     %ul.thumbnails
