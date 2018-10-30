@@ -3,7 +3,8 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to "Cancel", :back
+          =# link_to "Cancel", :back
+          = link_to "Cancel", user_setting_path(current_user.user_setting)
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
