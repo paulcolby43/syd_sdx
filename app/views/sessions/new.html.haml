@@ -5,7 +5,10 @@
     - if @company.blank?
       %p= link_to image_tag('sd_portal_transparent_small.png', alt: 'sd_portal_transparent_small.png', class: 'img-responsive center-block'), root_path
     - else
-      %h1.lead.text-center= "#{@company.name} Customer Portal"
+      %h1.lead.text-center
+        = "#{@company.name} Customer Portal"
+        - unless @company.logo.file.nil?
+          = image_tag(@company.logo.url, alt: 'company_logo', class: 'img-responsive center-block')
       .lead.text-center
         Powered by 
         = link_to "www.ScrapDragon.com", 'https://scrapdragon.com/', target: '_blank'
