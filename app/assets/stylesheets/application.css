@@ -130,7 +130,7 @@ body { padding-top: 30px; }
   height: auto;
 }
 
-#vin-barcode-scanner canvas, #vin-barcode-scanner video {
+.vin_barcode_scanner canvas, .vin_barcode_scanner video {
   width: 100%;
   height: auto;
 }

@@ -958,8 +958,9 @@ jQuery ->
     Object.keys(counts).sort (curKey, nextKey) ->
       counts[curKey] < counts[nextKey]
 
-  load_vin_barcode_scanner = ->
-    if $('#vin-barcode-scanner').length > 0 and navigator.mediaDevices and typeof navigator.mediaDevices.getUserMedia == 'function'
+  load_vin_barcode_scanner = (item_id) ->
+    barcode_scanner_div = "#vin_barcode_scanner_" + item_id
+    if $(barcode_scanner_div).length > 0 and navigator.mediaDevices and typeof navigator.mediaDevices.getUserMedia == 'function'
       last_result = []
       if Quagga.initialized == undefined
         Quagga.onProcessed (result) ->
@@ -1000,21 +1001,29 @@ jQuery ->
             code = order_by_occurrence(last_result)[0]
             last_result = []
             console.log code
-            $('#vin_number').val(code)
-            #$('.vin_search_button').trigger 'keyup'
-            #$('.vin_search_button').click()
+            console.log result.codeResult.format
+            #$(barcode_scanner_div).closest('.modal').find('.vin_search_field').val(code)
+            #$(barcode_scanner_div).closest('.modal').find('#vin_number:first').val(code)
+            #$(barcode_scanner_div).closest('.modal').find('.vin_search_button').click()
+            #$(barcode_scanner_div).closest('.modal-body').find('.vin_search_field:first').val(code)
+            $('.vin_search_field').val(code)
             Quagga.stop()
-            $('#vin-barcode-scanner').empty()
+            $('.vin_barcode_scanner').empty()
           return
       Quagga.init {
         inputStream:
           name: 'Live'
           type: 'LiveStream'
           numOfWorkers: navigator.hardwareConcurrency
-          target: document.querySelector('#vin-barcode-scanner')
+          target: document.querySelector(barcode_scanner_div)
         decoder: readers: [
+          'ean_reader'
+          'ean_8_reader'
           'code_39_reader'
           'code_39_vin_reader'
+          'codabar_reader'
+          'upc_reader'
+          'upc_e_reader'
         ]
       }, (err) ->
         if err
@@ -1025,7 +1034,8 @@ jQuery ->
         return
     return
 
-  $('.car_details').on 'click', '#open_vin_barcode_scanner_button', (e) ->
-    load_vin_barcode_scanner()
+  $('.car_details').on 'click', '.vin_barcode_search_button', (e) ->
+    item_id = $(this).data( "item-id" )
+    load_vin_barcode_scanner(item_id)
   
   ### End VIN Barcode Scanner ###
