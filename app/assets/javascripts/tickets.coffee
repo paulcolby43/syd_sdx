@@ -1002,10 +1002,6 @@ jQuery ->
             last_result = []
             console.log code
             console.log result.codeResult.format
-            #$(barcode_scanner_div).closest('.modal').find('.vin_search_field').val(code)
-            #$(barcode_scanner_div).closest('.modal').find('#vin_number:first').val(code)
-            #$(barcode_scanner_div).closest('.modal').find('.vin_search_button').click()
-            #$(barcode_scanner_div).closest('.modal-body').find('.vin_search_field:first').val(code)
             $('.vin_search_field').val(code)
             Quagga.stop()
             $('.vin_barcode_scanner').empty()
@@ -1017,13 +1013,13 @@ jQuery ->
           numOfWorkers: navigator.hardwareConcurrency
           target: document.querySelector(barcode_scanner_div)
         decoder: readers: [
-          'ean_reader'
-          'ean_8_reader'
+          #'ean_reader'
+          #'ean_8_reader'
           'code_39_reader'
           'code_39_vin_reader'
-          'codabar_reader'
-          'upc_reader'
-          'upc_e_reader'
+          #'codabar_reader'
+          #'upc_reader'
+          #'upc_e_reader'
         ]
       }, (err) ->
         if err
@@ -1034,7 +1030,9 @@ jQuery ->
         return
     return
 
-  $('.car_details').on 'click', '.vin_barcode_search_button', (e) ->
+  #$('.car_details').on 'click', '.vin_barcode_search_button', (e) ->
+  $(document).on 'click', '.vin_barcode_search_button', (e) ->
+    $('.vin_search_field').val('')
     item_id = $(this).data( "item-id" )
     load_vin_barcode_scanner(item_id)
   

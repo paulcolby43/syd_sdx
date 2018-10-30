@@ -253,10 +253,17 @@ class TicketsController < ApplicationController
   def line_item_fields
     @ticke_number = params[:ticket_number]
     @ticket_id = params[:ticket_id]
-    @vehicle_makes = []
-    @vehicle_models = []
-    @body_styles = []
-    @vehicle_colors = []
+    
+    @combolists = Vehicle.combolists(current_user.token)
+    @vehicle_makes = (@combolists.blank? or @combolists["VehicleMakes"].blank?) ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
+    @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
+    @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+    @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    
+#    @vehicle_makes = []
+#    @vehicle_models = []
+#    @body_styles = []
+#    @vehicle_colors = []
     respond_to do |format|
       format.js
     end
