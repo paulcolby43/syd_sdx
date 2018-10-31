@@ -338,6 +338,7 @@ jQuery ->
 
   ### Start QR Code Scanner ###
   load_pack_shipment_qrcode_scanner = ->
+    alert 'in qr code scanner'
     codeReader = new (ZXing.BrowserQRCodeReader)
     console.log 'ZXing code reader initialized'
     codeReader.getVideoInputDevices().then (videoInputDevices) ->
