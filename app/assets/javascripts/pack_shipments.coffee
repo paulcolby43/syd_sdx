@@ -370,6 +370,7 @@ jQuery ->
 
       ).catch (err) ->
         console.error err
+      console.log 'Started continous decode from camera with id ' + firstDeviceId
       return
   
   $('#pack_details').on 'click', '#open_pack_qrcode_scanner_button', (e) ->
