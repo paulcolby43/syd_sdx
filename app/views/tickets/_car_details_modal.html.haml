@@ -5,7 +5,7 @@
         %strong Car Details
         = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
       .modal-body 
-        %div{:id => "vin_barcode_scanner_#{id}", class: "vin_barcode_scanner"}
+        -# %div{:id => "vin_barcode_scanner_#{id}", class: "vin_barcode_scanner"}
         %ul.nav.nav-tabs
           %li.active
             %a{:href => "#vin_search_#{id}", :data => {:toggle => "tab"}}
@@ -18,9 +18,10 @@
           .tab-pane.active{:id => "vin_search_#{id}"}
             %br
             .input-group
-              %span.input-group-addon
-                %a{href: nil, id: "item_#{id}_open_vin_barcode_scanner_button", class: 'vin_barcode_search_button', 'data-item-id' => id}
-                  %i.fa.fa-barcode
+              -#
+                %span.input-group-addon
+                  %a{href: nil, id: "item_#{id}_open_vin_barcode_scanner_button", class: 'vin_barcode_search_button', 'data-item-id' => id}
+                    %i.fa.fa-barcode
               = text_field_tag :vin_number, nil, :placeholder => "VIN", class: "form-control input-lg vin_search_field", autofocus: true
               %span.input-group-addon
                 %a{href: nil, id: "item_#{id}_vin_search_button", class: 'vin_search_button'}

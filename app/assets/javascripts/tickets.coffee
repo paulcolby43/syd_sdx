@@ -824,7 +824,7 @@ jQuery ->
     $('#upload_button').show()
 
   ### VIN Search ###
-  $(document).on 'click', '.vin_search_button', (e) ->
+  $(wrapper).on 'click', '.vin_search_button', (e) ->
     modal = $(this).closest('.modal')
     vin_number = modal.find('#vin_number').val()
     results_div = modal.find('#results')
