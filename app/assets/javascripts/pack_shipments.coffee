@@ -343,8 +343,8 @@ jQuery ->
     codeReader.getVideoInputDevices().then (videoInputDevices) ->
       sourceSelect = document.getElementById('sourceSelect')
       firstDeviceId = videoInputDevices[0].deviceId
+      ###
       if videoInputDevices.length > 1
-        alert 'more than one video input device'
         videoInputDevices.forEach (element) ->
           sourceOption = document.createElement('option')
           sourceOption.text = element.label
@@ -353,8 +353,8 @@ jQuery ->
           return
         sourceSelectPanel = document.getElementById('sourceSelectPanel')
         sourceSelectPanel.style.display = 'block'
+      ###
       codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
-        alert 'a result!'
         console.log result.text
         $('#qrcode_scanner_modal').modal('hide')
         $('.shipment_pack_select').select2('open')
