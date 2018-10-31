@@ -33,4 +33,5 @@
 //= require raphael
 //= require morris
 //= require quagga
+//= require zxing-js.min
 //= require_tree .

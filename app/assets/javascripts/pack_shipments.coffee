@@ -334,5 +334,42 @@ jQuery ->
 
   $('#pack_details').on 'click', '#open_pack_barcode_scanner_button', (e) ->
     load_pack_shipment_barcode_scanner()
-  
   ### End Barcode Scanner ###
+
+  ### Start QR Code Scanner ###
+  load_pack_shipment_qrcode_scanner = ->
+    codeReader = new (ZXing.BrowserQRCodeReader)
+    console.log 'ZXing code reader initialized'
+    codeReader.getVideoInputDevices().then (videoInputDevices) ->
+      sourceSelect = document.getElementById('sourceSelect')
+      firstDeviceId = videoInputDevices[0].deviceId
+      if videoInputDevices.length > 1
+        videoInputDevices.forEach (element) ->
+          sourceOption = document.createElement('option')
+          sourceOption.text = element.label
+          sourceOption.value = element.deviceId
+          sourceSelect.appendChild sourceOption
+          return
+        sourceSelectPanel = document.getElementById('sourceSelectPanel')
+        sourceSelectPanel.style.display = 'block'
+      codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
+        console.log result.text
+        $('#qrcode_scanner_modal').modal('hide')
+        $('.shipment_pack_select').select2('open')
+        $('.shipment_pack_select').click()
+        $('.select2-search__field:first').val(result.text).trigger 'keyup'
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
+
+      $('#qrcode_scanner_modal').on 'hidden.bs.modal', (e) ->
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
+        return
+
+      ).catch (err) ->
+        console.error err
+      return
+  
+  $('#pack_details').on 'click', '#open_pack_qrcode_scanner_button', (e) ->
+    load_pack_shipment_qrcode_scanner()
+  ### End QR Code Scanner ###
