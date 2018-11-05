@@ -28,6 +28,13 @@
                 = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
     %p
       %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
+    %form
+      %input#file{:type => "file"}/
+      %button{:type => "button"} Decode
+      .error
+      %div
+        %pre.decodedText
+
     - unless @customers.blank?
       %div{id: "customers"}
         - @customers.each do |customer|
