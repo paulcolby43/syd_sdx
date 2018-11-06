@@ -34,6 +34,4 @@
 //= require morris
 //= require quagga
 //= require zxing-js.min
-//= require BigInteger.min
-//= require zxing-pdf417
 //= require_tree .
