@@ -9,16 +9,8 @@
       - else
         = link_to "SDX", 'http://www.scrapdragon.com', target: '_blank'
       Portal
-    -#
-      - unless @tickets.blank? and @line_items.blank?
-        %p
-          .pull-right
-            %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-lg btn-default'}
-              %i.fa.fa-download
-              CSV
-    -# if params[:q].blank?
     = form_tag reports_path, :method => 'get', :class => "form-inline" do
-      =# hidden_field_tag 'report[type]', @type
+      = hidden_field_tag :customer_id, params[:customer_id]
       - if mobile_device?
         .row
           %p
@@ -73,21 +65,12 @@
 
     - unless @tickets.blank? and @pack_shipments.blank?
       - unless @status == 'shipments'
-        -#
-          .text-muted= "#{pluralize(@tickets.count, "ticket")} found"
         - unless @type == 'commodity_summary'
-          = render 'tickets_customer_summary'
+          = render 'reports/tickets_customer_summary'
         - else
-          = render 'tickets_commodity_summary'
+          = render 'reports/tickets_commodity_summary'
       - else
-        = render 'shipments_customer_summary'
-        -#
-          .text-muted= "#{pluralize(@pack_shipments.count, "shipment")} found"
-        -#
-          - unless @type == 'commodity_summary'
-            = render 'shipments_customer_summary'
-          - else
-            = render 'shipments_commodity_summary'
+        = render 'reports/shipments_customer_summary'
         
     - else
       %p Nothing to report on
@@ -96,3 +79,8 @@
       
         
 =# render partial: "shared/footer_navbar", locals: {title: "Reports"}
+
+:javascript
+  if (window!=window.top) { 
+    $('.navbar').hide();
+  }

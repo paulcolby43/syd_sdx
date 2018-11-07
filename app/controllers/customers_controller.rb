@@ -67,10 +67,6 @@ class CustomersController < ApplicationController
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
     @closed_tickets = Customer.closed_tickets(current_user.token, current_yard_id, params[:id])
-#    if @customer_user.blank?
-#      @new_user = User.new
-#    end
-#    @cust_pics = CustPic.where(cust_nbr: @customer['Id'], location: current_yard_id)
   end
 
   # GET /customers/new
