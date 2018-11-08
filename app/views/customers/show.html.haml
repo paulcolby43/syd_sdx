@@ -109,15 +109,18 @@
     %hr
     %p.lead Customer Pictures
     %div#cust_pics
-    - @cust_pics_array.each_slice(6) do |cust_pics|
-      .row
-        - cust_pics.each do |cust_pic|
-          .col-xs-12.col-sm-2.col-md-2
-            .thumbnail
-              %a{href: cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                = image_tag(show_preview_image_cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-              .text-center
-                %small.text-muted= cust_pic['EVENT_CODE']
+    - unless @cust_pics_array.blank?
+      - @cust_pics_array.each_slice(6) do |cust_pics|
+        .row
+          - cust_pics.each do |cust_pic|
+            .col-xs-12.col-sm-2.col-md-2
+              .thumbnail
+                %a{href: cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                  = image_tag(show_preview_image_cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                .text-center
+                  %small.text-muted= cust_pic['EVENT_CODE']
+    - else
+      None
     -#
       %div{id: 'endless_page'}
         %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
