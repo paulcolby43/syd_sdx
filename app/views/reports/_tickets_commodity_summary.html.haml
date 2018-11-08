@@ -3,7 +3,7 @@
     %p.lead 
       Tickets Commodity Summary Report
       - unless @line_items.blank? 
-        %a{href: reports_path(format: "csv", 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+        %a{href: reports_path(format: "csv", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
           %i.fa.fa-download
           CSV
       %br
