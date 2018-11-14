@@ -171,7 +171,7 @@
                                 %i.fa.fa-car.fa-lg
                                 Car
                               = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
-                          = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
+                          = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                           %br
                           = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
                   .panel-footer
@@ -292,7 +292,7 @@
                               %i.fa.fa-car.fa-lg
                               Car
                             = render partial: 'car_details_modal', locals: {id: "#{@ticket['TicketItemCollection']['ApiTicketItem']['Id']}", perform_initial_vin_search: true}
-                        = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg"
+                        = text_field_tag "ticket[line_items][][serial_number]", @ticket["TicketItemCollection"]["ApiTicketItem"]['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", @ticket["TicketItemCollection"]["ApiTicketItem"]['Notes'], :placeholder => "Notes", class: "form-control input-lg"
                 .panel-footer
@@ -396,7 +396,7 @@
                             %i.fa.fa-car.fa-lg
                             Car
                           = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
-                      = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
+                      = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                       %br
                       = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
               %div.panel-footer

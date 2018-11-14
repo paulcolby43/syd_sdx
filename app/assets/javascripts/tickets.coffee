@@ -1037,3 +1037,11 @@ jQuery ->
     load_vin_barcode_scanner(item_id)
   
   ### End VIN Barcode Scanner ###
+
+  ### Don't submit form if press enter key when in the serial number field ###
+  $(document).on 'keydown', '.serial_number_field', (e) ->
+    code = e.keyCode or e.which
+    if code == 13 and !jQuery(e.target).is('textarea,input[type="submit"],input[type="button"]')
+      e.preventDefault()
+      return false
+    return

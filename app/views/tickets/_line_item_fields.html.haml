@@ -42,7 +42,7 @@
                 %i.fa.fa-car.fa-lg
                 Car
               = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
-          = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
+          = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
           %br
           = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
   %div.panel-footer
