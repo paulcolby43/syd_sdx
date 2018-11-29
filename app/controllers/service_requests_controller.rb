@@ -25,7 +25,7 @@ class ServiceRequestsController < ApplicationController
     respond_to do |format|
       format.html {
         if create_service_request_response and create_service_request_response["Success"] == 'true'
-          flash[:success] = "Service Request was successfully created. Workorder Number: #{create_service_request_response['WorkOrderNumber']}"
+          flash[:success] = "Service Request was successfully created. Work Order Number: #{create_service_request_response['WorkOrderNumber']}"
 #          redirect_to service_request_path(create_service_request_response['Item']['Id'])
           redirect_to root_path
         else
