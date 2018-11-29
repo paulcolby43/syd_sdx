@@ -148,7 +148,7 @@ class Trip
       "yardId"=> yard_id, 
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info "Trip.add_service_request payload #{json_encoded_payload}"
+#    Rails.logger.info "Trip.add_service_request payload #{json_encoded_payload}"
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
