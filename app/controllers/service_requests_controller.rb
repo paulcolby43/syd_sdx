@@ -14,17 +14,17 @@ class ServiceRequestsController < ApplicationController
     authorize! :create, :service_requests
 #    @service_request = ServiceRequest.new
     @customers = Customer.all_dispatch(current_user.token, current_yard_id)
-#    @task_type_functions = Trip.task_type_functions(current_user.token)
+    @task_type_functions = Trip.task_type_functions(current_user.token)
   end
 
   def edit
   end
 
   def create
-    create_service_request_response = ServiceRequest.create(current_user.token, current_yard_id, service_request_params)
+    create_service_request_response = Trip.add_service_request(current_user.token, current_yard_id, service_request_params[:customer_id], service_request_params[:task_type_function_id])
     respond_to do |format|
       format.html {
-        if create_service_request_response["Success"] == 'true'
+        if create_service_request_response and create_service_request_response["Success"] == 'true'
           flash[:success] = 'Service Request was successfully created.'
 #          redirect_to service_request_path(create_service_request_response['Item']['Id'])
           redirect_to root_path
@@ -52,6 +52,6 @@ class ServiceRequestsController < ApplicationController
     end
 
     def service_request_params
-      params.require(:service_request).permit(ticket_nbr)
+      params.require(:service_request).permit(:customer_id, :task_type_function_id)
     end
 end

@@ -129,7 +129,37 @@ class Trip
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+    Rails.logger.info "*************Trip.task_type_functions: #{data}"
+    unless data["ApiGetDispatchTaskTypeFunctionListResponse"].blank? 
+      return data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
+    else
+      return []
+    end
+  end
+  
+  def self.add_service_request(auth_token, yard_id, customer_id, task_type_function_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/AddServiceRequest"
+    
+    payload = {
+      "customerId"=> customer_id, 
+      "taskTypeFunctionId"=> task_type_function_id, 
+      "yardId"=> yard_id, 
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info "Trip.add_service_request payload #{json_encoded_payload}"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    Rails.logger.info "Trip.add_service_request response: #{response}"
+    data= Hash.from_xml(response)
+    unless data["ApiAddDispatchWorkOrderResponse"].blank?
+      return data["ApiAddDispatchWorkOrderResponse"]
+    else
+      return nil
+    end
   end
   
 end
