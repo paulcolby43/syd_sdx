@@ -130,19 +130,20 @@ class Trip
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     Rails.logger.info "*************Trip.task_type_functions: #{data}"
-    unless data["ApiGetDispatchTaskTypeFunctionListResponse"].blank? 
+    unless data["ApiGetDispatchTaskTypeFunctionListResponse"].blank? or data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"].blank? or data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"].blank?
       return data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
     else
       return []
     end
   end
   
-  def self.add_service_request(auth_token, yard_id, customer_id, task_type_function_id)
+  def self.add_service_request(auth_token, yard_id, driver_id, customer_id, task_type_function_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/dispatch/AddServiceRequest"
     
     payload = {
+      "driverId" => driver_id,
       "customerId"=> customer_id, 
       "taskTypeFunctionId"=> task_type_function_id, 
       "yardId"=> yard_id, 
@@ -159,6 +160,21 @@ class Trip
       return data["ApiAddDispatchWorkOrderResponse"]
     else
       return nil
+    end
+  end
+  
+  def self.drivers(auth_token)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/drivers"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "*************Trip.drivers: #{data}"
+    unless data["ApiGetDispatchDriverListResponse"].blank? or data["ApiGetDispatchDriverListResponse"]["DriverList"].blank? or data["ApiGetDispatchDriverListResponse"]["DriverList"]["DriverListInformation"].blank?
+      return data["ApiGetDispatchDriverListResponse"]["DriverList"]["DriverListInformation"]
+    else
+      return []
     end
   end
   

@@ -15,13 +15,14 @@ class ServiceRequestsController < ApplicationController
 #    @service_request = ServiceRequest.new
     @customers = Customer.all_dispatch(current_user.token, current_yard_id)
     @task_type_functions = Trip.task_type_functions(current_user.token)
+    @drivers = Trip.drivers(current_user.token)
   end
 
   def edit
   end
 
   def create
-    create_service_request_response = Trip.add_service_request(current_user.token, current_yard_id, service_request_params[:customer_id], service_request_params[:task_type_function_id])
+    create_service_request_response = Trip.add_service_request(current_user.token, current_yard_id, service_request_params[:driver_id], service_request_params[:customer_id], service_request_params[:task_type_function_id])
     respond_to do |format|
       format.html {
         if create_service_request_response and create_service_request_response["Success"] == 'true'
@@ -52,6 +53,6 @@ class ServiceRequestsController < ApplicationController
     end
 
     def service_request_params
-      params.require(:service_request).permit(:customer_id, :task_type_function_id)
+      params.require(:service_request).permit(:customer_id, :task_type_function_id, :driver_id)
     end
 end

@@ -9,6 +9,10 @@
       =# hidden_field_tag "commodity[yard_name]", current_yard_name
       .row.form-group
         %div{:class => "col-sm-12 col-md-12"}
+          = label_tag "Driver", nil, :class => 'control-label'
+          = select_tag "service_request[driver_id]", options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }), prompt: 'Select driver', class: "form-control input-lg", required: true  
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
           = label_tag "Customer", nil, :class => 'control-label'
           = select_tag "service_request[customer_id]", options_for_select(@customers.collect {|c| [ "#{(c['FirstName'].blank? or c['LastName'].blank?) ? (c['Company'].blank? ? c['CustomerNumber'] : c['Company']) : (c['FirstName'] + ' ' + c['LastName'])}", c['Id'] ] }), prompt: 'Select customer', class: "form-control input-lg", required: true
       .row.form-group
