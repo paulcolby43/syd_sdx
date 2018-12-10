@@ -1,9 +1,16 @@
 class ServiceRequestsController < ApplicationController
   before_filter :login_required
+  include TasksHelper
 
   respond_to :html, :js
 
   def index
+    authorize! :index, :service_requests
+    @status = service_request_params[:status] == 'All' ? nil : service_request_params[:status] # Default status to All
+    @driver_id = service_request_params[:driver_id] == 'All' ? nil : service_request_params[:driver_id] # Default drivers to All
+    @start_date = service_request_params[:start_date].blank? ? Date.today.to_s : service_request_params[:start_date]# Default to today
+    @service_requests = Trip.service_requests(current_user.token, @status, @driver_id, @start_date)
+    @drivers = Trip.drivers(current_user.token)
   end
 
   def show
@@ -28,10 +35,10 @@ class ServiceRequestsController < ApplicationController
         if create_service_request_response and create_service_request_response["Success"] == 'true'
           flash[:success] = "Service Request was successfully created. Work Order Number: #{create_service_request_response['WorkOrderNumber']}"
 #          redirect_to service_request_path(create_service_request_response['Item']['Id'])
-          redirect_to root_path
+          redirect_to service_requests_path
         else
           flash[:danger] = 'Error creating Service Request.'
-          redirect_to root_path
+          redirect_to service_requests_path
         end
       }
     end
@@ -53,6 +60,6 @@ class ServiceRequestsController < ApplicationController
     end
 
     def service_request_params
-      params.require(:service_request).permit(:customer_id, :task_type_function_id, :driver_id)
+      params.fetch(:service_request, {}).permit(:customer_id, :task_type_function_id, :driver_id, :status, :start_date)
     end
 end

@@ -8,6 +8,7 @@ class Trip
   #     Class Methods         #
   #############################
   
+  # User/driver-specific dispatch info
   def self.dispatch_info_by_user_guid(auth_token)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -20,6 +21,7 @@ class Trip
     return data["MobileDispatchInformation"]
   end
   
+  # User/driver-specific trips
   def self.all_trips(dispatch_information)
     unless dispatch_information.blank? or dispatch_information["Trips"].blank? or dispatch_information["Trips"]["MobileDispatchTripInformation"].blank?
       if dispatch_information["Trips"]["MobileDispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -30,6 +32,54 @@ class Trip
     else
       # No trips
       return [] 
+    end
+  end
+  
+  def self.service_requests(auth_token, status, driver_id, start_date)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/gettrips"
+    payload = {
+      "statuses" => status.blank? ? [] : [status],
+      "startingdate"=> "#{start_date}T00:00:00", 
+      "driverId"=> driver_id
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info "Get trips payload: #{json_encoded_payload}"
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
+    payload: json_encoded_payload)
+    Rails.logger.info "Trip.service_requests payload: #{json_encoded_payload}"
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info data
+    unless data["ApiGetDispatchTripsResponse"].blank? or data["ApiGetDispatchTripsResponse"]["Trips"].blank? or data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"].blank?
+      return data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"]
+    else
+      # No service_requests
+      return [] 
+    end
+  end
+  
+  def self.service_request_tasks(service_request)
+    unless service_request["Tasks"].blank? or service_request["Tasks"]["DispatchTaskInformation"].blank?
+      if service_request["Tasks"]["DispatchTaskInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [service_request["Tasks"]["DispatchTaskInformation"]]
+      else # Array of results returned
+        return service_request["Tasks"]["DispatchTaskInformation"]
+      end
+    else
+      return []
+    end
+  end
+  
+  def self.service_request_workorders(service_request)
+    unless service_request["WorkOrders"].blank? or service_request["WorkOrders"]["WorkOrderTripRelatedListInformation"].blank?
+      if service_request["WorkOrders"]["WorkOrderTripRelatedListInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [service_request["WorkOrders"]["WorkOrderTripRelatedListInformation"]]
+      else # Array of results returned
+        return service_request["WorkOrders"]["WorkOrderTripRelatedListInformation"]
+      end
+    else
+      return []
     end
   end
   
