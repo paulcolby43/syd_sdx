@@ -143,9 +143,9 @@
                           7100 30th Ave N
                         %br
                         %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
-
-- @service_requests.each do |sr|
-  .well
-    = sr
+-#
+  - @service_requests.each do |sr|
+    .well
+      = sr
 
 =# render partial: "shared/new_service_request_footer_navbar", locals: {title: "Service Request"}
