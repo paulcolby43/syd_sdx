@@ -46,7 +46,7 @@ class Trip
       }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info "Get trips payload: #{json_encoded_payload}"
-    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
     payload: json_encoded_payload)
     Rails.logger.info "Trip.service_requests payload: #{json_encoded_payload}"
     data= Hash.from_xml(xml_content)
