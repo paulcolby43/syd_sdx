@@ -1,8 +1,8 @@
 %p
   %a{:href => trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Driver Trips"}} 
-    %i.glyphicon.glyphicon-user
-    Driver Trips
+    %i.fa.fa-map-marker
+    = "#{current_user.first_name} Trips"
 %p
-  %a{:href => service_requests_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Service Requests"}} 
-    %i.glyphicon.glyphicon-thumbs-up
-    Service Requests
+  %a{:href => search_trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Trips Search"}} 
+    %i.fa.fa-search
+    Trips Search

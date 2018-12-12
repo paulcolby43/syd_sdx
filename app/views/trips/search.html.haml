@@ -1,26 +1,26 @@
-= render partial: "shared/navbars/service_requests_navbar", locals: {title: "Service Requests"}
-- @title="Service Requests"
+= render partial: "shared/navbars/trips_search_navbar", locals: {title: "Trip Search"}
+- @title="Trip Search"
   
 .container
   %br
   %br
-  = form_tag service_requests_path, :method => 'get', :class => "form-inline" do
+  = form_tag search_trips_path, :method => 'get', :class => "form-inline" do
     .form-group
       = label_tag "Status", nil, :class => 'control-label'
-      = select_tag 'service_request[status]', options_for_select([['All'], ['Planned', '0'], ['Started', '1'], ['Completed', '2'], ['Canceled', '3'], ['Rescheduled', '4'], ['Deployed', '5'], ['Merged', '6']], @status), class: "form-control input-lg"
+      = select_tag 'trip[status]', options_for_select([['All'], ['Planned', '0'], ['Started', '1'], ['Completed', '2'], ['Canceled', '3'], ['Rescheduled', '4'], ['Deployed', '5'], ['Merged', '6']], @status), class: "form-control input-lg"
     .form-group
       = label_tag "Driver", nil, :class => 'control-label'
-      = select_tag 'service_request[driver_id]', options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }.insert(0,'All'), @driver_id), class: "form-control input-lg"
+      = select_tag 'trip[driver_id]', options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }.insert(0,'All'), @driver_id), class: "form-control input-lg"
     .form-group
       = label_tag "Start", nil, :class => 'control-label'
-      = text_field_tag 'service_request[start_date]', nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+      = text_field_tag 'trip[start_date]', nil, :placeholder => "Start Date", value: @start_date, class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
     .form-group
       = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
         %i.fa.fa-search
         Search
   %hr
   
-  - unless @service_requests.blank?
+  - unless @trips.blank?
     .table-responsive
       %table.table.table-striped
         %thead
@@ -36,28 +36,28 @@
             %th 
               %strong Tasks
             %th 
-              %strong Workorders
+              %strong Requests
             %th
         %tbody
-          - @service_requests.sort_by{|service_request| service_request['BeginDate']}.each do |service_request|
-            - driver = @drivers.find {|driver| driver['Id'] == service_request['DriverId']}
-            - tasks = Trip.service_request_tasks(service_request)
-            - workorders = Trip.service_request_workorders(service_request)
+          - @trips.sort_by{|trip| trip['BeginDate']}.each do |trip|
+            - driver = @drivers.find {|driver| driver['Id'] == trip['DriverId']}
+            - tasks = Trip.service_request_tasks(trip)
+            - service_requests = Trip.service_requests(trip)
             %tr
-              %td= "#{service_request['TripNumber']}"
-              %td= "#{service_request_status_string(service_request['TripStatus'])}"
-              %td= "#{service_request['BeginDate'].to_datetime.strftime('%-m/%-d/%y')}"
+              %td= "#{trip['TripNumber']}"
+              %td= "#{trip_status_string(trip['TripStatus'])}"
+              %td= "#{trip['BeginDate'].to_datetime.strftime('%-m/%-d/%y')}"
               %td= "#{driver.blank? ? 'Unassigned' : driver['FirstName'] + ' ' + driver['LastName']}"
               %td
-                %a{href: "#service_request_#{service_request['Id']}_tasks_modal", "data-target" => "#service_request_#{service_request['Id']}_tasks_modal", "data-toggle" => "modal", id: "#service_request_#{service_request['Id']}_tasks_link"}
+                %a{href: "#trip_#{trip['Id']}_tasks_modal", "data-target" => "#trip_#{trip['Id']}_tasks_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_tasks_link"}
                   %span.badge{style: 'background-color: #5BC0DE;'}= tasks.count
-              .modal.fade{id: "service_request_#{service_request['Id']}_tasks_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+              .modal.fade{id: "trip_#{trip['Id']}_tasks_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
                 .modal-dialog.modal-sm{:role => "document"}
                   .modal-content
                     .modal-header
                       %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
                         %span{"aria-hidden" => "true"} ×
-                      %strong= "Service Request #{service_request['TripNumber']} Tasks"
+                      %strong= "Trip #{trip['TripNumber']} Tasks"
                     .modal-body
                       - unless tasks.blank?
                         - tasks.sort_by {|task| task['Sequence']}.each do |task|
@@ -77,32 +77,32 @@
                     .modal-footer
                       %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
               %td
-                %a{href: "#service_request_#{service_request['Id']}_workorders_modal", "data-target" => "#service_request_#{service_request['Id']}_workorders_modal", "data-toggle" => "modal", id: "#service_request_#{service_request['Id']}_workorders_link"}
-                  %span.badge{style: 'background-color: #5BC0DE;'}= workorders.count
-              .modal.fade{id: "service_request_#{service_request['Id']}_workorders_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                %a{href: "#trip_#{trip['Id']}_service_requests_modal", "data-target" => "#trip_#{trip['Id']}_service_requests_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_service_requests_link"}
+                  %span.badge{style: 'background-color: #5BC0DE;'}= service_requests.count
+              .modal.fade{id: "trip_#{trip['Id']}_service_requests_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
                 .modal-dialog.modal-sm{:role => "document"}
                   .modal-content
                     .modal-header
                       %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
                         %span{"aria-hidden" => "true"} ×
-                      %strong= "Service Request #{service_request['TripNumber']} Workorders"
+                      %strong= "Trip #{trip['TripNumber']} Service Requests"
                     .modal-body
-                      - unless workorders.blank?
-                        - workorders.sort_by {|task| task['Sequence']}.each do |workorder|
+                      - unless service_requests.blank?
+                        - service_requests.each do |service_request|
                           %li.list-group-item
-                            = workorder['WorkOrderNumber']
-                            = workorder['Customer']
+                            = service_request['WorkOrderNumber']
+                            = service_request['Customer']
                             %small
                               .text-muted 
-                                %div= workorder['TaskType']
+                                %div= service_request['TaskType']
                       - else
                         %p None
                     .modal-footer
                       %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
               %td
-                = link_to 'Show', '#', class: 'btn btn-default btn-xs'
-                = link_to 'Edit', '#', class: 'btn btn-primary btn-xs'
-                = link_to 'Remove', '#', class: 'btn btn-danger btn-xs'
+                = link_to 'Show', trip_path(trip['Id']), class: 'btn btn-default'
+                = link_to 'Edit', edit_trip_path(trip['Id']), class: 'btn btn-primary'
+                = link_to 'Remove', '#', class: 'btn btn-danger'
   - else
     %p.lead None
 
@@ -144,8 +144,8 @@
                         %br
                         %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
 -#
-  - @service_requests.each do |sr|
+  - @trips.each do |trip|
     .well
-      = sr
+      = trip
 
 =# render partial: "shared/new_service_request_footer_navbar", locals: {title: "Service Request"}

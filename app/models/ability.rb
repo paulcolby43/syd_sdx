@@ -220,7 +220,9 @@ class Ability
       if user.company.include_dispatch?
         can :index, :trips
         can :show, :trips
+        can :create, :trips
         can :edit, :trips
+        can :search, :trips
       end
       
       # Tasks
@@ -236,13 +238,6 @@ class Ability
       # Locations
       ############
       can :show, :locations
-      
-      # ServiceRequests
-      ############
-      can :index, :service_requests
-      can :show, :service_requests
-      can :create, :service_requests
-      can :edit, :service_requests
       
     # End admin user role
     

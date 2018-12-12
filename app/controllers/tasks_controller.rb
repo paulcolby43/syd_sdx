@@ -9,7 +9,7 @@ class TasksController < ApplicationController
     authorize! :show, :tasks
     @task = params[:task]
     @dispatch_information = Trip.dispatch_info_by_user_guid(current_user.token)
-    @trips = Trip.all_trips(@dispatch_information)
+    @trips = Trip.all_by_user(@dispatch_information)
 #    @trip = Trip.find(current_user.token, params[:trip_id])
     @trip = Trip.find_in_trips(@trips, params[:trip_id])
     @workorders = Trip.workorders(@trip)
@@ -25,7 +25,7 @@ class TasksController < ApplicationController
   def edit
     authorize! :edit, :tasks
     @task = params[:task]
-    @trip = Trip.find(current_user.token, params[:trip_id])
+    @trip = Trip.find_by_user_guid(current_user.token, params[:trip_id])
     @workorders = Trip.workorders(@trip)
     @workorder = @workorders.find {|workorder| workorder['Id'] == @task['WorkOrderId']}
     @containers = Task.containers(@task)

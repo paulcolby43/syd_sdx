@@ -15,7 +15,12 @@ Rails.application.routes.draw do
       get 'update_container'
     end
   end
-  resources :trips
+  
+  resources :trips do
+    collection do
+      get :search
+    end
+  end
   
   resources :inv_tags do
     member do
@@ -190,7 +195,6 @@ Rails.application.routes.draw do
   
   resources :containers
   resources :locations
-  resources :service_requests
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
