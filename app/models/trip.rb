@@ -213,10 +213,43 @@ class Trip
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
-    Rails.logger.info "Trip.add_service_request response: #{response}"
+    Rails.logger.info "Trip.create response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiAddDispatchWorkOrderResponse"].blank?
       return data["ApiAddDispatchWorkOrderResponse"]
+    else
+      return nil
+    end
+  end
+  
+  def self.update_driver(auth_token, trip_id, driver_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}api/dispatch/updatetrip?tripId=#{trip_id}&driverId=#{driver_id}&voidTrip={bool}&voidWorkOrder={bool}"
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&driverId=#{driver_id}"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    
+    Rails.logger.info "Trip.update_driver response: #{response}"
+    data= Hash.from_xml(response)
+    unless data["ApiUpdateDispatchTripResponse"].blank?
+      return data["ApiUpdateDispatchTripResponse"]
+    else
+      return nil
+    end
+  end
+  
+  def self.void(auth_token, trip_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&voidTrip=true&voidWorkOrder=true"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    
+    Rails.logger.info "Trip.void response: #{response}"
+    data= Hash.from_xml(response)
+    unless data["ApiUpdateDispatchTripResponse"].blank?
+      return data["ApiUpdateDispatchTripResponse"]
     else
       return nil
     end

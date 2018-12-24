@@ -40,8 +40,13 @@ class TripsController < ApplicationController
     @customers = Customer.all_dispatch(current_user.token, current_yard_id)
     @task_type_functions = Trip.task_type_functions(current_user.token)
     @drivers = Trip.drivers(current_user.token)
-    @service_request = Trip.service_requests(@trip).last
-    @service_request_task_type_id = @task_type_functions.find {|task_type_function| task_type_function['Name'] == @service_request['TaskType']}['Id']
+    @service_requests = Trip.service_requests(@trip)
+    unless @service_requests.blank?
+      service_request_task_type = @task_type_functions.find {|task_type_function| task_type_function['Name'] == @service_requests.first['TaskType']}
+      @service_request_task_type_id = service_request_task_type['Id'] unless service_request_task_type.blank?
+      @customer_id = @service_requests.first['CustomerId']
+    end
+#    @service_request_task_type_id = @task_type_functions.find {|task_type_function| task_type_function['Name'] == @service_request['TaskType']}['Id']
   end
 
   def create
@@ -60,15 +65,17 @@ class TripsController < ApplicationController
   end
 
   def update
-    update_trip_response = Trip.create(current_user.token, current_yard_id, trip_params[:driver_id], trip_params[:customer_id], trip_params[:task_type_function_id])
+    update_trip_response = Trip.update_driver(current_user.token, params[:id], trip_params[:driver_id])
     respond_to do |format|
       format.html {
         if update_trip_response and update_trip_response["Success"] == 'true'
           flash[:success] = "Trip was successfully updated."
-          redirect_to search_trips_path
+#          redirect_to search_trips_path
+          redirect_to :back
         else
           flash[:danger] = 'Error updating Trip.'
-          redirect_to search_trips_path
+#          redirect_to search_trips_path
+          redirect_to :back
         end
       }
     end
@@ -82,6 +89,24 @@ class TripsController < ApplicationController
     @trips = Trip.search(current_user.token, @status, @driver_id, @start_date)
     @drivers = Trip.drivers(current_user.token)
   end
+  
+  # DELETE /trips/1
+  # DELETE /trips/1.json
+  def destroy
+    void_trip_response = Trip.void(current_user.token, params[:id])
+    respond_to do |format|
+      format.html {
+        if void_trip_response and void_trip_response["Success"] == 'true'
+          flash[:success] = "Trip and Service Request were successfully voided."
+          redirect_to :back
+        else
+          flash[:danger] = 'Error voiding Trip.'
+          redirect_to :back
+        end
+      }
+    end
+  end
+  
   
   private
 

@@ -4,9 +4,10 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
-            %a{href: search_trips_path, data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i> Trips"}, class: 'trip_button'}
+            -# %a{href: search_trips_path, data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i> Trips"}, class: 'trip_button'}
+            = link_to 'javascript:history.back()' do
               %i.fa.fa-chevron-left
-              Trips
+              Back
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title

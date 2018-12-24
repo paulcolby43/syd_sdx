@@ -1,5 +1,5 @@
 = render partial: "shared/navbars/show_trip_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
--@title="Trip #{@trip['TripNumber']}"
+-@title= "Trip #{@trip['TripNumber']}"
 
 .container
   %br
@@ -47,7 +47,7 @@
       %strong Driver
       = "#{@driver.blank? ? 'Unassigned' : @driver['FirstName'] + ' ' + @driver['LastName']}"
 
-    = link_to 'Edit', edit_trip_path(@trip['Id']), class: 'btn btn-primary'
+    =# link_to 'Edit', edit_trip_path(@trip['Id']), class: 'btn btn-primary'
 
 -#
   .jumbotron{style: 'background-color: #FFFFFF;'}
