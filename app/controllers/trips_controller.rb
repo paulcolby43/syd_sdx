@@ -97,7 +97,7 @@ class TripsController < ApplicationController
     respond_to do |format|
       format.html {
         if void_trip_response and void_trip_response["Success"] == 'true'
-          flash[:success] = "Trip and Service Request were successfully voided."
+          flash[:success] = "Trip was successfully voided."
           redirect_to :back
         else
           flash[:danger] = 'Error voiding Trip.'

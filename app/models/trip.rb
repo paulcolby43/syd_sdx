@@ -242,7 +242,8 @@ class Trip
   def self.void(auth_token, trip_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&voidTrip=true&voidWorkOrder=true"
+#    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&voidTrip=true&voidWorkOrder=true"
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&voidTrip=true"
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     
