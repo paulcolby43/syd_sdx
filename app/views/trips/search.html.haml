@@ -90,7 +90,7 @@
                       %strong= "Trip #{trip['TripNumber']}"
                     .modal-body
                       - service_requests.each do |service_request|
-                        %li.list-group-item
+                        %li.list-group-item.list-group-item-info
                           =# service_request['WorkOrderNumber']
                           = service_request['Customer']
                           %small
