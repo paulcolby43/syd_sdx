@@ -1,5 +1,5 @@
 %p
-  %a{:href => trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Driver Trips"}} 
+  %a{:href => trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{current_user.first_name} Trips"}} 
     %i.fa.fa-map-marker
     = "#{current_user.first_name} Trips"
 %p
