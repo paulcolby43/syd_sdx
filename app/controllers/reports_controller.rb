@@ -28,7 +28,9 @@ class ReportsController < ApplicationController
       @line_items = []
       unless @tickets.blank?
         @tickets.each do |ticket|
-          @line_items = @line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
+          unless ticket['TicketItemCollection'].blank? or ticket['TicketItemCollection']['ApiTicketItem'].blank?
+            @line_items = @line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
+          end
         end
       end
       @line_items_total = 0
