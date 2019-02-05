@@ -61,19 +61,19 @@ class ReportsController < ApplicationController
       @cash_total = 0
       @cash_payment_tickets.each do |cash_payment_ticket|
         unless cash_payment_ticket['TicketItemCollection'].blank? or cash_payment_ticket['TicketItemCollection']['ApiTicketItem'].blank?
-          @cash_total = @cash_total + cash_payment_ticket['TicketItemCollection']['ApiTicketItem'].to_d
+          @cash_total = @cash_total + Ticket.line_items_total(cash_payment_ticket['TicketItemCollection']['ApiTicketItem']).to_d
         end
       end
       @check_total = 0
       @check_payment_tickets.each do |check_payment_ticket|
         unless check_payment_ticket['TicketItemCollection'].blank? or check_payment_ticket['TicketItemCollection']['ApiTicketItem'].blank?
-          @check_total = @check_total + check_payment_ticket['TicketItemCollection']['ApiTicketItem'].to_d
+          @check_total = @check_total + Ticket.line_items_total(check_payment_ticket['TicketItemCollection']['ApiTicketItem']).to_d
         end
       end
       @ezcash_total = 0
       @ezcash_payment_tickets.each do |ezcash_payment_ticket|
         unless ezcash_payment_ticket['TicketItemCollection'].blank? or ezcash_payment_ticket['TicketItemCollection']['ApiTicketItem'].blank?
-          @ezcash_total = @ezcash_total + ezcash_payment_ticket['TicketItemCollection']['ApiTicketItem'].to_d
+          @ezcash_total = @ezcash_total + Ticket.line_items_total(ezcash_payment_ticket['TicketItemCollection']['ApiTicketItem']).to_d
         end
       end
 #      @cash_total = @cash_payment_tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum
