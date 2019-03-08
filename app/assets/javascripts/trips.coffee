@@ -63,6 +63,7 @@ jQuery ->
     cache: true
     tags: true
     allowClear: true
+    selectOnClose: true
     placeholder: 'Search containers'
     insertTag: (data, tag) ->
       tag.text = 'Create: ' + tag.text
