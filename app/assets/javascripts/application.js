@@ -34,4 +34,5 @@
 //= require morris
 //= require quagga
 //= require zxing-js.min
+//= require dbr-6.5.0.1.min
 //= require_tree .
