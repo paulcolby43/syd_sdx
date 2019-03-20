@@ -4,8 +4,12 @@
 .container
   %br
   %br
-  #divLoadInfo loading...
-  %input#uploadImage.btn-secondary{:accept => "image/bmp,image/jpeg,image/png,image/gif", :title => "<i class='fa fa-barcode'></i> License Barcode", :type => "file"}/
+  #divLoadInfo
+    %i.fa.fa-spinner.fa-lg.fa-spin
+    Drivers License Scanner loading
+  #divScanbutton{style: 'display: none;'}
+    %input#uploadImage.btn-secondary{:accept => "image/bmp,image/jpeg,image/png,image/gif", :title => "<i class='fa fa-barcode'></i> Scan Drivers License Barcode", :type => "file"}/
+  
   %ul{class: 'list-inline'}
     - current_user.license_reader_devices.each do |license_reader_device|
       %li
@@ -112,6 +116,7 @@
 
   dynamsoft.dbrEnv.onAutoLoadWasmSuccess = function(){
       document.getElementById('divLoadInfo').innerHTML="load dbr wasm success.";
+      document.getElementById('divScanbutton').style.display = 'block';
   };
   dynamsoft.dbrEnv.onAutoLoadWasmError = function(status){
       document.getElementById('divLoadInfo').innerHTML="load wasm failed: "+status;
