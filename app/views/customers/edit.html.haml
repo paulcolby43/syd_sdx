@@ -107,10 +107,13 @@
 
 = render partial: "shared/edit_customer_footer_navbar", locals: {title: "Customer"}
 
+-# <script src="https://demo.dynamsoft.com/dbr_wasm/js/dbr-6.5.0.1.min.js"></script>
+<script src="#{asset_path('dbr-6.5.0.1.min.js')}"></script>
 :javascript
   //dynamsoft.dbrEnv.resourcesPath = 'https://demo.dynamsoft.com/dbr_wasm/js';
   //dynamsoft.dbrEnv.resourcesPath = "http://localhost:8081/assets";
-  dynamsoft.dbrEnv.resourcesPath = "#{asset_path('assets')}";
+  //dynamsoft.dbrEnv.resourcesPath = "#{asset_path('assets')}";
+  dynamsoft.dbrEnv.resourcesPath = "#{asset_path('/')}";
 
   //dynamsoft.dbrEnv.bUseWorker = true; //uncomment it to use worker
 
