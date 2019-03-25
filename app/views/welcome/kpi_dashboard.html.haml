@@ -4,8 +4,26 @@
   .container-fluid
     .row
       .col-xs-12
+        .col-xs-12.col-sm-4{style: 'color: white;'}
+          %h3 SCRAP DRAGON COMMAND STATION
+          .text-danger 
+            %i.fa.fa-warning
+            System wide alert
+        .col-xs-12.col-sm-4
+          .panel{style: 'background-color: #303030; color: white; height: 100px; padding-top: 0px; padding-bottom: 0px;'}
+            -#
+              .panel-heading{style: 'background-color: gray;'}
+                New York
+            .panel-body
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=small&timezone=America%2FNew_York", :width => "100%", :height => "100px"}
+        .col-xs-12.col-sm-2
+          .panel{style: 'background-color: #303030; color: white;'}
+            .panel-heading
+              %i.fa.fa-cloud
+              Weather
+              #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
         .pull-right
-          .col-xs-12.col-sm-4
+          .col-xs-12.col-sm-2
             = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
               %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
     .row
@@ -14,70 +32,124 @@
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                Held Today
-                %h3
-                  = "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
+                %h4.text-center Tickets Created
+                %p.text-center
+                  Today:
+                  %span.text-success= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
                   %br
-                  Tickets
-                  %br
-                  %span.text-success= number_to_currency(@held_tickets_today_total)
+                  30-Day:
+                  %span.text-success= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                Paid Today
-                %h3
-                  = "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
+                %h4.text-center Tickets on Hold
+                %p.text-center
+                  Today:
+                  %span.text-success= "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
                   %br
-                  Tickets
+                  Average
+                  %span.text-success 15 minutes
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h4.text-center Tickets Paid
+                %p.text-center
+                  Today:
+                  %span.text-success= "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
                   %br
                   %span.text-success= number_to_currency(@paid_tickets_today_total)
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h4.text-center Nonferrous LB
+                %p.text-center
+                  Today:
+                  %span.text-success= @paid_tickets_today_line_items_net_total
+                  %br
+                  30-Day:
+                  %span.text-success= @paid_tickets_line_items_net_total
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white; margin-left: 0px;'}
+              .panel-heading
+                %h4.text-center Ferrous LB
+                %p.text-center
+                  Today:
+                  %span.text-success= @paid_tickets_today_line_items_net_total
+                  %br
+                  30-Day:
+                  %span.text-success= @paid_tickets_line_items_net_total
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                Held Today
-                %h3
-                  = "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
+                %h4.text-center Shipments on Hold
+                %p.text-center
+                  Today:
+                  %span.text-success= "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
                   %br
-                  Shipments
-                  %br
-                  %span.text-success= @held_shipments_today_total_net.round(3)
+                  %span.text-success= @held_shipments_today.last['CustomerName'] unless @held_shipments_today.blank?
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                Sent Today
-                %h3
-                  = "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
+                %h4.text-center Shipments Sent
+                %p.text-center
+                  Today:
+                  %span.text-success= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
                   %br
-                  Shipments
-                  %br
-                  %span.text-success= @closed_shipments_today_total_net.round(3)
-          .col-xs-6
-            .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading
-                Weather
-                #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
-          .col-xs-6
-            .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading
-                Forecast
-              .panel-body
-                #forecast{style: 'background-color: #303030; color: white;'}
+                  %span.text-success= @closed_shipments_today.last['CustomerName'] unless @closed_shipments_today.blank?
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading{style: 'background-color: gray;'}
-                New York
-              .panel-body
-                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
-
+              .panel-heading
+                %h4
+                  %i.fa.fa-video-camera
+                  Live Camera Feed
+                .embed-responsive.embed-responsive-1by1
+                  %iframe{:allow => "autoplay; encrypted-media", :allowfullscreen => "", :frameborder => "0", :height => "1200", :src => "http://192.168.11.54", :width => "854"}
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h4
+                  %i.fa.fa-bolt
+                  ezCash ATMs
+                .table-responsive
+                  %table.table.table-condensed
+                    %thead
+                      %tr
+                        %th{:scope => "col"} ID
+                        %th{:scope => "col"} Name
+                        %th{:scope => "col"} State
+                        %th{:scope => "col"} Status
+                        %th{:scope => "col"} Remaining
+                        %th
+                    %tbody
+                      %tr
+                        %td 312
+                        %td Scrapy's ATM
+                        %td Ready
+                        %td= link_to "1101", '#', class: 'btn btn-sm btn-success'
+                        %td= number_to_currency(78084)
+          -#
+            .col-xs-6
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  Weather
+                  #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
+            .col-xs-6
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  Forecast
+                .panel-body
+                  #forecast{style: 'background-color: #303030; color: white;'}
 
         .col-xs-6
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                Daily Tickets
-              - unless @held_tickets_today.blank?
+                %h4 Daily Tickets
+              -# unless @held_tickets_today.blank?
+              - unless @closed_and_held_and_paid_tickets_today.blank?
                 %table.table
-                  - @held_tickets_today.each do |ticket|
+                  -# @held_tickets_today.each do |ticket|
+                  - @closed_and_held_and_paid_tickets_today.each do |ticket|
                     %tr
                       %td= ticket['TicketNumber']
                       %td= ticket['Company']
@@ -87,7 +159,7 @@
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                Daily Shipments
+                %h4 Daily Shipments
               - unless @closed_shipments_today.blank?
                 %table.table
                   - @held_shipments_today.each do |shipment|
