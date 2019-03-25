@@ -64,20 +64,20 @@
                 %h4.text-center Nonferrous LB
                 %p.text-center
                   Today:
-                  %span.text-success= @paid_tickets_today_line_items_net_total
+                  %span.text-success= number_with_delimiter(@paid_tickets_today_line_items_net_total.round)
                   %br
                   30-Day:
-                  %span.text-success= @paid_tickets_line_items_net_total
+                  %span.text-success= number_with_delimiter(@paid_tickets_line_items_net_total.round)
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white; margin-left: 0px;'}
               .panel-heading
                 %h4.text-center Ferrous LB
                 %p.text-center
                   Today:
-                  %span.text-success= @paid_tickets_today_line_items_net_total
+                  %span.text-success= number_with_delimiter(@paid_tickets_today_line_items_net_total.round)
                   %br
                   30-Day:
-                  %span.text-success= @paid_tickets_line_items_net_total
+                  %span.text-success= number_with_delimiter(@paid_tickets_line_items_net_total.round)
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -85,8 +85,11 @@
                 %p.text-center
                   Today:
                   %span.text-success= "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
-                  %br
-                  %span.text-success= @held_shipments_today.last['CustomerName'] unless @held_shipments_today.blank?
+                  - unless @held_shipments_today.blank?
+                    %br
+                    %span.text-success= @held_shipments_today.last['CustomerName'] 
+                    %br
+                    %span.text-success= @held_shipments_today.last['DateCreated'].to_datetime.strftime("%l:%M %p") unless @held_shipments_today.last['DateCreated'].blank? or @held_shipments_today.last == '{"i:nil"=>"true"}'
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -94,8 +97,11 @@
                 %p.text-center
                   Today:
                   %span.text-success= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
-                  %br
-                  %span.text-success= @closed_shipments_today.last['CustomerName'] unless @closed_shipments_today.blank?
+                  - unless @closed_shipments_today.blank?
+                    %br
+                    %span.text-success= @closed_shipments_today.last['CustomerName'] 
+                    %br
+                    %span.text-success= @closed_shipments_today.last['DateCreated'].to_datetime.strftime("%l:%M %p") unless @closed_shipments_today.last['DateCreated'].blank? or @closed_shipments_today.last == '{"i:nil"=>"true"}'
           -#
             .col-xs-12
               .panel{style: 'background-color: #303030; color: white;'}
@@ -157,20 +163,21 @@
                       %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
               - else
                 .panel-body None
-          .col-xs-12
-            .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading
-                %h4 Daily Shipments
-              - unless @closed_shipments_today.blank?
-                %table.table
-                  - @held_shipments_today.each do |shipment|
-                    %tr
-                      %td= shipment['ShipmentNumber']
-                      %td= shipment['CustomerName']
-                      %td= shipment['ContractDescription']
-                      %td= "#{shipment['NetWeight']}#{shipment['UnitOfMeasure']}"
-              - else
-                .panel-body None
+          -#
+            .col-xs-12
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  %h4 Daily Shipments
+                - unless @closed_shipments_today.blank?
+                  %table.table
+                    - @held_shipments_today.each do |shipment|
+                      %tr
+                        %td= shipment['ShipmentNumber']
+                        %td= shipment['CustomerName']
+                        %td= shipment['ContractDescription']
+                        %td= "#{shipment['NetWeight']}#{shipment['UnitOfMeasure']}"
+                - else
+                  .panel-body None
           .col-xs-12
             .embed-responsive.embed-responsive-16by9
               %iframe{class: "embed-responsive-item", :height => "225", :scrolling => "yes", :src => "https://www.dailyforex.com/forex-widget/widget/28129", :style => "width: 800px; height:225px; display: block;border:0px;overflow:auto;", :width => "800"}
