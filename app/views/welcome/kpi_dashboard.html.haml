@@ -96,14 +96,15 @@
                   %span.text-success= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
                   %br
                   %span.text-success= @closed_shipments_today.last['CustomerName'] unless @closed_shipments_today.blank?
-          .col-xs-12
-            .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading
-                %h4
-                  %i.fa.fa-video-camera
-                  Live Camera Feed
-                .embed-responsive.embed-responsive-1by1
-                  %iframe{:allow => "autoplay; encrypted-media", :allowfullscreen => "", :frameborder => "0", :height => "1200", :src => "http://192.168.11.54", :width => "854"}
+          -#
+            .col-xs-12
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  %h4
+                    %i.fa.fa-video-camera
+                    Live Camera Feed
+                  .embed-responsive.embed-responsive-1by1
+                    %iframe{:allow => "autoplay; encrypted-media", :allowfullscreen => "", :frameborder => "0", :height => "1200", :src => "http://192.168.11.54", :width => "854"}
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -149,7 +150,7 @@
               - unless @closed_and_held_and_paid_tickets_today.blank?
                 %table.table
                   -# @held_tickets_today.each do |ticket|
-                  - @closed_and_held_and_paid_tickets_today.each do |ticket|
+                  - @closed_and_held_and_paid_tickets_today.last(10).each do |ticket|
                     %tr
                       %td= ticket['TicketNumber']
                       %td= ticket['Company']
