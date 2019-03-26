@@ -1,6 +1,6 @@
 = render 'shared/navbars/kpi_dashboard_navbar'
 
-.jumbotron{id: 'kpi_dashboard', style: 'background-color: black;'}
+.jumbotron{id: 'kpi_dashboard', style: 'background-color: black; margin-bottom: 0px; padding-bottom: 0px;'}
   .container-fluid
     .row
       .col-xs-12
@@ -179,8 +179,9 @@
                 - else
                   .panel-body None
           .col-xs-12
-            .embed-responsive.embed-responsive-16by9
-              %iframe{class: "embed-responsive-item", :height => "225", :scrolling => "yes", :src => "https://www.dailyforex.com/forex-widget/widget/28129", :style => "width: 800px; height:225px; display: block;border:0px;overflow:auto;", :width => "800"}
+            -# .embed-responsive.embed-responsive-16by9
+            .embed-responsive{style: 'padding-top: 35%;'}
+              %iframe{class: "embed-responsive-item", :scrolling => "yes", :src => "https://www.dailyforex.com/forex-widget/widget/28129", :style => "display: block;border:0px;overflow:auto;"}
 
     -#    
       .row
