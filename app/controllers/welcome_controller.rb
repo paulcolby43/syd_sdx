@@ -39,32 +39,32 @@ class WelcomeController < ApplicationController
         @paid_tickets_today_total = @paid_tickets_today_total + (ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) 
       end
       
-      @paid_tickets_line_items = []
-      unless @paid_tickets.blank?
-        @paid_tickets.each do |ticket|
+      @closed_tickets_line_items = []
+      unless @closed_tickets.blank?
+        @closed_tickets.each do |ticket|
           unless ticket['TicketItemCollection'].blank? or ticket['TicketItemCollection']['ApiTicketItem'].blank?
-            @paid_tickets_line_items = @paid_tickets_line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
+            @closed_tickets_line_items = @closed_tickets_line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
           end
         end
       end
       
-      @paid_tickets_line_items_net_total = 0
-      @paid_tickets_line_items.each do |line_item|
-        @paid_tickets_line_items_net_total = @paid_tickets_line_items_net_total + line_item["NetWeight"].to_d
+      @closed_tickets_line_items_net_total = 0
+      @closed_tickets_line_items.each do |line_item|
+        @closed_tickets_line_items_net_total = @closed_tickets_line_items_net_total + line_item["NetWeight"].to_d
       end
       
-      @paid_tickets_today_line_items = []
-      unless @paid_tickets_today.blank?
-        @paid_tickets_today.each do |ticket|
+      @closed_tickets_today_line_items = []
+      unless @closed_tickets_today.blank?
+        @closed_tickets_today.each do |ticket|
           unless ticket['TicketItemCollection'].blank? or ticket['TicketItemCollection']['ApiTicketItem'].blank?
-            @paid_tickets_today_line_items = @paid_tickets_today_line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
+            @closed_tickets_today_line_items = @closed_tickets_today_line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
           end
         end
       end
       
-      @paid_tickets_today_line_items_net_total = 0
-      @paid_tickets_today_line_items.each do |line_item|
-        @paid_tickets_today_line_items_net_total = @paid_tickets_today_line_items_net_total + line_item["NetWeight"].to_d
+      @closed_tickets_today_line_items_net_total = 0
+      @closed_tickets_today_line_items.each do |line_item|
+        @closed_tickets_today_line_items_net_total = @closed_tickets_today_line_items_net_total + line_item["NetWeight"].to_d
       end
       
       @closed_and_held_and_paid_tickets_today = @closed_tickets_today + @held_tickets_today + @paid_tickets_today
