@@ -72,18 +72,11 @@ class WelcomeController < ApplicationController
 #      @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(5)
 #      @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, Date.today, Date.today)
       
-      @shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, Date.today, Date.today)
+      @held_shipments_today = PackShipment.all_held_today(current_user.token, current_yard_id)
+      @last_held_shipment_today = @held_shipments_today.sort_by{|s| s['DateCreated']}.last unless @held_shipments_today.blank?
       
-      @held_shipments_today = []
-      @shipments_today.each do |shipment|
-        @held_shipments_today << shipment if shipment["ShipmentStatus"] == "1"
-      end
-      
-      @closed_shipments_today = []
-      @shipments_today.each do |shipment|
-        @closed_shipments_today << shipment if shipment["ShipmentStatus"] == "0"
-      end
-      
+      @closed_shipments_today = PackShipment.all_closed_today(current_user.token, current_yard_id)
+      @last_closed_shipment_today = @closed_shipments_today.sort_by{|s| s['DateShipped']}.last unless @closed_shipments_today.blank?
       
       @held_shipments_today_total_net = 0
       @held_shipments_today.each do |shipment|

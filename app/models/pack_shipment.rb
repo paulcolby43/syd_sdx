@@ -30,6 +30,15 @@ class PackShipment
     end
   end
   
+  def self.all_held_today(auth_token, yard_id)
+    held_shipments = PackShipment.all_held(auth_token, yard_id)
+    held_shipments_today = []
+    held_shipments.each do |shipment|
+      held_shipments_today << shipment if shipment['DateCreated'].to_date == Date.today
+    end
+    return held_shipments_today
+  end
+  
   def self.find_by_id(auth_token, yard_id, pack_shipment_id)
     pack_shipments = PackShipment.all(auth_token, yard_id)
     # Find pack shipment within array of hashes
@@ -137,6 +146,36 @@ class PackShipment
       "CustomerIds" => [],
       "StartDate" => "#{start_date} 00:00:00",
       "EndDate" => "#{end_date} 23:59:59"
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info json_encoded_payload
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "PackShipment.all_by_date: #{data}"
+    
+    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank?# No results, so put into empty array
+      return []
+    else # Array of results returned
+      if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash  # Only one result returned, so put it into an array
+        return [data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else
+        return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
+    end
+  end
+  
+  def self.all_closed_today(auth_token, yard_id) # Non-held shipments
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/getshipmentsbycustomer"
+    
+    payload = {
+      "CustomerIds" => [],
+      "StartDate" => "#{Date.today} 00:00:00",
+      "EndDate" => "#{Date.today} 23:59:59"
       }
     json_encoded_payload = JSON.generate(payload)
     Rails.logger.info json_encoded_payload

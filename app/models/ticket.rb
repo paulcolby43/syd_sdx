@@ -1007,4 +1007,16 @@ class Ticket
     end
   end
   
+  def self.status_string(status)
+    if status == "1"
+      return "Closed"
+    elsif status == "2"
+      return "Held"
+    elsif status == "3"
+      return "Paid"
+    else
+      "N/A"
+    end
+  end
+  
 end
