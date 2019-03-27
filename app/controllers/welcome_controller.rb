@@ -19,15 +19,15 @@ class WelcomeController < ApplicationController
         session[:yard_name] = @yard['Name']
       end
       
-      @closed_tickets = Ticket.all_last_365_days(1, current_user.token, current_yard_id)
-      @held_tickets = Ticket.all_last_365_days(2, current_user.token, current_yard_id)
-      @paid_tickets = Ticket.all_last_365_days(3, current_user.token, current_yard_id)
+      @closed_tickets = Ticket.all_last_30_days(1, current_user.token, current_yard_id)
+      @held_tickets = Ticket.all_last_30_days(2, current_user.token, current_yard_id)
+      @paid_tickets = Ticket.all_last_30_days(3, current_user.token, current_yard_id)
       
       @closed_and_held_and_paid_tickets = @closed_tickets + @held_tickets + @paid_tickets
       
-      @closed_tickets_today = @closed_tickets.last(5)
-      @held_tickets_today = @held_tickets.last(5)
-      @paid_tickets_today = @paid_tickets.last(5)
+      @closed_tickets_today = Ticket.all_today(1, current_user.token, current_yard_id)
+      @held_tickets_today = Ticket.all_today(2, current_user.token, current_yard_id)
+      @paid_tickets_today = Ticket.all_today(3, current_user.token, current_yard_id)
       
       @held_tickets_today_total = 0
       @held_tickets_today.each do |ticket|
@@ -69,8 +69,21 @@ class WelcomeController < ApplicationController
       
       @closed_and_held_and_paid_tickets_today = @closed_tickets_today + @held_tickets_today + @paid_tickets_today
 
-      @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(5)
-      @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, (Date.today - 4.months), Date.today).last(5)
+#      @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(5)
+#      @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, Date.today, Date.today)
+      
+      @shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, Date.today, Date.today)
+      
+      @held_shipments_today = []
+      @shipments_today.each do |shipment|
+        @held_shipments_today << shipment if shipment["ShipmentStatus"] == "1"
+      end
+      
+      @closed_shipments_today = []
+      @shipments_today.each do |shipment|
+        @closed_shipments_today << shipment if shipment["ShipmentStatus"] == "0"
+      end
+      
       
       @held_shipments_today_total_net = 0
       @held_shipments_today.each do |shipment|
