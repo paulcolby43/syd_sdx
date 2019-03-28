@@ -129,29 +129,7 @@
                     Live Camera Feed
                   .embed-responsive.embed-responsive-1by1
                     %iframe{:allow => "autoplay; encrypted-media", :allowfullscreen => "", :frameborder => "0", :height => "1200", :src => "http://192.168.11.54", :width => "854"}
-          .col-xs-12
-            .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading
-                %h2
-                  %i.fa.fa-bolt
-                  ezCash ATMs
-                %h4.table-responsive
-                  %table.table.table-condensed
-                    %thead
-                      %tr
-                        %th{:scope => "col"} ID
-                        %th{:scope => "col"} Name
-                        %th{:scope => "col"} State
-                        %th{:scope => "col"} Status
-                        %th{:scope => "col"} Remaining
-                        %th
-                    %tbody
-                      %tr
-                        %td 312
-                        %td Scrapy's ATM
-                        %td Ready
-                        %td= link_to "1101", '#', class: 'btn btn-sm btn-success'
-                        %td= number_to_currency(78084)
+          
           -#
             .col-xs-6
               .panel{style: 'background-color: #303030; color: white;'}
@@ -183,6 +161,29 @@
                         %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
               - else
                 .panel-body None
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2
+                  %i.fa.fa-bolt
+                  ezCash ATMs
+                %h4.table-responsive
+                  %table.table.table-condensed
+                    %thead
+                      %tr
+                        %th{:scope => "col"} ID
+                        %th{:scope => "col"} Name
+                        %th{:scope => "col"} State
+                        %th{:scope => "col"} Status
+                        %th{:scope => "col"} Remaining
+                        %th
+                    %tbody
+                      %tr
+                        %td 312
+                        %td Scrapy's ATM
+                        %td Ready
+                        %td= link_to "1101", '#', class: 'btn btn-sm btn-success'
+                        %td= number_to_currency(78084)
           -#
             .col-xs-12
               .panel{style: 'background-color: #303030; color: white;'}
