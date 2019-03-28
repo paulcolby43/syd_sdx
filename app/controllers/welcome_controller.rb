@@ -99,7 +99,7 @@ class WelcomeController < ApplicationController
 #      end
       
       @closed_and_held_and_paid_tickets_today = @closed_tickets_today + @held_tickets_today + @paid_tickets_today
-      @closed_and_held_and_paid_tickets_today = @closed_and_held_and_paid_tickets_today.sort_by{|s| s['DateCreated']}
+      @closed_and_held_and_paid_tickets_today = @closed_and_held_and_paid_tickets_today.sort_by{|s| s['DateCreated']}.reverse
 
 #      @held_shipments_today = PackShipment.all_held(current_user.token, current_yard_id).last(5)
 #      @closed_shipments_today = PackShipment.all_by_date(current_user.token, current_yard_id, Date.today, Date.today)

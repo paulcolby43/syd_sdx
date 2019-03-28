@@ -6,27 +6,32 @@
       .col-xs-12
         .col-xs-12.col-sm-5{style: 'color: white;'}
           %h2 SCRAP DRAGON COMMAND STATION
+          = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
+            %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
           %h4.text-danger 
             %i.fa.fa-warning
             System wide alert
         .col-xs-12.col-sm-3
-          .panel{style: 'background-color: #303030; color: white; height: 100px; padding-top: 0px; padding-bottom: 0px;'}
+          .panel{style: 'background-color: #303030; color: white; height: 150px; padding-top: 0px; padding-bottom: 0px;'}
             -#
               .panel-heading{style: 'background-color: gray;'}
                 New York
             .panel-body
-              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=small&timezone=America%2FNew_York", :width => "100%", :height => "100px"}
-        .col-xs-12.col-sm-2
-          .panel{style: 'background-color: #303030; color: white;'}
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
+        .col-xs-12.col-sm-4
+          .panel
             .panel-heading
-              %h2.text-center
-                %i.fa.fa-cloud
-                Weather
-              #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
-        .pull-right
-          .col-xs-12.col-sm-2
-            = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
-              %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
+              %iframe#forecast_embed{:frameborder => "0", :height => "210", :src => "//forecast.io/embed/#lat=#{current_user.company.latitude}&lon=#{current_user.company.longitude}&color=#00aaff&name=#{current_user.company.city.blank? ? 'St. Pete' : current_user.company.city}", :width => "100%"}
+              -#
+                %h2.text-center
+                  %i.fa.fa-cloud
+                  Weather
+                #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
+        -#
+          .pull-right
+            .col-xs-12.col-sm-2
+              = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
+                %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
     .row
       .col-xs-12
         .col-xs-6
