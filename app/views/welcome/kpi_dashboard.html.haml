@@ -45,6 +45,8 @@
                   %br
                   30-Day:
                   %span.text-success= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
+                  =# Commodity.types(current_user.token, current_yard_id)
+                  =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -76,14 +78,14 @@
                   Today:
                   %br
                   %span.text-success
-                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_net_total.round)
+                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_non_ferrous_net_total.round)
                     lb
                   %br
                   %br
                   30-Day avg:
                   %br
                   %span.text-success
-                    = number_with_delimiter((@closed_tickets_line_items_net_total/30).round)
+                    = number_with_delimiter((@closed_tickets_line_items_non_ferrous_net_total / 30).round)
                     lb
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white; margin-left: 0px;'}
@@ -93,14 +95,14 @@
                   Today:
                   %br
                   %span.text-success
-                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_net_total.round)
+                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_ferrous_net_total.round)
                     lb
                   %br
                   %br
                   30-Day avg:
                   %br
                   %span.text-success
-                    = number_with_delimiter((@closed_tickets_line_items_net_total/30).round)
+                    = number_with_delimiter((@closed_tickets_line_items_ferrous_net_total / 30).round)
                     lb
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}

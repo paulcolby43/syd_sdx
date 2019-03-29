@@ -65,9 +65,15 @@ class WelcomeController < ApplicationController
         end
       end
       
-      @closed_and_paid_tickets_today_line_items_net_total = 0
+      @closed_and_paid_tickets_today_line_items_ferrous_net_total = 0
+      @closed_and_paid_tickets_today_line_items_non_ferrous_net_total = 0
       @closed_and_paid_tickets_today_line_items.each do |line_item|
-        @closed_and_paid_tickets_today_line_items_net_total = @closed_and_paid_tickets_today_line_items_net_total + line_item["NetWeight"].to_d
+        commodity = Commodity.find_by_id(current_user.token, current_yard_id, line_item["CommodityId"])
+        if commodity and commodity["Type"] == "F"
+          @closed_and_paid_tickets_today_line_items_ferrous_net_total = @closed_and_paid_tickets_today_line_items_ferrous_net_total + line_item["NetWeight"].to_d
+        elsif commodity and commodity["Type"] == "N"
+          @closed_and_paid_tickets_today_line_items_non_ferrous_net_total = @closed_and_paid_tickets_today_line_items_non_ferrous_net_total + line_item["NetWeight"].to_d
+        end
       end
       
       @closed_tickets_line_items = []
@@ -79,9 +85,15 @@ class WelcomeController < ApplicationController
         end
       end
       
-      @closed_tickets_line_items_net_total = 0
+      @closed_tickets_line_items_ferrous_net_total = 0
+      @closed_tickets_line_items_non_ferrous_net_total = 0
       @closed_tickets_line_items.each do |line_item|
-        @closed_tickets_line_items_net_total = @closed_tickets_line_items_net_total + line_item["NetWeight"].to_d
+        commodity = Commodity.find_by_id(current_user.token, current_yard_id, line_item["CommodityId"])
+        if commodity and commodity["Type"] == "F"
+          @closed_tickets_line_items_ferrous_net_total = @closed_tickets_line_items_ferrous_net_total + line_item["NetWeight"].to_d
+        elsif commodity and commodity["Type"] == "N"
+          @closed_tickets_line_items_non_ferrous_net_total = @closed_tickets_line_items_non_ferrous_net_total + line_item["NetWeight"].to_d
+        end
       end
       
 #      @closed_tickets_today_line_items = []
