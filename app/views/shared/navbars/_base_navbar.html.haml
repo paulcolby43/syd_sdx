@@ -85,6 +85,8 @@
               = link_to "#{current_user.first_name} Trips", trips_path
             %li{:class => "#{(params[:controller] == 'service_requests') ? 'active' : ''}"}
               = link_to 'Trips Search', search_trips_path
+        %li
+          %a{href: welcome_kpi_dashboard_path, target: '_blank'} COMMAND STATION
         -#
           - unless Yard.device_groups(current_yard_id).blank?
             %li.dropdown
