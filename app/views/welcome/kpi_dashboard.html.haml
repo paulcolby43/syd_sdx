@@ -7,10 +7,10 @@
         .col-xs-12.col-sm-3{style: 'color: white;'}
           %h2 
             - unless current_user.company.logo.url.blank?
-              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive', size: '100x100')
-            - else
-              SCRAP DRAGON 
-            SCOREBOARD
+              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive', size: '200x200')
+            POWERED BY 
+            %br
+            %span.text-info SCRAP DRAGON
           = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
             %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control", onchange: "this.form.submit();"
           
@@ -47,10 +47,10 @@
                 %h2.text-center Tickets Created
                 %h3.text-center
                   Today:
-                  %span.text-success= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
+                  %span.text-info= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
                   %br
                   30-Day:
-                  %span.text-success= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
+                  %span.text-info= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
                   =# Commodity.types(current_user.token, current_yard_id)
                   =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
           .col-xs-12.col-sm-6
@@ -59,10 +59,10 @@
                 %h2.text-center Tickets on Hold
                 %h3.text-center
                   Today:
-                  %span.text-success= "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
+                  %span.text-info= "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
                   %br
                   Average:
-                  %span.text-success 15 minutes
+                  %span.text-info 15 minutes
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -70,12 +70,12 @@
                 %h3.text-center
                   Today:
                   %br
-                  %span.text-success= "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
+                  %span.text-info= "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
                   %br
                   %br
                   Total:
                   %br
-                  %span.text-success= number_to_currency(@paid_tickets_today_total)
+                  %span.text-info= number_to_currency(@paid_tickets_today_total)
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -83,14 +83,14 @@
                 %h3.text-center
                   Today:
                   %br
-                  %span.text-success
+                  %span.text-info
                     = number_with_delimiter(@closed_and_paid_tickets_today_line_items_non_ferrous_net_total.round)
                     lb
                   %br
                   %br
                   30-Day avg:
                   %br
-                  %span.text-success
+                  %span.text-info
                     = number_with_delimiter((@closed_tickets_line_items_non_ferrous_net_total / 30).round)
                     lb
           .col-xs-12.col-sm-4
@@ -100,14 +100,14 @@
                 %h3.text-center
                   Today:
                   %br
-                  %span.text-success
+                  %span.text-info
                     = number_with_delimiter(@closed_and_paid_tickets_today_line_items_ferrous_net_total.round)
                     lb
                   %br
                   %br
                   30-Day avg:
                   %br
-                  %span.text-success
+                  %span.text-info
                     = number_with_delimiter((@closed_tickets_line_items_ferrous_net_total / 30).round)
                     lb
           .col-xs-12.col-sm-6
@@ -116,26 +116,26 @@
                 %h2.text-center Shipments on Hold
                 %h3.text-center
                   Today:
-                  %span.text-success= "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
+                  %span.text-info= "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
                   - unless @held_shipments_today.blank? or @last_held_shipment_today.blank?
                     %br
                     %br
-                    %span.text-success= @last_held_shipment_today['CustomerName'] 
+                    %span.text-info= @last_held_shipment_today['CustomerName'] 
                     %br
-                    %span.text-success= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
                 %h2.text-center Shipments Sent
                 %h3.text-center
                   Today:
-                  %span.text-success= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
+                  %span.text-info= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
                   - unless @closed_shipments_today.blank? or @last_closed_shipment_today.blank?
                     %br
                     %br
-                    %span.text-success= @last_closed_shipment_today['CustomerName'] 
+                    %span.text-info= @last_closed_shipment_today['CustomerName'] 
                     %br
-                    %span.text-success= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
                     
           -#
             .col-xs-12
@@ -195,7 +195,7 @@
               %span{:style => "position:relative;display:block;text-align:center;color:#ffffff;font-family:verdana,sans-serif;font-size:10px;"}
 
 = render 'shared/ticker_navbar'
-= render 'shared/kpi_footer_navbar'
+=# render 'shared/kpi_footer_navbar'
 
 
 :javascript
