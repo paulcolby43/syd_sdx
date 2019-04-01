@@ -5,14 +5,14 @@
     .row
       .col-xs-12
         .col-xs-12.col-sm-3{style: 'color: white;'}
-          %h2 
+          %h2.text-center
             - unless current_user.company.logo.url.blank?
-              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive', size: '200x200')
+              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive center-block', size: '200x200')
             POWERED BY 
             %br
             %span.text-info SCRAP DRAGON
-          = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
-            %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control", onchange: "this.form.submit();"
+            = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
+              %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control", onchange: "this.form.submit();"
           
         .col-xs-12.col-sm-4
           .panel{style: 'background-color: #303030; color: white; height: 150px; padding-top: 0px; padding-bottom: 0px;'}
