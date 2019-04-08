@@ -1,15 +1,16 @@
-= render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
+Hey there
+-#
+  = render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
 
-.jumbotron{style: 'background-color: #FFFFFF;'}
-  .container
-    -#
-      .well
-        = @ticket
-      .well
-        =# @commodity_types
-        =# @commodities
-        =# @commodities_grouped_by_type_for_select
-    -#
+  .jumbotron{style: 'background-color: #FFFFFF;'}
+    .container
+      -#
+        .well
+          = @ticket
+        .well
+          =# @commodity_types
+          =# @commodities
+          =# @commodities_grouped_by_type_for_select
       = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
         = hidden_field_tag "ticket[ticket_number]", @ticket_number
         =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
