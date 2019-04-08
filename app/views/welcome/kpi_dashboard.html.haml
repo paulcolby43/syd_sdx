@@ -155,7 +155,7 @@
               - unless @closed_and_held_and_paid_tickets_today.blank?
                 %h4.table-responsive
                   %table.table.table-condensed
-                    - @closed_and_held_and_paid_tickets_today.last(15).each do |ticket|
+                    - @closed_and_held_and_paid_tickets_today.last(35).each do |ticket|
                       %tr
                         %td= ticket['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p")
                         %td= ticket['TicketNumber']
