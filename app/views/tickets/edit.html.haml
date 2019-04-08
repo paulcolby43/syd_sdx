@@ -474,19 +474,19 @@
             %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], ticket: @ticket, status: @ticket['Status']), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
       
     %div#images
-
-    - @images_array.each_slice(6) do |images|
-      .row
-        - images.each do |image|
-          -# if current_user.view_images?
-          - unless image['HIDDEN'] == '1' or not current_user.view_images?
-            .col-xs-12.col-sm-2.col-md-2
-              .thumbnail
-                %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-                -#
-                  .text-center= image.event_code
-                .text-center
-                  %small.text-muted= image['EVENT_CODE']
+    -#
+      - @images_array.each_slice(6) do |images|
+        .row
+          - images.each do |image|
+            -# if current_user.view_images?
+            - unless image['HIDDEN'] == '1' or not current_user.view_images?
+              .col-xs-12.col-sm-2.col-md-2
+                .thumbnail
+                  %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  -#
+                    .text-center= image.event_code
+                  .text-center
+                    %small.text-muted= image['EVENT_CODE']
     
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}
