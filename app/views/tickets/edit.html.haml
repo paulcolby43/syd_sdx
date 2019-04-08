@@ -1,4 +1,5 @@
 = render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
+
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     -#
@@ -336,17 +337,16 @@
                   = select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   %br
                   %div.input-group.gross_input_group
-                    -#
-                      - current_user.scale_devices.each do |scale_device|
-                        %span.input-group-addon
-                          - if scale_device.scale_camera_only?
-                            %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-camera.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                          - else
-                            %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-dashboard.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                    - current_user.scale_devices.each do |scale_device|
+                      %span.input-group-addon
+                        - if scale_device.scale_camera_only?
+                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-camera.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                        - else
+                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-dashboard.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                     %span.input-group-addon
                       %i.fa.fa-plus{style: "font-size:0.7em;"}
                     = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
@@ -355,17 +355,16 @@
                         %i.fa.fa-upload.fa-2x
                   %br
                   %div.input-group.tare_input_group
-                    -#
-                      - current_user.scale_devices.each do |scale_device|
-                        %span.input-group-addon
-                          - if scale_device.scale_camera_only?
-                            %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-camera.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                          - else
-                            %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-dashboard.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                    - current_user.scale_devices.each do |scale_device|
+                      %span.input-group-addon
+                        - if scale_device.scale_camera_only?
+                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-camera.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                        - else
+                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                            %i.fa.fa-dashboard.fa-lg
+                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                     %span.input-group-addon
                       %i.fa.fa-minus{style: "font-size:0.7em;"}
                     = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
@@ -467,28 +466,28 @@
                 %i.fa.fa-dollar.fa-lg
                 Pay
         = render partial: "payment_modal"
-    -#       
-      %hr
-      - unless @ticket['Status'] == '3'
-        .row
-          .pull-right
+            
+    %hr
+    - unless @ticket['Status'] == '3'
+      .row
+        .pull-right
+          .col-xs-12.col-sm-2.col-md-2
+            %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], ticket: @ticket, status: @ticket['Status']), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
+      
+    %div#images
+
+    - @images_array.each_slice(6) do |images|
+      .row
+        - images.each do |image|
+          -# if current_user.view_images?
+          - unless image['HIDDEN'] == '1' or not current_user.view_images?
             .col-xs-12.col-sm-2.col-md-2
-              %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], ticket: @ticket, status: @ticket['Status']), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
-
-      %div#images
-      -#
-        - @images_array.each_slice(6) do |images|
-          .row
-            - images.each do |image|
-              -# if current_user.view_images?
-              - unless image['HIDDEN'] == '1' or not current_user.view_images?
-                .col-xs-12.col-sm-2.col-md-2
-                  .thumbnail
-                    %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                      = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-                    -#
-                      .text-center= image.event_code
-                    .text-center
-                      %small.text-muted= image['EVENT_CODE']
-
-  = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}
+              .thumbnail
+                %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                -#
+                  .text-center= image.event_code
+                .text-center
+                  %small.text-muted= image['EVENT_CODE']
+    
+= render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}

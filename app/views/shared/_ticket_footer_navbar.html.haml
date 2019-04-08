@@ -4,29 +4,27 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
-            -#
-              - current_user.finger_print_reader_devices.each do |finger_print_reader_device|
-                %a{href: '#', class: 'finger_print_trigger', 'data-device-id' => finger_print_reader_device.id, 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-name' => @ticket['Company'], 'data-customer-id' => @ticket['CustomerId'] }
-                  %i.fa.fa-hand-pointer-o.fa-lg
-                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                  = "Reader" unless mobile_device?
+            - current_user.finger_print_reader_devices.each do |finger_print_reader_device|
+              %a{href: '#', class: 'finger_print_trigger', 'data-device-id' => finger_print_reader_device.id, 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-name' => @ticket['Company'], 'data-customer-id' => @ticket['CustomerId'] }
+                %i.fa.fa-hand-pointer-o.fa-lg
+                %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                = "Reader" unless mobile_device?
         .col-xs-4.col-sm-4
           %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
             %i.fa.fa-camera.fa-lg
             = "Picture" unless mobile_device?
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
-            -#
-              - unless current_user.signature_pad_devices.blank?
-                - current_user.signature_pad_devices.each do |signature_pad_device|
-                  %a{href: '#', class: 'tud_signature_pad', 'data-device-id' => signature_pad_device.id, 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-name' => @ticket['Company'], 'data-customer-id' => @ticket['CustomerId'] }
-                    %i.fa.fa-pencil.fa-lg
-                    %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    = "Sign" unless mobile_device?
-              - else
-                %a{href: "#signature_form", "data-toggle" => "modal", :alt => "new_signature_form"}
+            - unless current_user.signature_pad_devices.blank?
+              - current_user.signature_pad_devices.each do |signature_pad_device|
+                %a{href: '#', class: 'tud_signature_pad', 'data-device-id' => signature_pad_device.id, 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-name' => @ticket['Company'], 'data-customer-id' => @ticket['CustomerId'] }
                   %i.fa.fa-pencil.fa-lg
+                  %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                   = "Sign" unless mobile_device?
+            - else
+              %a{href: "#signature_form", "data-toggle" => "modal", :alt => "new_signature_form"}
+                %i.fa.fa-pencil.fa-lg
+                = "Sign" unless mobile_device?
 
 = render partial: "image_files/upload_modal"
 =# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
