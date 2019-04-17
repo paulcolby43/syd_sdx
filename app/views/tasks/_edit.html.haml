@@ -68,10 +68,10 @@
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Status", nil, :class => 'control-label'
-            = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), "data-sequence-number" => task['Sequence'], :class => "form-control input-lg task_status"
+            = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), "data-sequence-number" => task['Sequence'], "data-current-value" => task['TaskStatus'], :class => "form-control input-lg task_status"
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
-            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block task_save_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
               Save
   - if task['TaskType'] == '0' or task['TaskType'] == '1'
     .tab-pane.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}

@@ -131,31 +131,45 @@ jQuery ->
   ### End Remove Container ###
 
   ### Task status being changed - check if all other tasks in this trip are set to complete, as well as whether previous tasks are completed. ###
-  $('.task_status').on 'change', ->
+  $('.task_status').on 'change', (e) ->
     input_select = $(this)
     newly_selected_value = input_select.val()
     task_form = $(this).closest('form')
     original_sequence_number = parseInt($(this).data("sequence-number")) # Get original task's sequence number and convert string to an integer for comparison
     if input_select.val() == '2' # Task is being marked complete
       all_done = true
+      allow_save = true
       $(this).closest('.panel').find('.task_status').each ->
         other_sequence_number = parseInt($(this).data("sequence-number")) # Get other tasks' sequence number and convert string to an integer for comparison
         if $(this).val() != '2' # Task is not marked complete
           all_done = false
           if (other_sequence_number < original_sequence_number) && ($(this).val() != '3') # This task has a lesser sequence number than the original task, and has not been marked complete and is not void (value 3)
+            allow_save = false
             alert "Task " + $(this).data("sequence-number") + " of this trip still needs to be completed!"
       if all_done == true
+        $(this).data 'current-value', input_select.val() # Set the data attribute so can find previous if necessary
         task_form.submit()
         alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
         $(this).closest('.modal').modal('hide')
         $(this).closest('.panel').remove()
       else
-        task_form.submit()
-        return
+        if allow_save == true
+          $(this).data 'current-value', input_select.val() # Set the data attribute so can find previous if necessary
+          task_form.submit()
+          return
+        else
+          previous_value = $(this).data("current-value")
+          $(this).val previous_value
+          return
     else
+      $(this).data 'current-value', input_select.val() # Set the data attribute so can find previous if necessary
       task_form.submit()
       return
-  ### Task status being changed - check if all others are set to complete ###
+  ### End Task status being changed - check if all others are set to complete ###
+
+  $('.task_save_button').on 'click', (e) ->
+    e.preventDefault()
+    $(this).closest("form").find('.task_status').change()
 
   $('.hide_trip_icon').on 'click', ->
     $(this).closest('.panel').remove()
