@@ -70,11 +70,13 @@
                 %td
                   = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
                   =# "(#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).last['PaymentMethod'])})"
-                - unless ticket['Status'] == '1'  # Don't show for closed tickets
-                  %td
+                %td
+                  - unless ticket['Status'] == '1'  # Don't show for closed tickets
                     =# "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}"
                     - payment_status = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'] rescue '4'
                     = payment_method_string(payment_status)
+                  - else
+                    N/A
                 -# %td= ticket
             -#
               %tr
