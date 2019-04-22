@@ -89,7 +89,7 @@
                       = ticket["TicketNumber"]
                       - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                         = "#{ticket['FirstName']} #{ticket['LastName']}"
-                      %br
+                        %br
                       %small= ticket["Company"]
                   - else
                     %a{href: ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
@@ -99,7 +99,7 @@
                       = ticket["TicketNumber"]
                       - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
                         = "#{ticket['FirstName']} #{ticket['LastName']}"
-                      %br
+                        %br
                       %small= ticket["Company"]
                   - if @status == '1' or @status == '3'
                     %div.list-group-item
