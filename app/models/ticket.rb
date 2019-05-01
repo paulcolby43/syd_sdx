@@ -353,8 +353,7 @@ class Ticket
           "Status" => status,
           "CurrencyId" => user.user_setting.currency_id,
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
-          "DateClosed" =>  Time.now.utc,
-          "DateCreated" => Time.now.utc
+          "DateClosed" =>  Time.now.utc
           }
         })
       
@@ -379,8 +378,7 @@ class Ticket
           "Status" => 5,
           "CurrencyId" => user.user_setting.currency_id,
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
-          "DateClosed" =>  Time.now.utc,
-          "DateCreated" => Time.now.utc
+          "DateClosed" =>  Time.now.utc
           }
         })
       
@@ -539,7 +537,6 @@ class Ticket
         "TicketItem"=>{
           "CommodityId" => commodity_id,
           "CurrencyId" => user.user_setting.currency_id, 
-          "DateCreated" => Time.now.utc.iso8601, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
           "GrossWeight" => gross,
@@ -581,8 +578,7 @@ class Ticket
       payload: {
         "TicketItem"=>{
           "CommodityId" => commodity_id,
-          "CurrencyId" => user.user_setting.currency_id, 
-          "DateCreated" => Time.now.utc, 
+          "CurrencyId" => user.user_setting.currency_id,
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
           "GrossWeight" => gross,
@@ -1017,6 +1013,26 @@ class Ticket
       return "Paid"
     else
       "N/A"
+    end
+  end
+  
+  def self.average_wait_time(tickets_array)
+    tickets = tickets_array
+    unless tickets.blank?
+      minutes_sum = 0
+      count = tickets.count
+      tickets.each do |ticket|
+        created = ticket['DateCreated'].blank? ? nil : ticket['DateCreated'].to_datetime
+        closed = ticket['DateClosed'].blank? ? nil : ticket['DateClosed'].to_datetime
+        unless (created.blank? or closed.blank?) or (created > closed) or (created.beginning_of_day != closed.beginning_of_day)
+          difference = closed - created
+          minutes = (difference / 1.minute).round
+          minutes_sum += minutes
+        end
+        return (minutes_sum / count).round
+      end
+    else
+      return 0
     end
   end
   

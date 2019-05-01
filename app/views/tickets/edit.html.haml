@@ -2,6 +2,9 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    .well
+      = "Created: #{@ticket['DateCreated']}"
+      = "Closed: #{@ticket['DateClosed']}"
     -#
       .well
         = @ticket

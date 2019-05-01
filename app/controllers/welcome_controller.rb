@@ -30,6 +30,8 @@ class WelcomeController < ApplicationController
       @paid_tickets_today = Ticket.all_today(3, current_user.token, current_yard_id)
       @closed_and_paid_tickets_today = @closed_tickets_today + @paid_tickets_today
       
+      @wait_time = Ticket.average_wait_time(@closed_and_paid_tickets_today)
+      
       @held_tickets_today_total = 0
       @held_tickets_today.each do |ticket|
         @held_tickets_today_total = @held_tickets_today_total + (ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) 
