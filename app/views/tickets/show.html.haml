@@ -34,7 +34,7 @@
                 .line_item_name
                   %div.text-success= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
             .panel-footer
-              = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['Quantity']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
+              = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
               x
               = "$#{number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['Price'], :precision => 3)}"
               = "= $#{@ticket["TicketItemCollection"]["ApiTicketItem"]['ExtendedAmount']}"
