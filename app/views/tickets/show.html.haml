@@ -22,7 +22,7 @@
                   .line_item_name
                     %div.text-success= line_item["PrintDescription"]
               .panel-footer
-                = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['Quantity']}#{line_item['UnitOfMeasure']}"
+                = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['NetWeight']}#{line_item['UnitOfMeasure']}"
                 x
                 = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
                 = "= $#{line_item['ExtendedAmount']}"
