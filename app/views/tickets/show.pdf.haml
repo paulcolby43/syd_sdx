@@ -7,9 +7,8 @@
     %br
   = @ticket["Description"] unless @ticket["Description"].blank?
 - unless @current_user.company.logo.url.blank?
-  %p= image_tag(["https://", request.host_with_port, @current_user.company.logo.url].join(), size: '50x50')
-  =# wicked_pdf_image_tag "/#{@current_user.company.logo.url}", size: '50x50'
-  %p= image_tag embed_remote_image(["https://", request.host_with_port, @current_user.company.logo.url].join(), 'image/jpg' ), size: '50x50'
+  =# image_tag(["https://", request.host_with_port, @current_user.company.logo.url].join(), size: '50x50')
+  %p= image_tag embed_remote_image(["https://", request.host_with_port, @current_user.company.logo.url].join(), 'image/jpg' ), size: '75x75'
 - else
   %p= wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
 =# wicked_pdf_image_tag 'Irving_logo.png', size: '50x50'
