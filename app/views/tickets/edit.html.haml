@@ -62,7 +62,7 @@
                     = "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
           %div{id: "collapseVendor", "aria-labelledby" => "headingOne", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
             .panel-body
-              = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", required: true
+              = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", style: "width: 100%;", required: true
               = hidden_field_tag "ticket[description]", "#{@ticket['Description'].blank? ? "" : @ticket['Description']}"
       - unless @ticket["TicketItemCollection"].blank?
         - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
