@@ -151,6 +151,7 @@ jQuery ->
         task_form.submit()
         alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
         $(this).closest('.modal').modal('hide')
+        #$(this).closest('.modal-backdrop').remove();
         $(this).closest('.panel').remove()
       else
         if allow_save == true
