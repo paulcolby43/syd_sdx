@@ -338,6 +338,7 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
+    ticket = Ticket.find_by_id(auth_token, yard_id, guid)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
         "TicketHead" => {
@@ -353,6 +354,7 @@ class Ticket
           "Status" => status,
           "CurrencyId" => user.user_setting.currency_id,
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
+          "DateCreated" =>  ticket['DateCreated'],
           "DateClosed" =>  Time.now.utc
           }
         })
@@ -1025,12 +1027,13 @@ class Ticket
         created = ticket['DateCreated'].blank? ? nil : ticket['DateCreated'].to_datetime
         closed = ticket['DateClosed'].blank? ? nil : ticket['DateClosed'].to_datetime
         unless (created.blank? or closed.blank?) or (created > closed) or (created.beginning_of_day != closed.beginning_of_day)
-          difference = closed - created
-          minutes = (difference / 1.minute).round
+          difference = closed.to_i - created.to_i
+          
+          minutes = (difference / 60)
           minutes_sum += minutes
         end
-        return (minutes_sum / count).round
       end
+      return (minutes_sum / count).round
     else
       return 0
     end
