@@ -40,7 +40,7 @@
               %li= link_to 'All', commodities_path
               %li= link_to 'New', new_commodity_path
         -#
-          %li= link_to 'WORK ORDERS', workorders_path
+          %li= link_to 'SERVICE REQUESTS', workorders_path
         -#
           %li.dropdown
             %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
@@ -115,7 +115,7 @@
             %li{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}= link_to "Admin User: <strong>#{current_user.username}</strong>".html_safe, current_user
             %li{:class => "#{(params[:controller] == 'yards') ? 'active' : ''}"}= link_to "Yard: <strong>#{current_yard_name}</strong>".html_safe, yard_path(current_yard_id)
             %li{role: "separator", class: "divider"}
-            %li{:class => "#{( current_page? workorders_path) ? 'active' : ''}"}= link_to 'Work Orders', workorders_path
+            %li{:class => "#{( current_page? workorders_path) ? 'active' : ''}"}= link_to 'Service Requests', workorders_path
             -#
               %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
               %li{:class => "#{(params[:controller] == 'reports') and (params[:report][:type] == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
