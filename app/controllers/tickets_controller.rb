@@ -170,6 +170,9 @@ class TicketsController < ApplicationController
     @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
     @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
     @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    
+    @deductions = Ticket.deductions(current_user.token)
+    @deductions_grouped_for_select = Ticket.deductions_grouped_for_select(@deductions)
   end
 
   # PATCH/PUT /tickets/1

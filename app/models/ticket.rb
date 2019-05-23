@@ -1039,4 +1039,32 @@ class Ticket
     end
   end
   
+  def self.deductions(auth_token)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/udl/7"
+    begin
+      xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+          :content_type => 'application/json', :Accept => "application/xml"})
+      data= Hash.from_xml(xml_content)
+      Rails.logger.info "*********************Ticket.deductions response: #{data}"
+      if not data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"].blank? and data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"]["Success"] == 'true'
+        unless data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"]["Items"].blank? or data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"]["Items"]["ApiUserDefinedListValue"].blank?
+          return data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"]["Items"]["ApiUserDefinedListValue"]
+        else
+          return []
+        end
+      else
+        return []
+      end
+    rescue RestClient::ExceptionWithResponse => e
+      Rails.logger.info "Ticket.deductions call: no Dragon API"
+      return nil
+    end
+  end
+  
+  def self.deductions_grouped_for_select(deductions)
+    deductions.collect { |d| d['CodeValue'] }
+  end
+  
 end
