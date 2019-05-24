@@ -263,6 +263,7 @@ class Ticket
           "TicketNumber" => ticket_number,
           "Status" => 2,
           "CurrencyId" => user.user_setting.currency_id,
+          "PrintPrices" => true,
           "DateCreated" => Time.now.utc
           }
         })
@@ -293,6 +294,7 @@ class Ticket
           "Status" => status,
           "CurrencyId" => user.user_setting.currency_id,
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
+          "PrintPrices" => true,
           "DateClosed" =>  Time.now.utc,
           "DateCreated" => Time.now.utc
           }
