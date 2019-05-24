@@ -162,31 +162,18 @@
                       %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
                         More
                       %div.collapse{id: "more_#{line_item['Id']}"}
-                        %p
-                          %strong Deductions
-                          =# @deductions_grouped_for_select
-                          = select_tag "ticket[line_items][][deductions][]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Choose deduction --', class: "form-control input-lg"
-                          - unless line_item["DeductionCollection"].blank?
-                            - if line_item["DeductionCollection"].is_a? Hash # Only one line item deduction
-                              = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
-                              = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
-                              = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
-                              = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
-                            - else
-                              - line_item["DeductionCollection"].each do |line_item_deduction|
-                                = line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
-                                = number_to_currency(line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
-                                = line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
-                                = line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"].blank?
-                          - else
-                            None
-                          %br
-                        - unless @combolists.blank? # Car vehicle information lists
-                          %p
-                            %a.btn.btn-primary{href: "#item_#{line_item['Id']}_vin_search_modal", id: "#item_#{line_item['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
-                              %i.fa.fa-car.fa-lg
-                              Car
-                            = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
+                        %ul{class: 'list-inline'}
+                          %li
+                            %a.btn.btn-default{href: "#item_#{line_item['Id']}_deductions_modal", id: "#item_#{line_item['Id']}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
+                              %i.fa.fa-minus-square-o.fa-lg
+                              Deductions
+                            = render partial: 'deductions_modal', locals: {line_item: line_item, id: "#{line_item['Id']}"}
+                          - unless @combolists.blank? # Car vehicle information lists
+                            %li
+                              %a.btn.btn-default{href: "#item_#{line_item['Id']}_vin_search_modal", id: "#item_#{line_item['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                                %i.fa.fa-car.fa-lg
+                                Car
+                              = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
                         = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"

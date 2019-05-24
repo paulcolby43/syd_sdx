@@ -251,6 +251,7 @@ class Ability
         can :index, :tickets
         can :show, :tickets
         can :edit, :tickets
+        can :void, :tickets
       
         # Customers
         ############
