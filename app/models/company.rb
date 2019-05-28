@@ -47,6 +47,43 @@ class Company < ActiveRecord::Base
     end
   end
   
+  def full_address_string
+    unless (address1.blank? and city.blank? and state.blank? and zip.blank?)
+      "#{address1}, #{address2.blank? ? '' : address2 + ','} #{city}, #{state}, #{zip}"
+    end
+  end
+  
+  def geolocation_api_url
+    unless full_address_string.blank?
+      "https://maps.googleapis.com/maps/api/geocode/json?address=#{CGI.escape(full_address_string)}&key=#{ENV['GOOGLE_MAPS_API_KEY']}"
+    end
+  end
+  
+  def geolocation_json
+    unless geolocation_api_url.blank?
+      json_data = RestClient::Request.execute(method: :get, url: geolocation_api_url, headers: {:Accept => "application/json"})
+      unless json_data.blank?
+        return JSON.parse(json_data, object_class: OpenStruct)
+      else
+        return nil
+      end
+    else
+      return nil
+    end
+  end
+  
+  def latitude
+    unless geolocation_json.blank? or geolocation_json.results.blank?
+      geolocation_json.results.first.geometry.location.lat
+    end
+  end
+  
+  def longitude
+    unless geolocation_json.blank? or geolocation_json.results.blank?
+      geolocation_json.results.first.geometry.location.lng
+    end
+  end
+  
   def image_event_codes
     event_codes.where(include_in_images: true)
   end
