@@ -30,7 +30,8 @@
     - else
       - unless current_yard_id.blank?
         - if current_user.admin?
-          = render partial: "shared/navbars/base_navbar", locals: {title: "Home"}
+          - unless current_page?(scoreboard_path)
+            = render partial: "shared/navbars/base_navbar", locals: {title: "Home"}
         - elsif current_user.basic?
           = render partial: "shared/navbars/basic_user_navbar", locals: {title: "Home"}
         - elsif current_user.customer?
