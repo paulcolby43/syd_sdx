@@ -9,7 +9,7 @@ class PackShipment
   #############################
   
   # Get all packs_shipments
-  def self.all(auth_token, yard_id)
+  def self.all_held(auth_token, yard_id) # Held shipments
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/HeldShipments"
@@ -28,6 +28,15 @@ class PackShipment
     else # No shipments found
       return []
     end
+  end
+  
+  def self.all_held_today(auth_token, yard_id)
+    held_shipments = PackShipment.all_held(auth_token, yard_id)
+    held_shipments_today = []
+    held_shipments.each do |shipment|
+      held_shipments_today << shipment if shipment['DateCreated'].to_date == Date.today
+    end
+    return held_shipments_today
   end
   
   def self.find_by_id(auth_token, yard_id, pack_shipment_id)
