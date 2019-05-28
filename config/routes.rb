@@ -190,6 +190,7 @@ Rails.application.routes.draw do
    
   get 'welcome/privacy' => 'welcome#privacy'
   get 'welcome/tos' => 'welcome#tos'
+  get 'scoreboard' => 'welcome#kpi_dashboard'
    
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
