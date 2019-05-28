@@ -167,6 +167,36 @@ class PackShipment
     end
   end
   
+  def self.all_closed_today(auth_token, yard_id) # Non-held shipments
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/getshipmentsbycustomer"
+    
+    payload = {
+      "CustomerIds" => [],
+      "StartDate" => "#{Date.today} 00:00:00",
+      "EndDate" => "#{Date.today} 23:59:59"
+      }
+    json_encoded_payload = JSON.generate(payload)
+    Rails.logger.info json_encoded_payload
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "PackShipment.all_by_date: #{data}"
+    
+    if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank?# No results, so put into empty array
+      return []
+    else # Array of results returned
+      if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash  # Only one result returned, so put it into an array
+        return [data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else
+        return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
+    end
+  end
+  
   def self.customer_summary_to_csv(pack_shipments_array)
     require 'csv'
     headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'NetWeight']
