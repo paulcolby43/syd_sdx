@@ -1010,4 +1010,37 @@ class Ticket
     end
   end
   
+  def self.status_string(status)
+    if status == "1"
+      return "Closed"
+    elsif status == "2"
+      return "Held"
+    elsif status == "3"
+      return "Paid"
+    else
+      "N/A"
+    end
+  end
+  
+  def self.average_wait_time(tickets_array)
+    tickets = tickets_array
+    unless tickets.blank?
+      minutes_sum = 0
+      count = tickets.count
+      tickets.each do |ticket|
+        created = ticket['DateCreated'].blank? ? nil : ticket['DateCreated'].to_datetime
+        closed = ticket['DateClosed'].blank? ? nil : ticket['DateClosed'].to_datetime
+        unless (created.blank? or closed.blank?) or (created > closed) or (created.beginning_of_day != closed.beginning_of_day)
+          difference = closed.to_i - created.to_i
+          
+          minutes = (difference / 60)
+          minutes_sum += minutes
+        end
+      end
+      return (minutes_sum / count).round
+    else
+      return 0
+    end
+  end
+  
 end
