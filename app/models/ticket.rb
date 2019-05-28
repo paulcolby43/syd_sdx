@@ -47,6 +47,60 @@ class Ticket
     end
   end
   
+  def self.all_last_30_days(status, auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=30&t=100"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    unless data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"].blank? or data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"].blank? or data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].blank?
+      if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+      else # Array of results returned
+        return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+      end
+    else
+      return []
+    end
+  end
+  
+  def self.all_last_90_days(status, auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=90&t=100"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    unless data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"].blank? or data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"].blank? or data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].blank?
+      if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+      else # Array of results returned
+        return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+      end
+    else
+      return []
+    end
+  end
+  
+  def self.all_last_365_days(status, auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?d=365&t=100"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    unless data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"].blank? or data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"].blank? or data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].blank?
+      if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
+      else # Array of results returned
+        return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
+      end
+    else
+      return []
+    end
+  end
+  
   def self.all_by_date_and_status(status, auth_token, yard_id, start_date, end_date)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
