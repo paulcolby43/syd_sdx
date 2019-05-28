@@ -1,297 +1,207 @@
-= render partial: "shared/navbars/no_user_navbar", locals: {title: "Terms of Service"}
-- @title="Terms of Service"
+= render 'shared/navbars/kpi_dashboard_navbar'
 
-.container
-  %h3 Terms of Service /  End User License Agreement
-  %p
-    This End User License Agreement ("EULA" or "Agreement") is a legal agreement between n you (either an individual or a legal entity) the Receiving Party 
-    identified below, (hereinafter "You", "Your", or Receiving Party) and Transact Payment Systems Inc. ("Licensor") with regard to the copyrighted Software 
-    (defined herein) provided with this EULA. Use of any Software and related documentation provided to You by Licensor in whatever form or media will constitute 
-    Your acceptance of these terms. If You do not agree with the terms of this EULA, do not access, download, install, copy or use the Software. By installing, 
-    copying or otherwise using the Software, You agree to be bound by the terms of this EULA. If You do not agree to the terms of this EULA, Licensor is unwilling 
-    to license the Software to You. Licensor reserves the right to change this EULA from time to time, in which case Licensor will post the revised EULA on the 
-    Tranact Site . By continuing to use Tranact after any such changes are posted, You accept the End User License Agreement, as modified.
+.jumbotron{id: 'kpi_dashboard', style: 'background-color: black;'}
+  .container-fluid
+    .row
+      .col-xs-12
+        .col-xs-12.col-sm-3{style: 'color: white;'}
+          %h2.text-center
+            - unless current_user.company.logo.url.blank?
+              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive center-block', size: '200x200')
+            POWERED BY 
+            %br
+            %span.text-info SCRAP DRAGON
+            = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
+              %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control", onchange: "this.form.submit();"
+          
+        .col-xs-12.col-sm-4
+          .panel{style: 'background-color: #303030; color: white; height: 150px; padding-top: 0px; padding-bottom: 0px;'}
+            -#
+              .panel-heading{style: 'background-color: gray;'}
+                New York
+            .panel-body
+              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
+              %h4.text-danger.text-center
+                %i.fa.fa-warning
+                System wide alert
+        .col-xs-12.col-sm-5
+          .panel
+            .panel-heading
+              %iframe#forecast_embed{:frameborder => "0", :height => "210", :src => "//forecast.io/embed/#lat=#{current_user.company.latitude}&lon=#{current_user.company.longitude}&color=#00aaff&name=#{current_user.company.city.blank? ? 'St. Pete' : current_user.company.city}", :width => "100%"}
+              -#
+                %h2.text-center
+                  %i.fa.fa-cloud
+                  Weather
+                #weather{'data-zipcode' => "#{current_user.company.zip.blank? ? '33710' : current_user.company.zip}", style: 'background-color: #303030; color: white;'}
+        -#
+          .pull-right
+            .col-xs-12.col-sm-2
+              = form_tag welcome_kpi_dashboard_path, method: 'get', :class => "form-inline", role: 'search' do
+                %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control input-lg", onchange: "this.form.submit();"
+    .row
+      .col-xs-12
+        .col-xs-6
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Tickets Created
+                %h3.text-center
+                  Today:
+                  %span.text-info= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
+                  %br
+                  30-Day:
+                  %span.text-info= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
+                  =# Commodity.types(current_user.token, current_yard_id)
+                  =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Tickets on Hold
+                %h3.text-center
+                  Today:
+                  %span.text-info= "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
+                  %br
+                  Average:
+                  %span.text-info= "#{@wait_time} minutes"
+                  =# @closed_tickets_today.first
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Paid
+                %h3.text-center
+                  Today:
+                  %br
+                  %span.text-info= "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
+                  %br
+                  %br
+                  Total:
+                  %br
+                  %span.text-info= number_to_currency(@paid_tickets_today_total)
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Nonferrous
+                %h3.text-center
+                  Today:
+                  %br
+                  %span.text-info
+                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_non_ferrous_net_total.round)
+                    lb
+                  %br
+                  %br
+                  30-Day avg:
+                  %br
+                  %span.text-info
+                    = number_with_delimiter((@closed_tickets_line_items_non_ferrous_net_total / 30).round)
+                    lb
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white; margin-left: 0px;'}
+              .panel-heading
+                %h2.text-center Ferrous
+                %h3.text-center
+                  Today:
+                  %br
+                  %span.text-info
+                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_ferrous_net_total.round)
+                    lb
+                  %br
+                  %br
+                  30-Day avg:
+                  %br
+                  %span.text-info
+                    = number_with_delimiter((@closed_tickets_line_items_ferrous_net_total / 30).round)
+                    lb
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Shipments on Hold
+                %h3.text-center
+                  Today:
+                  %span.text-info= "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
+                  - unless @held_shipments_today.blank? or @last_held_shipment_today.blank?
+                    %br
+                    %br
+                    %span.text-info= @last_held_shipment_today['CustomerName'] 
+                    %br
+                    %span.text-info= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Shipments Sent
+                %h3.text-center
+                  Today:
+                  %span.text-info= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
+                  - unless @closed_shipments_today.blank? or @last_closed_shipment_today.blank?
+                    %br
+                    %br
+                    %span.text-info= @last_closed_shipment_today['CustomerName'] 
+                    %br
+                    %span.text-info= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
+                    
+          -#
+            .col-xs-12
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  %h4
+                    %i.fa.fa-video-camera
+                    Live Camera Feed
+                  .embed-responsive.embed-responsive-1by1
+                    %iframe{:allow => "autoplay; encrypted-media", :allowfullscreen => "", :frameborder => "0", :height => "1200", :src => "http://192.168.11.54", :width => "854"}
+          
+        .col-xs-6
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2 Daily Tickets
+              - unless @closed_and_held_and_paid_tickets_today.blank?
+                %h4.table-responsive
+                  %table.table.table-condensed
+                    - @closed_and_held_and_paid_tickets_today.first(10).each do |ticket|
+                      %tr
+                        %td= ticket['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p")
+                        %td= ticket['TicketNumber']
+                        %td= ticket['Company'].blank? ? "#{ticket['FirstName']} #{ticket['LastName']}" : ticket['Company']
+                        %td= Ticket.status_string(ticket['Status'])
+                        %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+              - else
+                .panel-body None
+          -#
+            .col-xs-12
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  %h2
+                    %i.fa.fa-bolt
+                    ezCash ATMs
+                  %h4.table-responsive
+                    %table.table.table-condensed
+                      %thead
+                        %tr
+                          %th{:scope => "col"} ID
+                          %th{:scope => "col"} Name
+                          %th{:scope => "col"} State
+                          %th{:scope => "col"} Status
+                          %th{:scope => "col"} Remaining
+                          %th
+                      %tbody
+                        %tr
+                          %td 312
+                          %td Scrapy's ATM
+                          %td Ready
+                          %td= link_to "1101", '#', class: 'btn btn-sm btn-success'
+                          %td= number_to_currency(78084)
+    -#
+      .row
+        .col-xs-12
+          .embed-responsive.embed-responsive-16by9
+            %iframe{:height => "25", :scrolling => "no", :src => "https://www.dailyforex.com/forex-widget/widget/29566", :style => "width: 100%; height:25px; display: block;border:0px;overflow:hidden;"}
+              %span{:style => "position:relative;display:block;text-align:center;color:#ffffff;font-family:verdana,sans-serif;font-size:10px;"}
 
-  %h5
-    1. Definitions. As used in this Agreement, the following capitalized terms shall have the following defined meanings.
-  %p
-    %ul
-      %li
-        "Business Intelligence Tools" means Licensor's additional data analytic software tools that work with Licensor's Software and Service to provide You 
-        with additional analytic information relative to data inputted by You in the course of using Licensor's Software and Service. "Confidential Information" 
-        means any information, technical or scientific data, trade secrets, inventions, mask works, works of authorship, processes, designs, drawings, materials, 
-        samples, techniques, product information, market analysis, business strategies, business plans, financial projections, computer programs and software, 
-        notes, formulas, algorithms, patents, patent applications, know-how or other intellectual property developed or owned by Tranact.
-      %li
-        "Customer Data" means any geographic, contact, and demographic information about Your individual customers inputted by You in the course of accomplishing 
-        any in-store transactions at Your Registered Location using Licensor's Software and Service.
-      %li
-        "Ecommerce Channel" means licensor's exclusive online marketing channel for the buying and selling of personal property goods.
-      %li
-        "Ecommerce Customer Data" means any information about any customers acquired by Licensor through the internet website that will host the Ecommerce Channel.
-      %li
-        "Go Live Date" means the date of your configuration call with Tranact technical support.
-      %li
-        "Host Computer" means the computer(s) and associated hardware and software owned and/or operated by Licensor at Licensor's location(s), which may include 
-        the use by Licensor of one or more designated third party hardware, software and /or cloud computing service providers, on which the main operating 
-        component modules of the Licensed Software, including associated information databases, resides and that Licensor will use to provide the Service to You.
-      %li
-        "Inventory Data" means information about Your inventory of goods inputted by You in the course of using Licensor's Software and Service.
-      %li
-        "PC" means the personal computer and related cabling and other equipment owned and controlled by You in use at Your Registered Location for the 
-        installation and use of the Licensed Software to access the Service.
-      %li
-        "Registered Location" means the physical location identified by You as the location where the Licensed Software is installed and where the Service will be used.
-      %li
-        "Regulatory Integration" means Licensor's inclusion in the Software and Licensed Software of police exports and legal compliance in the ordinary course 
-        of business where the municipality uses BusinessWatch International or Leads0nline.  This is city and state specific. If custom development needs to 
-        occur, You will be charged hourly to develop.
-      %li
-        "Service" means the provision of merchandise valuation tools for use by companies and related businesses for merchandise value evaluation services using 
-        the Licensed Software and the Host Computer as well as the online storage on the Host Computer of all customer transaction data inputted by You during 
-        the course of using the Licensed Software and Service.
-      %li
-        "Software" or "Licensed Software" means the Tranact™ software for personal computers, the associated media, any User Documentation, and any new releases 
-        and versions thereof that Licensor provides from time to time to any licensees without additional charge.
-      %li
-        "Specifications" means the technical specifications regarding the Licensed Software and the Service set forth in the User Documentation.
-      %li
-        "Transaction Data" means transactional information about each of Your transactions inputted by You in the course of using Licensor's Software and Service.
-      %li
-        "User Documentation" means any printed materials accompanying the Software and / or any "online" or electronic documentation for the Software and/or the 
-        Service provided by Licensor to You.
+= render 'shared/ticker_navbar'
+=# render 'shared/kpi_footer_navbar'
 
-  %h5
-    2. License Grant and Provision of Service.
-    
-  %p
-    Licensor hereby grants to You, and You hereby accept, a non-transferable, non-exclusive, limited license to use the Licensed Software solely for installation 
-    and use by You at Your Registered Location and solely for the purpose of providing the Software and Service as part of Your business at Your Registered 
-    Location. As part of this Agreement, Licensor agrees to provide the Service to You and You accept and use the Service. You agree to use the Service at all 
-    times in accordance with the User Documentation and solely for the purpose of providing personal property valuation services as part of Your business at Your 
-    Registered Location. No rights or licenses to the Licensed Software, the Service or the User Documentation other than those expressly granted in this Agreement 
-    are granted, whether expressly, by implication or estoppel or otherwise.
 
-  %p
-    Licensor will not be providing any content or applications for You under this Agreement other than the Licensed Software and the related Service. The Licensed 
-    Software must be used on one or more PCs that meets Licensor's minimum configuration and technical requirements, including minimum security protocol 
-    requirements. You are responsible for installing the licensed Software on a PC that meets the Specifications set by Licensor. You are solely responsible for 
-    maintaining the confidentiality of user names and passwords for all users of the Licensed Software and Service. You are solely responsible for the number of 
-    authorized users, the level of access per user, who uses the Licensed Software and Service at Your Registered Location, and for maintaining the confidentiality 
-    of Your user names and passwords for using the Licensed Software and Service. You understand and agree that Licensor may, from time to time, and in its sole 
-    discretion, change the content or format of the Licensed Software, Service, User Documentation ion or the media of delivery, in accordance with general 
-    changes made to its standard service and product offering. However, Licensor will not make material changes to the content or format of the Licensed Software, 
-    Service, User Documentation or the media of delivery without Your prior written consent, which will not be unreasonably withheld.
-
-  %p
-    Your use of the Software may not exceed the scope of the use provisions above without the express written agreement of Licensor and Your payment of additional 
-    license fees. The license granted by this Agreement  is a single copy license for the Software and You may only use the Software on one single PC at a time. 
-    Use of the Software on any other cloned copies of the authorized PC is expressly prohibited. Furthermore, You may not install the Software on any new computer 
-    for which You intend to be Your single PC at Your Registered Location without the express consent and approval by Licensor. Modifying, translating, renting, 
-    copying, transferring or assigning all or part of the Software, or any rights gr anted hereunder, to any other persons and removing any proprietary notices, 
-    labels or marks from the Software is strictly prohibited. Furthermore, You hereby agree not to create derivative works based on the Software. This Software 
-    is available for license solely to the end user of the Software, with no right of duplication or further distribution, licensing, or sub-licensing. 
-    IF YOU DO NOT INTEND TO BE BOUND BY THE SCOPE OF THIS SOFTWARE LICENSE, THEN DO NOT ACCESS, DOWNLOAD, INSTALL, COPY OR USE THE SOFTWARE.
-
-  %h5
-    3. Setup and License Fees.
-
-  %p
-    The Licensed Software is available for download and installation upon payment by You of a prescribed activation and setup fee (the "Activation and Setup Fee"). 
-    Once the Activation and Setup Fee is paid, licensor will provide You with a license key or license keys per Attached Addendum to allow You to use the 
-    Software and Service upon installation of the Software on the number of PCs for which You have paid. Each license key may be used only with a single PC at 
-    a single Registered Location and, except as expressly provided for in this Agreement, is not to be installed on any single PC that is configured as a 
-    computer network or otherwise capable of sharing the use of the licensed single copy of the Software on the authorized PC at Your Registered Location beyond 
-    the scope of the license provided for in this Agreement.
-
-  %p
-    For the license of the licensed Software and provision of the Service, You shall pay to Licensor a service fee, paid monthly or annually (the "License Fee"). 
-    The License Fee includes Tranact's regulatory integration ("Regulatory Integration'') and services for all states besides Minneso12 and Wisconsin. The 
-    initial License Fee shall be due and payable to licensor on Go Live Date as agreed upon in attached Addendum. If You choose monthly payments, all subsequent 
-    License Fees shall be due each month that You are registered to use the Service. If You choose annual payments, all subsequent License Fees shall be due on 
-    the anniversary of the Go Live Date. Annual payments are nonrefundable. Failure to pay any subsequent license Fees owed may result in Licensor suspending 
-    any and all access to the Service until such time as the subsequent License Fees are paid.
-
-  %p
-    As part of Your use of the Software and Service, You agree that You will keep on file with Licensor valid credit card, debit card, or ACH account information 
-    to which licensor is hereby authorized to charge the license Fee on a monthly or annual basis on the anniversary of Your Go Live Date. You are responsible 
-    for maintaining valid account information on file with Licensor. In The event that Licensor is unable to charge the License Fee to the credit card, debit 
-    card, or ACH account You have on file, then You will be immediately notified by Licensor.  You will have ten (10) calendar days from such notice to provide 
-    Licensor with valid account information, and You will be assessed a $25 penalty. If monthly fees are not paid in full after this notice, a $50 penalty will 
-    be assessed to Your account, and Interest will accrue at a rate of 18% per annum on any past due and unpaid amounts and may result in Your access to the 
-    Service being suspended and Your License to use the Software and Service granted by this Agreement to be terminated.
-
-  %p
-    You shall also be liable for and shall pay any and all income, franchise, sales, use, personal property, ad valorem, value added, stamp or other tax, levy, 
-    customs duty, or other impost or fee, including withheld taxes, on the Licensed Software and/or the Service, whether now in force or enacted or levied in 
-    the future, except a tax based on the net income of Licensor, together with all penalties, fines and interest thereon, that in any way arises out of 
-    this Agreement, whether on or measured by the price, the charges, or on the Licensed Software or Service, or their use, however designated, levied or based. 
-    This section will apply during and after termination of this Agreement.
-
-  %p
-    The License Fee and any other additional fees may be modified as agreed upon in the Addendum, or by Licensor on an annual basis on or before the anniversary 
-    date of the date that You registered to use the Service, but only after providing You with at least 60 days’ written notice of Licensor's election to modify 
-    the License Fee accordingly.
-
-  %h5 4. Copyright.
-
-  %p
-    The Software is licensed to You, not sold, and nothing in this Agreement shall be construed to the contrary. You acknowledge that no title to the intellectual 
-    property in the Software, Service, or User Documentation is transferred to You. You further acknowledge that all right, title and interest in and to the 
-    Software, the Service, and the User Documentation, including all associated intellectual property rights, are and shall at all times remain the exclusive 
-    property of Licensor, and You will not acquire any rights to the Software, Service, or User Documentation, except as expressly set forth above. All title 
-    and copyrights in and to the Software (including but not limited to any images, photographs, animations, video, audio, music, text and "applets," 
-    incorporated into the Software), the Service, the User Documentation, and any copies of the Software or User Documentation are owned by Licensor. 
-    The Software and Service contains trade secret and proprietary information owned by Licensor or its third party licensors and is protected by copyright 
-    laws and international copyright treaties as well as other intellectual property laws and treaties. You must treat the Software, Service, or User 
-    Documentation like any other copyrighted material and, except solely for backup or archival purposes for which You may make copies, You may not disclose, 
-    copy, transfer or transmit the Software, Service, or User Documentation, electronically or otherwise, for any purpose. You may not sublicense, assign, 
-    transfer, sell, rent, lend or lease the Software, Service, or User Documentation, or any portions thereof, and any attempt to do so is null and void. 
-    All permitted copies of the Software and the User Documentation must include Licensor's copyright and other proprietary notices.
-
-  %h5 5. Reverse Engineering.
-
-  %p
-    You agree that You will not attempt, and if You are an entity of any kind, You will use Your best efforts to prevent Your employees, representatives, agents, 
-    and contractors from attempting to reverse compile, modify, translate, decompile or disassemble or making any attempt to ascertain, derive or obtain the 
-    source code for the Software in whole or in part. Any failure to comply with the above or any other terms and conditions contained herein will result in 
-    the automatic termination of this license and the reversion of the rights granted hereunder to Licensor.
-
-  %h5 6. Licensor's Use of Your Data
-  
-  %p
-    (a) Customer Data. Except as otherwise provided for in this Agreement, all Customer Data provided by You to Licensor during the course of using the Software 
-    and Service shall be the sole and exclusive property of You and shall not be used by Licensor for any commercial purposes beyond the intended scope of this 
-    Agreement. By use of the Software and Service, You hereby grant to Licensor a perpetual, royalty free, transferable license to copy and use Your Customer 
-    Data solely for internal research, development, and analytical purposes.
-
-  %p
-    (b) Transaction Data. Except as otherwise provided for in this Agreement, all Transaction Data provided by You to Licensor during the course of using the 
-    Software and Service shall be the sole and exclusive property of You. During the term of this Agreement, You hereby grant to Licensor a perpetual, royalty 
-    free, transferable license to copy and use Your Transaction Data, but solely for internal research, and analytical purposes. Licensor shall not be entitled 
-    to otherwise commercialize the Transaction Data in any way.
-
-  %p
-    (c) Inventory Data. Except as otherwise provided for in this agreement, all Inventory Data provided by You to Licensor during the course of using Licensor's 
-    Software and Service shall be the sole and exclusive property of You. By use of the Software and Service, You hereby grant to Licensor a perpetual, royalty 
-    free, transferable license to copy and use Inventory Data solely for internal research, development, and analytical purposes.
-
-  %p
-    (d) Ecommerce Customer Data. Notwithstanding any other provision in this Agreement to the contrary, You expressly agree that any Ecommerce Customer Data, 
-    regardless of whether such data might also constitute Customer Data, shall be shared property of Licensor and Licensee and that nothing in this Agreement 
-    shall be construed as prohibiting Licensor from using in any way any Ecommerce Customer Data.
-
-  %p
-    (e) No Waiver. Nothing in the provisions of this Section 6 of the Agreement shall be construed in any way as a waiver by Licensor of the provisions set 
-    forth in this Agreement relating to Disclaimer of Warranty and Limitation of Liability.
-
-  %h5 7. Non-Disclosure.
-
-  %p
-    You agree not to use any confidential information disclosed to You by Licensor for Your own use or benefit or for any purpose other than for related Service 
-    ("Confidential Information"). You shall not disclose any Confidential Information to third parties. You shall be responsible for any breaches by Your 
-    affiliates, employees, contractors or agents, irrespective of whether the breach occurs during or after the period of the affiliation, employment, agency 
-    or contractor relationship. You agree that You will take all reasonable measure to protect the secrecy of and avoid disclosure or use of Confidential 
-    Information in order to prevent it from falling into the public domain or the possession of persons other than those persons authorized under this Agreement 
-    to have any such Confidential Information. Such measures shall include, but not be limited to, the same degree of care that the Receiving Party agrees to 
-    immediately notify Tranact in writing of any misuse or misappropriation of Confidential Information which may come to the Receiving Party's attention.
-
-  %h5 8. Disclaimer of Warranty.
-
-  %p
-    LICENSOR DOES NOT MAKE ANY WARRANTY, EITHER EXPRESS OR IMPLIED, WITH RESPECT TO THE LICENSED SOFTWARE, THE SERVICE, OR THE USER DOCUMENTATION, OR THEIR 
-    QUALITY, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. NO WARRANTY IS MADE THAT THE OPERATION OF THE LICENSED SOFTWARE OR SERVICE WILL BE 
-    UNINTERRUPTED OR BUG FREE. NO WARRANTY IS MADE BY LICENSOR WITH RESPECT TO THE MAINTENANCE OF AND/OR ACCURACY OF ANY OF YOUR DATA, INCLUDING BUT NOT 
-    LIMITED TO CUSTOMER DATA, TRANSACT ION DATA, OR INVENTORY DATA, ACQUIRED BY LICENSOR AS PART OF YOUR USE OF THE SOFTWARE AND/OR THE SERVICE. YOU 
-    ACKNOWLEDGE AND AGREE THAT LICENSOR HAS NO CONTROL OVER OR LIABILITY FOR TELECOMMUNICATIONS OR INTERNET SERVICES PROVIDED BY LICENSOR'S OR YOUR 
-    TELECOMMUNICATION AND INTERNET SERVICE PROVIDERS AND THAT EMAIL, TEXT MESSAGES, INTERNET-BASED SERVICES AND OTHER ASPECTS OF THE LICENSED SOFTWARE AND 
-    THE SERVICE THAT RELY ON THIRD PARTY TELECOMMUNICATIONS OR INTERNET SERVICE PROVIDERS ARE NOT THE RESPONSIBILITY OF LICENSOR AND LICENSOR HAS NO LIABILITY 
-    FOR ANY FAILURES, INTERRUPTIONS OR OTHER PROBLEMS CAUSED BY THE SERVICE OR EQUIPMENT OF SUCH TELECOMMUNICATIONS OR INTERNET SERVICE PROVIDERS, INCLUDING, 
-    BUT NOT LIMITED TO, ANY LIABILITY FOR UNSENT, MISDIRECTED, LOST, BLOCKED OR UNRECEIVED EMAILS OR TEXT MESSAGE ALERTS. NO ORAL INFORMATION OR ADVICE GIVEN BY 
-    LICENSOR OR ITS EMPLOYEES SHALL CREATE A WARRANTY OR MAKE ANY MODIFICATION, EXTENSION OR ADDITION TO THIS WARRANTY. LICENSOR DOES NOT AND CANNOT WARRANT THE 
-    PERFORMANCE OR RESULTS OBTAINED BY YOU IN USING THE SOFTWARE OR SERVICE, OR THAT THE SOFTWARE OR SERVICE WILL MEET YOUR REQUIREMENTS OR THAT THE OPERATION 
-    OF THE SOFTWARE OR SERVICE WILL BE UNINTERRUPTED OR ERROR FREE. THE SOFTWARE AND SERVICE ARE LICENSED "AS IS" WITHOUT WARRANTY OF ANY KIND AND LICENSOR 
-    EXPRESSLY DISCLAIMS ANY AND ALL OTHER WARRANTIES WITH RESPECT TO THE SOFTWARE AND SERVICE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. LICENSOR IS NOT OBLIGATED TO PROVIDE ANY UPDATES TO THE SOFTWARE OR SERVICE.
-
-  %h5 9. Limitation of Liability.
-
-  %p
-    IN NO EVENT WILL LICENSOR OR ITS OWNERS, SHAREHOLDERS, MEMBERS, PARENTS, SUBSIDIARIES, AFFILIATES, OFFICERS, DIRECTORS, MANAGERS, EMPLOYEES, ATTORNEYS OR 
-    AGENTS BE LIABLE FOR ANY INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOST PROFITS, 
-    OPPORTUNITIES OR CONTRIBUTIONS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, GOODWILL, OR OTHER PECUNIARY OR NON-PECUNIARY LOSS, ARISING OUT OF 
-    THE USE OF OR INABILITY TO USE THE SOFTWARE OR THE SERVICE, THE LOSS OR INACCURACY OF ANY DATA MAINTAINED BY LICENSOR AS PART OF THE SOFTWARE OR THE SERVICE, 
-    OR OTHERWISE RELATED TO THIS AGREEMENT, EVEN IF LICENSOR HAS BEEN ADV ISE D OF THE POSSIBILITY OF SUCH DAMAGES OR ANY CLAIM BY A THIRD PARTY. LICENSOR'S 
-    ENTIRE LIABILTY AND YOUR EXCLUSIVE REMEDY UNDER THIS AGREEMENT SHALL NOT EXCEED ONE- HUNDRED PERCENT (100%} OF THE FEES PAID BY YOU FOR THE SOFTWARE AND 
-    SERVICE UNDER THIS AGREEMENT. BECAUSE SOME STATES/COUNTRIES DO NOT ALLOW THE EXCLUSION OR LIMITATION OF LIABILITY FOR CONSEQUENTIAL OR INCIDENTAL DAMAGES, 
-    THE ABOVE LIMITATION MAY NOT APPLY TO YOU.
-
-  %h5 10. Legal Compliance.
-
-  %p
-    Any and all uses of the Licensed Software and the Service by You shall be in compliance with all applicable and necessary governmental approvals and all 
-    applicable laws, rules and regulations. You shall immediately inform Licensor in writing of any material complaint by any consumer or governmental body 
-    relevant to the Licensed Software or the  Service, and the status and resolution thereof. You shall at Your own cost move expeditiously to resolve and assist 
-    Licensor to resolve any such complaint.
-
-  %h5 11. Indemnification.
-
-  %p
-    If You distribute the Software in violation of this Agreement, You agree to indemnify, hold harmless and defend Licensor and its agents from and against any 
-    demands, claims or lawsuits, including attorney's fees, that arise or result from Your use or distribution of the Software or Service in violation of this 
-    Agreement or Your violation of any law or the rights of a third party.
-
-  %h5 12. Termination.
-
-  %p
-    This Agreement is effective until terminated. You may terminate the license granted under this Agreement at any time by ceasing to use the Software and 
-    Service, and by returning all copies of the Software and User Documentation to Licensor or destroying or erasing all copies of the Software. This 
-    Agreement will also terminate at Licensor's option upon Your failure to comply with any material term and condition hereof. In the event of termination, 
-    all the sections of this Agreement will survive except the License Grant section.  Unless otherwise expressly agreed to by Licensor, in the event that this 
-    license is terminated prior to the end of the month, You shall not be entitled to any pro-rated refund for the number of days remaining in the month. Upon 
-    termination of this Agreement, so long as all License Fees owed by You have been paid to Licensor for use of the Software and Service, then Licensor, upon 
-    written request by You, shall provide You with a complete copy of licensor's database of Your Customer, Transaction, and Inventory Data relating to Your 
-    use of the Software and Service. You shall pay to Licensor the data export service fee that shall be due and payable to Licensor upon completion of 
-    requested data export.
-
-  %h5 13. Firearms Acquisition and Disposition Records.
-
-  %p
-    If Your company acquires and/or sells firearms, ATF Ruling 2013-5 requires that the Acquisition and Disposition Records be stored on a server that is owned 
-    and operated solely by You. Licensor shall make available to You Your Acquisition and Disposition Records by download. It shall be Your sole responsibility 
-    to ensure such Records are downloaded to Your server.
-
-  %h5 14. Publicity.
-
-  %p
-    On or about the Go Live Date, the parties may issue one or more mutually acceptable press releases announcing this Agreement. The content of the press 
-    release shall be subject to the parties' mutual approval and consent, provided that neither party will unreasonably delay its review of any proposed 
-    press release or announcement. Moreover, You agree that Licensor may publicly identify You as a customer of Licensor's Licensed Software and Service.
-
-  %h5 15. Assignment.
-
-  %p
-    Any assignment of this Agreement or any rights or obligations hereunder by You, without the prior written consent of Licensor, shall be null and void and of 
-    no effect and a material breach hereof; provided, however, that You may assign this Agreement to a successor to all or substantially all of Your business 
-    and assets that is not a competitor of Licensor or a company who uses a competing software application or service, provided that You shall give Licensor at 
-    least thirty (30) days prior written notice of such permitted assignment.
-
-  %h5 16. Miscellaneous.
-
-  %p
-    This Agreement and Your Agreement to purchase the Software together set forth the entire agreement between the parties with respect to the subject matter 
-    hereof and all other agreements, representations, communications and understandings, both oral and written, are superseded hereby. If any court of competent 
-    jurisdiction declares any term of this Agreement void or unenforceable, that declaration shall have no effect on the remaining terms hereof. The failure by 
-    either party to enforce any rights granted hereunder or to take action against the other party in the event of any breach of this Agreement will not be 
-    deemed a waiver by that party as to the subsequent enforcement of rights or subsequent actions in the event of future breaches. Neither party shall be 
-    liable for any delay, nonperformance or related damages if such delay or nonperformance was due to causes beyond its reasonable control, including, but 
-    not limited to acts of God, civil emergencies, electrical power failure, loss of communications, or the delay of the other party or third parties.
-
-  %h5 17. Arbitration.
-
-  %p
-    Any disputes or claims under this Agreement or its breach shall be submitted to and resolved exclusively by arbitration conducted in accordance with American 
-    Arbitration Association rules. One arbitrator appointed under such rules shall conduct arbitration. Arbitration shall be in Las Vegas, Nevada, and the laws 
-    of Nevada shall be applied. Any decision in arbitration shall be final and binding upon the parties. Judgment may be entered thereon in any court of 
-    competent jurisdiction. Notwithstanding the above, Licensor may sue in any court of competent jurisdiction for infringement of its proprietary or 
-    intellectual property rights or any claims relating to Your indemnification obligations to licensor under this Agreement.
+:javascript
+  // Refresh page every 5 minutes
+  setInterval(function(){
+   window.location.reload(1);
+  }, 300000);
