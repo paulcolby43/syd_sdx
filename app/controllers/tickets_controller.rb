@@ -187,7 +187,7 @@ class TicketsController < ApplicationController
               # Create new item
               Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
-                ticket_params[:customer_id], line_item[:unit_of_measure])
+                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
             end
           else
             unless line_item[:commodity].blank?
@@ -263,7 +263,8 @@ class TicketsController < ApplicationController
     @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
     @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
     @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
-    
+    @deductions = Ticket.deductions(current_user.token)
+    @deductions_grouped_for_select = Ticket.deductions_grouped_for_select(@deductions)
 #    @vehicle_makes = []
 #    @vehicle_models = []
 #    @body_styles = []

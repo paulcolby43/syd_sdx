@@ -22,6 +22,11 @@ class WelcomeController < ApplicationController
       @closed_tickets = Ticket.all_last_30_days(1, current_user.token, current_yard_id)
       @held_tickets = Ticket.all_last_30_days(2, current_user.token, current_yard_id)
       @paid_tickets = Ticket.all_last_30_days(3, current_user.token, current_yard_id)
+      
+#      @closed_tickets = Ticket.all_by_date_and_status_and_yard(1, current_user.token, current_yard_id, 30.days.ago, Date.today.yesterday)
+#      @held_tickets = Ticket.all_by_date_and_status_and_yard(2, current_user.token, current_yard_id, 30.days.ago, Date.today.yesterday)
+#      @paid_tickets = Ticket.all_by_date_and_status_and_yard(3, current_user.token, current_yard_id, 30.days.ago, Date.today.yesterday)
+      
       @closed_and_paid_tickets = @closed_tickets + @paid_tickets
       @closed_and_held_and_paid_tickets = @closed_tickets + @held_tickets + @paid_tickets
       
@@ -123,6 +128,9 @@ class WelcomeController < ApplicationController
       
       @closed_shipments_today = PackShipment.all_closed_today(current_user.token, current_yard_id)
       @last_closed_shipment_today = @closed_shipments_today.sort_by{|s| s['DateShipped']}.last unless @closed_shipments_today.blank?
+      
+      @closed_and_held_shipments_today = @held_shipments_today + @closed_shipments_today
+      @closed_and_held_shipments_today = @closed_and_held_shipments_today.select {|t| t['DateCreated'].to_date == Date.today}.sort_by{|t| t['DateCreated']}.reverse
       
       @held_shipments_today_total_net = 0
       @held_shipments_today.each do |shipment|

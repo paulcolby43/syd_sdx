@@ -18,7 +18,11 @@
   .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
     %br
     %div
-      %strong= "To:"
+      %strong= "Customer:"
+      .pull-right
+        = task['Customer']
+      %br
+      %strong= "At:"
       .pull-right
         - unless task['ToLocation'].blank?
           %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
@@ -41,10 +45,6 @@
       %strong= "Service Request:"
       .pull-right
         = task['WorkOrderNumber']
-      %br
-      %strong= "Customer:"
-      .pull-right
-        = task['Customer']
       %br
       %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
         %i.fa.fa-map-marker

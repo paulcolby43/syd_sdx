@@ -58,8 +58,8 @@
               = @ticket
           %div.panel-heading{:role => "tab", id: "vendor_heading"}
             %h4.panel-title
-              %a.text-success{"aria-controls" => "collapseVendor", "aria-expanded" => "true", "data-parent" => "#vendor_accordion", "data-toggle" => "collapse", :href => "#collapseVendor", :role => "button" }
-                #vendor_name.text-success
+              %a.text-primary{"aria-controls" => "collapseVendor", "aria-expanded" => "true", "data-parent" => "#vendor_accordion", "data-toggle" => "collapse", :href => "#collapseVendor", :role => "button" }
+                #vendor_name.text-primary
                   - if not (@ticket["FirstName"].blank? and @ticket["LastName"].blank?)
                     = "#{@ticket['FirstName']} #{@ticket['LastName']}"
                   - else
@@ -80,7 +80,7 @@
                   %h4.panel-title
                     %ul{class: 'list-inline'}
                       %li
-                        %a.line_item_name.text-success{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
+                        %a.line_item_name.text-primary{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
                           = line_item["PrintDescription"]
                       %li.pull-right
                         %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
@@ -159,8 +159,9 @@
                       = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                     %br
                     %p
-                      %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
-                        More
+                      %small
+                        %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
+                          More
                       %div.collapse{id: "more_#{line_item['Id']}"}
                         %ul{class: 'list-inline'}
                           %li
@@ -177,22 +178,67 @@
                         = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
-                .panel-footer
-                  %ul{class: 'list-inline'}
-                    %li.calculation_details
-                      = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
-                      x
-                      = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
-                      = "= $#{line_item['ExtendedAmount']}"
-                      - unless line_item['TaxCollection'].blank?
-                        - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
-                          - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
-                            = "+ $#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']} (tax)"
-                        - else # Multiple line item tax results returned
-                          - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
-                            - unless tax['TaxAmount'] == '0.00'
-                              = "+ $#{tax['TaxAmount']} (tax)"
-                    %li.pull-right
+                .panel-footer{style: 'padding-top: 0px;'}
+                  .calculation_details
+                    %strong Gross:
+                    = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                    &nbsp;
+                    %strong Tare:
+                    = "#{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                    &nbsp;
+                    %strong Net:
+                    = "#{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)} LB"
+                    &nbsp;
+                    = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
+                    &nbsp;
+                    %strong= "$#{line_item['ExtendedAmount']}"
+                  / Deduction weights
+                  -# unless line_item["DeductionCollection"].blank?
+                  / Deduction weights
+                  .weight_deduction_details
+                    - unless line_item["DeductionCollection"].blank?
+                      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                        - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
+                        - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+                          %strong Less:
+                          = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                      - else
+                        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                          - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+                            %strong Less:
+                            = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                  / Deduction dollar amounts
+                  .dollar_amount_deduction_details
+                    - unless line_item["DeductionCollection"].blank?
+                      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                        - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
+                        - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+                          %strong Less:
+                          = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                      - else
+                        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                          - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+                            %strong Less:
+                            = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                  - unless line_item['TaxCollection'].blank?
+                    / Taxes
+                    .tax_details
+                      %strong Taxes
+                      - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                        - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                          = "$#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
+                      - else # Multiple line item tax results returned
+                        - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                          - unless tax['TaxAmount'] == '0.00'
+                            = "$#{tax['TaxAmount']}"
+                  -#
+                    %br
+                    = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
+                    x
+                    = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
+                    = "= $#{line_item['ExtendedAmount']}"
+                  -#
+                    .pull-right
                       %a.text-success{"aria-controls" => "collapse#{line_item['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-3x.collapse_icon
       - else
@@ -205,7 +251,7 @@
                 %h4.panel-title
                   %ul{class: 'list-inline'}
                     %li
-                      %a.line_item_name.text-success{"aria-controls" => "collapse#{new_item_id}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", :role => "button", class: "ticket_collapse_link" }
+                      %a.line_item_name.text-primary{"aria-controls" => "collapse#{new_item_id}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", :role => "button", class: "ticket_collapse_link" }
                         Choose an item*
                     %li.pull-right
                       %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
@@ -269,23 +315,38 @@
                   = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                   %br
                   %p
-                    %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
-                      More
+                    %small
+                      %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
+                        More
                     %div.collapse{id: "more_#{new_item_id}"}
-                      - unless @combolists.blank? # Car vehicle information lists
-                        %p
-                          %a.btn.btn-primary{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
-                            %i.fa.fa-car.fa-lg
-                            Car
-                          = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
+                      %ul{class: 'list-inline'}
+                        %li
+                          %a.btn.btn-default{href: "#item_#{new_item_id}_deductions_modal", id: "#item_#{new_item_id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
+                            %i.fa.fa-minus-square-o.fa-lg
+                            Deductions
+                          = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{new_item_id}"}
+                        - unless @combolists.blank? # Car vehicle information lists
+                          %li
+                            %a.btn.btn-default{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
+                              %i.fa.fa-car.fa-lg
+                              Car
+                            = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
                       = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                       %br
                       = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-              %div.panel-footer
-                %ul{class: 'list-inline'}
-                  %li.calculation_details
+              %div.panel-footer{style: 'padding-top: 0px;'}
+                .calculation_details
+                .deduction_details
+                -# %ul{class: 'list-inline'}
+                / Deduction weights
+                .weight_deduction_details
+                / Deduction dollar amounts
+                .dollar_amount_deduction_details
+                / Taxes
+                .tax_details
+                -#
                   - unless mobile_device?
-                    %li.pull-right
+                    .pull-right
                       %a.text-muted{"aria-controls" => "collapse#{new_item_id}", "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-check-square.fa-2x.collapse_icon
       

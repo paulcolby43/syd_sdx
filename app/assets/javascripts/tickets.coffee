@@ -39,8 +39,13 @@ jQuery ->
               $('.tax').each ->
                 sum += Number($(this).val())
                 return
-              $('#total').text '$' + sum.toFixed(2)
-              $('#payment_amount').val sum.toFixed(2)
+              # Add up deduction dollar amounts
+              deduction_dollar_amount = 0
+              $('.deduction_dollar_amount').each ->
+                deduction_dollar_amount += Number($(this).val())
+                return
+              $('#total').text '$' + (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+              $('#payment_amount').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
             error: ->
               spinner_icon.hide()
               trash_icon.show()
@@ -57,8 +62,13 @@ jQuery ->
           $('.tax').each ->
             sum += Number($(this).val())
             return
-          $('#total').text '$' + sum.toFixed(2)
-          $('#payment_amount').val sum.toFixed(2)
+          # Add up deduction dollar amounts
+          deduction_dollar_amount = 0
+          $('.deduction_dollar_amount').each ->
+            deduction_dollar_amount += Number($(this).val())
+            return
+          $('#total').text '$' + (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+          $('#payment_amount').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
         return
       else
         e.preventDefault()
@@ -101,9 +111,14 @@ jQuery ->
     $('.tax').each ->
       sum += Number($(this).val())
       return
-    $('#total').text '$' + sum.toFixed(2)
-    $('#ticket_total').val sum.toFixed(2)
-    $('#payment_amount').val sum.toFixed(2)
+    # Add up deduction dollar amounts
+    deduction_dollar_amount = 0
+    $('.deduction_dollar_amount').each ->
+      deduction_dollar_amount += Number($(this).val())
+      return
+    $('#total').text '$' + (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+    $('#ticket_total').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+    $('#payment_amount').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
     return
 
   # Automatically highlight field value when focused
@@ -205,6 +220,14 @@ jQuery ->
     changed_field = $(this)
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
+    line_item_dollar_amount_deductions_total = 0
+    $(this).closest('.panel').find('.deduction_dollar_amount').each ->
+      line_item_dollar_amount_deductions_total += Number($(this).val())
+      return
+    line_item_weight_deductions_total = 0
+    $(this).closest('.panel').find('.deduction_weight').each ->
+      line_item_weight_deductions_total += Number($(this).val())
+      return
     if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').length
       tax_percent_1 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').val()
     else 
@@ -217,7 +240,7 @@ jQuery ->
       tax_percent_3 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_3').val()
     else 
       tax_percent_3 = '0.00'
-    net = (parseFloat(gross) - parseFloat(tare)).toFixed(2)
+    net = (parseFloat(gross) - parseFloat(tare) - parseFloat(line_item_weight_deductions_total)).toFixed(2)
     changed_field.closest('.panel').find('#ticket_line_items__net').val net
     changed_field.closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
     changed_field.closest('.panel').find('#tare_picture_button:first').attr 'data-weight', tare
@@ -256,12 +279,15 @@ jQuery ->
           changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
           changed_field.closest('.panel').find('#ticket_line_items__tax_amount_3').val tax_amount_3
           
+          # Update calculation details in panel footer
+          changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2) + '</strong>'
+          if line_item_dollar_amount_deductions_total > 0
+            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Less:</strong> $' + line_item_dollar_amount_deductions_total
+          if line_item_weight_deductions_total > 0
+            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Less:</strong> ' + line_item_weight_deductions_total + ' LB'
           if total_tax_amount > 0
-            # Show tax amount
-            changed_field.closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
-          else
-            # Don't show tax amount
-            changed_field.closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount
+            changed_field.closest('.panel').find('.tax_details').html '<strong>Taxes:</strong> $' + total_tax_amount
+              
           sum = 0;
           # Add up amounts
           $('.amount').each ->
@@ -271,9 +297,15 @@ jQuery ->
           $('.tax').each ->
             sum += Number($(this).val())
             return
-          $('#total').text '$' + sum.toFixed(2)
-          $('#ticket_total').val sum.toFixed(2)
-          $('#payment_amount').val sum.toFixed(2)
+          
+          # Add up deduction dollar amounts
+          deduction_dollar_amount = 0
+          $('.deduction_dollar_amount').each ->
+            deduction_dollar_amount += Number($(this).val())
+            return
+          $('#total').text '$' + (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+          $('#ticket_total').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+          $('#payment_amount').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
           return
         error: ->
           alert 'Error getting commodity unit of measure conversion.'

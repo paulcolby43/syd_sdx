@@ -5,29 +5,34 @@
     .row
       .col-xs-12
         .col-xs-12.col-sm-3{style: 'color: white;'}
-          %h2.text-center
+          %h3.text-center
             - unless current_user.company.logo.url.blank?
-              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive center-block', size: '200x200')
+              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive center-block', size: '150x150')
             POWERED BY 
             %br
             %span.text-info SCRAP DRAGON
+            
+        .col-xs-12.col-sm-4
+          %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=#{url_encode(session[:time_zone])}", :width => "100%"}
+          .text-center
             = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
               %p= select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard['Name'], yard['Id'] ] }, current_yard_id), class: "form-control", onchange: "this.form.submit();"
           
-        .col-xs-12.col-sm-4
-          .panel{style: 'background-color: #303030; color: white; height: 150px; padding-top: 0px; padding-bottom: 0px;'}
-            -#
-              .panel-heading{style: 'background-color: gray;'}
-                New York
-            .panel-body
-              %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
-              %h4.text-danger.text-center
-                %i.fa.fa-warning
-                System wide alert
+          -#
+            .panel{style: 'background-color: #303030; color: white; height: 150px; padding-top: 0px; padding-bottom: 0px;'}
+              -#
+                .panel-heading{style: 'background-color: gray;'}
+                  New York
+              .panel-body
+                %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
+                %h4.text-danger.text-center
+                  %i.fa.fa-warning
+                  System wide alert
         .col-xs-12.col-sm-5
           .panel
             .panel-heading
-              %iframe#forecast_embed{:frameborder => "0", :height => "210", :src => "//forecast.io/embed/#lat=#{current_user.company.latitude}&lon=#{current_user.company.longitude}&color=#00aaff&name=#{current_user.company.city.blank? ? 'St. Pete' : current_user.company.city}", :width => "100%"}
+              -# %iframe#forecast_embed{:frameborder => "0", :height => "210", :src => "//forecast.io/embed/#lat=#{current_user.company.latitude}&lon=#{current_user.company.longitude}&color=#00aaff&name=#{current_user.company.city.blank? ? 'St. Pete' : current_user.company.city}", :width => "100%"}
+              %iframe#forecast_embed{:frameborder => "0", :height => "140", :src => "//forecast.io/embed/#lat=#{current_user.company.latitude}&lon=#{current_user.company.longitude}&color=#00aaff&name=#{current_user.company.city.blank? ? 'St. Pete' : current_user.company.city}", :width => "100%"}
               -#
                 %h2.text-center
                   %i.fa.fa-cloud
@@ -49,7 +54,7 @@
                   Today:
                   %span.text-info= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
                   %br
-                  30-Day:
+                  30-Day Total:
                   %span.text-info= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
                   =# Commodity.types(current_user.token, current_yard_id)
                   =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
@@ -123,7 +128,7 @@
                     %br
                     %span.text-info= @last_held_shipment_today['CustomerName'] 
                     %br
-                    %span.text-info= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -136,7 +141,7 @@
                     %br
                     %span.text-info= @last_closed_shipment_today['CustomerName'] 
                     %br
-                    %span.text-info= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p (Eastern)") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
                     
           -#
             .col-xs-12
@@ -152,17 +157,31 @@
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2 Daily Tickets
+                %h2 Last 10 Tickets
               - unless @closed_and_held_and_paid_tickets_today.blank?
                 %h4.table-responsive
                   %table.table.table-condensed
                     - @closed_and_held_and_paid_tickets_today.first(10).each do |ticket|
                       %tr
-                        %td= ticket['DateCreated'].to_datetime.in_time_zone("Eastern Time (US & Canada)").strftime("%l:%M %p")
+                        %td= ticket['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
                         %td= ticket['TicketNumber']
                         %td= ticket['Company'].blank? ? "#{ticket['FirstName']} #{ticket['LastName']}" : ticket['Company']
                         %td= Ticket.status_string(ticket['Status'])
                         %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+              - else
+                .panel-body None
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2 Last 10 Shipments
+              - unless @closed_and_held_shipments_today.blank?
+                %h4.table-responsive
+                  %table.table.table-condensed
+                    - @closed_and_held_shipments_today.first(10).each do |shipment|
+                      %tr
+                        %td= shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
+                        %td= shipment['ShipmentNumber']
+                        %td= shipment['CustomerName']
               - else
                 .panel-body None
           -#
