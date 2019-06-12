@@ -181,6 +181,7 @@
         %td
         %td
         %td
+        %td
           - if params[:status] == '3'
             -# Paid Ticket
             %strong= "Total: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
