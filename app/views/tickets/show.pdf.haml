@@ -131,6 +131,21 @@
           %td= number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight'], precision: 2, strip_insignificant_zeros: true)
           %td= number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight'], precision: 2, strip_insignificant_zeros: true)
           %td= number_with_precision(@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight'], precision: 2, strip_insignificant_zeros: true)
+          - line_item = @ticket["TicketItemCollection"]["ApiTicketItem"]
+          - unless line_item["DeductionCollection"].blank?
+            - if line_item["DeductionCollection"].is_a? Hash # Only one line item deduction
+              = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
+              = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
+              = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
+              = number_with_precision(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
+            - else
+              - line_item["DeductionCollection"].each do |line_item_deduction|
+                = line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
+                = number_to_currency(line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
+                = line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
+                = number_with_precision(line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"].blank?
+          - else
+            None
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']
           %td= "$#{number_with_precision(@ticket['TicketItemCollection']['ApiTicketItem']['Price'])}"
           - unless @ticket["TicketItemCollection"]["ApiTicketItem"]['TaxCollection'].blank? # Taxes
