@@ -264,7 +264,7 @@
                   = hidden_field_tag "ticket[line_items][][status]", nil
                   =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
-                  = select_tag "ticket[line_items][][commodity]", [], prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
+                  = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   %br
                   %div.input-group.gross_input_group
                     - current_user.scale_devices.each do |scale_device|
