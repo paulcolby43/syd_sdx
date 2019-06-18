@@ -73,3 +73,14 @@
         %li.pull-right
           %a.text-muted{"aria-controls" => "collapse#{id}", "data-toggle" => "collapse", :href => "#collapse_#{id}", class: 'pull-right ticket_collapse_link' }
             %i.fa.fa-check-square.fa-2x.collapse_icon
+
+:javascript
+  $('.item_select').select2({
+    theme: 'bootstrap',
+    minimumInputLength: 2,
+    ajax: {
+      url: '/commodities',
+      dataType: 'json',
+      delay: 250
+    }
+  });

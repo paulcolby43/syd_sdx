@@ -839,6 +839,15 @@ jQuery ->
       dataType: 'json'
       delay: 250
 
+  # Dropdown select for ticket commodities
+  $('.item_select').select2
+    theme: 'bootstrap'
+    minimumInputLength: 2
+    ajax:
+      url: '/commodities'
+      dataType: 'json'
+      delay: 250
+
   ### Customer ID changed ###
   $('#ticket_customer_id').on 'change', ->
     input_select = $(this)

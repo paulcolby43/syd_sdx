@@ -20,10 +20,23 @@ class CommoditiesController < ApplicationController
       results = Commodity.all(current_user.token, current_yard_id)
 #      results = Commodity.all_disabled(current_user.token, current_yard_id) if @status == 'disabled'
     end
-    unless results.blank?
-      @commodities = Kaminari.paginate_array(results).page(params[:page]).per(25)
-    else
-      @commodities = []
+    respond_to do |format|
+      format.html {
+        unless results.blank?
+          @commodities = Kaminari.paginate_array(results).page(params[:page]).per(25)
+        else
+          @commodities = []
+        end
+      }
+      format.json {
+        unless results.blank?
+          @commodities = results.collect{ |commodity| {id: commodity['Id'], text: "#{commodity['PrintDescription']} (#{commodity['Code']})"} }
+        else
+          @commodities = nil
+        end
+        Rails.logger.info "results: {#{@commodities}}"
+        render json: {results: @commodities}
+      }
     end
   end
   
