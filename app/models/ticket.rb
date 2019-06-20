@@ -366,9 +366,11 @@ class Ticket
   end
   
   # Update an existing ticket
-  def self.void(auth_token, yard_id, ticket)
+#  def self.void(auth_token, yard_id, ticket)
+  def self.void(auth_token, yard_id, ticket_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
+    ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
       payload: {
