@@ -357,11 +357,11 @@
           %div.col-xs-3.col-sm-3
             = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
             - unless mobile_device?
-              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id'], combolists: @combolists), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
                 %i.fa.fa-plus
                 Item
             - else
-              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id'], combolists: @combolists), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
                 %i.fa.fa-plus
                 Item
         %div.col-xs-3.col-sm-3
