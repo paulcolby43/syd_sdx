@@ -834,6 +834,11 @@ jQuery ->
   $('#ticket_customer_id').select2
     theme: 'bootstrap'
     minimumInputLength: 3
+    language: noResults: ->
+      #'No customers found. <button onclick="open_new_customer_modal(); " class="btn btn-primary btn-sm">Create</button>'
+      'No customers found. <a href = "/customers/new" class="btn btn-primary btn-sm" target="_blank;">Create</a>'
+    escapeMarkup: (markup) ->
+      markup
     ajax:
       url: '/customers'
       dataType: 'json'

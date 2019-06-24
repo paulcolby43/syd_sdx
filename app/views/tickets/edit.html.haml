@@ -68,6 +68,7 @@
             .panel-body
               = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", style: "width: 100%;", required: true
               = hidden_field_tag "ticket[description]", "#{@ticket['Description'].blank? ? "" : @ticket['Description']}"
+              =# render partial: 'new_customer_modal'
       - unless @line_items.blank?
         / Line items
         %div.ticket_input_fields_wrap
@@ -437,3 +438,10 @@
                   %small.text-muted= image['EVENT_CODE']
     
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}
+
+:javascript
+  var open_new_customer_modal;
+  open_new_customer_modal = function() {
+    $('#new_customer_modal').modal('show');
+    $('#ticket_customer_id').select2("close");
+  };
