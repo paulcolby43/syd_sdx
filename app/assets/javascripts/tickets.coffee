@@ -836,7 +836,7 @@ jQuery ->
     minimumInputLength: 3
     language: noResults: ->
       #'No customers found. <button onclick="open_new_customer_modal(); " class="btn btn-primary btn-sm">Create</button>'
-      'No customers found. <a href = "/customers/new" class="btn btn-primary btn-sm" target="_blank;">Create</a>'
+      'No customers found. <a href = "/customers/new" target="_blank;"><i class="fa fa-plus"></i> Add</a>'
     escapeMarkup: (markup) ->
       markup
     ajax:
