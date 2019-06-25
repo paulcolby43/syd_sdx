@@ -352,8 +352,12 @@
                     .pull-right
                       %a.text-muted{"aria-controls" => "collapse#{new_item_id}", "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", class: 'pull-right ticket_collapse_link' }
                         %i.fa.fa-check-square.fa-2x.collapse_icon
-      
-      .row.form-group
+      .row.form-group{id: 'calculating', style: 'display:none;'}
+        %div.col-xs-12
+          %h3.text-center
+            %i.fa.fa-spinner.fa-spin.fa-2x
+            Calculating...
+      .row.form-group{id: 'hold_close_pay_buttons'}
         - unless @ticket['Status'] == '3'
           %div.col-xs-3.col-sm-3
             = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
