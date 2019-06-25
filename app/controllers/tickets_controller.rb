@@ -11,7 +11,7 @@ class TicketsController < ApplicationController
     @start_date = params[:start_date]
     @end_date = params[:end_date]
     @sort_column = params[:sort_column] ||= 'DateCreated'
-    @sort_direction = params[:sort_direction] ||= 'Ascending'
+    @sort_direction = params[:sort_direction] ||= @status == '3' ? 'Descending' : 'Ascending'
 #    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
