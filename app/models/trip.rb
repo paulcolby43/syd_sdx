@@ -8,6 +8,7 @@ class Trip
   #     Class Methods         #
   #############################
   
+  # User/driver-specific dispatch info
   def self.dispatch_info_by_user_guid(auth_token)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -20,7 +21,8 @@ class Trip
     return data["MobileDispatchInformation"]
   end
   
-  def self.all_trips(dispatch_information)
+  # User/driver-specific trips
+  def self.all_by_user(dispatch_information)
     unless dispatch_information.blank? or dispatch_information["Trips"].blank? or dispatch_information["Trips"]["MobileDispatchTripInformation"].blank?
       if dispatch_information["Trips"]["MobileDispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
         return [dispatch_information["Trips"]["MobileDispatchTripInformation"]]
@@ -30,6 +32,63 @@ class Trip
     else
       # No trips
       return [] 
+    end
+  end
+  
+  def self.search(auth_token, status, driver_id, start_date)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/gettrips"
+    payload = {
+      "statuses" => status.blank? ? [] : [status],
+      "startingdate"=> start_date.blank? ? nil : "#{start_date}T00:00:00", 
+      "driverId"=> driver_id
+      }
+    json_encoded_payload = JSON.generate(payload)
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+    payload: json_encoded_payload)
+#    Rails.logger.info "Trip.search payload: #{json_encoded_payload}"
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "Trip.search results: #{data}"
+    unless data["ApiGetDispatchTripsResponse"].blank? or data["ApiGetDispatchTripsResponse"]["Trips"].blank? or data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"].blank?
+      if data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"]]
+      else
+        return data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"]
+      end
+    else
+      # No trips
+      return [] 
+    end
+  end
+  
+  def self.find(auth_token, trip_id)
+    trips = Trip.search(auth_token, nil, nil, nil)
+    trip = trips.find {|trip| trip['Id'] == trip_id}
+    return trip
+  end
+  
+  def self.service_request_tasks(trip)
+    unless trip["Tasks"].blank? or trip["Tasks"]["DispatchTaskInformation"].blank?
+      if trip["Tasks"]["DispatchTaskInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [trip["Tasks"]["DispatchTaskInformation"]]
+      else # Array of results returned
+        return trip["Tasks"]["DispatchTaskInformation"]
+      end
+    else
+      return []
+    end
+  end
+  
+  def self.service_requests(trip)
+    unless trip["WorkOrders"].blank? or trip["WorkOrders"]["WorkOrderTripRelatedListInformation"].blank?
+      if trip["WorkOrders"]["WorkOrderTripRelatedListInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [trip["WorkOrders"]["WorkOrderTripRelatedListInformation"]]
+      else # Array of results returned
+        return trip["WorkOrders"]["WorkOrderTripRelatedListInformation"]
+      end
+    else
+      return []
     end
   end
   
@@ -49,7 +108,7 @@ class Trip
     end
   end
   
-  def self.find(auth_token, trip_id)
+  def self.find_by_user_guid(auth_token, trip_id)
     trips = Trip.find_all_by_user_guid(auth_token)
     # Find trip within array of hashes
     trip = trips.find {|trip| trip['Id'] == trip_id}
@@ -117,6 +176,96 @@ class Trip
       else # Array of results returned
         return dispatch_information["ContainerTypes"]["ContainerTypeInformation"]
       end
+    else
+      return []
+    end
+  end
+  
+  def self.task_type_functions(auth_token)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/dispatchtasktypefunctions"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "*************Trip.task_type_functions: #{data}"
+    unless data["ApiGetDispatchTaskTypeFunctionListResponse"].blank? or data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"].blank? or data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"].blank?
+      return data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
+    else
+      return []
+    end
+  end
+  
+  def self.create(auth_token, yard_id, driver_id, customer_id, task_type_function_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/AddServiceRequest"
+    
+    payload = {
+      "driverId" => driver_id,
+      "customerId"=> customer_id, 
+      "taskTypeFunctionId"=> task_type_function_id, 
+      "yardId"=> yard_id, 
+      }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info "Trip.add_service_request payload #{json_encoded_payload}"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    
+    Rails.logger.info "Trip.create response: #{response}"
+    data= Hash.from_xml(response)
+    unless data["ApiAddDispatchWorkOrderResponse"].blank?
+      return data["ApiAddDispatchWorkOrderResponse"]
+    else
+      return nil
+    end
+  end
+  
+  def self.update_driver(auth_token, trip_id, driver_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}api/dispatch/updatetrip?tripId=#{trip_id}&driverId=#{driver_id}&voidTrip={bool}&voidWorkOrder={bool}"
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&driverId=#{driver_id}"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    
+    Rails.logger.info "Trip.update_driver response: #{response}"
+    data= Hash.from_xml(response)
+    unless data["ApiUpdateDispatchTripResponse"].blank?
+      return data["ApiUpdateDispatchTripResponse"]
+    else
+      return nil
+    end
+  end
+  
+  def self.void(auth_token, trip_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&voidTrip=true&voidWorkOrder=true"
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/updatetrip?tripId=#{trip_id}&voidTrip=true"
+    
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    
+    Rails.logger.info "Trip.void response: #{response}"
+    data= Hash.from_xml(response)
+    unless data["ApiUpdateDispatchTripResponse"].blank?
+      return data["ApiUpdateDispatchTripResponse"]
+    else
+      return nil
+    end
+  end
+  
+  def self.drivers(auth_token)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/dispatch/drivers"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "*************Trip.drivers: #{data}"
+    unless data["ApiGetDispatchDriverListResponse"].blank? or data["ApiGetDispatchDriverListResponse"]["DriverList"].blank? or data["ApiGetDispatchDriverListResponse"]["DriverList"]["DriverListInformation"].blank?
+      return data["ApiGetDispatchDriverListResponse"]["DriverList"]["DriverListInformation"]
     else
       return []
     end

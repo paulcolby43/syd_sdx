@@ -3,15 +3,14 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          = link_to root_path do
-            Home
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to root_path do
+              %i.fa.fa-chevron-left
+              Home
         .col-xs-4.col-sm-4
           = title
         .col-xs-4.col-sm-4
-          %a{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
-            - unless mobile_device?
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            %a{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' Customer'}"}}
               %i.fa.fa-user-plus.fa-lg
-              = "Customer" 
-            - else
-              .pull-right
-                %i.fa.fa-user-plus.fa-lg
+              = "Customer" unless mobile_device?

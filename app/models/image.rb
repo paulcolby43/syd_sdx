@@ -269,7 +269,6 @@ class Image < ActiveRecord::Base
     Rails.logger.debug "*********** Image.api_find_all_by_service_request_number response: #{response}"
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
-    
     unless data["RESULT"]["ROW"].blank?
       if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
         return [data["RESULT"]["ROW"]]
@@ -281,6 +280,47 @@ class Image < ActiveRecord::Base
     end
   end
   
+  # Get all jpegger images for this company with this ticket number
+  def self.api_find_all_by_container_number_and_service_request_number(container_number, service_request_number, company, yard_id)
+    require 'socket'
+    host = company.jpegger_service_ip
+    port = company.jpegger_service_port
+    
+    # SQL command that gets sent to jpegger service
+    command = "<FETCH><SQL>select * from images where container_nbr='#{container_number}' and service_req_nbr='#{service_request_number}' and yardid='#{yard_id}'</SQL><ROWS>1000</ROWS></FETCH>"
+    
+    # SSL TCP socket communication with jpegger
+    tcp_client = TCPSocket.new host, port
+    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+    ssl_client.connect
+    ssl_client.sync_close = true
+    ssl_client.puts command
+#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+
+    results = ""
+    while response = ssl_client.sysread(1000) # Read 1000 bytes at a time
+      results = results + response
+#      puts response
+      break if (response.include?("</RESULT>"))
+    end
+    
+    ssl_client.close
+    
+#    Rails.logger.debug "***********Image.api_find_all_by_container_number_and_service_request_number results #{results}"
+    data= Hash.from_xml(results.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
+    
+    unless data["RESULT"]["ROW"].blank?
+      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["RESULT"]["ROW"]]
+      else
+        return data["RESULT"]["ROW"]
+      end
+    else
+      return [] # No images found
+    end
+    
+  end
+  
   def self.jpeg_image_data_uri(jpeg_image)
     unless jpeg_image.blank?
       "data:image/jpg;base64, #{Base64.encode64(jpeg_image)}"
@@ -288,6 +328,35 @@ class Image < ActiveRecord::Base
       nil
     end
   end
+  
+  def self.latitude_and_longitude(company, capture_sequence_number, yard_id)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
+    begin
+      data = Exif::Data.new(open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE))
+
+      latitude = data.gps_latitude
+      longitude = data.gps_longitude
+      latitude_ref = data.gps_latitude_ref
+      longitude_ref = data.gps_longitude_ref
+
+      latitude_decimal = latitude.blank? ? nil : (latitude[0] + latitude[1]/60 + latitude[2]/3600).to_f.round(6)
+      longitude_decimal = longitude.blank? ? nil : (longitude[0] + longitude[1]/60 + longitude[2]/3600).to_f.round(6)
+
+      unless latitude_decimal.blank? or longitude_decimal.blank?
+        return "#{latitude_decimal} #{latitude_ref},#{longitude_decimal} #{longitude_ref}"
+      else
+        return ""
+      end
+    rescue => e
+      Rails.logger.info "Image.latitude_and_longitude: #{e}"
+      return ""
+    end
+  end
+  
+  def Image.google_map(center)
+    return "https://www.google.com/maps/embed/v1/place?key=#{ENV['GOOGLE_MAPS_API_KEY']}&q=#{center}&zoom=19"
+  end
   
 end

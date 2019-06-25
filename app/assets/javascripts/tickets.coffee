@@ -39,8 +39,13 @@ jQuery ->
               $('.tax').each ->
                 sum += Number($(this).val())
                 return
-              $('#total').text '$' + sum.toFixed(2)
-              $('#payment_amount').val sum.toFixed(2)
+              # Add up deduction dollar amounts
+              deduction_dollar_amount = 0
+              $('.deduction_dollar_amount').each ->
+                deduction_dollar_amount += Number($(this).val())
+                return
+              $('#total').text '$' + (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+              $('#payment_amount').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
             error: ->
               spinner_icon.hide()
               trash_icon.show()
@@ -57,8 +62,13 @@ jQuery ->
           $('.tax').each ->
             sum += Number($(this).val())
             return
-          $('#total').text '$' + sum.toFixed(2)
-          $('#payment_amount').val sum.toFixed(2)
+          # Add up deduction dollar amounts
+          deduction_dollar_amount = 0
+          $('.deduction_dollar_amount').each ->
+            deduction_dollar_amount += Number($(this).val())
+            return
+          $('#total').text '$' + (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
+          $('#payment_amount').val (parseFloat(sum) - parseFloat(deduction_dollar_amount)).toFixed(2)
         return
       else
         e.preventDefault()
@@ -101,9 +111,14 @@ jQuery ->
     $('.tax').each ->
       sum += Number($(this).val())
       return
-    $('#total').text '$' + sum.toFixed(2)
-    $('#ticket_total').val sum.toFixed(2)
-    $('#payment_amount').val sum.toFixed(2)
+    # Add up deduction dollar amounts
+    #deduction_dollar_amount = 0
+    #$('.deduction_dollar_amount').each ->
+    #  deduction_dollar_amount += Number($(this).val())
+    #  return
+    $('#total').text '$' + (parseFloat(sum)).toFixed(2)
+    $('#ticket_total').val (parseFloat(sum)).toFixed(2)
+    $('#payment_amount').val (parseFloat(sum)).toFixed(2)
     return
 
   # Automatically highlight field value when focused
@@ -205,6 +220,14 @@ jQuery ->
     changed_field = $(this)
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
+    line_item_dollar_amount_deductions_total = 0
+    $(this).closest('.panel').find('.deduction_dollar_amount').each ->
+      line_item_dollar_amount_deductions_total += Number($(this).val())
+      return
+    line_item_weight_deductions_total = 0
+    $(this).closest('.panel').find('.deduction_weight').each ->
+      line_item_weight_deductions_total += Number($(this).val())
+      return
     if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').length
       tax_percent_1 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').val()
     else 
@@ -217,7 +240,7 @@ jQuery ->
       tax_percent_3 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_3').val()
     else 
       tax_percent_3 = '0.00'
-    net = (parseFloat(gross) - parseFloat(tare)).toFixed(2)
+    net = (parseFloat(gross) - parseFloat(tare) - parseFloat(line_item_weight_deductions_total)).toFixed(2)
     changed_field.closest('.panel').find('#ticket_line_items__net').val net
     changed_field.closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
     changed_field.closest('.panel').find('#tare_picture_button:first').attr 'data-weight', tare
@@ -243,7 +266,7 @@ jQuery ->
         success: (data) ->
           new_weight = data.new_weight
           console.log 'new_weight', data
-          amount = (parseFloat(price) * parseFloat(new_weight)).toFixed(2)
+          amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
           console.log 'amount:', amount
           changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
 
@@ -256,12 +279,15 @@ jQuery ->
           changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
           changed_field.closest('.panel').find('#ticket_line_items__tax_amount_3').val tax_amount_3
           
+          # Update calculation details in panel footer
+          changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
+          if line_item_dollar_amount_deductions_total > 0
+            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Less:</strong> $' + line_item_dollar_amount_deductions_total
+          if line_item_weight_deductions_total > 0
+            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Less:</strong> ' + line_item_weight_deductions_total + ' LB'
           if total_tax_amount > 0
-            # Show tax amount
-            changed_field.closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount + ' + ' + '$' + total_tax_amount + ' (tax)'
-          else
-            # Don't show tax amount
-            changed_field.closest('.panel').find('.calculation_details').text '(' + gross + ' - ' + tare + ') ' + '= ' + net + 'LB' + ' x '  + '$' + price + '/' + unit_of_measure + ' = ' + '$' + amount
+            changed_field.closest('.panel').find('.tax_details').html '<strong>Taxes:</strong> $' + total_tax_amount
+              
           sum = 0;
           # Add up amounts
           $('.amount').each ->
@@ -271,9 +297,15 @@ jQuery ->
           $('.tax').each ->
             sum += Number($(this).val())
             return
-          $('#total').text '$' + sum.toFixed(2)
-          $('#ticket_total').val sum.toFixed(2)
-          $('#payment_amount').val sum.toFixed(2)
+          
+          # Add up deduction dollar amounts
+          #deduction_dollar_amount = 0
+          #$('.deduction_dollar_amount').each ->
+          #  deduction_dollar_amount += Number($(this).val())
+          #  return
+          $('#total').text '$' + (parseFloat(sum)).toFixed(2)
+          $('#ticket_total').val (parseFloat(sum)).toFixed(2)
+          $('#payment_amount').val (parseFloat(sum)).toFixed(2)
           return
         error: ->
           alert 'Error getting commodity unit of measure conversion.'
@@ -296,7 +328,8 @@ jQuery ->
   $('input[type=file]').bootstrapFileInput()
 
   ### File upload ###
-  $("#new_image_file").fileupload
+  #$("#new_image_file").fileupload
+  $(".image_file_upload_form").fileupload
     dataType: "script"
     disableImageResize: false
     imageMaxWidth: 1024
@@ -801,8 +834,22 @@ jQuery ->
   $('#ticket_customer_id').select2
     theme: 'bootstrap'
     minimumInputLength: 3
+    language: noResults: ->
+      #'No customers found. <button onclick="open_new_customer_modal(); " class="btn btn-primary btn-sm">Create</button>'
+      'No customers found. <a href = "/customers/new" target="_blank;"><i class="fa fa-plus"></i> Add</a>'
+    escapeMarkup: (markup) ->
+      markup
     ajax:
       url: '/customers'
+      dataType: 'json'
+      delay: 250
+
+  # Dropdown select for ticket commodities
+  $('.item_select').select2
+    theme: 'bootstrap'
+    minimumInputLength: 2
+    ajax:
+      url: '/commodities'
       dataType: 'json'
       delay: 250
 
@@ -823,7 +870,7 @@ jQuery ->
     $('#upload_button').show()
 
   ### VIN Search ###
-  $(document).on 'click', '.vin_search_button', (e) ->
+  $(wrapper).on 'click', '.vin_search_button', (e) ->
     modal = $(this).closest('.modal')
     vin_number = modal.find('#vin_number').val()
     results_div = modal.find('#results')
@@ -944,4 +991,103 @@ jQuery ->
       modal = $(this).closest('.modal')
       search_button = modal.find('.vin_search_button')
       search_button.click()
+    return
+
+  ### Start VIN Barcode Scanner ###
+  order_by_occurrence = (arr) ->
+    counts = {}
+    arr.forEach (value) ->
+      if !counts[value]
+        counts[value] = 0
+      counts[value]++
+      return
+    Object.keys(counts).sort (curKey, nextKey) ->
+      counts[curKey] < counts[nextKey]
+
+  load_vin_barcode_scanner = (item_id) ->
+    barcode_scanner_div = "#vin_barcode_scanner_" + item_id
+    if $(barcode_scanner_div).length > 0 and navigator.mediaDevices and typeof navigator.mediaDevices.getUserMedia == 'function'
+      last_result = []
+      if Quagga.initialized == undefined
+        Quagga.onProcessed (result) ->
+          drawingCtx = Quagga.canvas.ctx.overlay
+          drawingCanvas = Quagga.canvas.dom.overlay
+          if result
+            if result.boxes
+              drawingCtx.clearRect 0, 0, parseInt(drawingCanvas.getAttribute('width')), parseInt(drawingCanvas.getAttribute('height'))
+              result.boxes.filter((box) ->
+                box != result.box
+              ).forEach (box) ->
+                Quagga.ImageDebug.drawPath box, {
+                  x: 0
+                  y: 1
+                }, drawingCtx,
+                  color: 'green'
+                  lineWidth: 3
+                return
+            if result.box
+              Quagga.ImageDebug.drawPath result.box, {
+                x: 0
+                y: 1
+              }, drawingCtx,
+                color: '#00F'
+                lineWidth: 3
+            if result.codeResult and result.codeResult.code
+              Quagga.ImageDebug.drawPath result.line, {
+                x: 'x'
+                y: 'y'
+              }, drawingCtx,
+                color: 'red'
+                lineWidth: 4
+          return
+        Quagga.onDetected (result) ->
+          last_code = result.codeResult.code
+          last_result.push last_code
+          if last_result.length > 20
+            code = order_by_occurrence(last_result)[0]
+            last_result = []
+            console.log code
+            console.log result.codeResult.format
+            $('.vin_search_field').val(code)
+            Quagga.stop()
+            $('.vin_barcode_scanner').empty()
+          return
+      Quagga.init {
+        inputStream:
+          name: 'Live'
+          type: 'LiveStream'
+          numOfWorkers: navigator.hardwareConcurrency
+          target: document.querySelector(barcode_scanner_div)
+        decoder: readers: [
+          #'ean_reader'
+          #'ean_8_reader'
+          'code_39_reader'
+          'code_39_vin_reader'
+          #'codabar_reader'
+          #'upc_reader'
+          #'upc_e_reader'
+        ]
+      }, (err) ->
+        if err
+          console.log err
+          return
+        Quagga.initialized = true
+        Quagga.start()
+        return
+    return
+
+  #$('.car_details').on 'click', '.vin_barcode_search_button', (e) ->
+  $(document).on 'click', '.vin_barcode_search_button', (e) ->
+    $('.vin_search_field').val('')
+    item_id = $(this).data( "item-id" )
+    load_vin_barcode_scanner(item_id)
+  
+  ### End VIN Barcode Scanner ###
+
+  ### Don't submit form if press enter key when in the serial number field ###
+  $(document).on 'keydown', '.serial_number_field', (e) ->
+    code = e.keyCode or e.which
+    if code == 13 and !jQuery(e.target).is('textarea,input[type="submit"],input[type="button"]')
+      e.preventDefault()
+      return false
     return

@@ -135,7 +135,11 @@ class Company < ActiveRecord::Base
   end
   
   def signature_event_code
-    event_codes.where(name: "Signature").first
+    event_codes.where(name: ["Signature", "SIGNATURE", "SIGNATURE CAPTURE"]).first
+  end
+  
+  def container_event_code
+    event_codes.where(name: "Container").first
   end
   
   def gross_event_code_id
@@ -157,6 +161,14 @@ class Company < ActiveRecord::Base
   def signature_event_code_id
     unless signature_event_code.blank?
       signature_event_code.id
+    else
+      nil
+    end
+  end
+  
+  def container_event_code_id
+    unless container_event_code.blank?
+      container_event_code.id
     else
       nil
     end

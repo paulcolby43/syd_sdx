@@ -3,7 +3,7 @@ $('#more_customers_spinner').hide();
 
 <% if @customers.next_page %>
   $('a.load-more-customers').show();
-  $('a.load-more-customers').attr('href', '<%= customers_path page: @customers.next_page, q: params[:q] %>');
+  $('a.load-more-customers').attr('href', '<%= customers_path page: @customers.next_page, q: params[:q], yard_filter: params[:yard_filter] %>');
 <% else %>
   $(window).off('scroll');
   $('a.load-more-customers').attr('href', '#');

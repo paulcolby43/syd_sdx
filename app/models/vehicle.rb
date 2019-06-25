@@ -15,8 +15,9 @@ class Vehicle
     begin
       xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
           :content_type => 'application/json', :Accept => "application/xml"})
-      data= Hash.from_xml(xml_content)
-#      Rails.logger.info data
+#      data= Hash.from_xml(xml_content)
+      data= Hash.from_xml(xml_content.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
+      Rails.logger.info data
 
       return data["GetVehicleComboListsResponse"]
     rescue RestClient::ExceptionWithResponse => e

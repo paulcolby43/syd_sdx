@@ -50,6 +50,12 @@ class ImageFileUploader < CarrierWave::Uploader::Base
   
   def caption
     # top caption
+    unless model.event_code_id.blank?
+      event_code = EventCode.find(model.event_code_id)
+      event_code_name = event_code.name
+    else
+      event_code_name = model.event_code
+    end
     manipulate! do |source|
       txt = Magick::Draw.new
       txt.pointsize = 20
@@ -58,7 +64,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
       txt.stroke = "#000000"
       txt.fill = "#F3F315"
       txt.font_weight = Magick::BoldWeight
-      caption = "#{model.customer_name} #{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{model.event_code.name}"
+      caption = "#{model.customer_name} #{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{event_code_name}"
       source.annotate(txt, 0, 0, 0, 20, caption)
     end
 
@@ -121,7 +127,11 @@ class ImageFileUploader < CarrierWave::Uploader::Base
 #      txt.stroke = "#000000"
 #      txt.fill = "#F3F315"
       txt.font_weight = Magick::LighterWeight
-      caption = "#{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} \\n Customer: #{model.customer_name}"
+      if model.container_number.blank?
+        caption = "#{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} \\n Customer: #{model.customer_name}"
+      else
+        caption = "#{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Container: #{model.container_number} \\n Customer: #{model.customer_name}"
+      end
       source.annotate(txt, 0, 0, 0, 0, caption)
     end
   end
@@ -173,15 +183,30 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     end
     
     def not_signature?(file)
-      return model.event_code.name != "Signature"
+      unless model.event_code_id.blank?
+        event_code = EventCode.find(model.event_code_id)
+        return event_code.name != "Signature"
+      else
+        return true
+      end
     end
     
     def should_process_caption?(file)
-      (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and model.event_code.name != "SIGNATURE CAPTURE"
+      unless model.event_code_id.blank?
+        event_code = EventCode.find(model.event_code_id)
+        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and event_code.name != "SIGNATURE CAPTURE" and event_code.name != "Signature"
+      else
+        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile")
+      end
     end
     
     def should_process_contract?(file)
-      (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and model.event_code.name == "SIGNATURE CAPTURE"
+      unless model.event_code_id.blank?
+        event_code = EventCode.find(model.event_code_id)
+        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile") and (event_code.name == "SIGNATURE CAPTURE" or event_code.name == "Signature")
+      else
+        (model.class.name == "ImageFile" or model.class.name == "ShipmentFile")
+      end
     end
 
 end

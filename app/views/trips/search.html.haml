@@ -1,0 +1,183 @@
+= render partial: "shared/navbars/trips_search_navbar", locals: {title: "Trip Search"}
+- @title="Trip Search"
+  
+.container
+  %br
+  %br
+  = form_tag search_trips_path, :method => 'get', :class => "form-inline" do
+    .form-group
+      = label_tag "Status", nil, :class => 'control-label'
+      = select_tag 'trip[status]', options_for_select([['All'], ['Planned', '0'], ['Started', '1'], ['Completed', '2'], ['Canceled', '3'], ['Rescheduled', '4'], ['Deployed', '5'], ['Merged', '6']], @status), class: "form-control"
+    .form-group
+      = label_tag "Driver", nil, :class => 'control-label'
+      = select_tag 'trip[driver_id]', options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }.insert(0,'All'), @driver_id), class: "form-control"
+    .form-group
+      = label_tag "Start", nil, :class => 'control-label'
+      = text_field_tag 'trip[start_date]', nil, :placeholder => "Start Date", value: @start_date, class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+    .form-group
+      = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+        %i.fa.fa-search
+        Search
+  %hr
+  
+  - unless @trips.blank?
+    .table-responsive
+      %table.table.table-striped
+        %thead
+          %tr
+            %th 
+              %strong #
+            %th
+              Customer
+            %th 
+              %strong Status
+            %th 
+              %strong Date
+            %th 
+              %strong Driver
+            %th
+        %tbody
+          - @trips.sort_by{|trip| trip['BeginDate']}.each do |trip|
+            - driver = @drivers.find {|driver| driver['Id'] == trip['DriverId']}
+            - tasks = Trip.service_request_tasks(trip)
+            - service_requests = Trip.service_requests(trip)
+            %tr
+              %td= "#{trip['TripNumber']}"
+              %td
+                %a{href: "#trip_#{trip['Id']}_tasks_modal", "data-target" => "#trip_#{trip['Id']}_tasks_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_tasks_link"}
+                  - unless service_requests.blank?
+                    = truncate(service_requests.first['Customer'], length: 10)
+                    %span
+                      %small
+                        .text-muted 
+                          = service_requests.first['TaskType']
+                  - else
+                    None
+                -#
+                  %a{href: "#trip_#{trip['Id']}_tasks_modal", "data-target" => "#trip_#{trip['Id']}_tasks_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_tasks_link"}
+                    %span.badge{style: 'background-color: #5BC0DE;'}= tasks.count
+              %td= "#{trip_status_string(trip['TripStatus'])}"
+              %td= "#{trip['BeginDate'].to_datetime.strftime('%-m/%-d/%y')}"
+              %td= link_to "#{driver.blank? ? 'Unassigned' : driver['FirstName'] + ' ' + driver['LastName']}", "#trip_#{trip['Id']}_assign_driver_modal", "data-target" => "#trip_#{trip['Id']}_assign_driver_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_assign_driver_link", class: 'btn btn-default'
+              -#
+                %td
+                  %a{href: "#trip_#{trip['Id']}_service_requests_modal", "data-target" => "#trip_#{trip['Id']}_service_requests_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_service_requests_link"}
+                    %span.badge{style: 'background-color: #5BC0DE;'}= service_requests.count
+
+              .modal.fade{id: "trip_#{trip['Id']}_assign_driver_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                .modal-dialog.modal-sm{:role => "document"}
+                  .modal-content
+                    .modal-header
+                      %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                        %span{"aria-hidden" => "true"} ×
+                      %strong= "Assign Driver"
+                    .modal-body
+                      = form_tag trip_path(id: trip["Id"]), method: 'put', :class => "form-horizontal" do
+                        .row.form-group
+                          %div{:class => "col-sm-12 col-md-12"}
+                            = select_tag "trip[driver_id]", options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }, trip['DriverId']), prompt: 'Unassigned', class: "form-control input-lg"  
+                        .modal-footer
+                          %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Cancel
+                          = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}) do
+                            Update
+
+              .modal.fade{id: "trip_#{trip['Id']}_tasks_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                .modal-dialog.modal-sm{:role => "document"}
+                  .modal-content
+                    .modal-header
+                      %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                        %span{"aria-hidden" => "true"} ×
+                      %strong= "Trip #{trip['TripNumber']}"
+                    .modal-body
+                      - service_requests.each do |service_request|
+                        %li.list-group-item.list-group-item-info
+                          =# service_request['WorkOrderNumber']
+                          = service_request['Customer']
+                          %small
+                            .text-muted 
+                              %div= service_request['TaskType']
+                      - tasks.sort_by {|task| task['Sequence']}.each do |task|
+                        %li{class: "list-group-item #{task_status_color(task['TaskStatus'])}"}
+                          = task['Sequence']
+                          = task_type_string(task['TaskType'])
+                          %small
+                            .text-muted 
+                              - unless task['ToLocation'].blank? or task['ToLocation'].is_a? Hash
+                                = task['ToLocation']
+                              - else
+                                Unknown location
+                              %br
+                              %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
+                    .modal-footer
+                      %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+              
+              .modal.fade{id: "trip_#{trip['Id']}_service_requests_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                .modal-dialog.modal-sm{:role => "document"}
+                  .modal-content
+                    .modal-header
+                      %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                        %span{"aria-hidden" => "true"} ×
+                      %strong= "Trip #{trip['TripNumber']} Service Requests"
+                    .modal-body
+                      - unless service_requests.blank?
+                        - service_requests.each do |service_request|
+                          %li.list-group-item
+                            = service_request['WorkOrderNumber']
+                            = service_request['Customer']
+                            %small
+                              .text-muted 
+                                %div= service_request['TaskType']
+                      - else
+                        %p None
+                    .modal-footer
+                      %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+              %td
+                = link_to 'Show', trip_path(trip['Id']), class: 'btn btn-default'
+                =# link_to 'Edit', edit_trip_path(trip['Id']), class: 'btn btn-primary'
+                = link_to "<i class='fa fa-warning'></i> Void".html_safe, trip['Id'], :method => :delete, :data => { :confirm => 'Are you sure you want to void this Trip?' }, class: 'btn btn-danger'
+  - else
+    %p.lead None
+
+    -#
+      #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        - @service_requests.each_with_index do |service_request, index|
+          .panel.panel-default
+            .panel-heading{id: "service_request_#{index}", :role => "tab"}
+              %h4.panel-title
+                %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
+                  = "#{service_request['TripNumber']}"
+                  =# Trip.service_request_tasks(service_request).first['Customer']
+                  - driver = @drivers.find {|driver| driver['Id'] == service_request['DriverId']}
+                  - unless driver.blank?
+                    = "#{driver['FirstName']} #{driver['LastName']}"
+                  %small
+                    .text-muted
+                      %br
+                      = "#{service_request['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                      - unless service_request['EndDate'].blank? or service_request['EndDate'].is_a? Hash
+                        = " - "
+                        = "#{service_request['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                      %br
+                      - Trip.service_request_workorders(service_request).each do |workorder|
+                        = workorder
+                        =# @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
+            .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "service_request_#{index}", :role => "tabpanel"}
+              %ul.list-group
+                - Trip.service_request_tasks(service_request).each do |task|
+                  %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
+                    = task['Sequence']
+                    = task_type_string(task['TaskType'])
+                    %small
+                      .text-muted 
+                        - unless task['ToLocation'].blank?
+                          = task['ToLocation']
+                        - else
+                          7100 30th Ave N
+                        %br
+                        %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
+-#
+  - @trips.each do |trip|
+    .well
+      = trip
+
+=# render partial: "shared/new_service_request_footer_navbar", locals: {title: "Service Request"}

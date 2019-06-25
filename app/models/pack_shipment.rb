@@ -107,7 +107,7 @@ class PackShipment
     end
   end
   
-  def self.all_by_date_and_customers(auth_token, yard_id, start_date, end_date, customer_ids)
+  def self.all_by_date_and_customers(auth_token, yard_id, start_date, end_date, customer_ids) # Non-held shipments
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/getshipmentsbycustomer"
@@ -137,7 +137,7 @@ class PackShipment
     end
   end
   
-  def self.all_by_date(auth_token, yard_id, start_date, end_date)
+  def self.all_by_date(auth_token, yard_id, start_date, end_date) # Non-held shipments
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/getshipmentsbycustomer"

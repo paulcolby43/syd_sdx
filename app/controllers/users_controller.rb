@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :update_latitude_and_longitude]
   load_and_authorize_resource  param_method: :user_params, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
 
   # GET /users
@@ -14,7 +14,7 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @portal_customers = @user.portal_customers
-    @dragon_roles = @user.access_token.roles
+    @dragon_roles = @user.access_token.roles unless @user.access_token.blank?
   end
 
   # GET /users/new
@@ -157,7 +157,10 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
+      format.html { 
+        flash[:success] = 'User was successfully destroyed.'
+        redirect_to users_url 
+        }
       format.json { head :no_content }
     end
   end
@@ -194,6 +197,18 @@ class UsersController < ApplicationController
         flash[:danger] = "Email address not found."
       end
       redirect_to root_path
+    end
+  end
+  
+  # GET /users/1/update_latitude_and_longitude
+  # GET /users/1/update_latitude_and_longitude.json
+  def update_latitude_and_longitude
+    respond_to do |format|
+      if @user.update(latitude: params[:latitude], longitude: params[:longitude])
+        format.json { head :no_content }
+      else
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
     end
   end
   

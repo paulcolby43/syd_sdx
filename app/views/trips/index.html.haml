@@ -3,6 +3,16 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    %btn.btn.btn-primary#watch_me{:onclick => "getLocation()"}
+      %i.fa.fa-location-arrow
+      Watch Position
+    %p#demo
+    
+
+    -#
+      %a.btn.btn-primary#track_location Track location
+      %p#demo
+
     -#
       - @containers.each do |container|
         .well
@@ -16,19 +26,19 @@
                 &nbsp;
                 %a{href: nil, class: 'hide_trip_icon'}
                   %i.fa.fa-times-circle
-              %h4.panel-title
+              .panel-title
                 %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{index}", :role => "button"}
                   = "#{trip['TripNumber']}"
                   = Trip.tasks(trip).first['Customer']
                   %small
                     .text-muted
                       %br
-                      = "#{trip['BeginDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                      = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%m/%d/%y %l:%M:%S%P')}"
                       - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
                         = " - "
-                        = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                        = "#{trip['EndDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%m/%d/%y %l:%M:%S%P')}"
                       %br
-                      - Trip.workorders(trip).each do |workorder|
+                      - Trip.workorders(trip).reverse.each do |workorder|
                         = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
                 %br
                 %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
@@ -49,8 +59,9 @@
                         %br
                         %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
                   / Modal
-                  .modal.fade{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
-                    .modal-dialog{class: "#{mobile_device? ? '' : 'modal-sm'}", :role => "document"}
+                  .modal{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                    -# .modal-dialog{class: "#{mobile_device? ? '' : 'modal-lg'}", :role => "document"}
+                    .modal-dialog{:role => "document"}
                       .modal-content
                         .modal-body
                           %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
@@ -64,3 +75,81 @@
       %p.text-center No trips found
 
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}
+
+:javascript
+  var map;
+  function initialize() {
+    // Get all maps with ".containers_map"
+    var maps = document.getElementsByClassName("containers_map");
+
+    var ids, gps, mapId = '';
+
+    // Loop: Explore all elements with "containers_map" and create a new Google Map object for each
+    for(var i=0; i<maps.length; i++) {
+
+      //var coords = [
+      //    {lat: 42.178232, lng: -122.670078},
+      //    {lat: 42.182794, lng: -122.679565},
+      //];
+
+      // Get ID of single div
+      mapId = document.getElementById(maps[i].id);
+      var containers = eval(mapId.getAttribute('container-coordinates-hashes-array'));
+      //console.log("containers", containers);
+      //console.log("length", containers.length);
+
+      if(containers.length > 0){
+        // Create new Google Map object for single canvas 
+        mapId.style.width = "100%";
+        mapId.style.height = "150px";
+        map = new google.maps.Map(mapId, {
+          zoom: 14,
+          center: new google.maps.LatLng(parseFloat(containers[0].lat), parseFloat(containers[0].lng)),
+          mapTypeId: 'roadmap',
+          mapTypeControl: true,
+          zoomControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_TOP
+          }
+        });
+        var infowindow = new google.maps.InfoWindow();
+        var marker, j;
+        for (j = 0; j < containers.length; j++) {
+          var container = containers[j];
+          var latlng = new google.maps.LatLng(container.lat, container.lng);
+
+          // Create new Google Marker object for new map
+          marker = new google.maps.Marker({
+            // Use our LatLng array bellow
+            position: latlng,
+            map: map,
+            title: container.number
+          });
+
+          google.maps.event.addListener(marker, 'click', (function (marker, j) {
+            return function () {
+              infowindow.setContent(marker.title);
+              infowindow.open(map, marker);
+            }
+          })(marker, j));
+        }
+      }
+    }
+  }
+
+%script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
+
+:javascript
+  var x = document.getElementById("demo");
+
+  function getLocation() {
+      if (navigator.geolocation) {
+          navigator.geolocation.watchPosition(showPosition);
+      } else { 
+          x.innerHTML = "Geolocation is not supported by this browser.";}
+      }
+
+  function showPosition(position) {
+      x.innerHTML="Lat: " + position.coords.latitude + 
+      "<br>Long: " + position.coords.longitude;
+      console.log("position changed");
+  }

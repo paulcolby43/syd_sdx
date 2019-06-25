@@ -381,7 +381,7 @@ class User < ActiveRecord::Base
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{token}", :content_type => 'application/json'})
       data= Hash.from_xml(response)
-      Rails.logger.info data
+      Rails.logger.info "Dragon Roles call response: #{data}"
       unless data["ArrayOfUserRoleInformation"].blank? or data["ArrayOfUserRoleInformation"]["UserRoleInformation"].blank?
         if data["ArrayOfUserRoleInformation"]["UserRoleInformation"].is_a? Hash # Only one result returned, so put it into an array
           return [data["ArrayOfUserRoleInformation"]["UserRoleInformation"]]

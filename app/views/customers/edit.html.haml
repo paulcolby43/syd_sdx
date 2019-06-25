@@ -4,6 +4,12 @@
 .container
   %br
   %br
+  #divLoadInfo
+    %i.fa.fa-spinner.fa-lg.fa-spin
+    Drivers License Scanner loading
+  #divScanbutton{style: 'display: none;'}
+    %input#uploadImage.btn-secondary{:accept => "image/bmp,image/jpeg,image/png,image/gif", :title => "<i class='fa fa-barcode'></i> Scan Drivers License Barcode", :type => "file"}/
+  
   %ul{class: 'list-inline'}
     - current_user.license_reader_devices.each do |license_reader_device|
       %li
@@ -100,3 +106,45 @@
             Save
 
 = render partial: "shared/edit_customer_footer_navbar", locals: {title: "Customer"}
+
+-# <script src="https://demo.dynamsoft.com/dbr_wasm/js/dbr-6.5.0.1.min.js"></script>
+<script src="#{asset_path('dbr-6.5.0.1.min.js')}"></script>
+:javascript
+  //dynamsoft.dbrEnv.resourcesPath = 'https://demo.dynamsoft.com/dbr_wasm/js';
+  //dynamsoft.dbrEnv.resourcesPath = "http://localhost:8081/assets";
+  //dynamsoft.dbrEnv.resourcesPath = "#{asset_path('assets')}";
+  dynamsoft.dbrEnv.resourcesPath = "#{asset_path('/')}";
+
+  //dynamsoft.dbrEnv.bUseWorker = true; //uncomment it to use worker
+
+  dynamsoft.dbrEnv.onAutoLoadWasmSuccess = function(){
+      //document.getElementById('divLoadInfo').innerHTML="load dbr wasm success.";
+      document.getElementById('divLoadInfo').innerHTML="";
+      document.getElementById('divScanbutton').style.display = 'block';
+  };
+  dynamsoft.dbrEnv.onAutoLoadWasmError = function(status){
+      document.getElementById('divLoadInfo').innerHTML="load wasm failed: "+status;
+  };
+  
+  //https://www.dynamsoft.com/CustomerPortal/Portal/TrialLicense.aspx
+  dynamsoft.dbrEnv.licenseKey = "t0068MgAAAF5kghIuCCwXvOgYPm3ff4uhtj9qAcpXBD2idkDkPX3cORBiyXkdD37oM3StFxaPwPyTNapr1u4SZKOaxSVxpnc=";
+  
+  document.getElementById('uploadImage').addEventListener('change', function(){
+      var files = this.files;
+      var reader = new dynamsoft.BarcodeReader();
+      var timestart = (new Date()).getTime();
+      reader.decodeFileInMemory(files[0]).then(function(results){
+          if(self.kConsoleLog)self.kConsoleLog('time cost: ' + ((new Date()).getTime() - timestart) + 'ms');
+          var txts = [];
+          for(var i=0;i<results.length;++i){
+              txts.push(results[i].BarcodeText);
+          }
+          reader.deleteInstance();
+          alert(txts.join("\n"));
+      }).catch(ex => {
+          reader.deleteInstance();
+          alert("Error: "+(ex.message || ex));
+          console.log(ex);
+      });
+      this.value = '';
+  });

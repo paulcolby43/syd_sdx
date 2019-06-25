@@ -1,0 +1,81 @@
+= render partial: "shared/navbars/new_and_edit_trip_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
+-@title= "Trip #{@trip['TripNumber']}"
+
+.container
+  %br
+  %br
+  .well.col-sm-6.col-md-4.col-md-offset-4
+    %p.lead
+      %strong Trip
+      = "#{@trip['TripNumber']}"
+    %p.lead
+      %strong Service Requests
+      - unless @service_requests.blank?
+        - @service_requests.each do |service_request|
+          %li.list-group-item
+            = service_request['WorkOrderNumber']
+            = service_request['Customer']
+            %small
+              .text-muted 
+                %div= service_request['TaskType']
+      - else
+        None
+    %p.lead
+      %strong Tasks
+      - unless @tasks.blank?
+        - @tasks.sort_by {|task| task['Sequence']}.each do |task|
+          %li{class: "list-group-item #{task_status_color(task['TaskStatus'])}"}
+            = task['Sequence']
+            = task_type_string(task['TaskType'])
+            %small
+              .text-muted 
+                - unless task['ToLocation'].blank? or task['ToLocation'].is_a? Hash
+                  = task['ToLocation']
+                - else
+                  Unknown location
+                %br
+                %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
+      - else
+        None
+    %p.lead
+      %strong Status
+      = "#{trip_status_string(@trip['TripStatus'])}"
+    %p.lead
+      %strong Start
+      = "#{@trip['BeginDate'].to_datetime.strftime('%-m/%-d/%y')}"
+    %p.lead
+      %strong Driver
+      = form_tag trip_path(id: @trip["Id"]), method: 'put', :class => "form-horizontal" do
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = select_tag "trip[driver_id]", options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }, @trip['DriverId']), prompt: 'Unassigned', class: "form-control input-lg", required: true  
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}) do
+              Update
+
+-#  
+  .container
+    %br
+    %br
+    .well.col-sm-6.col-md-4.col-md-offset-4
+      = form_tag trip_path(id: @trip["Id"]), method: 'put', :class => "form-horizontal" do
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Driver", nil, :class => 'control-label'
+            = select_tag "trip[driver_id]", options_for_select(@drivers.collect {|driver| [ "#{driver['FirstName']} #{driver['LastName']}", driver['Id'] ] }, @trip['DriverId']), prompt: 'Select driver', class: "form-control input-lg", required: true  
+        -#
+          .row.form-group
+            %div{:class => "col-sm-12 col-md-12"}
+              = label_tag "Customer", nil, :class => 'control-label'
+              = select_tag "trip[customer_id]", options_for_select(@customers.collect {|c| [ "#{(c['FirstName'].blank? or c['LastName'].blank?) ? (c['Company'].blank? ? c['CustomerNumber'] : c['Company']) : (c['FirstName'] + ' ' + c['LastName'])}", c['Id'] ] }, @customer_id), prompt: 'Select customer', class: "form-control input-lg", required: true
+          .row.form-group
+            %div{:class => "col-sm-12 col-md-12"}
+              = label_tag "Type", nil, :class => 'control-label'
+              = select_tag "trip[task_type_function_id]", options_for_select(@task_type_functions.collect {|task_type_function| [ task_type_function['Name'], task_type_function['Id'] ] }, @service_request_task_type_id), prompt: 'Select type', class: "form-control input-lg", required: true
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}) do
+              Update
+
+=# render partial: "shared/new_service_request_footer_navbar", locals: {title: "Service Request"}

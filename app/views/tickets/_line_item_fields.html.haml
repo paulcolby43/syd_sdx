@@ -1,9 +1,9 @@
-.panel.panel-default.line-item
+.panel.panel-default.line-item{style: "margin-bottom: 5px;"}
   %div.panel-heading{:role => "tab", id: "heading#{id}"}
     %h4.panel-title
       %ul{class: 'list-inline'}
         %li
-          %a.text-success.line_item_name{"aria-controls" => "collapse#{id}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse_#{id}", :role => "button", class: 'ticket_collapse_link'}
+          %a.text-primary.line_item_name{"aria-controls" => "collapse#{id}", "aria-expanded" => "true", "data-toggle" => "collapse", :href => "#collapse_#{id}", :role => "button", class: 'ticket_collapse_link'}
             Choose an item*
         %li.pull-right
           %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket_id, "data-item-id" => id, "data-commodity-id" => "", "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
@@ -33,22 +33,54 @@
       = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
       %br
       %p
-        %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
-          More
+        %small
+          %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
+            More
         %div.collapse{id: "more_#{id}"}
-          - unless @combolists.blank? # Car vehicle information lists
-            %p
-              %a.btn.btn-primary{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+          %ul{class: 'list-inline'}
+            %li
+              %a.btn.btn-default{href: "#item_#{id}_deductions_modal", id: "#item_#{id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
+                %i.fa.fa-minus-square-o.fa-lg
+                Deductions
+              = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{id}"}
+            -# unless @combolists.blank? # Car vehicle information lists
+            %li
+              %a.btn.btn-default{href: "#item_#{id}_vin_search_modal", id: 'item_#{id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
                 %i.fa.fa-car.fa-lg
                 Car
               = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
-          = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg"
+          -#
+            - unless @combolists.blank? # Car vehicle information lists
+              %p
+                %a.btn.btn-default{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                  %i.fa.fa-car.fa-lg
+                  Car
+                = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
+          = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
           %br
           = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-  %div.panel-footer
-    %ul{class: 'list-inline'}
-      %li.calculation_details
+  %div.panel-footer{style: 'padding-top: 0px;'}
+    .calculation_details
+    .deduction_details
+    / Deduction weights
+    .weight_deduction_details
+    / Deduction dollar amounts
+    .dollar_amount_deduction_details
+    / Taxes
+    .tax_details
+    -#
       - unless mobile_device?
         %li.pull-right
           %a.text-muted{"aria-controls" => "collapse#{id}", "data-toggle" => "collapse", :href => "#collapse_#{id}", class: 'pull-right ticket_collapse_link' }
             %i.fa.fa-check-square.fa-2x.collapse_icon
+
+:javascript
+  $('.item_select').select2({
+    theme: 'bootstrap',
+    minimumInputLength: 2,
+    ajax: {
+      url: '/commodities',
+      dataType: 'json',
+      delay: 250
+    }
+  });

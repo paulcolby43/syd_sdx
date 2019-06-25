@@ -1,0 +1,57 @@
+%div{:id => "new_customer_modal", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        New Customer
+        = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+      .modal-body
+        = form_tag customers_path, :class => "form-horizontal", id: 'customer_form' do
+          .form-group
+            %div{:class => "col-sm-12 col-md-6"}
+              = label_tag "First Name", nil, :class => 'control-label'
+              = text_field_tag "customer[first_name]", params[:first_name], :placeholder => "First Name", class: "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-6"}
+              = label_tag "Last Name", nil, :class => 'control-label'
+              = text_field_tag "customer[last_name]", params[:last_name], :placeholder => "Last Name", class: "form-control input-lg"
+          .form-group
+            %div{:class => "col-sm-12 col-md-6"}
+              = label_tag "Company", nil, :class => 'control-label'
+              = text_field_tag "customer[company]", nil, :placeholder => "Company", class: "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-6"}
+              = label_tag "Phone", nil, :class => 'control-label'
+              = text_field_tag "customer[phone]", nil, :placeholder => "Phone", class: "form-control input-lg"
+          %hr
+          .form-group
+            %div{:class => "col-sm-12 col-md-6"}
+              = label_tag "Address 1", nil, :class => 'control-label'
+              = text_field_tag "customer[address_1]", params[:streetaddress], :placeholder => "Address 1", class: "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-6"}
+              = label_tag "Address 2", nil, :class => 'control-label'
+              = text_field_tag "customer[address_2]", nil, :placeholder => "Address 2", class: "form-control input-lg"
+          .form-group
+            %div{:class => "col-sm-12 col-md-4"}
+              = label_tag "City", nil, :class => 'control-label'
+              = text_field_tag "customer[city]", params[:city], :placeholder => "City", class: "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-4"}
+              = label_tag "State", nil, :class => 'control-label'
+              =# text_field_tag "customer[state]", params[:state], :placeholder => "State", class: "form-control input-lg"
+              = select_tag "customer[state]", options_for_select(us_states_and_ca_provinces), :class => "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-4"}
+              = label_tag "Zip", nil, :class => 'control-label'
+              = text_field_tag "customer[zip]", params[:zip], :placeholder => "Zip", class: "form-control input-lg"
+          %hr
+          .form-group
+            %div{:class => "col-sm-12 col-md-4"}
+              = label_tag "ID Number", nil, :class => 'control-label'
+              = text_field_tag "customer[id_number]", params[:license_number], :placeholder => "ID Number", class: "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-4"}
+              = label_tag "ID State", nil, :class => 'control-label'
+              = text_field_tag "customer[id_state]", nil, :placeholder => "ID State", class: "form-control input-lg"
+            %div{:class => "col-sm-12 col-md-4"}
+              = label_tag "ID Expiration", nil, :class => 'control-label'
+              =# date_field_tag "customer[id_expiration]", params[:expiration_date], :placeholder => "ID Expiration", class: "form-control input-lg"
+              = text_field_tag "customer[id_expiration]", params[:expiration_date], :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", readonly: true
+          .modal-footer
+            %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Cancel
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create"}) do
+              Create

@@ -2,7 +2,18 @@
   #{@user.first_name}, welcome to Scrap Yard Dog!
 %p 
   You can confirm your account email through the link below.
-  %br
-  By clicking the link below, you agree to our
-  = link_to "Terms of Service", welcome_tos_url
+
 %p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)
+
+%p 
+  By setting up an account at Scrap Yard Dog you are agreeing to our 
+  = link_to "Terms of Service", welcome_tos_url
+
+%p
+  = link_to 'TranAct', 'http://tranact.com'
+  •
+  = link_to 'Scrap Dragon', 'https://scrapdragon.com'
+  •
+  = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
+  •
+  = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'

@@ -8,25 +8,43 @@ class TicketsController < ApplicationController
     authorize! :index, :tickets
     @status = "#{params[:status].blank? ? '2' : params[:status]}"
     @currencies = Ticket.currencies(current_user.token)
+    @start_date = params[:start_date]
+    @end_date = params[:end_date]
+    @sort_column = params[:sort_column] ||= 'DateCreated'
+    @sort_direction = params[:sort_direction] ||= 'Ascending'
 #    @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
 #    @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     
     unless params[:q].blank?
       results = Ticket.search(@status.to_i, current_user.token, current_yard_id, params[:q])
     else
-      results = Ticket.all_by_status_and_yard(@status.to_i, current_user.token, current_yard_id) unless current_user.customer?
-      if current_user.customer?
-        results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, current_user.customer_guid)
-        current_user.portal_customers.each do |portal_customer|
-          portal_customer_results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, portal_customer.customer_guid)
-          results = [] if results.blank? # Create an empty array to add to if there are no results yet
-          results = results + portal_customer_results unless portal_customer_results.blank?
+      unless current_user.customer?
+        if @start_date.blank? and @end_date.blank?
+          results = Ticket.all_by_status_and_yard(@status.to_i, current_user.token, current_yard_id)
+        else
+          results = Ticket.all_by_date_and_status_and_yard(@status.to_i, current_user.token, current_yard_id, @start_date, @end_date)
+        end
+      else
+        if @start_date.blank? and @end_date.blank?
+          results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, current_user.customer_guid)
+        else
+          results = Ticket.all_by_date_and_customers(@status.to_i, current_user.token, current_yard_id, @start_date, @end_date, current_user.portal_customer_ids) 
+#          current_user.portal_customers.each do |portal_customer|
+#            portal_customer_results = Customer.tickets(@status.to_i, current_user.token, current_yard_id, portal_customer.customer_guid)
+#            results = [] if results.blank? # Create an empty array to add to if there are no results yet
+#            results = results + portal_customer_results unless portal_customer_results.blank?
+#          end
         end
       end
     end
     unless results.blank?
-      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
-      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
+      if @sort_direction == 'Descending'
+        results = results.sort_by{|ticket| ticket["#{@sort_column}"]}.reverse
+      else
+        results = results.sort_by{|ticket| ticket["#{@sort_column}"]}
+      end
+#      results = results.sort_by{|ticket| ticket["DateCreated"]} if @status == '2'
+#      results = results.sort_by{|ticket| ticket["DateCreated"]}.reverse if @status == '1' or @status == '3'
       @tickets = Kaminari.paginate_array(results).page(params[:page]).per(10)
     else
       @tickets = []
@@ -134,9 +152,9 @@ class TicketsController < ApplicationController
         end
       end
     end
-    @commodity_types = Commodity.types(current_user.token, current_yard_id)
-    @commodities = Commodity.all(current_user.token, current_yard_id)
-    @commodities_grouped_by_type_for_select = Commodity.all_by_type_grouped_for_select(@commodity_types, @commodities)
+#    @commodity_types = Commodity.types(current_user.token, current_yard_id)
+#    @commodities = Commodity.all(current_user.token, current_yard_id)
+#    @commodities_grouped_by_type_for_select = Commodity.all_by_type_grouped_for_select(@commodity_types, @commodities)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
 #    @contract = Yard.contract(current_yard_id)
     @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
@@ -152,6 +170,9 @@ class TicketsController < ApplicationController
     @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
     @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
     @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    
+    @deductions = Ticket.deductions(current_user.token)
+    @deductions_grouped_for_select = Ticket.deductions_grouped_for_select(@deductions)
   end
 
   # PATCH/PUT /tickets/1
@@ -166,14 +187,15 @@ class TicketsController < ApplicationController
               # Create new item
               Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
-                ticket_params[:customer_id], line_item[:unit_of_measure])
+                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
             end
           else
             unless line_item[:commodity].blank?
               # Update existing item
               Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
-                ticket_params[:customer_id], line_item[:unit_of_measure])
+                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
+              
             end
           end
         end
@@ -235,6 +257,15 @@ class TicketsController < ApplicationController
   def line_item_fields
     @ticke_number = params[:ticket_number]
     @ticket_id = params[:ticket_id]
+    
+#    @combolists = Vehicle.combolists(current_user.token)
+#    @combolists = params[:combolists]
+#    @vehicle_makes = (@combolists.blank? or @combolists["VehicleMakes"].blank?) ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
+#    @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
+#    @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+#    @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    @deductions = Ticket.deductions(current_user.token)
+    @deductions_grouped_for_select = Ticket.deductions_grouped_for_select(@deductions)
     @vehicle_makes = []
     @vehicle_models = []
     @body_styles = []
@@ -328,6 +359,7 @@ class TicketsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
       params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, :description, line_items: [:id, :commodity, :gross, :tare, :net, :price, 
-          :amount, :tax_amount, :status, :notes, :serial_number, :unit_of_measure])
+          :amount, :tax_amount, :status, :notes, :serial_number, :unit_of_measure, :tax_amount_1, :tax_amount_2, :tax_amount_3, :tax_percent_1, :tax_percent_2, :tax_percent_3,
+          deductions: [:deduct_weight_description, :deduct_weight, :deduct_dollar_amount_description, :deduct_dollar_amount, :id] ])
     end
 end

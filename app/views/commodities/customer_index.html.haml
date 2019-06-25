@@ -1,0 +1,38 @@
+= render partial: "shared/navbars/commodities_customer_index_navbar", locals: {title: "Commodities"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p
+      = form_tag customer_index_commodities_path, id: 'customer_commodity_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        =# hidden_field_tag :status, @status
+        .input-group
+          = search_field_tag :q, params[:q], :placeholder => "Search commodities", class: "form-control input-lg"
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+
+    - unless @commodities.blank?
+      %div{id: "commodities"}
+        - @commodities.each do |commodity|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel{class: "#{(commodity['IsDisabled'] == 'true') ? 'panel-danger' : 'panel-primary'}"}
+                %div.list_group
+                  %a{href: customer_show_commodity_path(commodity['Id'], yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity['PrintDescription']} (#{commodity['UnitOfMeasure']})"}}
+                    = "#{commodity['PrintDescription']} (#{commodity['UnitOfMeasure']})"
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+                  %div.list-group-item
+                    %small= @commodity_types.find {|type| type["CodeValue"] == commodity['Type']}["ReportDescription"]
+                    .pull-right
+                      -#
+                        = number_with_precision(commodity['ScalePrice'], precision: 3)
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_commodities_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', customer_index_commodities_path(:page => @commodities.next_page, :q => params[:q]), :class => 'load-more-commodities btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_commodities_spinner').show();" if @commodities.next_page
+    - else
+      %p No commodities found
+                
+=# render partial: "shared/commodities_footer_navbar", locals: {title: "Commodities"}

@@ -58,9 +58,14 @@
               - unless params[:customer_needs_to_change_password].blank?
                 %p.help-block Please update your password.
                 = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password", :autofocus => true, required: true
+                %br
+                = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation", required: true
               - else
                 %p.help-block Leave blank if you don't want to change.
                 = f.password_field :password, :class => "form-control input-lg", placeholder: "New Password"
+                %br
+                = f.password_field :password_confirmation, :class => "form-control input-lg", placeholder: "Password Confirmation"
+              
         - if current_user.admin?
           - if @user.customer?
             .row.form-group

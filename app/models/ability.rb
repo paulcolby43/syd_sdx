@@ -220,13 +220,24 @@ class Ability
       if user.company.include_dispatch?
         can :index, :trips
         can :show, :trips
+        can :create, :trips
         can :edit, :trips
+        can :search, :trips
       end
       
       # Tasks
       ############
       can :show, :tasks
       can :edit, :tasks
+      
+      # Containers
+      ############
+      can :show, :containers
+      can :edit, :containers
+      
+      # Locations
+      ############
+      can :show, :locations
       
     # End admin user role
     
@@ -299,6 +310,15 @@ class Ability
         ############
         can :show, :tasks
         can :edit, :tasks
+        
+        # Containers
+        ############
+        can :show, :containers
+        can :edit, :containers
+        
+        # Locations
+        ############
+        can :show, :locations
       end
       
       # Images
@@ -374,6 +394,11 @@ class Ability
       ############
       can :show, :pack_shipments
       can :pictures, :pack_shipments
+      
+      # Commodities
+      ############
+      can :customer_index, :commodities
+      can :customer_show, :commodities
       
     # End customer user role
     end 

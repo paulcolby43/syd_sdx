@@ -11,14 +11,44 @@ class CommoditiesController < ApplicationController
     unless params[:q].blank?
       results = Commodity.search(current_user.token, current_yard_id, params[:q])
 #      results = Commodity.search_disabled(current_user.token, current_yard_id, params[:q]) if @status == 'disabled'
-      if results.class == 'Hash'
-        single_commodity_hash = results
-        results = []
-        results << single_commodity_hash
-      end
+#      if results.class == 'Hash'
+#        single_commodity_hash = results
+#        results = []
+#        results << single_commodity_hash
+#      end
     else
       results = Commodity.all(current_user.token, current_yard_id)
 #      results = Commodity.all_disabled(current_user.token, current_yard_id) if @status == 'disabled'
+    end
+    respond_to do |format|
+      format.html {
+        unless results.blank?
+          @commodities = Kaminari.paginate_array(results).page(params[:page]).per(25)
+        else
+          @commodities = []
+        end
+      }
+      format.json {
+        unless results.blank?
+          @commodities = results.collect{ |commodity| {id: commodity['Id'], text: "#{commodity['PrintDescription']} (#{commodity['Code']})"} }
+        else
+          @commodities = nil
+        end
+        Rails.logger.info "results: {#{@commodities}}"
+        render json: {results: @commodities}
+      }
+    end
+  end
+  
+  # GET /commodities/customer_index
+  # GET /commodities/customer_index.json
+  def customer_index
+    authorize! :customer_index, :commodities
+    @commodity_types = Commodity.types(current_user.token, current_yard_id)
+    unless params[:q].blank?
+      results = Commodity.search(current_user.token, current_yard_id, params[:q])
+    else
+      results = Commodity.all(current_user.token, current_yard_id)
     end
     unless results.blank?
       @commodities = Kaminari.paginate_array(results).page(params[:page]).per(25)
@@ -36,6 +66,19 @@ class CommoditiesController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @commodity['PrintDescription'], "price" => @commodity['ScalePrice']} } 
+    end
+  end
+  
+  # GET /commodities/1/customer_show
+  # GET /commodities/1/customer_show.json
+  def customer_show
+    authorize! :customer_show, :commodities
+    @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
+    @commodity_types = Commodity.types(current_user.token, current_yard_id)
+    @customer_price = Commodity.price_by_customer(current_user.token, params[:id], current_user.customer_guid)
+    respond_to do |format|
+      format.html {}
+      format.json {render json: {"name" => @commodity['PrintDescription'], "price" => @customer_price} } 
     end
   end
 
@@ -110,8 +153,8 @@ class CommoditiesController < ApplicationController
     end
   end
   
-  # GET /commodities/1/get_price
-  # GET /commodities/1/get_price.json
+  # GET /commodities/1/price
+  # GET /commodities/1/price.json
   def price
     authorize! :show, :commodities
     @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])

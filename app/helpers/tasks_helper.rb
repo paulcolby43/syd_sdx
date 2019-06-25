@@ -26,7 +26,7 @@ module TasksHelper
 #    Red: Void (3)
 #    Gray(blue): Delayed (4)
 #    
-    task_status_color_hash = {'0' => '', '1' => 'list-group-item-warning', '2' => 'list-group-item-success', '3' => 'list-group-item-danger', '4' => 'list-group-item-info'}
+    task_status_color_hash = {'0' => 'list-group-item', '1' => 'list-group-item-warning', '2' => 'list-group-item-success', '3' => 'list-group-item-danger', '4' => 'list-group-item-info'}
     return task_status_color_hash[status]
   end
   

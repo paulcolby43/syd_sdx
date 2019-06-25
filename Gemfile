@@ -121,6 +121,10 @@ gem 'nested_form_fields'
 gem 'morrisjs-rails'
 gem 'raphael-rails'
 
+
+# Ruby EXIF reader
+gem 'exif'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

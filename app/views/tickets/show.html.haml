@@ -5,13 +5,14 @@
     .panel.panel-default
       %div.panel-heading{:role => "tab", id: "vendor_heading"}
         %h4.panel-title
-          %div.text-success= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
+          %div.text-primary= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
     - if @ticket["TicketItemCollection"].blank?
       .panel.panel-default.line-item
         %div.panel-heading
           %h4.panel-title No ticket items
     - else
-      - unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      -# unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+      - unless false
         #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           -# @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
           - @line_items.each do |line_item|
@@ -19,20 +20,78 @@
               %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                 %h4.panel-title
                   .line_item_name
-                    %div.text-success= line_item["PrintDescription"]
-              .panel-footer
-                = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['NetWeight']}#{line_item['UnitOfMeasure']}"
-                x
-                = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
-                = "= $#{line_item['ExtendedAmount']}"
-                =# line_item 
+                    %div.text-primary= line_item["PrintDescription"]
+              .panel-footer{style: 'padding-top: 0px;'}
+                .calculation_details
+                  %strong Gross:
+                  = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                  &nbsp;
+                  %strong Tare:
+                  = "#{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                  &nbsp;
+                  %strong Net:
+                  = "#{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)} LB"
+                  &nbsp;
+                  = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
+                  &nbsp;
+                  %strong= "$#{line_item['ExtendedAmount']}"
+                / Deduction weights
+                -# unless line_item["DeductionCollection"].blank?
+                / Deduction weights
+                .weight_deduction_details
+                  - unless line_item["DeductionCollection"].blank?
+                    - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                      - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
+                      - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+                        %strong Less:
+                        = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                        = "(#{line_item_deduction["DeductWeightDescription"]})"
+                    - else
+                      - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                        - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+                          %strong Less:
+                          = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                          = "(#{line_item_deduction["DeductWeightDescription"]})"
+                / Deduction dollar amounts
+                .dollar_amount_deduction_details
+                  - unless line_item["DeductionCollection"].blank?
+                    - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                      - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
+                      - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+                        %strong Less:
+                        = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                        = "(#{line_item_deduction["DeductDollarAmountDescription"]})"
+                    - else
+                      - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                        - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+                          %strong Less:
+                          = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                          = "(#{line_item_deduction["DeductDollarAmountDescription"]})"
+                - unless line_item['TaxCollection'].blank?
+                  / Taxes
+                  .tax_details
+                    %strong Taxes
+                    - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                      - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                        = "$#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
+                    - else # Multiple line item tax results returned
+                      - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                        - unless tax['TaxAmount'] == '0.00'
+                          = "$#{tax['TaxAmount']}"
+              -#
+                .panel-footer
+                  = "(#{line_item['GrossWeight']} - #{line_item['TareWeight']}) = #{line_item['NetWeight']}#{line_item['UnitOfMeasure']}"
+                  x
+                  = "$#{number_with_precision(line_item['Price'], :precision => 3)}"
+                  = "= $#{line_item['ExtendedAmount']}"
+                  =# line_item 
       - else
         #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           .panel.panel-default.line-item
             %div.panel-heading{:role => "tab", id: "heading#{@ticket["TicketItemCollection"]["ApiTicketItem"]['Id']}"}
               %h4.panel-title
                 .line_item_name
-                  %div.text-success= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
+                  %div.text-primary= @ticket["TicketItemCollection"]["ApiTicketItem"]["PrintDescription"]
             .panel-footer
               = "(#{@ticket["TicketItemCollection"]["ApiTicketItem"]['GrossWeight']} - #{@ticket["TicketItemCollection"]["ApiTicketItem"]['TareWeight']}) = #{@ticket["TicketItemCollection"]["ApiTicketItem"]['NetWeight']}#{@ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']}"
               x

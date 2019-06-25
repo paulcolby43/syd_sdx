@@ -12,9 +12,15 @@ Rails.application.routes.draw do
     member do
       get 'remove_container'
       get 'create_new_container'
+      get 'update_container'
     end
   end
-  resources :trips
+  
+  resources :trips do
+    collection do
+      get :search
+    end
+  end
   
   resources :inv_tags do
     member do
@@ -113,6 +119,7 @@ Rails.application.routes.draw do
   resources :users do
     member do
       get :confirm_email
+      get :update_latitude_and_longitude
     end
     collection do
       get :resend_confirmation_instructions
@@ -127,6 +134,10 @@ Rails.application.routes.draw do
       put 'update_price'
       get :price
       get :unit_of_measure_weight_conversion
+      get :customer_show
+    end
+    collection do
+      get :customer_index
     end
   end
   
@@ -181,6 +192,9 @@ Rails.application.routes.draw do
       get :remove_scanned_pack
     end
   end
+  
+  resources :containers
+  resources :locations
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

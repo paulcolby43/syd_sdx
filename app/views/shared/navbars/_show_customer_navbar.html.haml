@@ -3,17 +3,17 @@
     .navbar-header
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
-          %a{href: customers_path}
-            Customers
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            %a{href: customers_path}
+              %i.fa.fa-chevron-left
+              Back
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title
           - else
             = truncate(title, length: 8)
         .col-xs-4.col-sm-4
-          - if current_user.admin?
-            %a{href: edit_customer_path(@customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i>"}, class: 'customer_button'}
-              - unless mobile_device?
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            - if current_user.admin?
+              %a{href: edit_customer_path(@customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i> Edit"}, class: 'customer_button'}
                 = "Edit"
-              - else
-                .pull-right Edit

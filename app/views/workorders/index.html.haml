@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/workorders_navbar", locals: {title: "Orders"}
+= render partial: "shared/navbars/workorders_navbar", locals: {title: "Requests"}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -29,6 +29,6 @@
                             %li= Workorder.status(workorder['WorkOrderStatus'])
       
     - else
-      %p No Work Orders found
+      %p No Service Requests found
                 
 =# render partial: "shared/commodities_footer_navbar", locals: {title: "Commodities"}

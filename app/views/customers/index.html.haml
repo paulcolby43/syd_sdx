@@ -4,6 +4,7 @@
   .container
     %p
       = form_tag customers_path, id: 'customer_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        = select_tag :yard_filter, options_for_select([['All Yards', 'all_yards'], ['My Yard', '1\my_yard']], @yard_filter), class: "form-control input-lg"
         .input-group
           = search_field_tag :q, params[:q], :placeholder => "Search customers", class: "form-control input-lg"
           = hidden_field_tag :first_name, params[:first_name]
@@ -25,6 +26,8 @@
                 %i.fa.fa-list-alt
                 = "#{license_reader_device.DeviceName}"
                 = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
+    %p
+      %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
     - unless @customers.blank?
       %div{id: "customers"}
         - @customers.each do |customer|
@@ -56,7 +59,7 @@
         .text-center
           %div{id: 'endless_page'}
             %p= image_tag("ajax-loader.gif", :id => "more_customers_spinner", :alt => "Loading ...", style: "display:none;")
-            %p= link_to 'Load more ...', customers_path(:page => @customers.next_page, :q => params[:q]), :class => 'load-more-customers btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_customers_spinner').show();" if @customers.next_page
+            %p= link_to 'Load more ...', customers_path(:page => @customers.next_page, :q => params[:q], :yard_filter => params[:yard_filter]), :class => 'load-more-customers btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_customers_spinner').show();" if @customers.next_page
     - else
       %p No customers found            
     

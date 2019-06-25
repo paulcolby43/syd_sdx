@@ -12,7 +12,45 @@ class Customer
   def self.all(auth_token, yard_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=100"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=500&yardFilterOn=false"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    
+    Rails.logger.info "Customer.all: #{data}"
+    unless data["ApiPaginatedResponseOfApiCustomerC9S9lUui"].blank? or data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"].blank? or data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"].blank?
+      if data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"]]
+      else # Array of results returned
+        return data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"]
+      end
+    else
+      return []
+    end
+  end
+  
+  def self.all_dispatch(auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=500&yardFilterOn=false&isDispatch=true"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    
+    Rails.logger.info "Customer.all_dispatch: #{data}"
+    unless data["ApiPaginatedResponseOfApiCustomerC9S9lUui"].blank? or data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"].blank? or data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"].blank?
+      if data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"]]
+      else # Array of results returned
+        return data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"]
+      end
+    else
+      return []
+    end
+  end
+  
+  def self.all_by_yard(auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=500"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
@@ -63,6 +101,22 @@ class Customer
 #  end
   
   def self.search(auth_token, yard_id, query_string)
+    require 'uri'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?q=#{query_string}&t=100&yardFilterOn=false")
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    Rails.logger.info "***********************************xml content: #{xml_content}"
+    data= Hash.from_xml(xml_content)
+    
+    if data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"]]
+    else # Array of results returned
+      return data["ApiPaginatedResponseOfApiCustomerC9S9lUui"]["Items"]["ApiCustomer"]
+    end
+  end
+  
+  def self.search_by_yard(auth_token, yard_id, query_string)
     require 'uri'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -292,26 +346,5 @@ class Customer
       return data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]
     end
   end
-  
-#  def self.paid_tickets_total(auth_token, yard_id, customer_id)
-#    paid_tickets = Ticket.search(3, auth_token, yard_id, company_name)
-#    paid_tickets = Customer.paid_tickets(auth_token, yard_id, customer_id)
-#    total = 0
-#    paid_tickets.each do |paid_ticket|
-#      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
-#    end
-#    return total
-#  end
-#  
-#  #  def paid_tickets_total_this_week(auth_token, yard_id, customer_id)
-#  def self.paid_tickets_total_this_week(auth_token, yard_id, company_name)
-#    paid_tickets = Ticket.search_this_week(3, auth_token, yard_id, company_name)
-#    total = 0
-#    Rails.logger.info paid_tickets.count
-#    paid_tickets.each do |paid_ticket|
-#      total = total + Ticket.total_paid(auth_token, yard_id, paid_ticket["Id"])
-#    end
-#    return total
-#  end
   
 end
