@@ -208,34 +208,35 @@
                         %i.fa.fa-camera.fa-lg
                         Customer Camera
                     - current_user.device_group.devices.each do |device|
-                      %li.list-group-item
-                        = device.DeviceName
-                        %br
-                        = "Workstation:"
-                        = device.workstation.WorkstationName
-                        %br
-                        = "Workstation IP:"
-                        = device.workstation.Host
-                        %br
-                        %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
-                          = "Device Type:"
-                          = device.device_type_icon.html_safe
-                          - if device.scale_camera_only?
-                            Scale camera only - no indicator
-                          - else
-                            = device.type
-                          - if device.printer?
-                            %small= "(Printer Width: #{device.PrinterWidth})"
-                        %br
-                        = "Device Order:"
-                        = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
-                        - unless device.CameraGroup.blank?
+                      - unless device.blank?
+                        %li.list-group-item
+                          = device.DeviceName
                           %br
-                          = "Camera Group:"
-                          = device.CameraGroup
-                        %br
-                        = "Listen Port:"
-                        = device.LocalListenPort
+                          = "Workstation:"
+                          = device.workstation.WorkstationName
+                          %br
+                          = "Workstation IP:"
+                          = device.workstation.Host
+                          %br
+                          %div{style: "color: #{device.scale_camera_only? ? 'hotpink;' : ''} "}
+                            = "Device Type:"
+                            = device.device_type_icon.html_safe
+                            - if device.scale_camera_only?
+                              Scale camera only - no indicator
+                            - else
+                              = device.type
+                            - if device.printer?
+                              %small= "(Printer Width: #{device.PrinterWidth})"
+                          %br
+                          = "Device Order:"
+                          = "#{device.device_group_member_order(current_user.device_group).blank? ? 'N/A' : device.device_group_member_order(current_user.device_group)}"
+                          - unless device.CameraGroup.blank?
+                            %br
+                            = "Camera Group:"
+                            = device.CameraGroup
+                          %br
+                          = "Listen Port:"
+                          = device.LocalListenPort
         - else
           .panel.panel-default
             .panel-heading
