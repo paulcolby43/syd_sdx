@@ -18,7 +18,13 @@ class DeviceGroup < ActiveRecord::Base
   end
   
   def devices
-    device_group_members.sort_by{|dgm| dgm.DevOrder}.map{|dgm| dgm.device }
+    member_devices = []
+    device_group_members.sort_by{|dgm| dgm.DevOrder}.each do |dgm|
+      device = Device.where(DevID: dgm.DevID).first
+      member_devices << device unless device.blank?
+    end
+    return member_devices
+#    device_group_members.sort_by{|dgm| dgm.DevOrder}.map{|dgm| dgm.device }
   end
   
   def scale_devices
