@@ -175,7 +175,8 @@ jQuery ->
           input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', commodity_id
           input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
           input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
-          input_select.closest('.panel').find('.amount-calculation-field:first').keyup() # Invoke 'keyup' so go through calculations again
+          #input_select.closest('.panel').find('.amount-calculation-field:first').keyup() # Invoke 'keyup' so go through calculations again
+          input_select.closest('.panel').find('.amount-calculation-field:first').change() # Invoke 'change' so go through calculations again
 
           if ticket_item_status != '0' # New ticket item that needs to be added/saved to ticket
             ticket_item_add_ajax()
@@ -215,8 +216,11 @@ jQuery ->
   ### End line item changed ###
 
   ### Line item calculation field value changed ###
-  $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
+  # $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
+  $('.ticket_input_fields_wrap').on 'change', '.amount-calculation-field', ->
     console.log '.amount-calculation-field changed', 'yes'
+    $('#hold_close_pay_buttons').hide();
+    $('#calculating').show();
     changed_field = $(this)
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
@@ -306,10 +310,14 @@ jQuery ->
           $('#total').text '$' + (parseFloat(sum)).toFixed(2)
           $('#ticket_total').val (parseFloat(sum)).toFixed(2)
           $('#payment_amount').val (parseFloat(sum)).toFixed(2)
+          $('#hold_close_pay_buttons').show();
+          $('#calculating').hide();
           return
         error: ->
           alert 'Error getting commodity unit of measure conversion.'
           console.log 'Error getting commodity unit of measure conversion.'
+          $('#hold_close_pay_buttons').show();
+          $('#calculating').hide();
           return
     if item_id != ''
       get_commodity_unit_of_measure_weight_conversion_ajax()
@@ -564,7 +572,8 @@ jQuery ->
         success: (data) ->
           weight = data.weight
           weight_text_field.val weight
-          $('.ticket_input_fields_wrap .amount-calculation-field').trigger 'keyup'
+          # $('.ticket_input_fields_wrap .amount-calculation-field').trigger 'keyup'
+          $('.ticket_input_fields_wrap .amount-calculation-field').trigger 'change'
           dashboard_icon.show()
           spinner_icon.hide()
           return
