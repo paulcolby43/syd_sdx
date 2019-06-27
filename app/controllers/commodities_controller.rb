@@ -28,6 +28,13 @@ class CommoditiesController < ApplicationController
           @commodities = []
         end
       }
+      format.js {
+        unless results.blank?
+          @commodities = Kaminari.paginate_array(results).page(params[:page]).per(25)
+        else
+          @commodities = []
+        end
+      }
       format.json {
         unless results.blank?
           @commodities = results.collect{ |commodity| {id: commodity['Id'], text: "#{commodity['PrintDescription']} (#{commodity['Code']})"} }
