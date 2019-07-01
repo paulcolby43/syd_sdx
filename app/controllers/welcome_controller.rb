@@ -19,6 +19,14 @@ class WelcomeController < ApplicationController
         session[:yard_name] = @yard['Name']
       end
       
+      @tickets_created = Scoreboard.tickets_created(current_user.token, current_yard_id)
+      @tickets_today = @tickets_created['TicketsCreatedToday'] unless @tickets_created.blank?
+      @tickets_30_days = @tickets_created['TicketsCreatedMultiDayTotal'] unless @tickets_created.blank?
+      
+      @tickets_on_hold = Scoreboard.tickets_on_hold(current_user.token, current_yard_id)
+      @tickets_on_hold_total = @tickets_on_hold['TicketsOnHold'] unless @tickets_on_hold.blank?
+      @average_hold_time = @tickets_on_hold['AverageHoldTime'] unless @tickets_on_hold.blank?
+      
       @closed_tickets = Ticket.all_last_30_days(1, current_user.token, current_yard_id)
       @held_tickets = Ticket.all_last_30_days(2, current_user.token, current_yard_id)
       @paid_tickets = Ticket.all_last_30_days(3, current_user.token, current_yard_id)

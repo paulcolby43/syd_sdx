@@ -3,6 +3,8 @@
 .jumbotron{id: 'kpi_dashboard', style: 'background-color: black;'}
   .container-fluid
     .row
+      .well
+        = @tickets_on_hold
       .col-xs-12
         .col-xs-12.col-sm-3{style: 'color: white;'}
           %h3.text-center
@@ -52,10 +54,10 @@
                 %h2.text-center Tickets Created
                 %h3.text-center
                   Today:
-                  %span.text-info= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
+                  %span.text-info= "#{@tickets_today.blank? ? 0 : @tickets_today}"
                   %br
                   30-Day Total:
-                  %span.text-info= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
+                  %span.text-info= "#{@tickets_30_days.blank? ? 0 : @tickets_30_days}"
                   =# Commodity.types(current_user.token, current_yard_id)
                   =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
           .col-xs-12.col-sm-6
@@ -64,11 +66,10 @@
                 %h2.text-center Tickets on Hold
                 %h3.text-center
                   Today:
-                  %span.text-info= "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
+                  %span.text-info= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
                   %br
                   Average:
-                  %span.text-info= "#{@wait_time} minutes"
-                  =# @closed_tickets_today.first
+                  %span.text-info= "#{@average_hold_time.blank? ? 0 : @average_hold_time} minutes"
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
