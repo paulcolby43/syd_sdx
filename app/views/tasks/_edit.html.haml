@@ -46,9 +46,11 @@
       .pull-right
         = task['WorkOrderNumber']
       %br
-      %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
-        %i.fa.fa-map-marker
-        Containers
+      %strong Current Containers
+      .pull-right
+        %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
+          %i.fa.fa-map-marker
+          Show All
       %br 
       %br
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
