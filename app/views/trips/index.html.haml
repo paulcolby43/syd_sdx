@@ -41,7 +41,8 @@
                         = " - "
                         - unless session[:time_zone].blank?
                           = "#{trip['EndDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%m/%d/%y %l:%M:%S%P')}"
-                        = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
+                        - else
+                          = "#{trip['EndDate'].to_datetime.strftime('%m/%d/%y %l:%M:%S%P')}"
                       %br
                       - Trip.workorders(trip).reverse.each do |workorder|
                         = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
