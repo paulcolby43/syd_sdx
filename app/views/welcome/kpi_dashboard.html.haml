@@ -95,15 +95,14 @@
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
                 %h2.text-center.text-danger Held Shipments
-                = @held_shipments
                 %h3.text-center
                   Today:
                   %span.text-info= "#{@held_shipments_count}"
-                  - unless @held_shipments_count.blank? or @held_shipments_count == '0' or @last_held_shipment_today.blank?
+                  - unless @held_shipments_count.blank? or @held_shipments_count == '0' or @held_shipment.blank?
                     %br
-                    %span.text-info= @last_held_shipment_today['CustomerName'] 
+                    %span.text-info= @held_shipment['CustomerName'] 
                     %br
-                    %span.text-info= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @held_shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @held_shipment['DateCreated'].blank? or @held_shipment['DateCreated'] == '{"i:nil"=>"true"}'
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -111,11 +110,11 @@
                 %h3.text-center
                   Today:
                   %span.text-info= "#{@sent_shipments_count}"
-                  - unless @sent_shipments_count.blank? or @sent_shipments_count == '0' or @last_closed_shipment_today.blank?
+                  - unless @sent_shipments_count.blank? or @sent_shipments_count == '0' or @closed_shipment.blank?
                     %br
-                    %span.text-info= @last_closed_shipment_today['CustomerName'] 
+                    %span.text-info= @closed_shipment['CustomerName'] 
                     %br
-                    %span.text-info= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @closed_shipment['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @closed_shipment['DateShipped'].blank? or @closed_shipment['DateShipped'] == '{"i:nil"=>"true"}'
                     
           -#
             .col-xs-12
@@ -149,11 +148,11 @@
               .panel-heading
                 %h2.text-danger Last 10 Shipments
               -# unless @closed_and_held_shipments_today.blank?
-              - unless @closed_shipments_today.blank?
+              - unless @last_10_shipments.blank?
                 %h4.table-responsive
                   %table.table.table-condensed
                     -# @closed_and_held_shipments_today.first(10).each do |shipment|
-                    - @closed_shipments_today.sort_by{|t| t['DateCreated']}.reverse.first(10).each do |shipment|
+                    - @last_10_shipments.sort_by{|t| t['DateCreated']}.reverse.each do |shipment|
                       %tr
                         %td= shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
                         %td= shipment['ShipmentNumber']

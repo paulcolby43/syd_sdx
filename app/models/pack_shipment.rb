@@ -8,7 +8,29 @@ class PackShipment
   #     Class Methods         #
   #############################
   
-  # Get all packs_shipments
+  # This returns shipments of any status except void.  You specify the number of results you’d like.
+  def self.all(auth_token, yard_id, number)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/Shipments/#{number}"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+#    Rails.logger.info "PackShipment.all response: #{data}"
+    
+    unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
+      if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else # Array of results returned
+        return data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
+    else # No shipments found
+      return []
+    end
+  end
+  
+  # Get all held shipments
   def self.all_held(auth_token, yard_id) # Held shipments
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -17,7 +39,7 @@ class PackShipment
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.all response: #{data}"
+#    Rails.logger.info "PackShipment.all_held response: #{data}"
     
     unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
       if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -37,6 +59,28 @@ class PackShipment
       held_shipments_today << shipment if shipment['DateCreated'].to_date == Date.today
     end
     return held_shipments_today
+  end
+  
+  # Get a number of held shipments
+  def self.number_of_held(auth_token, yard_id, number)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/HeldShipments/#{number}"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+#    Rails.logger.info "PackShipment.number_of_held response: #{data}"
+    
+    unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
+      if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else # Array of results returned
+        return data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
+    else # No shipments found
+      return []
+    end
   end
   
   def self.find_by_id(auth_token, yard_id, pack_shipment_id)
@@ -164,6 +208,50 @@ class PackShipment
       else
         return data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"]
       end
+    end
+  end
+  
+  # Get all closed shipments
+  def self.all_closed(auth_token, yard_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/ClosedShipments"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+#    Rails.logger.info "PackShipment.all_closed response: #{data}"
+    
+    unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
+      if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else # Array of results returned
+        return data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
+    else # No shipments found
+      return []
+    end
+  end
+  
+  # Get given number of closed shipments
+  def self.number_of_closed(auth_token, yard_id, number)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/shipping/ClosedShipments/#{number}"
+    
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
+        :content_type => 'application/json', :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "PackShipment.number_of_closed response: #{data}"
+    
+    unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
+      if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
+        return [data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]]
+      else # Array of results returned
+        return data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"]
+      end
+    else # No shipments found
+      return []
     end
   end
   

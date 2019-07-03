@@ -41,9 +41,12 @@ class WelcomeController < ApplicationController
       @paid_tickets_today = Scoreboard.paid_tickets_today(current_user.token, current_yard_id)
       @closed_and_held_and_paid_tickets_today = @held_tickets_today + @closed_tickets_today + @paid_tickets_today
       
-      @closed_shipments_today = Scoreboard.closed_shipments_today(current_user.token, current_yard_id)
-#      @held_shipments_today = Scoreboard.held_shipments_today(current_user.token, current_yard_id)
-#      @held_and_closed_shipments_today = @held_shipments_today + @closed_shipments_today
+      unless @held_shipments_count == '0' and @sent_shipments_count == '0'
+        @last_10_shipments = PackShipment.all(current_user.token, current_yard_id, 10)
+        @held_shipment = PackShipment.number_of_held(current_user.token, current_yard_id, 1).first
+        @closed_shipment = PackShipment.number_of_closed(current_user.token, current_yard_id, 1).first
+      end
+      
     else
       flash[:danger] = 'You do not have access to that page.'
       redirect_to root_path
