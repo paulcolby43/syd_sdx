@@ -7,7 +7,7 @@ class ReportsController < ApplicationController
   # GET /reports.json
   def index
     authorize! :index, :reports
-    @status = "#{report_params[:status].blank? ? '1' : report_params[:status]}" # Default status to 1 (closed tickets)
+    @status = "#{report_params[:status].blank? ? '3,1' : report_params[:status]}" # Default status to 1 (closed tickets)
     @type = report_params[:type] || 'commodity_summary' # Default to commodity summary
     @start_date = report_params[:start_date].blank? ? Date.today.to_s : report_params[:start_date]# Default to today
     @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
