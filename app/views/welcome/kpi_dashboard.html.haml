@@ -78,12 +78,12 @@
                   %br
                   Total:
                   %span.text-info= number_to_currency(@paid_tickets_today_amount.blank? ? 0 : @paid_tickets_today_amount)
-          - @commodity_totals_by_type.each do |commodity_total|
-            .col-xs-12.col-sm-4
+          - @commodity_totals_by_type.select {|ct| ct['ReportDescription'] == 'Ferrous' or ct['ReportDescription'] == 'Nonferrous'} .each do |commodity_total|
+            .col-xs-12.col-sm-6
               .panel{style: 'background-color: #303030; color: white;'}
                 .panel-heading
                   %h2.text-center= commodity_total['ReportDescription']
-                %h5.table-responsive
+                %h4.table-responsive
                   %table.table.table-condensed
                     %thead
                       %tr
