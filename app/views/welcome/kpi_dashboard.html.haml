@@ -25,7 +25,7 @@
                   New York
               .panel-body
                 %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
-                %h4.text-danger.text-center
+                %h4.text-center
                   %i.fa.fa-warning
                   System wide alert
         .col-xs-12.col-sm-5
@@ -49,7 +49,7 @@
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center.text-danger Created
+                %h2.text-center Created
                 %h3.text-center
                   Today:
                   %span.text-info= "#{@tickets_today.blank? ? 0 : @tickets_today}"
@@ -61,7 +61,7 @@
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center.text-danger Held
+                %h2.text-center Held
                 %h3.text-center
                   Total:
                   %span.text-info= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
@@ -71,7 +71,7 @@
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center.text-danger Paid
+                %h2.text-center Paid
                 %h3.text-center
                   Today:
                   %span.text-info= "#{@paid_tickets_today_count.blank? ? 0 : @paid_tickets_today_count}"
@@ -82,19 +82,30 @@
             .col-xs-12.col-sm-4
               .panel{style: 'background-color: #303030; color: white;'}
                 .panel-heading
-                  %h2.text-center.text-danger= commodity_total['ReportDescription']
-                  %h3.text-center
-                    Today:
-                    %span.text-info
-                      = "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}lb (#{number_to_currency(commodity_total['Cost'].to_i.round)})"
-                    %br
-                    30-Day:
-                    %span.text-info
-                      = "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}lb (#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round)})"
+                  %h2.text-center= commodity_total['ReportDescription']
+                .table-responsive
+                  %table.table.table-condensed
+                    %tr
+                      %td Today
+                      %td= "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}lb"
+                      %td= "#{number_to_currency(commodity_total['Cost'].to_i.round, precision: 0)}"
+                    %tr
+                      %td 30-Day
+                      %td= "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}lb"
+                      %td= "#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round, precision: 0)}"
+                  -#
+                    %h3.text-center
+                      Today:
+                      %span.text-info
+                        = "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}lb (#{number_to_currency(commodity_total['Cost'].to_i.round)})"
+                      %br
+                      30-Day:
+                      %span.text-info
+                        = "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}lb (#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round)})"
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center.text-danger Held Shipments
+                %h2.text-center Held Shipments
                 %h3.text-center
                   Today:
                   %span.text-info= "#{@held_shipments_count}"
@@ -106,7 +117,7 @@
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center.text-danger Sent Shipments
+                %h2.text-center Sent Shipments
                 %h3.text-center
                   Today:
                   %span.text-info= "#{@sent_shipments_count}"
@@ -130,7 +141,7 @@
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-danger Last 10 Tickets
+                %h2 Last 10 Tickets
               - unless @closed_and_held_and_paid_tickets_today.blank?
                 %h4.table-responsive
                   %table.table.table-condensed
@@ -146,7 +157,7 @@
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-danger Last 10 Shipments
+                %h2 Last 10 Shipments
               -# unless @closed_and_held_shipments_today.blank?
               - unless @last_10_shipments.blank?
                 %h4.table-responsive
