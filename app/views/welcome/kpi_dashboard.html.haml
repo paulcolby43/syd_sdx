@@ -66,8 +66,8 @@
                   Total:
                   %span.text-info= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
                   %br
-                  Avg:
-                  %span.text-info= "#{@average_hold_time.blank? ? 0 : @average_hold_time} min"
+                  Avg (min):
+                  %span.text-info= "#{@average_hold_time.blank? ? 0 : @average_hold_time}"
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
@@ -88,17 +88,17 @@
                     %thead
                       %tr
                         %th
-                        %th wt
-                        %th amt
+                        %th.text-right wt
+                        %th.text-right amt
                     %tbody
                       %tr
                         %td Today
-                        %td= "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}"
-                        %td= "#{number_to_currency(commodity_total['Cost'].to_i.round, precision: 0)}"
+                        %td.text-right= "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}"
+                        %td.text-right= "#{number_to_currency(commodity_total['Cost'].to_i.round, precision: 0)}"
                       %tr
                         %td 30-Day
-                        %td= "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}"
-                        %td= "#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round, precision: 0)}"
+                        %td.text-right= "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}"
+                        %td.text-right= "#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round, precision: 0)}"
                   -#
                     %h3.text-center
                       Today:
@@ -157,7 +157,7 @@
                         %td= ticket['TicketNumber']
                         %td= ticket['Company'].blank? ? "#{ticket['FirstName']} #{ticket['LastName']}" : ticket['Company']
                         %td= Ticket.status_string(ticket['Status'])
-                        %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+                        %td.text-right= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
               - else
                 .panel-body None
           .col-xs-12
@@ -175,7 +175,7 @@
                         %td= shipment['ShipmentNumber']
                         %td= shipment['CustomerName']
                         %td= shipment['ShipmentStatus'] == '0' ? 'Shipped' : 'Held'
-                        %td= "#{number_with_delimiter(shipment['NetWeight'].to_i.round)} lb"
+                        %td.text-right= "#{number_with_delimiter(shipment['NetWeight'].to_i.round)} lb"
               - else
                 .panel-body None
           -#
