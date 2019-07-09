@@ -6,7 +6,7 @@ ActiveAdmin.register Company do
   #
    permit_params :name, :dragon_api, :account_number, :include_leads_online, 
      :include_shipments, :include_inventories, :include_external_users, :jpegger_service_ip, :jpegger_service_port,
-     :include_dispatch
+     :include_dispatch, :address1, :address2, :city, :state, :zip, :phone
   #
   # or
   #
