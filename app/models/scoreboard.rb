@@ -9,7 +9,7 @@ class Scoreboard
       xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     rescue RestClient::ExceptionWithResponse => e
       e.response
-#      Rails.logger.info "Scoreboard.tickets_created exception response: #{e.response}"
+      Rails.logger.info "Scoreboard.tickets_created exception response: #{e.response}"
       return nil
     end
     unless xml_content.blank?
