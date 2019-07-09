@@ -25,7 +25,7 @@
                   New York
               .panel-body
                 %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=America%2FNew_York", :width => "100%"}
-                %h4.text-danger.text-center
+                %h4.text-center
                   %i.fa.fa-warning
                   System wide alert
         .col-xs-12.col-sm-5
@@ -46,102 +46,92 @@
     .row
       .col-xs-12
         .col-xs-6
-          .col-xs-12.col-sm-6
+          .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center Tickets Created
+                %h2.text-center Created
                 %h3.text-center
                   Today:
-                  %span.text-info= "#{@closed_and_held_and_paid_tickets_today.blank? ? 0 : @closed_and_held_and_paid_tickets_today.count}"
+                  %span.text-info= "#{@tickets_today.blank? ? 0 : @tickets_today}"
                   %br
-                  30-Day Total:
-                  %span.text-info= "#{@closed_and_held_and_paid_tickets.blank? ? 0 : @closed_and_held_and_paid_tickets.count}"
+                  30-Day:
+                  %span.text-info= "#{@tickets_30_days.blank? ? 0 : @tickets_30_days}"
                   =# Commodity.types(current_user.token, current_yard_id)
                   =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
-          .col-xs-12.col-sm-6
+          .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center Tickets on Hold
+                %h2.text-center Held
                 %h3.text-center
-                  Today:
-                  %span.text-info= "#{@held_tickets_today.blank? ? 0 : @held_tickets_today.count}"
+                  Total:
+                  %span.text-info= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
                   %br
-                  Average:
-                  %span.text-info= "#{@wait_time} minutes"
-                  =# @closed_tickets_today.first
+                  Avg (min):
+                  %span.text-info= "#{@average_hold_time.blank? ? 0 : @average_hold_time}"
           .col-xs-12.col-sm-4
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
                 %h2.text-center Paid
                 %h3.text-center
                   Today:
-                  %br
-                  %span.text-info= "#{@paid_tickets_today.blank? ? 0 : @paid_tickets_today.count}"
-                  %br
+                  %span.text-info= "#{@paid_tickets_today_count.blank? ? 0 : @paid_tickets_today_count}"
                   %br
                   Total:
-                  %br
-                  %span.text-info= number_to_currency(@paid_tickets_today_total)
-          .col-xs-12.col-sm-4
-            .panel{style: 'background-color: #303030; color: white;'}
-              .panel-heading
-                %h2.text-center Nonferrous
-                %h3.text-center
-                  Today:
-                  %br
-                  %span.text-info
-                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_non_ferrous_net_total.round)
-                    lb
-                  %br
-                  %br
-                  30-Day avg:
-                  %br
-                  %span.text-info
-                    = number_with_delimiter((@closed_tickets_line_items_non_ferrous_net_total / 30).round)
-                    lb
-          .col-xs-12.col-sm-4
-            .panel{style: 'background-color: #303030; color: white; margin-left: 0px;'}
-              .panel-heading
-                %h2.text-center Ferrous
-                %h3.text-center
-                  Today:
-                  %br
-                  %span.text-info
-                    = number_with_delimiter(@closed_and_paid_tickets_today_line_items_ferrous_net_total.round)
-                    lb
-                  %br
-                  %br
-                  30-Day avg:
-                  %br
-                  %span.text-info
-                    = number_with_delimiter((@closed_tickets_line_items_ferrous_net_total / 30).round)
-                    lb
+                  %span.text-info= number_to_currency(@paid_tickets_today_amount.blank? ? 0 : @paid_tickets_today_amount)
+          - @commodity_totals_by_type.select {|ct| ct['ReportDescription'] == 'Ferrous' or ct['ReportDescription'] == 'Nonferrous'} .each do |commodity_total|
+            .col-xs-12.col-sm-6
+              .panel{style: 'background-color: #303030; color: white;'}
+                .panel-heading
+                  %h2.text-center= commodity_total['ReportDescription']
+                %h4.table-responsive
+                  %table.table.table-condensed
+                    %thead
+                      %tr
+                        %th
+                        %th.text-right wt
+                        %th.text-right amt
+                    %tbody
+                      %tr
+                        %td Today
+                        %td.text-right= "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}"
+                        %td.text-right= "#{number_to_currency(commodity_total['Cost'].to_i.round, precision: 0)}"
+                      %tr
+                        %td 30-Day
+                        %td.text-right= "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}"
+                        %td.text-right= "#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round, precision: 0)}"
+                  -#
+                    %h3.text-center
+                      Today:
+                      %span.text-info
+                        = "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}lb (#{number_to_currency(commodity_total['Cost'].to_i.round)})"
+                      %br
+                      30-Day:
+                      %span.text-info
+                        = "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}lb (#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round)})"
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center Shipments on Hold
+                %h2.text-center Held Shipments
                 %h3.text-center
                   Today:
-                  %span.text-info= "#{@held_shipments_today.blank? ? 0 : @held_shipments_today.count}"
-                  - unless @held_shipments_today.blank? or @last_held_shipment_today.blank?
+                  %span.text-info= "#{@held_shipments_count}"
+                  - unless @held_shipments_count.blank? or @held_shipments_count == '0' or @held_shipment.blank?
                     %br
+                    %span.text-info= @held_shipment['CustomerName'] 
                     %br
-                    %span.text-info= @last_held_shipment_today['CustomerName'] 
-                    %br
-                    %span.text-info= @last_held_shipment_today['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @last_held_shipment_today['DateCreated'].blank? or @last_held_shipment_today['DateCreated'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @held_shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @held_shipment['DateCreated'].blank? or @held_shipment['DateCreated'] == '{"i:nil"=>"true"}'
           .col-xs-12.col-sm-6
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
-                %h2.text-center Shipments Sent
+                %h2.text-center Sent Shipments
                 %h3.text-center
                   Today:
-                  %span.text-info= "#{@closed_shipments_today.blank? ? 0 : @closed_shipments_today.count}"
-                  - unless @closed_shipments_today.blank? or @last_closed_shipment_today.blank?
+                  %span.text-info= "#{@sent_shipments_count}"
+                  - unless @sent_shipments_count.blank? or @sent_shipments_count == '0' or @closed_shipment.blank?
                     %br
+                    %span.text-info= @closed_shipment['CustomerName'] 
                     %br
-                    %span.text-info= @last_closed_shipment_today['CustomerName'] 
-                    %br
-                    %span.text-info= @last_closed_shipment_today['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @last_closed_shipment_today['DateShipped'].blank? or @last_closed_shipment_today['DateShipped'] == '{"i:nil"=>"true"}'
+                    %span.text-info= @closed_shipment['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @closed_shipment['DateShipped'].blank? or @closed_shipment['DateShipped'] == '{"i:nil"=>"true"}'
                     
           -#
             .col-xs-12
@@ -161,29 +151,31 @@
               - unless @closed_and_held_and_paid_tickets_today.blank?
                 %h4.table-responsive
                   %table.table.table-condensed
-                    - @closed_and_held_and_paid_tickets_today.first(10).each do |ticket|
+                    - @closed_and_held_and_paid_tickets_today.sort_by{|t| t['DateCreated']}.reverse.first(10).each do |ticket|
                       %tr
                         %td= ticket['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
                         %td= ticket['TicketNumber']
                         %td= ticket['Company'].blank? ? "#{ticket['FirstName']} #{ticket['LastName']}" : ticket['Company']
                         %td= Ticket.status_string(ticket['Status'])
-                        %td= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
+                        %td.text-right= number_to_currency(ticket['TicketItemCollection'].blank? ? 0 : Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem']))
               - else
                 .panel-body None
           .col-xs-12
             .panel{style: 'background-color: #303030; color: white;'}
               .panel-heading
                 %h2 Last 10 Shipments
-              - unless @closed_and_held_shipments_today.blank?
+              -# unless @closed_and_held_shipments_today.blank?
+              - unless @last_10_shipments.blank?
                 %h4.table-responsive
                   %table.table.table-condensed
-                    - @closed_and_held_shipments_today.first(10).each do |shipment|
+                    -# @closed_and_held_shipments_today.first(10).each do |shipment|
+                    - @last_10_shipments.sort_by{|t| t['DateCreated']}.reverse.each do |shipment|
                       %tr
                         %td= shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
                         %td= shipment['ShipmentNumber']
                         %td= shipment['CustomerName']
                         %td= shipment['ShipmentStatus'] == '0' ? 'Shipped' : 'Held'
-                        %td= "#{number_with_delimiter(shipment['NetWeight'].to_i.round)} lb"
+                        %td.text-right= "#{number_with_delimiter(shipment['NetWeight'].to_i.round)} lb"
               - else
                 .panel-body None
           -#
