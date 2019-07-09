@@ -11,7 +11,8 @@ class WelcomeController < ApplicationController
   end
   
   def kpi_dashboard
-    if current_user.admin?
+    @tickets_created = Scoreboard.tickets_created(current_user.token, current_yard_id)
+    if current_user.admin? and not @tickets_created.nil?
       @yards = Yard.all(current_user.token)
       unless params[:yard_id].blank?
         @yard = Yard.find_by_id(current_user.token, params[:yard_id])
@@ -19,7 +20,6 @@ class WelcomeController < ApplicationController
         session[:yard_name] = @yard['Name']
       end
       
-      @tickets_created = Scoreboard.tickets_created(current_user.token, current_yard_id)
       @tickets_today = @tickets_created['TicketsCreatedToday'] unless @tickets_created.blank?
       @tickets_30_days = @tickets_created['TicketsCreatedMultiDayTotal'] unless @tickets_created.blank?
       
@@ -48,7 +48,7 @@ class WelcomeController < ApplicationController
       end
       
     else
-      flash[:danger] = 'You do not have access to that page.'
+      flash[:danger] = 'An upgrade to Scrap Dragon Xtreme is required to use the Scoreboard. Give us a call at 1-855-937-2466 or email Support@Scrap-Dragon.com to schedule your upgrade. www.Scrapdragon.com/support'
       redirect_to root_path
     end
   end
