@@ -55,7 +55,7 @@
                   %span.text-info= "#{@tickets_today.blank? ? 0 : @tickets_today}"
                   %br
                   30-Day:
-                  %span.text-info= "#{@tickets_30_days.blank? ? 0 : @tickets_30_days}"
+                  %span.text-info= "#{@tickets_30_day_average.blank? ? 0 : @tickets_30_day_average}"
                   =# Commodity.types(current_user.token, current_yard_id)
                   =# Commodity.find_by_id(current_user.token, current_yard_id, Ticket.line_items(@closed_and_held_and_paid_tickets.last['TicketItemCollection']['ApiTicketItem']).first["CommodityId"])
           .col-xs-12.col-sm-4
