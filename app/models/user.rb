@@ -230,7 +230,7 @@ class User < ActiveRecord::Base
   end
   
   def admin?
-    role == "admin"
+    role == "admin" or mobile_admin?
   end
   
   def basic?
