@@ -244,7 +244,7 @@ class Ability
     elsif user.basic?
     # Start basic user type
      
-      if user.mobile_buy? or user.mobile_admin?
+      if user.mobile_buy?
         # Mobile Buy or Admin Dragon Role
         # Tickets
         ############
@@ -264,7 +264,7 @@ class Ability
         can :show, :commodities
       end
       
-      if user.mobile_sell? or user.mobile_admin?
+      if user.mobile_sell?
         # Mobile Sell or Admin Dragon Role
         # PackShipments
         ############
@@ -289,14 +289,14 @@ class Ability
         end
       end
       
-      if user.mobile_reports? or user.mobile_admin?
+      if user.mobile_reports?
         # Mobile Reports or Admin Dragon Role
         # Reports
         ############
         can :index, :reports
       end
       
-      if user.mobile_dispatch? or user.mobile_admin?
+      if user.mobile_dispatch?
         # Mobile Dispatch or Admin Dragon Role
         # Trips
         ############

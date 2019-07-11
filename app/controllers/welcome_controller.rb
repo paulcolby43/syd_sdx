@@ -21,7 +21,8 @@ class WelcomeController < ApplicationController
       end
       
       @tickets_today = @tickets_created['TicketsCreatedToday'] unless @tickets_created.blank?
-      @tickets_30_days = @tickets_created['TicketsCreatedMultiDayTotal'] unless @tickets_created.blank?
+      @tickets_30_day_total= @tickets_created['TicketsCreatedMultiDayTotal'] unless @tickets_created.blank?
+      @tickets_30_day_average = @tickets_created['TicketsCreatedMultiDayAverage'] unless @tickets_created.blank?
       
       @tickets_on_hold = Scoreboard.tickets_on_hold(current_user.token, current_yard_id)
       @tickets_on_hold_total = @tickets_on_hold['TicketsOnHold'] unless @tickets_on_hold.blank?
