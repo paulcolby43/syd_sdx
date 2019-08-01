@@ -15,6 +15,9 @@
             %i.fa.fa-dollar
           = text_field_tag :payment_amount, nil, :placeholder => "Amount", class: "form-control input-lg", readonly: true
         %br
+        - unless @drawers.blank?
+          = select_tag :drawer_id, options_for_select(@drawers.map{ |drawer| [drawer['DrawerName'], drawer['CashDrawerId']] }), prompt: 'Choose a drawer', class: "form-control input-lg" 
+          %br
         .btn-group-vertical.btn-block{"data-toggle" => "buttons"}
           %label.btn.btn-lg.btn-default{class: 'active cash_account'}
             =# radio_button_tag :cash_payment, true, checked: true
