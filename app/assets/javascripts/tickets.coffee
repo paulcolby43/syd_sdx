@@ -261,13 +261,16 @@ jQuery ->
 
     # Get unit of measure weight conversion for commodity item
     item_id = changed_field.closest('.panel').find('#ticket_line_items__commodity').val()
+    line_item_unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
     get_commodity_unit_of_measure_weight_conversion_ajax = ->
       $.ajax
-        url: "/commodities/" + item_id + "/unit_of_measure_weight_conversion"
+        #url: "/commodities/" + item_id + "/unit_of_measure_weight_conversion"
+        url: "/commodities/unit_of_measure_lb_conversion"
         dataType: 'json'
         #delay: 500 # Wait so that net can be re-calculated
         data:
           net: net
+          unit_of_measure: line_item_unit_of_measure
         success: (data) ->
           new_weight = data.new_weight
           console.log 'new_weight', data

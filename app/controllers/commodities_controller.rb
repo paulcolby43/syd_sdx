@@ -201,6 +201,24 @@ class CommoditiesController < ApplicationController
         }
     end
   end
+  
+  def unit_of_measure_lb_conversion
+    unit_of_measure_conversion_response = Commodity.unit_of_measure_weight_conversion(current_user.token, params[:unit_of_measure], params[:net])
+    if unit_of_measure_conversion_response["Success"] == 'true'
+      @new_weight = unit_of_measure_conversion_response["ConvertedValue"]
+    end
+    
+    respond_to do |format|
+      format.html {}
+      format.json {
+        if @new_weight
+          render json: {"new_weight" => @new_weight}, status: :ok
+        else
+          render json: {error: unit_of_measure_conversion_response["FailureInformation"]}, :status => :bad_request
+        end
+        }
+    end
+  end
 
 
   # DELETE /commodities/1
