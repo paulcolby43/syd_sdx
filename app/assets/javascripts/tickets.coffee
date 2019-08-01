@@ -252,6 +252,7 @@ jQuery ->
     #description = $(this).closest('.panel').find('#item_description').val()
     price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
     unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
+    console.log 'unit of measure', unit_of_measure
     #tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     #tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     #total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)

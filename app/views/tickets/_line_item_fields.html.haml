@@ -23,8 +23,11 @@
         %span.input-group-addon
           %i.fa.fa-dollar.fa-lg
         = text_field_tag "ticket[line_items][][price]", nil, :placeholder => "Rate", class: "form-control input-lg amount-calculation-field", required: true
-      = hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
-      = hidden_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
+      =# hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
+      %br
+      %div.input-group
+        = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure), class: "form-control input-lg", required: true
+      = hidden_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount amount-calculation-field", required: true, readonly: true
       = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
       = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
       = hidden_field_tag "ticket[line_items][][tax_amount_3]", '0.00', :placeholder => "Tax Amount 3", class: "form-control input-lg amount-calculation-field tax", readonly: true
