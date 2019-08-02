@@ -274,7 +274,10 @@ jQuery ->
         success: (data) ->
           new_weight = data.new_weight
           console.log 'new_weight', data
-          amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+          if line_item_unit_of_measure != 'LD'
+            amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+          else 
+            amount = (parseFloat(price) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
           console.log 'amount:', amount
           changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
 
