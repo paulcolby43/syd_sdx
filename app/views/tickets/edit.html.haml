@@ -2,6 +2,7 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    -# .well= @drawers
     -#
       .well
         = @ticket
@@ -14,7 +15,8 @@
       =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
       = hidden_field_tag "ticket[status]", @ticket['Status']
       =# hidden_field_tag "ticket[id]", @ticket['Id']
-      = hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
+      =# hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
+      =# select_tag :drawer_id, options_for_select(@drawers.map{ |drawer| [drawer['DrawerName'], drawer['CashDrawerId']] }), prompt: 'Choose a drawer' unless @drawers.blank?
       =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
       =# @accounts_payable_items
       - unless @accounts_payable_items.blank?
@@ -131,13 +133,15 @@
                         %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                           %i.fa.fa-upload.fa-2x
                     %br
-                    %div
-                      = hidden_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
-                    %div.input-group
+                    = hidden_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
+                    .input-group
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                    = hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
+                      =# hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg  amount-calculation-field", required: true
+                      %span.input-group-addon
+                        %i.fa.fa-balance-scale.fa-lg
+                      = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations, line_item['UnitOfMeasure']), class: "form-control input-lg amount-calculation-field", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                     - unless line_item['TaxCollection'].blank?
                       - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -304,11 +308,14 @@
                         %i.fa.fa-upload.fa-2x
                   %br
                   = hidden_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
-                  %div.input-group
+                  .input-group
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                  = hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
+                    =# hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
+                    %span.input-group-addon
+                      %i.fa.fa-balance-scale.fa-lg
+                    = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
@@ -374,12 +381,13 @@
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Hold"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
               %i.fa.fa-check.fa-lg
               - if @ticket['Status'] == '2'
-                = 'Hold' unless mobile_device?
+                = 'Hold'
               - else
-                = 'Save' unless mobile_device?
+                = 'Save'
           - else
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-block', id: 'save_button', name: 'save', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Hold"}, onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#close_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#pay_button').removeAttr('data-disable-with');") do
-              %i.fa.fa-check.fa-lg
+              - unless mobile_device?
+                %i.fa.fa-check.fa-lg
               - if @ticket['Status'] == '2'
                 Hold
               - else
@@ -389,31 +397,34 @@
             - if @ticket['Status'] == '2'
               = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-default btn-lg btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
                 %i.fa.fa-folder.fa-lg
-                = 'Close' unless mobile_device?
+                = 'Close'
             - if @ticket['Status'] == '1'
               %a.btn.btn-success.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
                 %i.fa.fa-dollar.fa-lg
-                = 'Pay' unless mobile_device?
+                = 'Pay'
           - else
             - if @ticket['Status'] == '2'
               = button_tag(close_ticket: true, :type => 'submit', :class => 'btn btn-default btn-block', id: 'close_button', name: 'close_ticket', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Close"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#close_and_pay_button').removeAttr('data-disable-with'); $(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with');") do
-                %i.fa.fa-folder.fa-lg
+                - unless mobile_device?
+                  %i.fa.fa-folder.fa-lg
                 Close
             - if @ticket['Status'] == '1'
               %a.btn.btn-success.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
-                %i.fa.fa-dollar.fa-lg
+                - unless mobile_device?
+                  %i.fa.fa-dollar.fa-lg
                 Pay
         - unless mobile_device? 
           - if @ticket['Status'] == '2'
             %div.col-xs-3.col-sm-3
               %a.btn.btn-success.btn-lg.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
                 %i.fa.fa-dollar.fa-lg
-                = 'Pay' unless mobile_device?
+                = 'Pay'
         - else
           - if @ticket['Status'] == '2'
             %div.col-xs-3.col-sm-3
               %a.btn.btn-success.btn-block{href: "#payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
-                %i.fa.fa-dollar.fa-lg
+                - unless mobile_device?
+                  %i.fa.fa-dollar.fa-lg
                 Pay
         = render partial: "payment_modal"
             

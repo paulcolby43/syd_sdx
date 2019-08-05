@@ -138,6 +138,7 @@ Rails.application.routes.draw do
     end
     collection do
       get :customer_index
+      get :unit_of_measure_lb_conversion
     end
   end
   

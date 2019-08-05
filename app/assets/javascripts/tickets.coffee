@@ -252,6 +252,7 @@ jQuery ->
     #description = $(this).closest('.panel').find('#item_description').val()
     price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
     unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
+    console.log 'unit of measure', unit_of_measure
     #tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     #tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     #total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
@@ -260,17 +261,23 @@ jQuery ->
 
     # Get unit of measure weight conversion for commodity item
     item_id = changed_field.closest('.panel').find('#ticket_line_items__commodity').val()
+    line_item_unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
     get_commodity_unit_of_measure_weight_conversion_ajax = ->
       $.ajax
-        url: "/commodities/" + item_id + "/unit_of_measure_weight_conversion"
+        #url: "/commodities/" + item_id + "/unit_of_measure_weight_conversion"
+        url: "/commodities/unit_of_measure_lb_conversion"
         dataType: 'json'
         #delay: 500 # Wait so that net can be re-calculated
         data:
           net: net
+          unit_of_measure: line_item_unit_of_measure
         success: (data) ->
           new_weight = data.new_weight
           console.log 'new_weight', data
-          amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+          if line_item_unit_of_measure != 'LD'
+            amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+          else 
+            amount = (parseFloat(price) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
           console.log 'amount:', amount
           changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
 
