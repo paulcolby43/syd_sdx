@@ -12,7 +12,7 @@ class Customer
   def self.all(auth_token, yard_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=500&yardFilterOn=false"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=100&yardFilterOn=false"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
@@ -31,7 +31,7 @@ class Customer
   def self.all_dispatch(auth_token, yard_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=500&yardFilterOn=false&isDispatch=true"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=100&yardFilterOn=false&isDispatch=true"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
@@ -50,7 +50,7 @@ class Customer
   def self.all_by_yard(auth_token, yard_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=500"
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/customer?t=100"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
