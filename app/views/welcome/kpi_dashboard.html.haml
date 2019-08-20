@@ -174,7 +174,7 @@
                         %td= shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
                         %td= shipment['ShipmentNumber']
                         %td= shipment['CustomerName']
-                        %td= shipment['ShipmentStatus'] == '0' ? 'Shipped' : 'Held'
+                        %td= shipment['ShipmentStatus'] == '1' ? 'Held' : 'Shipped'
                         %td.text-right= "#{number_with_delimiter(shipment['NetWeight'].to_i.round)} lb"
               - else
                 .panel-body None
