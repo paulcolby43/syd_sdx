@@ -18,10 +18,18 @@ class ReportsController < ApplicationController
       if current_user.customer? or @customer_user.present?
         if params[:q].blank?
           tickets = Ticket.all_by_date_and_customers(@status.split(',').map(&:to_i), @user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) 
-          @tickets = tickets.select {|t| t['Status'] != '7'} # Only show tickets not awaiting approval status
+          unless tickets.blank?
+            @tickets = tickets.select {|t| t['Status'] != '7'} # Only show tickets not awaiting approval status
+          else
+            @tickets = nil
+          end
         else
           tickets = Ticket.search_all_statuses(@user.token, current_yard_id, params[:q])
-          @tickets = tickets.select {|t| @user.portal_customer_ids.include?(t["CustomerId"]) and t['Status'] != '7'} # Only show tickets this customer portal user has access to and not awaiting approval status
+          unless tickets.blank?
+            @tickets = tickets.select {|t| @user.portal_customer_ids.include?(t["CustomerId"]) and t['Status'] != '7'} # Only show tickets this customer portal user has access to and not awaiting approval status
+          else
+            @tickets = nil
+          end
         end
       else
         @tickets = Ticket.all_by_date_and_status_and_yard(@status.split(',').map(&:to_i), current_user.token, current_yard_id, @start_date, @end_date)
