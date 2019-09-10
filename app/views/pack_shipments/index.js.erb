@@ -3,7 +3,7 @@ $('#more_pack_shipments_spinner').hide();
 
 <% if @pack_shipments.next_page %>
   $('a.load-more-pack-shipments').show();
-  $('a.load-more-pack-shipments').attr('href', '<%= pack_shipments_path page: @pack_shipments.next_page %>');
+  $('a.load-more-pack-shipments').attr('href', '<%= pack_shipments_path status: @status, page: @pack_shipments.next_page %>');
 <% else %>
   $(window).off('scroll');
   $('a.load-more-pack-shipments').attr('href', '#');

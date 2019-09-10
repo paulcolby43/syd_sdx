@@ -54,6 +54,11 @@ module ApplicationHelper
     return method_hash[method_number]
   end
   
+  def shipment_status_string(status_number)
+    status_hash = {"1" => "Held", "0" => "Closed"}
+    return status_hash[status_number]
+  end
+  
   def empty_guid
     '00000000-0000-0000-0000-000000000000'
   end

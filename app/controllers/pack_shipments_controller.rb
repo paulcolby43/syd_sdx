@@ -6,7 +6,12 @@ class PackShipmentsController < ApplicationController
   def index
     authorize! :index, :pack_shipments
 #    @query_string = params[:q].blank? ? '' : "%#{params[:q]}%"
-    @pack_shipments = Kaminari.paginate_array(PackShipment.all_held(current_user.token, current_yard_id)).page(params[:page]).per(10)
+    @status = "#{params[:status].blank? ? 'held' : params[:status]}"
+    if @status == 'held'
+      @pack_shipments = Kaminari.paginate_array(PackShipment.all_held(current_user.token, current_yard_id)).page(params[:page]).per(10)
+    elsif @status == 'closed'
+      @pack_shipments = Kaminari.paginate_array(PackShipment.all_closed(current_user.token, current_yard_id)).page(params[:page]).per(10)
+    end
   end
 
   # GET /pack_shipments/1
@@ -45,6 +50,12 @@ class PackShipmentsController < ApplicationController
     @contract_items = PackShipment.contract_items(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
     @available_packs_array = Pack.all(current_user.token, current_yard_id, 0).collect{ |pack| [ pack['TagNumber'], pack['Id'] ] }
+    @status = "#{params[:status].blank? ? 'held' : params[:status]}"
+    if @pack_shipment['ShipmentStatus'] == '1'
+      @status = 'held'
+    elsif @pack_shipment['ShipmentStatus'] == '0'
+      @status = 'closed'
+    end
     respond_to do |format|
       format.html {}
       format.json {render json: {"name" => @pack_shipment['ShipmentNumber']} } 

@@ -3,6 +3,14 @@
 - @title="Shipments"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    %p
+      .btn-group{"aria-label" => "shipment_status", :role => "group"}
+        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'held'), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+          %i.fa.fa-folder-open-o.fa-lg
+          Held
+        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'closed'), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+          %i.fa.fa-folder.fa-lg
+          Closed
     - unless @pack_shipments.blank?
       %div{id: "pack_shipments"}
         - @pack_shipments.each do |pack_shipment|
@@ -36,7 +44,7 @@
         .text-center
           %div{id: 'endless_page'}
             %p= image_tag("ajax-loader.gif", :id => "more_pack_shipments_spinner", :alt => "Loading ...", style: "display:none;")
-            %p= link_to 'Load more ...', pack_shipments_path(:page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
+            %p= link_to 'Load more ...', pack_shipments_path(:status => @status, :page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
     - else
       %p.text-center No pack shipments found
 
