@@ -34,6 +34,16 @@ class SessionsController < ApplicationController
       end
       if user.email_confirmed
         log_in user
+        
+        ### Trackable Information###
+        sign_in_count = user.sign_in_count + 1
+        last_sign_in_at = user.current_sign_in_at 
+        current_sign_in_at = Time.now
+        last_sign_in_ip = user.current_sign_in_ip
+        current_sign_in_ip = request.remote_ip
+        user.update_attributes(sign_in_count: sign_in_count, last_sign_in_at: last_sign_in_at, current_sign_in_at: current_sign_in_at, last_sign_in_ip: last_sign_in_ip, current_sign_in_ip: current_sign_in_ip)
+        ### Trackable Information###
+        
         unless (user.admin? and user.user_setting.currency_id.blank?) or (user.customer? and params[:customer_needs_to_change_password] == 'true')
           flash[:success] = "You have been logged in."
           unless user.customer?
