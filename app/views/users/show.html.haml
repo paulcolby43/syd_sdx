@@ -13,6 +13,28 @@
             %span.lead.text-danger 
               %i.fa.fa-warning
               Inactive
+      .col-sm-12.col-md-6
+        %p
+          %strong Log In Sessions
+          %br
+          - if @user.sign_in_count > 0
+            Sign In Count:
+            = @user.sign_in_count
+            %br
+            Current Sign In At:
+            = @user.current_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p')
+            %br
+            Last Sign In At:
+            = @user.last_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p')
+            %br
+            Current Sign In IP:
+            = @user.current_sign_in_ip
+            %br
+            Last Sign In IP:
+            = @user.last_sign_in_ip
+          - else
+            User has yet to log in
+              
     .row
       .col-sm-12.col-md-6
         %p
