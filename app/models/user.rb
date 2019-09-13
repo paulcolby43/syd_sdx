@@ -453,6 +453,44 @@ class User < ActiveRecord::Base
     end
   end
   
+  def current_ip_address_lookup_api_url
+    unless current_sign_in_ip.blank?
+      "http://api.ipstack.com/#{current_sign_in_ip}?access_key=#{ENV['IP_STACK_API_KEY']}"
+    end
+  end
+  
+  def current_ip_address_json
+    unless current_ip_address_lookup_api_url.blank?
+      json_data = RestClient::Request.execute(method: :get, url: current_ip_address_lookup_api_url, headers: {:Accept => "application/json"})
+      unless json_data.blank?
+        return JSON.parse(json_data, object_class: OpenStruct)
+      else
+        return nil
+      end
+    else
+      return nil
+    end
+  end
+  
+  def last_ip_address_lookup_api_url
+    unless current_sign_in_ip.blank?
+      "http://api.ipstack.com/#{last_sign_in_ip}?access_key=#{ENV['IP_STACK_API_KEY']}"
+    end
+  end
+  
+  def last_ip_address_json
+    unless last_ip_address_lookup_api_url.blank?
+      json_data = RestClient::Request.execute(method: :get, url: last_ip_address_lookup_api_url, headers: {:Accept => "application/json"})
+      unless json_data.blank?
+        return JSON.parse(json_data, object_class: OpenStruct)
+      else
+        return nil
+      end
+    else
+      return nil
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################

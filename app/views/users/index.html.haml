@@ -21,7 +21,7 @@
                 %th{:scope => "col"}= users_sort_link 'last_sign_in_at', 'Last Sign In', @role
                 %th{:scope => "col"}= users_sort_link 'current_sign_in_ip', 'Current IP', @role
                 %th{:scope => "col"}= users_sort_link 'last_sign_in_ip', 'Last IP', @role
-                %th Last Location
+                %th Last Geolocation
             %tbody
               - @users.each do |user|
                 %tr{class: user.inactive? ? 'danger' : ''}
