@@ -428,6 +428,31 @@ class User < ActiveRecord::Base
     not active?
   end
   
+  def geolocation_api_url
+    unless latitude.blank? or longitude.blank?
+      "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{latitude},#{longitude}&key=#{ENV['GOOGLE_MAPS_API_KEY']}"
+    end
+  end
+  
+  def geolocation_json
+    unless geolocation_api_url.blank?
+      json_data = RestClient::Request.execute(method: :get, url: geolocation_api_url, headers: {:Accept => "application/json"})
+      unless json_data.blank?
+        return JSON.parse(json_data, object_class: OpenStruct)
+      else
+        return nil
+      end
+    else
+      return nil
+    end
+  end
+  
+  def location_address
+    unless geolocation_json.blank? or geolocation_json.results.blank?
+      geolocation_json.results.first.formatted_address
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################

@@ -2,12 +2,14 @@ class UsersController < ApplicationController
   before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :update_latitude_and_longitude]
   load_and_authorize_resource  param_method: :user_params, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
+  
+  helper_method :users_sort_column, :users_sort_direction
 
   # GET /users
   # GET /users.json
   def index
-#    @users = User.all
-    @users = current_user.company.users
+    @role = params[:role] ||= 'All roles'
+    @users = current_user.company.users.order("#{users_sort_column} #{users_sort_direction}")
   end
 
   # GET /users/1
@@ -223,5 +225,15 @@ class UsersController < ApplicationController
       params.require(:user).permit(:username, :password, :password_confirmation, :first_name, :last_name, :company_name, :email, :phone, 
         :customer_guid, :role, :yard_id, :company_id, :address1, :address2, :city, :state, :zip, :terms_of_service, :email_confirmed, :confirm_token, 
         :dragon_account_number, :view_images, :active, portal_customers_attributes:[:user_id, :customer_guid, :_destroy,:id])
+    end
+    
+    ### Secure the users sort direction ###
+    def users_sort_direction
+      %w[asc desc].include?(params[:users_direction]) ?  params[:users_direction] : "asc"
+    end
+
+    ### Secure the users sort column name ###
+    def users_sort_column
+      ["username", "first_name", "last_name", "role", "confirmed", "sign_in_count", "current_sign_in_at", "last_sign_in_at", "current_sign_in_ip", "last_sign_in_ip"].include?(params[:users_column]) ? params[:users_column] : "role"
     end
 end

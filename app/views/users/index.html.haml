@@ -2,36 +2,88 @@
 - @title="Users"
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
-  .container
-    - unless @users.blank?
-      %div{id: "users"}
-        -# @users.each do |user|
-        - @users.group_by{ |u| u.role }.each do |user_role, users|
-          %p= user_role.titleize
-          - users.each do |user|
-            %div.row
-              .col-xs-12.col-sm-12.col-md-12
-                %div.panel{class: "#{user.admin? ? 'panel-danger' : user.customer? ? 'panel-warning' : 'panel-primary'}"}
-                  %div.list_group
-                    %a{href: user_path(user.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{user.first_name} #{user.last_name}"}, class: "list-group-item user_button"}
-                      - unless user.first_name.blank? and user.last_name.blank?
-                        = "#{user.first_name} #{user.last_name}"
-                      - else
-                        = user.username
-                      - if user.inactive?
-                        %span
-                          %small.text-danger
-                            %i.fa.fa-warning
-                            Inactive
-                      .pull-right
-                        &nbsp;
-                        %i.fa.fa-chevron-right.fa-lg
-                    %div.list-group-item
-                      = "#{user.role} user"
-                      - if user_role == 'customer'
-                        %br
-                        = "#{user.email_confirmed? ? 'Email confirmed' : 'Email not confirmed'}"
-    - else
-      %p No users found  
+  .container-fluid
+    .panel.panel-primary
+      .panel-heading
+        %h3.panel-title Users
+      - unless @users.blank?
+        .table-responsive
+          %table.table.table-striped
+            %thead
+              %tr
+                %th{:scope => "col"}= users_sort_link 'username', 'Username', @role
+                %th{:scope => "col"}= users_sort_link 'first_name', 'First', @role
+                %th{:scope => "col"}= users_sort_link 'last_name', 'Last', @role
+                %th{:scope => "col"}= users_sort_link 'role', 'Role', @role
+                %th{:scope => "col"}= users_sort_link 'email_confirmed', 'Confirmed?', @role
+                %th{:scope => "col"}= users_sort_link 'sign_in_count', 'Sign In Count?', @role
+                %th{:scope => "col"}= users_sort_link 'current_sign_in_at', 'Current Sign In', @role
+                %th{:scope => "col"}= users_sort_link 'last_sign_in_at', 'Last Sign In', @role
+                %th{:scope => "col"}= users_sort_link 'current_sign_in_ip', 'Current IP', @role
+                %th{:scope => "col"}= users_sort_link 'last_sign_in_ip', 'Last IP', @role
+                %th Last Location
+            %tbody
+              - @users.each do |user|
+                %tr{class: user.inactive? ? 'danger' : ''}
+                  %td= link_to user.username, user
+                  %td= user.first_name
+                  %td= user.last_name
+                  %td= user.role
+                  %td= "#{user.email_confirmed? ? 'Yes' : 'No'}"
+                  %td= user.sign_in_count
+                  %td
+                    - unless user.current_sign_in_at.blank?
+                      = user.current_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p')
+                    - else
+                      No data
+                  %td
+                    - unless user.last_sign_in_at.blank?
+                      = user.last_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p')
+                    - else
+                      No data
+                  %td= user.current_sign_in_ip.blank? ? 'No data' : user.current_sign_in_ip
+                  %td= user.last_sign_in_ip.blank? ? 'No data' : user.last_sign_in_ip
+                  %td
+                    - unless user.latitude.blank? or user.longitude.blank? or user.geolocation_json.blank?
+                      = user.location_address
+                      =# user.geolocation_json
+                    - else
+                      No data
+      - else
+        .panel-body
+          .text-center
+            %p No users found
 
-    =# link_to 'Add User', new_user_path, class: 'btn btn-primary btn-lg'
+    -#
+      - unless @users.blank?
+        %div{id: "users"}
+          -# @users.each do |user|
+          - @users.group_by{ |u| u.role }.each do |user_role, users|
+            %p= user_role.titleize
+            - users.each do |user|
+              %div.row
+                .col-xs-12.col-sm-12.col-md-12
+                  %div.panel{class: "#{user.admin? ? 'panel-danger' : user.customer? ? 'panel-warning' : 'panel-primary'}"}
+                    %div.list_group
+                      %a{href: user_path(user.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{user.first_name} #{user.last_name}"}, class: "list-group-item user_button"}
+                        - unless user.first_name.blank? and user.last_name.blank?
+                          = "#{user.first_name} #{user.last_name}"
+                        - else
+                          = user.username
+                        - if user.inactive?
+                          %span
+                            %small.text-danger
+                              %i.fa.fa-warning
+                              Inactive
+                        .pull-right
+                          &nbsp;
+                          %i.fa.fa-chevron-right.fa-lg
+                      %div.list-group-item
+                        = "#{user.role} user"
+                        - if user_role == 'customer'
+                          %br
+                          = "#{user.email_confirmed? ? 'Email confirmed' : 'Email not confirmed'}"
+      - else
+        %p No users found  
+
+      =# link_to 'Add User', new_user_path, class: 'btn btn-primary btn-lg'
