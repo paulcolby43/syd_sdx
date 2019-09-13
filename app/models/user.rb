@@ -474,7 +474,7 @@ class User < ActiveRecord::Base
   
   def current_ip_address_location_address
     json_data = current_ip_address_json
-    unless json_data.blank?
+    unless json_data.blank? or (json_data.city.blank? and json_data.region_name.blank? and json_data.zip.blank? and json_data.country_name.blank?)
       "#{json_data.city}, #{json_data.region_name}, #{json_data.zip}, #{json_data.country_name}"
     end
   end
@@ -500,7 +500,7 @@ class User < ActiveRecord::Base
   
   def last_ip_address_location_address
     json_data = last_ip_address_json
-    unless json_data.blank?
+    unless json_data.blank? or (json_data.city.blank? and json_data.region_name.blank? and json_data.zip.blank? and json_data.country_name.blank?)
       "#{json_data.city}, #{json_data.region_name}, #{json_data.zip}, #{json_data.country_name}"
     end
   end

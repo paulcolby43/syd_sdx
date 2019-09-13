@@ -3,6 +3,14 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container-fluid
+    %p
+      .btn-group{"aria-label" => "user_role", :role => "group"}
+        %a.btn.btn-default.btn-lg{:href => users_path, class: params[:role].blank? ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> All"}} 
+          All
+        %a.btn.btn-default.btn-lg{:href => users_path(role: 'basic'), class: params[:role] == 'basic' ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Basic"}} 
+          Basic
+        %a.btn.btn-default.btn-lg{:href => users_path(role: 'customer'), class: params[:role] == 'customer' ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Customer"}} 
+          Customer
     .panel.panel-primary
       .panel-heading
         %h3.panel-title Users
@@ -21,7 +29,6 @@
                 %th{:scope => "col"}= users_sort_link 'last_sign_in_at', 'Last Sign In', @role
                 %th{:scope => "col"}= users_sort_link 'current_sign_in_ip', 'Current IP', @role
                 %th{:scope => "col"}= users_sort_link 'last_sign_in_ip', 'Last IP', @role
-                %th Last Geolocation
             %tbody
               - @users.each do |user|
                 %tr{class: user.inactive? ? 'danger' : ''}
@@ -44,23 +51,11 @@
                   %td
                     - unless user.current_sign_in_ip.blank?
                       = user.current_sign_in_ip
-                      - unless user.current_ip_address_json.blank?
-                        %br
-                        %small= user.current_ip_address_location_address
                     - else
                       No data
                   %td
                     - unless user.last_sign_in_ip.blank?
                       = user.last_sign_in_ip
-                      - unless user.last_ip_address_json.blank?
-                        %br
-                        %small= user.last_ip_address_location_address
-                    - else
-                      No data
-                  %td
-                    - unless user.latitude.blank? or user.longitude.blank? or user.geolocation_json.blank?
-                      = user.location_address
-                      =# user.geolocation_json
                     - else
                       No data
       - else

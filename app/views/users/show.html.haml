@@ -6,6 +6,29 @@
     .row
       .col-sm-12.col-md-6
         %p
+          %strong Name
+          %br
+          = "#{@user.first_name} #{@user.last_name}"
+          - if current_user.admin? 
+            %br
+            %small
+              %i.fa.fa-gear
+              = link_to 'User settings', @user.user_setting
+        
+      .col-sm-12.col-md-6
+        %p
+          %strong Username
+          %br
+          = @user.username
+          
+    .row
+      .col-sm-12.col-md-6
+        %p
+          %strong User Type
+          %br
+          = @user.role.titleize
+      .col-sm-12.col-md-6
+        %p
           %strong Portal Status
           - if @user.active
             %span.lead.text-success Active
@@ -13,6 +36,7 @@
             %span.lead.text-danger 
               %i.fa.fa-warning
               Inactive
+    .row
       .col-sm-12.col-md-6
         %p
           %strong Log In Sessions
@@ -29,32 +53,17 @@
             %br
             Current Sign In IP:
             = @user.current_sign_in_ip
+            - unless @user.current_ip_address_json.blank? or @user.current_ip_address_location_address.blank?
+              %br
+              %small= @user.current_ip_address_location_address
             %br
             Last Sign In IP:
             = @user.last_sign_in_ip
+            - unless @user.last_ip_address_json.blank? or @user.last_ip_address_location_address.blank?
+              %br
+              %small= @user.last_ip_address_location_address
           - else
             No user log in data
-              
-    .row
-      .col-sm-12.col-md-6
-        %p
-          %strong User Type
-          %br
-          = @user.role.titleize
-      .col-sm-12.col-md-6
-        %p
-          %strong Name
-          %br
-          = "#{@user.first_name} #{@user.last_name}"
-    .row
-      .col-sm-12.col-md-6
-        %p
-          %strong Username
-          %br
-          = @user.username
-        - if current_user.admin? 
-          %p
-            = link_to 'User settings', @user.user_setting
       .col-sm-12.col-md-6
         - unless @user.customer?
           %p
@@ -116,6 +125,8 @@
         - unless @user.latitude.blank? and @user.longitude.blank?
           %p
             %strong Recent Location
+          %p
+            = @user.location_address
           .embed-responsive.embed-responsive-16by9
             %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{@user.latitude},#{@user.longitude}"), :style => "border:0"}
 

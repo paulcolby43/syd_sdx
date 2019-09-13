@@ -8,8 +8,12 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @role = params[:role] ||= 'All roles'
-    @users = current_user.company.users.order("#{users_sort_column} #{users_sort_direction}")
+    unless params[:role].blank?
+      @role = params[:role]
+    else
+      @role = ['admin', 'basic', 'customer']
+    end
+    @users = current_user.company.users.where(role: @role).order("#{users_sort_column} #{users_sort_direction}")
   end
 
   # GET /users/1
