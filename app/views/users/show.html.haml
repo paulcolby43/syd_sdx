@@ -46,10 +46,16 @@
             = @user.sign_in_count
             %br
             Current Sign In At:
-            = @user.current_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p') unless @user.current_sign_in_at.blank?
+            - unless @user.current_sign_in_at.blank?
+              = @user.current_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p') 
+            - else
+              No data
             %br
             Last Sign In At:
-            = @user.last_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p') unless @user.last_sign_in_at.blank?
+            - unless @user.last_sign_in_at.blank?
+              = @user.last_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p') 
+            - else
+              No data
             %br
             Current Sign In IP:
             = @user.current_sign_in_ip
