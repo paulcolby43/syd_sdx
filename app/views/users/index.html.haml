@@ -41,8 +41,22 @@
                       = user.last_sign_in_at.in_time_zone(session[:time_zone]).strftime('%-m/%-d/%Y %l:%M %p')
                     - else
                       No data
-                  %td= user.current_sign_in_ip.blank? ? 'No data' : user.current_sign_in_ip
-                  %td= user.last_sign_in_ip.blank? ? 'No data' : user.last_sign_in_ip
+                  %td
+                    - unless user.current_sign_in_ip.blank?
+                      = user.current_sign_in_ip
+                      - unless user.current_ip_address_json.blank?
+                        %br
+                        %small= user.current_ip_address_location_address
+                    - else
+                      No data
+                  %td
+                    - unless user.last_sign_in_ip.blank?
+                      = user.last_sign_in_ip
+                      - unless user.last_ip_address_json.blank?
+                        %br
+                        %small= user.last_ip_address_location_address
+                    - else
+                      No data
                   %td
                     - unless user.latitude.blank? or user.longitude.blank? or user.geolocation_json.blank?
                       = user.location_address

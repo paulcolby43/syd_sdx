@@ -497,6 +497,12 @@ class User < ActiveRecord::Base
     end
   end
   
+  def last_ip_address_location_address
+    unless last_ip_address_json.blank?
+      "#{last_ip_address_json.city}, #{last_ip_address_json.region_name}, #{last_ip_address_json.zip}, #{last_ip_address_json.country_name}"
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################
