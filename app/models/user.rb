@@ -480,7 +480,7 @@ class User < ActiveRecord::Base
   end
   
   def last_ip_address_lookup_api_url
-    unless current_sign_in_ip.blank?
+    unless last_sign_in_ip.blank?
       "http://api.ipstack.com/#{last_sign_in_ip}?access_key=#{ENV['IP_STACK_API_KEY']}"
     end
   end
