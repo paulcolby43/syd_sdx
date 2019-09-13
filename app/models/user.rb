@@ -472,6 +472,12 @@ class User < ActiveRecord::Base
     end
   end
   
+  def current_ip_address_location_address
+    unless current_ip_address_json.blank?
+      "#{current_ip_address_json.city}, #{current_ip_address_json.region_name}, #{current_ip_address_json.zip}, #{current_ip_address_json.country_name}"
+    end
+  end
+  
   def last_ip_address_lookup_api_url
     unless current_sign_in_ip.blank?
       "http://api.ipstack.com/#{last_sign_in_ip}?access_key=#{ENV['IP_STACK_API_KEY']}"
