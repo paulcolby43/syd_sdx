@@ -74,9 +74,6 @@ GEM
       json (>= 1.7)
       mime-types (>= 1.16)
     chronic (0.10.2)
-    cloudflare-rails (0.1.2)
-      httparty
-      rails (~> 4.0)
     coffee-rails (4.1.1)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.1.x)
@@ -127,8 +124,6 @@ GEM
       ruby_parser (~> 3.5)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    httparty (0.16.2)
-      multi_xml (>= 0.5.2)
     httpi (2.4.1)
       rack
     i18n (0.7.0)
@@ -166,7 +161,6 @@ GEM
     morrisjs-rails (0.5.1.2)
       railties (> 3.1, < 6)
     multi_json (1.11.2)
-    multi_xml (0.6.0)
     nested_form_fields (0.8)
       coffee-rails (>= 3.2.1)
       jquery-rails
@@ -314,7 +308,6 @@ DEPENDENCIES
   byebug
   cancancan
   carrierwave
-  cloudflare-rails
   coffee-rails (~> 4.1.0)
   devise
   exception_notification
