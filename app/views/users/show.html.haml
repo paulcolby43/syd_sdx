@@ -57,11 +57,13 @@
             - else
               No data
             %br
+            %br
             Current Sign In IP:
             = @user.current_sign_in_ip
             - unless @user.current_ip_address_json.blank? or @user.current_ip_address_location_address.blank?
               %br
               %small= @user.current_ip_address_location_address
+            %br
             %br
             Last Sign In IP:
             = @user.last_sign_in_ip
