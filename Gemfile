@@ -121,9 +121,13 @@ gem 'nested_form_fields'
 gem 'morrisjs-rails'
 gem 'raphael-rails'
 
-
 # Ruby EXIF reader
 gem 'exif'
+
+group :production do
+  # or :staging or :beta or whatever environments you are using cloudflare in.
+  gem 'cloudflare-rails'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
