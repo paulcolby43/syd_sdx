@@ -120,6 +120,8 @@ gem 'raphael-rails'
 # Ruby EXIF reader
 gem 'exif'
 
+# Allow Rails request.remote_ip to defer to CloudFlare's connecting IP
+gem 'actionpack-cloudflare'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

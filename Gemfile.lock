@@ -29,6 +29,8 @@ GEM
       activesupport (= 4.1.8)
       rack (~> 1.5.2)
       rack-test (~> 0.6.2)
+    actionpack-cloudflare (1.1.0)
+      actionpack (>= 3.2)
     actionview (4.1.8)
       activesupport (= 4.1.8)
       builder (~> 3.1)
@@ -300,6 +302,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  actionpack-cloudflare
   activeadmin!
   activerecord-sqlserver-adapter
   bcrypt
