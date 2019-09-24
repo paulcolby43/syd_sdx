@@ -885,8 +885,13 @@ jQuery ->
 
   ### Ticket picture event code chosen ###
   #$(".event_code_radio").on 'click', ->
-  $('.image_file_upload_form').on 'click', '.event_code_radio', (e) ->
+  $('#individual_ticket_upload').on 'click', '.event_code_radio', (e) ->
     #$('#upload_button').show()
+    form = $(this).closest("form")
+    form.find('#image_file_file').click()
+
+  ### Tickets index picture event code chosen ###
+  $('#tickets').on 'click', '.event_code_radio', (e) ->
     form = $(this).closest("form")
     form.find('#image_file_file').click()
 

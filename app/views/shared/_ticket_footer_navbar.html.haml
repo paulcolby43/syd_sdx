@@ -28,6 +28,6 @@
                 = "Sign" unless mobile_device?
 
 =# render partial: "image_files/upload_modal"
-= render partial: "image_files/upload_modal", locals: {ticket: @ticket}
+%div#individual_ticket_upload= render partial: "image_files/upload_modal", locals: {ticket: @ticket}
 =# render partial: "#{current_user.user_setting.table_name.singularize}_files/upload_modal"
 = render partial: "#{current_user.user_setting.table_name.singularize}_files/signature_modal"
