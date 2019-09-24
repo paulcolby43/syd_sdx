@@ -885,6 +885,11 @@ jQuery ->
   $(".event_code_radio").on 'click', ->
     $('#upload_button').show()
 
+  ### Tickets index picture event code chosen ###
+  $('#tickets').on 'click', '.event_code_radio', (e) ->
+    form = $(this).closest("form")
+    form.find('#image_file_file').click()
+
   ### VIN Search ###
   $(wrapper).on 'click', '.vin_search_button', (e) ->
     modal = $(this).closest('.modal')
