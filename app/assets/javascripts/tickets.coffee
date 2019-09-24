@@ -365,7 +365,9 @@ jQuery ->
           current_data.fileupload 'process', data
         ).done ->
           data.submit()
-        $('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        form = $(this).closest("form")
+        form.find('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        # $('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $('#images').prepend('<div class="row"><div class="col-xs-12 col-sm-2 col-md-2 col-lg-2"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $(".picture_loading_spinner").show()
       else
@@ -882,11 +884,9 @@ jQuery ->
   ### End Customer ID changed ###
 
   ### Ticket picture event code chosen ###
-  $(".event_code_radio").on 'click', ->
-    $('#upload_button').show()
-
-  ### Tickets index picture event code chosen ###
-  $('#tickets').on 'click', '.event_code_radio', (e) ->
+  #$(".event_code_radio").on 'click', ->
+  $('.image_file_upload_form').on 'click', '.event_code_radio', (e) ->
+    #$('#upload_button').show()
     form = $(this).closest("form")
     form.find('#image_file_file').click()
 

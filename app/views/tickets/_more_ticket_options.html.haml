@@ -2,7 +2,7 @@
   %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
     %i.fa.fa-camera
     Picture
-  = render partial: "image_files/upload_modal", locals: {ticket: ticket}
+  
 - unless current_user.customer?
   - if @status == '1'
     %p
