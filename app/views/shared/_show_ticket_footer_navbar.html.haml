@@ -8,7 +8,8 @@
               %i.fa.fa-home.fa-lg
               = "Home" unless mobile_device?
         .col-xs-4.col-sm-4
-          %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
+          -# %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
+          %a{href: "#ticket_#{@ticket['Id']}_upload_form", id: "ticket_#{@ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
             %i.fa.fa-camera.fa-lg
             = "Picture" unless mobile_device?
         .col-xs-4.col-sm-4
