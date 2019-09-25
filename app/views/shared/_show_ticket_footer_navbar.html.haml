@@ -16,4 +16,5 @@
             %i.fa.fa-file-pdf-o.fa-lg
             = "Print" unless mobile_device?
 
-= render partial: "image_files/upload_modal"
+=# render partial: "image_files/upload_modal"
+%div#individual_ticket_upload= render partial: "image_files/upload_modal", locals: {ticket: @ticket}
