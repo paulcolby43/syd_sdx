@@ -77,6 +77,7 @@
     - unless @tickets.blank?
       %div{id: "tickets"}
         - @tickets.each do |ticket|
+          = render partial: "image_files/upload_modal", locals: {ticket: ticket}
           %div.row
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
@@ -101,20 +102,28 @@
                         = "#{ticket['FirstName']} #{ticket['LastName']}"
                         %br
                       %small= ticket["Company"]
-                  - if @status == '1' or @status == '3'
-                    %div.list-group-item
-                      = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-                      .pull-right
-                        %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
-                          More
-                      %br
-                      %br
-                  - else
-                    %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
-                      = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-                      .pull-right
-                        %i.fa.fa-file-pdf-o.fa-lg
-                        Print
+                  %div.list-group-item
+                    = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                    .pull-right
+                      %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                        More
+                    %br
+                    %br
+                  -#
+                    - if @status == '1' or @status == '3'
+                      %div.list-group-item
+                        = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                        .pull-right
+                          %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                            More
+                        %br
+                        %br
+                    - else
+                      %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
+                        = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                        .pull-right
+                          %i.fa.fa-file-pdf-o.fa-lg
+                          Print
       .row
         .text-center
           %div{id: 'endless_page'}

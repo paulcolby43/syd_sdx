@@ -1,4 +1,5 @@
 - @tickets.each do |ticket|
+  = render partial: "image_files/upload_modal", locals: {ticket: ticket}
   %div.row
     .col-xs-12.col-sm-12.col-md-12
       %div.panel.panel-primary
@@ -23,20 +24,67 @@
                 = "#{ticket['FirstName']} #{ticket['LastName']}"
                 %br
               %small= ticket["Company"]
-          - if @status == '1' or @status == '3'
-            %div.list-group-item
-              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-              .pull-right
-                %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
-                  More
-              %br
-              %br
-          - else
-            %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
-              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-              .pull-right
-                %i.fa.fa-file-pdf-o.fa-lg
-                Print
+          %div.list-group-item
+            = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+            .pull-right
+              %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                More
+            %br
+            %br
+          -#
+            - if @status == '1' or @status == '3'
+              %div.list-group-item
+                = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                .pull-right
+                  %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                    More
+                %br
+                %br
+            - else
+              %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
+                = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                .pull-right
+                  %i.fa.fa-file-pdf-o.fa-lg
+                  Print
 
 :javascript
   $('[data-toggle="popover"]').popover();
+
+  //File upload for dynamically added tickets
+  $(".image_file_upload_form").fileupload({
+    dataType: "script",
+    disableImageResize: false,
+    imageMaxWidth: 1024,
+    imageMaxHeight: 768,
+    imageMinWidth: 800,
+    imageMinHeight: 600,
+    imageCrop: false,
+    add: function(e, data) {
+      var current_data, file, form, types;
+      file = void 0;
+      types = void 0;
+      types = /(\.|\/)(gif|jpe?g|png|pdf)$/i;
+      file = data.files[0];
+      if (types.test(file.type) || types.test(file.name)) {
+        data.context = $(tmpl("template-upload", file));
+        current_data = $(this);
+        data.process(function() {
+          return current_data.fileupload('process', data);
+        }).done(function() {
+          return data.submit();
+        });
+        form = $(this).closest("form");
+        form.find('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>');
+        return $(".picture_loading_spinner").show();
+      } else {
+        return alert("" + file.name + " is not a gif, jpeg, or png picture file");
+      }
+    },
+    progress: function(e, data) {
+      var progress;
+      if (data.context) {
+        progress = parseInt(data.loaded / data.total * 100, 10);
+        return data.context.find('.progress-bar').css('width', progress + '%');
+      }
+    }
+  });

@@ -8,7 +8,8 @@
               %i.fa.fa-home.fa-lg
               = "Home" unless mobile_device?
         .col-xs-4.col-sm-4
-          %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
+          -# %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
+          %a{href: "#ticket_#{@ticket['Id']}_upload_form", id: "ticket_#{@ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
             %i.fa.fa-camera.fa-lg
             = "Picture" unless mobile_device?
         .col-xs-4.col-sm-4
@@ -16,4 +17,5 @@
             %i.fa.fa-file-pdf-o.fa-lg
             = "Print" unless mobile_device?
 
-= render partial: "image_files/upload_modal"
+=# render partial: "image_files/upload_modal"
+%div#individual_ticket_upload= render partial: "image_files/upload_modal", locals: {ticket: @ticket}

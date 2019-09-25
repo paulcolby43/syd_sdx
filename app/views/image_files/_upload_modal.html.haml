@@ -1,10 +1,11 @@
-%div{:id => "upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+-# %div{:id => "upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+%div{:id => "ticket_#{ticket['Id']}_upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
   = form_for ImageFile.new, html: {class: 'image_file_upload_form'} do |f|
     .modal-dialog.modal-sm
       .modal-content
         -#
           .modal-header
-            = @ticket["TicketNumber"]
+            = ticket["TicketNumber"]
             = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
         .modal-body
           %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
@@ -13,12 +14,12 @@
           = f.hidden_field :user_id, value: current_user.id
           =# f.hidden_field :location, value: current_yard_id
           = f.hidden_field :yard_id, value: current_yard_id
-          =# f.hidden_field :customer_number, value: @ticket["CustomerId"]
-          = f.hidden_field :customer_name, value: "#{@ticket['FirstName']} #{@ticket['LastName']}"
+          =# f.hidden_field :customer_number, value: ticket["CustomerId"]
+          = f.hidden_field :customer_name, value: "#{ticket['FirstName']} #{ticket['LastName']}"
           = f.hidden_field :tare_seq_nbr
           = f.hidden_field :commodity_name
           = f.hidden_field :weight
-          = f.hidden_field :ticket_number, value: @ticket["TicketNumber"]
+          = f.hidden_field :ticket_number, value: ticket["TicketNumber"]
           .form-group{:id => "event_code"}
             =# f.label "Event Code", :class => 'control-label'
             .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
