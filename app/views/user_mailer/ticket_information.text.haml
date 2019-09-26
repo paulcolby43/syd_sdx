@@ -62,5 +62,6 @@
     - @images_array.each_slice(6) do |images|
       - images.each do |image|
         - unless image['HIDDEN'] == '1'
-          = image_tag(show_preview_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
+          =# image_tag(show_preview_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
+          = image_tag("http://#{@user.company.jpegger_service_ip}:#{@user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}&yardid=#{@ticket["YardId"]}", alt: image['CAPTURE_SEQ_NBR'])
           = image['EVENT_CODE']

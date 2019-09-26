@@ -374,7 +374,7 @@ class TicketsController < ApplicationController
       @images_array = []
     end
     @recipients = params[:recipients]
-    UserMailer.ticket_information(@ticket, @line_items, @recipients, @images_array).deliver
+    UserMailer.ticket_information(current_user, @ticket, @line_items, @recipients, @images_array).deliver
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket details emailed to recipients.' 

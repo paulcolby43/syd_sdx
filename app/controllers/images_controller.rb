@@ -105,6 +105,12 @@ class ImagesController < ApplicationController
     send_data Image.preview(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
+  def preview
+#    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
+    company = Company.find(params[:company_id])
+    send_data Image.preview(company, params[:id], params[:yard_id]), :type => 'image/jpeg',:disposition => 'inline'
+  end
+  
   def send_pdf_data
 #    send_data @image.jpeg_image, :type => 'application/pdf',:disposition => 'attachment'
     send_data Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'application/pdf',:disposition => 'attachment'
