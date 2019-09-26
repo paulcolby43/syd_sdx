@@ -124,12 +124,6 @@
                     %div.list-group-item
                       = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
                       .pull-right
-                        -#
-                          = form_tag email_ticket_path(ticket['Id']), method: 'post' do |f|
-                            = hidden_field_tag :line_items, @line_items
-                            %button.btn.btn-default{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Email"}} 
-                              %i.fa.fa-send.fa-lg
-                              Email
                         %a.btn.btn-default{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
                           %i.fa.fa-envelope.fa-lg
                           Email
