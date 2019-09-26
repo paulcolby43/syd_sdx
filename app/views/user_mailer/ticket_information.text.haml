@@ -57,12 +57,8 @@
     = "Balance Due: #{number_to_currency(@ticket['BalanceDue'])}"
  
 - unless @images_array.blank?
-  = "\r\n" 
-  Images
   = "\r\n"
-  - @images_array.each_slice(6) do |images|
-    - images.each do |image|
-      - unless image['HIDDEN'] == '1'
-        = image_tag(preview_image_path(image['CAPTURE_SEQ_NBR'], company_id: @user.company_id, yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
-        = "\r\n"
-        = image['EVENT_CODE']
+  - @images.each do |image|
+    - unless image['HIDDEN'] == '1'
+      = image_tag(preview_image_path(image['CAPTURE_SEQ_NBR'], company_id: @user.company_id, yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
+      = "\r\n"
