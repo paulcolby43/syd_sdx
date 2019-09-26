@@ -124,14 +124,14 @@
                     %div.list-group-item
                       = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
                       .pull-right
+                        %a.btn.btn-primary{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                          %i.fa.fa-camera.fa-lg
+                          Picture
                         %a.btn.btn-default{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
                           %i.fa.fa-envelope.fa-lg
                           Email
                         = render partial: "send_email_modal", locals: {ticket: ticket}
-                        %a.btn.btn-primary{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
-                          %i.fa.fa-camera.fa-lg
-                          Picture
-                        %a.btn.btn-primary{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), target: '_blank'}
+                        %a.btn.btn-default{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), target: '_blank'}
                           %i.fa.fa-file-pdf-o.fa-lg
                           PDF
                       %br
