@@ -17,6 +17,8 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 #  config.action_mailer.default_url_options = { host: 'localhost', port: 8081 }
   config.action_mailer.default_url_options = { host: ENV['SCRAP_YARD_DOG_HOST'] }
+  config.action_mailer.asset_host = "http://#{ENV['SCRAP_YARD_DOG_HOST']}"
+
   
   config.action_mailer.delivery_method = :smtp
 
