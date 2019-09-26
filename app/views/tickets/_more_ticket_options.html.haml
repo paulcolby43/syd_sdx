@@ -10,16 +10,21 @@
         %i.fa.fa-dollar
         = 'Pay'
     = render partial: "quick_payment_modal", locals: {ticket: ticket}
+%p
+  %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
+    %i.fa.fa-envelope
+    Email
+= render partial: "send_email_modal", locals: {ticket: ticket}
 
 %p
-  %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-primary btn-block", target: '_blank'}
+  %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-block", target: '_blank'}
     %i.fa.fa-file-pdf-o
     PDF
 
 - unless current_user.customer?
   - if (@status == '1' or @status == '3') and current_user.company.include_leads_online? and current_user.company.leads_online_config_settings_present?
     %p
-      %a{href: send_to_leads_online_ticket_path(ticket['Id']), class: "btn btn-primary btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
+      %a{href: send_to_leads_online_ticket_path(ticket['Id']), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Send to Leads"}}
         %i.fa.fa-search
         Send to Leads
   - if @status == '3'
