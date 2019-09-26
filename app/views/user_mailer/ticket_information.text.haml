@@ -61,6 +61,6 @@
     = "\r\n"
     - @images_array.each_slice(6) do |images|
       - images.each do |image|
-        - unless image['HIDDEN'] == '1' or not current_user.view_images?
+        - unless image['HIDDEN'] == '1'
           = image_tag(show_preview_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
           = image['EVENT_CODE']
