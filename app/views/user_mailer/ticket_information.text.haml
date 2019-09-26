@@ -1,0 +1,66 @@
+= "Ticket: #{@ticket['TicketNumber']}"
+= "#{@ticket['Company'].blank? ? 'No company name' : @ticket['Company']}"
+= "\r\n"
+- if @ticket["TicketItemCollection"].blank?
+  No ticket items
+- else
+  - @line_items.each do |line_item|
+    = line_item["PrintDescription"]
+    = "Gross: #{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+    = "Tare: #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+    = "Net: #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+    = "Price: $#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
+    = "Amount: $#{line_item['ExtendedAmount']}"
+    - unless line_item["DeductionCollection"].blank?
+      = "\r\n"
+      Deduction weights
+      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+        - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
+        - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+          Less:
+          = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+          = "(#{line_item_deduction["DeductWeightDescription"]})"
+      - else
+        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+          - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+            Less:
+            = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+            = "(#{line_item_deduction["DeductWeightDescription"]})"
+    - unless line_item["DeductionCollection"].blank?
+      = "\r\n"
+      Deduction dollar amounts
+      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+        - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
+        - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+          %strong Less:
+          = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+          = "(#{line_item_deduction["DeductDollarAmountDescription"]})"
+      - else
+        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+          - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+            %strong Less:
+            = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+            = "(#{line_item_deduction["DeductDollarAmountDescription"]})"
+    - unless line_item['TaxCollection'].blank?
+      = "\r\n"
+      Taxes
+      - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+        - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+          = "$#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
+      - else # Multiple line item tax results returned
+        - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+          - unless tax['TaxAmount'] == '0.00'
+            = "$#{tax['TaxAmount']}"
+
+  - unless @ticket['Status'] == '3'
+    = "\r\n"
+    = "Balance Due: #{number_to_currency(@ticket['BalanceDue'])}"
+  = "\r\n"  
+  - unless @images_array.blank?
+    Images
+    = "\r\n"
+    - @images_array.each_slice(6) do |images|
+      - images.each do |image|
+        - unless image['HIDDEN'] == '1' or not current_user.view_images?
+          = image_tag(show_preview_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
+          = image['EVENT_CODE']

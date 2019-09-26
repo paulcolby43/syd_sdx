@@ -157,6 +157,7 @@ Rails.application.routes.draw do
     end
     member do
       get :send_to_leads_online
+      get :email
     end
   end
   
