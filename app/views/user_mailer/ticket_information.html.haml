@@ -68,6 +68,6 @@
 
 - unless @images_array.blank?
   %hr
-  - @images.each do |image|
+  - @images_array.each do |image|
     - unless image['HIDDEN'] == '1'
       %p= image_tag(preview_image_path(image['CAPTURE_SEQ_NBR'], company_id: @user.company_id, yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
