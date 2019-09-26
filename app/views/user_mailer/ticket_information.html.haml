@@ -65,17 +65,15 @@
 
   - unless @ticket['Status'] == '3'
     %p= "Balance Due: #{number_to_currency(@ticket['BalanceDue'])}"
+
+- unless @images_array.blank?
   %hr
-  - unless @images_array.blank?
-    %p
-      Images
-      %br
-      - @images_array.each_slice(6) do |images|
-        - images.each do |image|
-          - unless image['HIDDEN'] == '1'
-            = image_tag(preview_image_path(image['CAPTURE_SEQ_NBR'], company_id: @user.company_id, yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
-            =# Image.preview(@user.company, image['CAPTURE_SEQ_NBR'], @ticket['YardId'])
-            =# image_tag("https://#{@user.company.jpegger_service_ip}:#{@user.company.jpegger_service_port}/sdcgi?preview=y&table=images&capture_seq_nbr=#{image['CAPTURE_SEQ_NBR']}&yardid=#{@ticket['YardId']}", alt: image['CAPTURE_SEQ_NBR'])
-            =# image_tag(Image.preview_data_uri(Image.preview(@user.company, image['CAPTURE_SEQ_NBR'], @ticket['YardId'])), alt: image['CAPTURE_SEQ_NBR'])
-            
-            = image['EVENT_CODE']
+  %p
+    Images
+    %br
+    - @images_array.each_slice(6) do |images|
+      - images.each do |image|
+        - unless image['HIDDEN'] == '1'
+          = image_tag(preview_image_path(image['CAPTURE_SEQ_NBR'], company_id: @user.company_id, yard_id: @ticket['YardId']), alt: image['CAPTURE_SEQ_NBR'])
+          %br
+          = image['EVENT_CODE']
