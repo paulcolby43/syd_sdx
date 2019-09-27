@@ -352,29 +352,8 @@ class TicketsController < ApplicationController
   # GET /tickets/1/email
   def email
     authorize! :show, :tickets
-    @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
-    @ticket_number = @ticket["TicketNumber"]
-    unless @ticket["TicketItemCollection"].blank?
-      unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
-        @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} 
-      else
-        if @ticket["TicketItemCollection"]["ApiTicketItem"]["Status"] == '0'
-          @line_items = [@ticket["TicketItemCollection"]["ApiTicketItem"]]
-        end
-      end
-    end
-    if current_user.view_images?
-      @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"]).reverse # Ticket images
-      rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, @ticket["YardId"])
-      rt_lookups.each do |rt_lookup|
-        rt_lookup_images = Image.api_find_all_by_receipt_number(rt_lookup['RECEIPT_NBR'], current_user.company, @ticket["YardId"]).reverse
-        @images_array =  @images_array | rt_lookup_images # Union the image arrays
-      end
-    else
-      @images_array = []
-    end
-    @recipients = params[:recipients]
-    UserMailer.ticket_information(current_user, @ticket, @line_items, @recipients, @images_array).deliver
+    TicketInfoSendEmailWorker.perform_async(current_user.id, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:recipients])
+    
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket details emailed to recipients.' 
