@@ -1,5 +1,5 @@
 class ImagesController < ApplicationController
-  before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image]
+  before_filter :login_required, :except => [:show_jpeg_image, :show_preview_image, :preview]
 #  before_action :set_image, only: [:show, :edit, :update, :show_jpeg_image, :show_preview_image, :destroy]
   
 #  load_and_authorize_resource :except => [:show_jpeg_image, :show_preview_image]
@@ -103,6 +103,12 @@ class ImagesController < ApplicationController
   def show_preview_image
 #    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
     send_data Image.preview(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'image/jpeg',:disposition => 'inline'
+  end
+  
+  def preview
+#    send_data @image.preview, :type => 'image/jpeg',:disposition => 'inline'
+    company = Company.find(params[:company_id])
+    send_data Image.preview(company, params[:id], params[:yard_id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def send_pdf_data

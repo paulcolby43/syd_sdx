@@ -886,14 +886,25 @@ jQuery ->
   ### Ticket picture event code chosen ###
   #$(".event_code_radio").on 'click', ->
   $('#individual_ticket_upload').on 'click', '.event_code_radio', (e) ->
-    #$('#upload_button').show()
     form = $(this).closest("form")
-    form.find('#image_file_file').click()
-
+    upload_button_div = form.find('#upload_button')
+    devices_div = form.find('#devices')
+    if devices_div.length > 0
+      devices_div.show()
+      upload_button_div.show()
+    else
+      form.find('#image_file_file').click()
+    
   ### Tickets index picture event code chosen ###
   $('#tickets').on 'click', '.event_code_radio', (e) ->
     form = $(this).closest("form")
-    form.find('#image_file_file').click()
+    upload_button_div = form.find('#upload_button')
+    devices_div = form.find('#devices')
+    if devices_div.length > 0
+      devices_div.show()
+      upload_button_div.show()
+    else
+      form.find('#image_file_file').click()
 
   ### VIN Search ###
   $(wrapper).on 'click', '.vin_search_button', (e) ->

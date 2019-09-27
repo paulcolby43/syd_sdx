@@ -84,6 +84,7 @@ Rails.application.routes.draw do
       get 'show_jpeg_image'
       get 'show_preview_image'
       get 'send_pdf_data'
+      get 'preview'
     end
     collection do
       get 'advanced_search'
@@ -157,6 +158,7 @@ Rails.application.routes.draw do
     end
     member do
       get :send_to_leads_online
+      get :email
     end
   end
   

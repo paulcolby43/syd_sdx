@@ -61,10 +61,10 @@
                     = service_request_number
                     %br
                     %strong Container
-                    = "#{workorder['DispatchContainer']} - #{workorder['ContainerType']}"
+                    = "#{workorder['DispatchContainer']} - #{workorder['ContainerType']}" unless workorder.blank?
                     %br
                     %strong Commodity
-                    = workorder['Commodity'].blank? ? 'None' : workorder['Commodity']
+                    = workorder['Commodity'].blank? ? 'None' : workorder['Commodity'] unless workorder.blank?
                   - tasks.each do |task|
                     %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
                       = task['Sequence']

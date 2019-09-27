@@ -33,5 +33,14 @@ class UserMailer < ActionMailer::Base
     @cc = "patrick@tranact.com, ken@tranact.com, brian@tranact.com, jeremy@tranact.com, tim@tranact.com, colby@tranact.com, adam.greenberg@tranact.com"
     mail(to: @to, cc: @cc, subject: 'SYD SDX New User Sign Up')
   end
+  
+  def ticket_information(user, ticket, line_items, recipients, images_array)
+    @user = user
+    @ticket = ticket
+    @line_items = line_items
+    @to = recipients
+    @images_array = images_array
+    mail(to: @to, subject: "Scrap Dragon Ticket #{@ticket['TicketNumber']}")
+  end
 
 end

@@ -349,6 +349,19 @@ class TicketsController < ApplicationController
     end
   end
   
+  # GET /tickets/1/email
+  def email
+    authorize! :show, :tickets
+    TicketInfoSendEmailWorker.perform_async(current_user.id, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:recipients])
+    
+    respond_to do |format|
+      format.html { 
+        flash[:success] = 'Ticket details emailed to recipients.' 
+        redirect_to :back 
+        }
+    end
+  end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.

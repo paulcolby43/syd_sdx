@@ -1,20 +1,25 @@
 %p
-  %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+  %a.btn.btn-primary.btn-block{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
     %i.fa.fa-camera
     Picture
   
 - unless current_user.customer?
   - if @status == '1'
     %p
-      %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
+      %a.btn.btn-primary.btn-block{href: "#ticket_#{ticket['Id']}_payment_form", id: 'payment_modal_link', "data-toggle" => "modal", title: "Pay"}
         %i.fa.fa-dollar
         = 'Pay'
     = render partial: "quick_payment_modal", locals: {ticket: ticket}
+%p
+  %a.btn.btn-default.btn-block{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
+    %i.fa.fa-envelope
+    Email
+= render partial: "send_email_modal", locals: {ticket: ticket}
 
 %p
   %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-block", target: '_blank'}
     %i.fa.fa-file-pdf-o
-    Print
+    PDF
 
 - unless current_user.customer?
   - if (@status == '1' or @status == '3') and current_user.company.include_leads_online? and current_user.company.leads_online_config_settings_present?
@@ -23,7 +28,7 @@
         %i.fa.fa-search
         Send to Leads
   - if @status == '3'
-    %a{href: create_ticket_customer_path(ticket['CustomerId']), class: "btn btn-default btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+    %a{href: create_ticket_customer_path(ticket['CustomerId']), class: "btn btn-primary btn-block", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
       %i.fa.fa-ticket
       Ticket
 
