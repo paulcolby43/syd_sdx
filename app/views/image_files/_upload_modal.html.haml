@@ -41,7 +41,7 @@
             = f.text_field :tag_number, :placeholder => "License Plate Number", class: "form-control input-lg", required: true
           
           %div{:id => 'uploads', :style => 'display:block;'}
-            %p{id: "upload_button", style: "display:none;"}
+            %p{id: "upload_button", style: "display:block;"}
               = f.file_field :file, name: "image_file[file]", :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
               / Devices
               - current_user.scanner_devices.each do |scanner_device|
