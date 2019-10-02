@@ -1,6 +1,7 @@
 class UserMailer < ActionMailer::Base
 #  default from: "admin@jeremysenn.com"
-  default from: "#{ENV['GMAIL_USERNAME']}"
+#  default from: "#{ENV['GMAIL_USERNAME']}"
+  default from: "#{ENV['GODADDY_MAIL_USERNAME']}"
 
   def confirmation_instructions(user)
     @user = user

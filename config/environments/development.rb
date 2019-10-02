@@ -23,13 +23,21 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
+#    address: "smtp.gmail.com",
+#    address: "smtpout.secureserver.net", #GoDaddy outgoing SMTP server
+    address: "smtp.office365.com",
     port: 587,
-    domain: "tranact.com",
-    authentication: "plain",
+#    port: 25,
+#    domain: "tranact.com",
+    domain: "scrapdragon.com",
+#    authentication: "plain",
+    authentication: "login",
     enable_starttls_auto: true,
-    user_name: ENV["GMAIL_USERNAME"],
-    password: ENV["GMAIL_PASSWORD"]
+#    enable_starttls_auto: false,
+#    user_name: ENV["GMAIL_USERNAME"],
+#    password: ENV["GMAIL_PASSWORD"]
+    user_name: ENV["GODADDY_MAIL_USERNAME"],
+    password: ENV["GODADDY_MAIL_PASSWORD"]
   }
 
   # Print deprecation notices to the Rails logger.
