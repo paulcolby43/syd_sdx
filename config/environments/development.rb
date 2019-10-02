@@ -25,14 +25,14 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
 #    address: "smtp.gmail.com",
     address: "smtpout.secureserver.net", #GoDaddy outgoing SMTP server
-#    port: 587,
-    port: 25,
+    port: 587,
+#    port: 25,
 #    domain: "tranact.com",
     domain: "scrapdragon.com",
-#    authentication: "plain",
-    authentication: "login",
-#    enable_starttls_auto: true,
-    enable_starttls_auto: false,
+    authentication: "plain",
+#    authentication: "login",
+    enable_starttls_auto: true,
+#    enable_starttls_auto: false,
 #    user_name: ENV["GMAIL_USERNAME"],
 #    password: ENV["GMAIL_PASSWORD"]
     user_name: ENV["GODADDY_MAIL_USERNAME"],
