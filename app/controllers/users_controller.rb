@@ -76,7 +76,7 @@ class UsersController < ApplicationController
             if current_user.blank?
               render :new
             else
-              flash[:danger] = "There was a problem creating the user in Scrap Yard Dog: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
+              flash[:danger] = "There was a problem creating the Portal user: #{@user.errors.each do |attr, msg| puts '#{attr} #{msg}' end}"
               redirect_to :back 
             end
           end
@@ -90,11 +90,11 @@ class UsersController < ApplicationController
                 if generate_scrap_dragon_token_response == 'success'
                   # Save user's dragon roles
                   @user.access_token.update_attribute(:roles, @user.dragon_role_names)
-                  flash[:success] = "Scrap Dragon user successfully added to Scrap Yard Dog."
+                  flash[:success] = "Scrap Dragon user successfully added to Portal."
                   redirect_to login_path if current_user.blank?
                   redirect_to users_path unless current_user.blank?
                 else
-                  flash[:danger] = "Problem adding Scrap Dragon user to Scrap Yard Dog: #{generate_scrap_dragon_token_response}"
+                  flash[:danger] = "Problem adding Scrap Dragon user to Portal: #{generate_scrap_dragon_token_response}"
                   @user.destroy
                   redirect_to login_path if current_user.blank?
                   redirect_to users_path unless current_user.blank?
@@ -176,7 +176,7 @@ class UsersController < ApplicationController
     if user
       user.email_activate
       user.send_after_confirmation_info_email
-      flash[:success] = "Welcome to Scrap Yard Dog! Your email has been confirmed.
+      flash[:success] = "Welcome to the Scrap Dragon Portal! Your email has been confirmed.
       Please sign in to continue."
       if user.customer?
         redirect_to login_path(customer_guid: user.customer_guid)
