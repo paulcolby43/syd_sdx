@@ -55,11 +55,11 @@ class ReportsController < ApplicationController
           if ticket['Status']  == '3' # Do this only for paid tickets
             # Find accounts payable for this ticket and payment status of 1, then determine payment method
             accounts_payable = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}
-            if accounts_payable['PaymentMethod'] == "0"
+            if accounts_payable and accounts_payable['PaymentMethod'] == "0"
               @cash_payment_tickets << ticket
-            elsif accounts_payable['PaymentMethod'] == "1"
+            elsif accounts_payable and accounts_payable['PaymentMethod'] == "1"
               @check_payment_tickets << ticket
-            elsif accounts_payable['PaymentMethod'] == "3"
+            elsif accounts_payable and accounts_payable['PaymentMethod'] == "3"
               @ezcash_payment_tickets << ticket
             else
               @cash_payment_tickets << ticket
