@@ -519,8 +519,12 @@ class User < ActiveRecord::Base
         unless user.access_token.blank?
           response = user.update_scrap_dragon_token(pass)
         else
-          AccessToken.create(user_id: user.id)
-          response = user.update_scrap_dragon_token(pass)
+          token = User.new_dragon_token(username: login, password: pass, dragon_account_number: account_number)
+          unless token.blank?
+           AccessToken.create(token_string: token, user_id: user.id, expiration: Time.now + 24.hours)
+          else
+            return nil
+          end
         end
         if response == 'success'
           # Update user's dragon roles
