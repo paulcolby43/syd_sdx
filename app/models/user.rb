@@ -516,7 +516,12 @@ class User < ActiveRecord::Base
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
       if user.active?
-        response = user.update_scrap_dragon_token(pass)
+        unless user.access_token.blank?
+          response = user.update_scrap_dragon_token(pass)
+        else
+          AccessToken.create(user_id: user.id)
+          response = user.update_scrap_dragon_token(pass)
+        end
         if response == 'success'
           # Update user's dragon roles
           user.access_token.update_attribute(:roles, user.dragon_role_names)
