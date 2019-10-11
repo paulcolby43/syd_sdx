@@ -179,7 +179,7 @@ class UsersController < ApplicationController
       flash[:success] = "Welcome to the Scrap Dragon Portal! Your email has been confirmed.
       Please sign in to continue."
       if user.customer?
-        redirect_to login_path(customer_guid: user.customer_guid)
+        redirect_to login_path(customer_guid: user.customer_guid, account_number: user.dragon_account_number)
       else
         redirect_to login_path
       end
