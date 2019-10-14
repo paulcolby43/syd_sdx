@@ -516,20 +516,24 @@ class User < ActiveRecord::Base
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
       if user.active?
-        unless user.access_token.blank?
-          response = user.update_scrap_dragon_token(pass)
-        else
-          token = User.new_dragon_token(username: login, password: pass, dragon_account_number: account_number)
-          unless token.blank?
-           AccessToken.create(token_string: token, user_id: user.id, expiration: Time.now + 24.hours)
+        unless user.customer? and user.customer_guid.blank? # Don't authenticate customer users without a customer guid
+          unless user.access_token.blank?
+            response = user.update_scrap_dragon_token(pass)
           else
-            return nil
+            token = User.new_dragon_token(username: login, password: pass, dragon_account_number: account_number)
+            unless token.blank?
+             AccessToken.create(token_string: token, user_id: user.id, expiration: Time.now + 24.hours)
+            else
+              return nil
+            end
           end
-        end
-        if response == 'success'
-          # Update user's dragon roles
-          user.access_token.update_attribute(:roles, user.dragon_role_names)
-          return user 
+          if response == 'success'
+            # Update user's dragon roles
+            user.access_token.update_attribute(:roles, user.dragon_role_names)
+            return user 
+          end
+        else
+          return nil
         end
       else
         return nil
