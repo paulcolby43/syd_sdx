@@ -516,7 +516,7 @@ class User < ActiveRecord::Base
 #    if user and user.password_hash == user.encrypt_password(pass)
     if user
       if user.active?
-        unless user.customer? and user.customer_guid.blank? # Don't authenticate customer user's without a customer guid
+        unless user.customer? and user.customer_guid.blank? # Don't authenticate customer users without a customer guid
           unless user.access_token.blank?
             response = user.update_scrap_dragon_token(pass)
           else
