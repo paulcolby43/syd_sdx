@@ -32,7 +32,7 @@ class UserMailer < ActionMailer::Base
     @user = user
     @to = 'info@tranact.com'
     @cc = "patrick@tranact.com, ken@tranact.com, brian@tranact.com, jeremy@tranact.com, tim@tranact.com, colby@tranact.com, adam.greenberg@tranact.com"
-    mail(to: @to, cc: @cc, subject: 'SDX PORTAL New User Sign Up')
+    mail(to: @to, cc: @cc, subject: 'SCRAP DRAGON PORTAL New User Sign Up')
   end
   
   def ticket_information(user, ticket, line_items, recipients, images_array)

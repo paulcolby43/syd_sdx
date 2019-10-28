@@ -23,7 +23,11 @@ class SessionsController < ApplicationController
   
   def create
     user = User.authenticate(params[:username], params[:password], params[:dragon_account_number])
-    session[:time_zone] = params[:time_zone] ||= 'America/New_York'
+    if params[:time_zone].blank?
+      session[:time_zone] = 'America/New_York'
+    else
+      session[:time_zone] = params[:time_zone]
+    end
     if user
       cookies.permanent[:dragon_account_number] = user.dragon_account_number # Store Dragon account number in a permanent cookie so can remember next time.
       if user.customer?

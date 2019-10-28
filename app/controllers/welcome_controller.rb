@@ -49,7 +49,7 @@ class WelcomeController < ApplicationController
       end
       
     else
-      flash[:danger] = 'An upgrade to Scrap Dragon Xtreme is required to use the Scoreboard. Give us a call at 1-855-937-2466 or email Support@Scrap-Dragon.com to schedule your upgrade. www.Scrapdragon.com/support'
+      flash[:danger] = 'An upgrade to Scrap Dragon is required to use the Scoreboard. Give us a call at 1-855-937-2466 or email info@scrapdragon.com to schedule your upgrade. www.Scrapdragon.com/support'
       redirect_to root_path
     end
   end
