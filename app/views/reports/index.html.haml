@@ -4,10 +4,7 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %h2.text-center
-      - unless mobile_device?
-        = link_to "Scrap Dragon Xtreme", 'http://www.scrapdragon.com', target: '_blank'
-      - else
-        = link_to "SDX", 'http://www.scrapdragon.com', target: '_blank'
+      = link_to "Scrap Dragon", 'http://www.scrapdragon.com', target: '_blank'
       Portal
     = form_tag reports_path, :method => 'get', :class => "form-inline" do
       = hidden_field_tag :customer_id, params[:customer_id]
