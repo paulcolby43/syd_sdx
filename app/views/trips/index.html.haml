@@ -32,7 +32,6 @@
                   = Trip.tasks(trip).first['Customer']
                   %small
                     .text-muted
-                      %br
                       - unless session[:time_zone].blank?
                         = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%m/%d/%y %l:%M:%S%P')}"
                       - else
@@ -48,10 +47,14 @@
                         = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
                       %br
                       = trip['Truck']
-                %br
-                %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
-                  %i.fa.fa-sticky-note-o
-                  Notes
+                      - Trip.workorders(trip).each do |workorder|
+                        %i= workorder['Notes']
+                        %br
+                -#
+                  %br
+                  %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
+                    %i.fa.fa-sticky-note-o
+                    Notes
             .panel-collapse.collapse{id: "collapse_#{index}", "aria-labelledby" => "trip_#{index}", :role => "tabpanel"}
               %ul.list-group
                 - Trip.tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
