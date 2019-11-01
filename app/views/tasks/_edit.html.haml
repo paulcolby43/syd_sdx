@@ -170,8 +170,8 @@
                 %p= text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
           .row.form-group
             %div{:class => "col-xs-12 col-sm-12 col-md-12"}
-              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Add Container"}) do
-                Add Container
+              = button_tag(:type => 'submit', style: 'display:none;', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save Container to Task"}) do
+                Save Container to Task
 
       %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
         = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task['Id']}_create_new_container_form" do
@@ -202,10 +202,21 @@
                   = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
           .row.form-group
             %div{:class => "col-xs-12 col-sm-12 col-md-12"}
-              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create Container"}) do
-                Create Container
-              = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show();"
+              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create New Container"}) do
+                Create New Container
+              %br
+              = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show(); $('#task_#{task['Id']}_container_select').select2('val', '');"
 
   - if task['TaskType'] == '1' 
     .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
       = render partial: "tasks/signature", locals: {task: task, task_containers: task_containers, containers: @containers}
+
+:javascript
+  $(".container_select").on("change", function() {
+    if($(this).val() == null || $(this).val() == ''){
+      $(this).closest('form').find('button[type="submit"]').hide();
+    }
+    else{
+      $(this).closest('form').find('button[type="submit"]').show();
+    }
+  });

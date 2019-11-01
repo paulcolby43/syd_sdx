@@ -46,7 +46,7 @@
               %td
                 %a{href: "#trip_#{trip['Id']}_tasks_modal", "data-target" => "#trip_#{trip['Id']}_tasks_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_tasks_link"}
                   - unless service_requests.blank?
-                    = truncate(service_requests.first['Customer'], length: 10)
+                    = truncate(service_requests.first['Customer'], length: 15)
                     %span
                       %small
                         .text-muted 
@@ -58,7 +58,8 @@
                     %span.badge{style: 'background-color: #5BC0DE;'}= tasks.count
               %td= "#{trip_status_string(trip['TripStatus'])}"
               %td= "#{trip['BeginDate'].to_datetime.strftime('%-m/%-d/%y')}"
-              %td= link_to "#{driver.blank? ? 'Unassigned' : driver['FirstName'] + ' ' + driver['LastName']}", "#trip_#{trip['Id']}_assign_driver_modal", "data-target" => "#trip_#{trip['Id']}_assign_driver_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_assign_driver_link", class: 'btn btn-default'
+              - driver_name = "#{driver['FirstName']} #{driver['LastName']}" unless driver.blank?
+              %td= link_to "#{driver.blank? ? 'Unassigned' : driver_name}", "#trip_#{trip['Id']}_assign_driver_modal", "data-target" => "#trip_#{trip['Id']}_assign_driver_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_assign_driver_link", class: 'btn btn-default'
               -#
                 %td
                   %a{href: "#trip_#{trip['Id']}_service_requests_modal", "data-target" => "#trip_#{trip['Id']}_service_requests_modal", "data-toggle" => "modal", id: "#trip_#{trip['Id']}_service_requests_link"}
