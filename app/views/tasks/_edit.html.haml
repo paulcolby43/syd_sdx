@@ -160,7 +160,9 @@
           .row.form-group
             %div{:class => "col-xs-12 col-sm-12 col-md-12"}
               =# label_tag "New Container", nil, :class => 'control-label'
-              %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+              - container_options = (@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }).reject{ |container| container.first.blank? }.sort_by { |container| container.first.to_s.downcase }
+              -# %p= select_tag "task[container_id]", options_for_select(@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+              %p= select_tag "task[container_id]", options_for_select(container_options), prompt: 'Search containers', id: "task_#{task['Id']}_container_select", "data-task-id" => "#{task['Id']}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
               = hidden_field_tag "task[container_number]"
               = hidden_field_tag "task[customer]", task['Customer']
               = hidden_field_tag "task[work_order_number]", task['WorkOrderNumber']
