@@ -94,6 +94,16 @@ jQuery ->
       success: (data) ->
         alert "New container created and added to task."
 
+  $('.update_task_form').submit (event) ->
+    if $(this).closest('.tab-content').find("#task_status option[value='2']").length == 0
+      $(this).closest('.tab-content').find('.task_status').append('<option value="2"> Completed </option>')
+      return
+
+  $('.new_container_form').submit (event) ->
+    if $(this).closest('.tab-content').find("#task_status option[value='2']").length == 0
+      $(this).closest('.tab-content').find('.task_status').append('<option value="2"> Completed </option>')
+      return
+
   ### Remove Container ###
   $('.task_containers').on 'click', '.remove_container', (e) ->
     # User clicks on container trash button
@@ -120,6 +130,7 @@ jQuery ->
           map.hide()
           location_data.hide()
           add_container_form.show()
+          add_container_form.closest('.tab-content').find("#task_status option[value='2']").remove()
           return
         error: ->
           trash_icon_spinner.hide()
