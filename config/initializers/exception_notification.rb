@@ -6,6 +6,7 @@ if Rails.env == "production" || Rails.env == "staging" || Rails.env == "developm
   exceptions << 'ActionController::RoutingError'
   exceptions << 'ActionController::InvalidAuthenticityToken'
   exceptions << 'ActionView::MissingTemplate'
+  exceptions << 'ActionController::UnknownFormat'
 
   Rails.application.config.middleware.use ExceptionNotification::Rack,
   :email => {
