@@ -12,12 +12,15 @@ class WelcomeController < ApplicationController
   
   def kpi_dashboard
     @tickets_created = Scoreboard.tickets_created(current_user.token, current_yard_id)
+    @cycle_yards = params[:cycle_yards]
     if current_user.admin? and not @tickets_created.nil?
       @yards = Yard.all(current_user.token)
       unless params[:yard_id].blank?
         @yard = Yard.find_by_id(current_user.token, params[:yard_id])
         session[:yard_id] = params[:yard_id]
         session[:yard_name] = @yard['Name']
+      else
+        @yard = Yard.find_by_id(current_user.token, current_yard_id)
       end
       
       @tickets_today = @tickets_created['TicketsCreatedToday'] unless @tickets_created.blank?
