@@ -20,9 +20,9 @@
           .text-center{style: 'color: white;'}
             = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
               .btn-group{"data-toggle" => "buttons"}
-                %label.btn.btn-default{class: params[:cycle_yards] == 'false' ? 'active' : '', onchange: "$('#yard_spinner').show(); this.form.submit();", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Single Yard"}}
+                %label.btn.btn-default{class: (params[:cycle_yards] == 'false' or params[:cycle_yards].blank?) ? 'active' : '', onchange: "$('#yard_spinner').show(); this.form.submit();", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Single Yard"}}
                   = radio_button_tag :cycle_yards, false, params[:cycle_yards] == 'false'
-                  - if params[:cycle_yards] == 'false'
+                  - if params[:cycle_yards] == 'false' or params[:cycle_yards].blank?
                     %i.fa.fa-check
                   Single Yard
                 %label.btn.btn-default{class: params[:cycle_yards] == 'true' ? 'active' : '', onchange: "$('#yard_spinner').show(); this.form.submit();", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Cycle Yards"}}
