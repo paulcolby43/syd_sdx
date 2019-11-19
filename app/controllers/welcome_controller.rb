@@ -12,7 +12,6 @@ class WelcomeController < ApplicationController
   
   def kpi_dashboard
     @tickets_created = Scoreboard.tickets_created(current_user.token, current_yard_id)
-    @cycle_yards = params[:cycle_yards]
     if current_user.admin? and not @tickets_created.nil?
       @yards = Yard.all(current_user.token)
       unless params[:yard_id].blank?
