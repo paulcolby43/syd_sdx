@@ -94,12 +94,16 @@ jQuery ->
       success: (data) ->
         alert "New container created and added to task."
 
+  # Add 'Completed' (2) option to list of task status options when adding an existing container to a task
   $('.update_task_form').submit (event) ->
+    # Only add if 'Completed' (2) is not already in the list of task status options
     if $(this).closest('.tab-content').find("#task_status option[value='2']").length == 0
       $(this).closest('.tab-content').find('.task_status').append('<option value="2"> Completed </option>')
       return
 
+  # Add 'Completed' (2) option to list of task status options when adding a new container to a task
   $('.new_container_form').submit (event) ->
+    # Only add if 'Completed' (2) is not already in the list of task status options
     if $(this).closest('.tab-content').find("#task_status option[value='2']").length == 0
       $(this).closest('.tab-content').find('.task_status').append('<option value="2"> Completed </option>')
       return
@@ -130,6 +134,7 @@ jQuery ->
           map.hide()
           location_data.hide()
           add_container_form.show()
+          # Remove 'Completed' (2) option from list of task status options when removing a container from the task
           add_container_form.closest('.tab-content').find("#task_status option[value='2']").remove()
           return
         error: ->
