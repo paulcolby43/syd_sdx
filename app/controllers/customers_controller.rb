@@ -67,6 +67,7 @@ class CustomersController < ApplicationController
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
     @closed_tickets = Customer.closed_tickets(current_user.token, current_yard_id, params[:id])
+    @service_requests = Workorder.all_by_customer(current_user.token, current_yard_id, params[:id])
   end
 
   # GET /customers/new
@@ -142,6 +143,13 @@ class CustomersController < ApplicationController
         flash[:success] = 'Ticket was successfully created.'
         redirect_to edit_ticket_path(@guid, status: 2, commodity_id: params[:commodity_id]) 
         }
+    end
+  end
+  
+  # GET /customers/service_requests
+  def service_requests
+    if current_user.customer? and not current_user.customer_guid.blank?
+      @service_requests = Workorder.all_by_customer(current_user.token, current_yard_id, current_user.customer_guid)
     end
   end
 

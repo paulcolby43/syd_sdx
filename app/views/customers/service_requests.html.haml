@@ -1,0 +1,23 @@
+= render partial: "shared/navbars/workorders_navbar", locals: {title: "Requests"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @service_requests.blank?
+      - @service_requests.each do |service_request|
+        %div.row
+          .col-xs-12.col-sm-12.col-md-12
+            %div.panel.panel-primary
+              %div.list_group
+                %a{href: workorder_path(service_request['Id'], workorder: service_request), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{service_request['WorkOrderNumber']}"}}
+                  %ul.list-inline
+                    %li= service_request['WorkOrderNumber']
+                    %li= "<b>Driver</b> #{service_request['DriverName']}".html_safe unless service_request['DriverName'].blank?
+                    %li= "<b>Truck</b> #{service_request['TruckNumber']}".html_safe unless service_request['TruckNumber'].blank?
+                    %li= service_request['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                    %li= Workorder.status(service_request['WorkOrderStatus'])
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+    - else
+      %p.lead.text-center None
+
+=# render partial: "shared/customer_footer_navbar", locals: {title: "Customer"}

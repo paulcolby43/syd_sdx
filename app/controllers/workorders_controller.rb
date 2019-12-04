@@ -18,11 +18,12 @@ class WorkordersController < ApplicationController
   # GET /workorders/1.json
   def show
     authorize! :show, :workorders
-    @workorder = Workorder.find_by_id(current_user.token, current_yard_id, params[:id])
-    @workorder_types = Workorder.types(current_user.token, current_yard_id)
+#    @workorder = Workorder.find_by_id(current_user.token, current_yard_id, params[:id])
+    @workorder = params[:workorder]
+    @images_array = Image.api_find_all_by_service_request_number(@workorder['WorkOrderNumber'], current_user.company, current_yard_id)
     respond_to do |format|
       format.html {}
-      format.json {render json: {"name" => @workorder['PrintDescription'], "price" => @workorder['ScalePrice']} } 
+      format.json {render json: {"id" => @workorder['Id']} } 
     end
   end
 

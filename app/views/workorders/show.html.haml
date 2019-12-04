@@ -1,0 +1,45 @@
+= render partial: "shared/navbars/workorders_navbar", locals: {title: "Request"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    -# .col-sm-6.col-md-4.col-md-offset-4
+    .col-xs-12.col-sm-6
+      %div.panel.panel-primary
+        %div.list_group
+          %div.list-group-item
+            %strong= "Service Request:"
+            .pull-right
+              = "#{@workorder['WorkOrderNumber']}"
+          %div.list-group-item
+            %strong= "Customer"
+            .pull-right
+              = Customer.name_by_id(current_user.token, current_yard_id, @workorder['CustomerId'])
+          %div.list-group-item
+            %strong= "Driver"
+            .pull-right
+              = "#{@workorder['DriverName']}"
+          %div.list-group-item
+            %strong= "Truck"
+            .pull-right
+              = "#{@workorder['TruckNumber']}"
+          %div.list-group-item
+            %strong= "Date"
+            .pull-right
+              = "#{@workorder['WorkOrderDate'].to_date.strftime('%m/%d/%y')}"
+          %div.list-group-item
+            %strong= "Status"
+            .pull-right
+              = "#{Workorder.status(@workorder['WorkOrderStatus'])}"
+    .col-xs-12.col-sm-6
+      - @images_array.each_slice(3) do |images|
+        .row
+          - images.each do |image|
+            - unless image['HIDDEN'] == '1' or not current_user.view_images?
+              .col-xs-12.col-sm-4.col-md-4
+                .thumbnail
+                  %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  .text-center
+                    %small.text-muted= image['EVENT_CODE']
+
+=# render partial: "shared/commodities_footer_navbar", locals: {title: "Commodities"}

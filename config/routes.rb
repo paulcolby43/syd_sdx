@@ -147,6 +147,9 @@ Rails.application.routes.draw do
     member do
       get 'create_ticket'
     end
+    collection do
+      get 'service_requests'
+    end
   end
   
   resources :tickets do
