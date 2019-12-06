@@ -4,12 +4,11 @@
       %div.panel.panel-primary
         %div.list_group
           %a{href: workorder_path(workorder['Id'], workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
-            %span
-              %ul.list-inline
-                %li= workorder['WorkOrderNumber']
-                %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
-                %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
-                %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
-                %li= Workorder.status(workorder['WorkOrderStatus'])
-                .pull-right
-                  %i.fa.fa-chevron-right.fa-lg
+            %ul.list-inline
+              %li= workorder['WorkOrderNumber']
+              %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
+              %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
+              %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+              %li= Workorder.status(workorder['WorkOrderStatus'])
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg
