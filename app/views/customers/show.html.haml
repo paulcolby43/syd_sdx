@@ -133,31 +133,38 @@
         %li.active
           %a{:href => "#tickets", :data => {:toggle => "tab"}}
             = "Tickets"
-        - unless @service_requests.blank?
+        - unless @workorders.blank?
           %li
-            %a{:href => "#service_requests", :data => {:toggle => "tab"}}
+            %a{:href => "#workorders", :data => {:toggle => "tab"}}
               = "Service Requests"
       .tab-content
         .tab-pane.active{:id => "tickets"}
           .embed-responsive.embed-responsive-4by3
             %iframe.embed-responsive-item{:src => "#{reports_url}?customer_id=#{@customer['Id']}"}
-        - unless @service_requests.blank?
-          .tab-pane{:id => "service_requests"}
+        - unless @workorders.blank?
+          .tab-pane{:id => "workorders"}
             %br
-            - @service_requests.each do |service_request|
-              %div.row
-                .col-xs-12.col-sm-12.col-md-12
-                  %div.panel.panel-primary
-                    %div.list_group
-                      %a{href: workorder_path(service_request['Id'], workorder: service_request), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{service_request['WorkOrderNumber']}"}}
-                        %ul.list-inline
-                          %li= service_request['WorkOrderNumber']
-                          %li= "<b>Driver</b> #{service_request['DriverName']}".html_safe unless service_request['DriverName'].blank?
-                          %li= "<b>Truck</b> #{service_request['TruckNumber']}".html_safe unless service_request['TruckNumber'].blank?
-                          %li= service_request['WorkOrderDate'].to_date.strftime("%m/%d/%y")
-                          %li= Workorder.status(service_request['WorkOrderStatus'])
-                          .pull-right
-                            %i.fa.fa-chevron-right.fa-lg
+            %div{id: "workorders_list"}
+              - @workorders.each do |workorder|
+                %div.row
+                  .col-xs-12.col-sm-12.col-md-12
+                    %div.panel.panel-primary
+                      %div.list_group
+                        %a{href: workorder_path(workorder['Id'], workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
+                          %ul.list-inline
+                            %li= workorder['WorkOrderNumber']
+                            %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
+                            %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
+                            %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                            %li= Workorder.status(workorder['WorkOrderStatus'])
+                            .pull-right
+                              %i.fa.fa-chevron-right.fa-lg
+            .row
+              .text-center
+                %div{id: 'endless_page'}
+                  %p= image_tag("ajax-loader.gif", :id => "more_workorders_spinner", :alt => "Loading ...", style: "display:none;")
+                  %p= link_to 'Load more ...', customer_path(@customer['Id'], page: @workorders.next_page), :class => 'load-more-workorders btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_workorders_spinner').show();" if @workorders.next_page
+
     - else
       %br
       -# %p.lead Tickets Last 120 Days
@@ -168,9 +175,9 @@
         %li
           %a{:href => "#paid_tickets", :data => {:toggle => "tab"}}
             = "Paid Tickets"
-        - unless @service_requests.blank?
+        - unless @workorders.blank?
           %li
-            %a{:href => "#service_requests", :data => {:toggle => "tab"}}
+            %a{:href => "#workorders", :data => {:toggle => "tab"}}
               = "Service Requests"
       .tab-content
         .tab-pane.active{:id => "closed_tickets"}
@@ -218,22 +225,28 @@
                           Print
           - else
             None
-        - unless @service_requests.blank?
-          .tab-pane{:id => "service_requests"}
+        - unless @workorders.blank?
+          .tab-pane{:id => "workorders"}
             %br
-            - @service_requests.each do |service_request|
-              %div.row
-                .col-xs-12.col-sm-12.col-md-12
-                  %div.panel.panel-primary
-                    %div.list_group
-                      %a{href: workorder_path(service_request['Id'], workorder: service_request), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{service_request['WorkOrderNumber']}"}}
-                        %ul.list-inline
-                          %li= service_request['WorkOrderNumber']
-                          %li= "<b>Driver</b> #{service_request['DriverName']}".html_safe unless service_request['DriverName'].blank?
-                          %li= "<b>Truck</b> #{service_request['TruckNumber']}".html_safe unless service_request['TruckNumber'].blank?
-                          %li= service_request['WorkOrderDate'].to_date.strftime("%m/%d/%y")
-                          %li= Workorder.status(service_request['WorkOrderStatus'])
-                          .pull-right
-                            %i.fa.fa-chevron-right.fa-lg
+            %div{id: "workorders_list"}
+              - @workorders.each do |workorder|
+                %div.row
+                  .col-xs-12.col-sm-12.col-md-12
+                    %div.panel.panel-primary
+                      %div.list_group
+                        %a{href: workorder_path(workorder['Id'], workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
+                          %ul.list-inline
+                            %li= workorder['WorkOrderNumber']
+                            %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
+                            %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
+                            %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                            %li= Workorder.status(workorder['WorkOrderStatus'])
+                            .pull-right
+                              %i.fa.fa-chevron-right.fa-lg
+            .row
+              .text-center
+                %div{id: 'endless_page'}
+                  %p= image_tag("ajax-loader.gif", :id => "more_workorders_spinner", :alt => "Loading ...", style: "display:none;")
+                  %p= link_to 'Load more ...', customer_path(@customer['Id'], page: @workorders.next_page), :class => 'load-more-workorders btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_workorders_spinner').show();" if @workorders.next_page
 
 = render partial: "shared/customer_footer_navbar", locals: {title: "Customer"}

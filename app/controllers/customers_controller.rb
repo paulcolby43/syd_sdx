@@ -67,7 +67,8 @@ class CustomersController < ApplicationController
 #    @paid_tickets = Ticket.search(3, current_user.token, current_yard_id, "#{@customer['Company']}")
     @paid_tickets = Customer.paid_tickets(current_user.token, current_yard_id, params[:id])
     @closed_tickets = Customer.closed_tickets(current_user.token, current_yard_id, params[:id])
-    @service_requests = Workorder.all_by_customer(current_user.token, current_yard_id, params[:id])
+    workorders = Workorder.all_by_customer(current_user.token, current_yard_id, params[:id])
+    @workorders = Kaminari.paginate_array(workorders).page(params[:page]).per(5) unless workorders.blank?
   end
 
   # GET /customers/new
@@ -149,7 +150,8 @@ class CustomersController < ApplicationController
   # GET /customers/service_requests
   def service_requests
     if current_user.customer? and not current_user.customer_guid.blank?
-      @service_requests = Workorder.all_by_customer(current_user.token, current_yard_id, current_user.customer_guid)
+      workorders = Workorder.all_by_customer(current_user.token, current_yard_id, current_user.customer_guid)
+      @workorders = Kaminari.paginate_array(workorders).page(params[:page]).per(5) unless workorders.blank?
     end
   end
 
