@@ -122,7 +122,8 @@
             %strong Additional Portal Customers
             %br
             - @portal_customers.each do |portal_customer|
-              %p= Customer.find_by_id(current_user.token, current_yard_id, portal_customer.customer_guid)['Company']
+              - unless portal_customer.customer_guid.blank?
+                %p= Customer.find_by_id(current_user.token, current_yard_id, portal_customer.customer_guid)['Company']
 
     .row
       .col-sm-12.col-md-6

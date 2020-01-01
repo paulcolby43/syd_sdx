@@ -128,18 +128,57 @@
         %p= link_to 'Re-load pictures ...', cust_pics_path(:page => nil, :q => {cust_nbr_eq: @customer['Id'], yardid_eq: current_yard_id}), :class => 'reload-cust-pics btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show(); $('#cust_pics').empty(); $('a.load-more-cust-pics').attr('href', '<%= cust_pics_path page: @cust_pics.next_page, q: params[:q] %>');", style: "display:none;"
 
     - unless @customer_users.blank?
-      .embed-responsive.embed-responsive-4by3
-        %iframe.embed-responsive-item{:src => "#{reports_url}?customer_id=#{@customer['Id']}"}
+      %ul.nav.nav-tabs
+        %br
+        %li.active
+          %a{:href => "#tickets", :data => {:toggle => "tab"}}
+            = "Tickets"
+        - unless @workorders.blank?
+          %li
+            %a{:href => "#workorders", :data => {:toggle => "tab"}}
+              = "Service Requests"
+      .tab-content
+        .tab-pane.active{:id => "tickets"}
+          .embed-responsive.embed-responsive-4by3
+            %iframe.embed-responsive-item{:src => "#{reports_url}?customer_id=#{@customer['Id']}"}
+        - unless @workorders.blank?
+          .tab-pane{:id => "workorders"}
+            %br
+            %div{id: "workorders_list"}
+              - @workorders.each do |workorder|
+                %div.row
+                  .col-xs-12.col-sm-12.col-md-12
+                    %div.panel.panel-primary
+                      %div.list_group
+                        %a{href: workorder_path(workorder['Id'], workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
+                          %ul.list-inline
+                            %li= workorder['WorkOrderNumber']
+                            %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
+                            %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
+                            %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                            %li= Workorder.status(workorder['WorkOrderStatus'])
+                            .pull-right
+                              %i.fa.fa-chevron-right.fa-lg
+            .row
+              .text-center
+                %div{id: 'endless_page'}
+                  %p= image_tag("ajax-loader.gif", :id => "more_workorders_spinner", :alt => "Loading ...", style: "display:none;")
+                  %p= link_to 'Load more ...', customer_path(@customer['Id'], page: @workorders.next_page), :class => 'load-more-workorders btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_workorders_spinner').show();" if @workorders.next_page
+
     - else
       %br
-      %p.lead Tickets Last 120 Days
+      -# %p.lead Tickets Last 120 Days
       %ul.nav.nav-tabs
         %li.active
           %a{:href => "#closed_tickets", :data => {:toggle => "tab"}}
-            = "Closed"
+            = "Closed Tickets"
         %li
           %a{:href => "#paid_tickets", :data => {:toggle => "tab"}}
-            = "Paid"
+            = "Paid Tickets"
+        - unless @workorders.blank?
+          %li
+            %a{:href => "#workorders", :data => {:toggle => "tab"}}
+              = "Service Requests"
       .tab-content
         .tab-pane.active{:id => "closed_tickets"}
           %br
@@ -186,5 +225,28 @@
                           Print
           - else
             None
+        - unless @workorders.blank?
+          .tab-pane{:id => "workorders"}
+            %br
+            %div{id: "workorders_list"}
+              - @workorders.each do |workorder|
+                %div.row
+                  .col-xs-12.col-sm-12.col-md-12
+                    %div.panel.panel-primary
+                      %div.list_group
+                        %a{href: workorder_path(workorder['Id'], workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
+                          %ul.list-inline
+                            %li= workorder['WorkOrderNumber']
+                            %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
+                            %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
+                            %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                            %li= Workorder.status(workorder['WorkOrderStatus'])
+                            .pull-right
+                              %i.fa.fa-chevron-right.fa-lg
+            .row
+              .text-center
+                %div{id: 'endless_page'}
+                  %p= image_tag("ajax-loader.gif", :id => "more_workorders_spinner", :alt => "Loading ...", style: "display:none;")
+                  %p= link_to 'Load more ...', customer_path(@customer['Id'], page: @workorders.next_page), :class => 'load-more-workorders btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_workorders_spinner').show();" if @workorders.next_page
 
 = render partial: "shared/customer_footer_navbar", locals: {title: "Customer"}

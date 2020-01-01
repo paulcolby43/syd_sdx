@@ -239,6 +239,10 @@ class Ability
       ############
       can :show, :locations
       
+      # Workorders
+      ############
+      can :show, :workorders
+      
     # End admin user role
     
     elsif user.basic?
@@ -399,6 +403,10 @@ class Ability
       ############
       can :customer_index, :commodities
       can :customer_show, :commodities
+      
+      # Workorders
+      ############
+      can :show, :workorders
       
     # End customer user role
     end 

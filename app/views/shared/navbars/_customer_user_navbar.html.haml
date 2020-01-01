@@ -41,6 +41,9 @@
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'reports') and (@type == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
             %li{:class => "#{(params[:controller] == 'reports') and (@type == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
+        %li
+          %a{href: service_requests_customers_path}
+            Service Requests
 
         -# 
           = form_tag reports_path, id: 'ticket_search_form', method: 'get', :class => "navbar-form navbar-left", role: 'search' do |f|

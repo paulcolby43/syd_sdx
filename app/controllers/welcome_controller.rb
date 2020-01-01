@@ -18,6 +18,8 @@ class WelcomeController < ApplicationController
         @yard = Yard.find_by_id(current_user.token, params[:yard_id])
         session[:yard_id] = params[:yard_id]
         session[:yard_name] = @yard['Name']
+      else
+        @yard = Yard.find_by_id(current_user.token, current_yard_id)
       end
       
       @tickets_today = @tickets_created['TicketsCreatedToday'] unless @tickets_created.blank?

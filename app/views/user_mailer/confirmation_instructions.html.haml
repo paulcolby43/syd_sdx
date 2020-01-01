@@ -1,12 +1,12 @@
 %p
-  #{@user.first_name}, welcome to Scrap Yard Dog!
+  #{@user.first_name}, welcome to Scrap Dragon Portal!
 %p 
   You can confirm your account email through the link below.
 
 %p= link_to 'Confirm my account', confirm_email_user_url(@user.confirm_token)
 
 %p 
-  By setting up an account at Scrap Yard Dog you are agreeing to our 
+  By setting up an account at Scrap Dragon Portal you are agreeing to our 
   = link_to "Terms of Service", welcome_tos_url
 
 %p

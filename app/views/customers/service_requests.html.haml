@@ -1,0 +1,30 @@
+= render partial: "shared/navbars/workorders_navbar", locals: {title: "Requests"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @workorders.blank?
+      %div{id: "workorders_list"}
+        - @workorders.each do |workorder|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: workorder_path(workorder['Id'], workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder['WorkOrderNumber']}"}}
+                    %ul.list-inline
+                      %li= workorder['WorkOrderNumber']
+                      %li= "<b>Driver</b> #{workorder['DriverName']}".html_safe unless workorder['DriverName'].blank?
+                      %li= "<b>Truck</b> #{workorder['TruckNumber']}".html_safe unless workorder['TruckNumber'].blank?
+                      %li= workorder['WorkOrderDate'].to_date.strftime("%m/%d/%y")
+                      %li= Workorder.status(workorder['WorkOrderStatus'])
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_workorders_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', service_requests_customers_path(page: @workorders.next_page), :class => 'load-more-workorders btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_workorders_spinner').show();" if @workorders.next_page
+
+    - else
+      %p.lead.text-center None
+
+=# render partial: "shared/customer_footer_navbar", locals: {title: "Customer"}

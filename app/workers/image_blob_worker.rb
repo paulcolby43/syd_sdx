@@ -6,10 +6,14 @@ class ImageBlobWorker
     image_file = ImageFile.find(image_file_id)
     image_file.update_attribute(:process, true)
     image_file.file.recreate_versions!
-    unless image_file.event_code_id.blank?
+    unless image_file.event_code_id.blank? 
       event_code = EventCode.find(image_file.event_code_id)
-      event_code_name = event_code.name
-      leads_online_string = "#{event_code.camera_class}#{event_code.camera_position}"
+      event_code_name = event_code.name 
+      if event_code and event_code.company.leads_online_config_settings_present?
+        leads_online_string = "#{event_code.camera_class}#{event_code.camera_position}"
+      else
+        leads_online_string = ""
+      end
     else
       event_code_name = image_file.event_code
       leads_online_string = ""
