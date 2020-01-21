@@ -179,40 +179,46 @@
             %div{:class => "col-xs-12 col-sm-12 col-md-12"}
               = button_tag(:type => 'submit', style: 'display:none;', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save Container to Task"}) do
                 Save Container to Task
-
-      %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
-        = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task['Id']}_create_new_container_form" do
-          .row.form-group
-            %div{:class => "col-xs-12 col-sm-12 col-md-12"}
-              = hidden_field_tag "container[customer]", task['Customer']
-              = hidden_field_tag "container[work_order_number]", task['WorkOrderNumber']
-              = hidden_field_tag "container[type]", task['TaskType']
-              .row.form-group
-                %div{:class => "col-xs-12"}
-                  = label_tag "Container Type", nil, :class => 'control-label'
-                  = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct['Type'], ct['Id'] ] }), prompt: 'Select type', class: "form-control input-lg", required: true
-                %div{:class => "col-xs-12"}
-                  = label_tag "Container Number", nil, :class => 'control-label'
-                  = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
-                %div{:class => "col-xs-12"}
-                  = label_tag "Tag Number", nil, :class => 'control-label'
-                  = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
-                -#
+      -# if current_user.can_create_container?
+      - if false
+        %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
+          = form_tag create_new_container_task_path(task["Id"]), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task['Id']}_create_new_container_form" do
+            .row.form-group
+              %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+                = hidden_field_tag "container[customer]", task['Customer']
+                = hidden_field_tag "container[work_order_number]", task['WorkOrderNumber']
+                = hidden_field_tag "container[type]", task['TaskType']
+                .row.form-group
                   %div{:class => "col-xs-12"}
-                    = label_tag "Latitude", nil, :class => 'control-label'
-                    = text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
+                    = label_tag "Container Type", nil, :class => 'control-label'
+                    = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct['Type'], ct['Id'] ] }), prompt: 'Select type', class: "form-control input-lg", required: true
                   %div{:class => "col-xs-12"}
-                    = label_tag "Longitude", nil, :class => 'control-label'
-                    = text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
-                %div{:class => "col-xs-12"}
-                  = label_tag "Description", nil, :class => 'control-label'
-                  = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
-          .row.form-group
-            %div{:class => "col-xs-12 col-sm-12 col-md-12"}
-              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create New Container"}) do
-                Create New Container
-              %br
-              = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show(); $('#task_#{task['Id']}_container_select').select2('val', '');"
+                    = label_tag "Container Number", nil, :class => 'control-label'
+                    = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
+                  %div{:class => "col-xs-12"}
+                    = label_tag "Tag Number", nil, :class => 'control-label'
+                    = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+                  -#
+                    %div{:class => "col-xs-12"}
+                      = label_tag "Latitude", nil, :class => 'control-label'
+                      = text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
+                    %div{:class => "col-xs-12"}
+                      = label_tag "Longitude", nil, :class => 'control-label'
+                      = text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
+                  %div{:class => "col-xs-12"}
+                    = label_tag "Description", nil, :class => 'control-label'
+                    = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
+            .row.form-group
+              %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+                = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create New Container"}) do
+                  Create New Container
+                %br
+                = link_to 'Cancel', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show(); $('#task_#{task['Id']}_container_select').select2('val', '');"
+            
+      - else
+        %div{id: "task_#{task['Id']}_create_new_container", style: 'display:none;'}
+          %p You are not allowed to create containers
+          = link_to 'Search Again', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show(); $('#task_#{task['Id']}_container_select').select2('val', '');"
 
   - if task['TaskType'] == '1' 
     .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
