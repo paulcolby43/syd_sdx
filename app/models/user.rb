@@ -261,6 +261,10 @@ class User < ActiveRecord::Base
     access_token.roles.include?("Mobile Reports")
   end
   
+  def can_create_container?
+    mobile_admin?
+  end
+  
   def portal_customer_ids
     ids = []
     if customer? and not customer_guid.blank?
