@@ -55,7 +55,11 @@ Rails.application.routes.draw do
   end
   resources :workorders
   
-  resources :reports
+  resources :reports do 
+    collection do
+      get :telerik
+    end
+  end
   
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)

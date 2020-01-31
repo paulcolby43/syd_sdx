@@ -166,3 +166,15 @@ canvas.drawing, canvas.drawingBuffer {
 .select2-container--default .select2-selection--single .select2-selection__arrow {
   height: 40px !important;
 }
+
+#reportViewer1 {
+/*  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;*/
+
+  font-family: 'segoe ui', 'ms sans serif';
+
+  overflow: hidden;
+}
