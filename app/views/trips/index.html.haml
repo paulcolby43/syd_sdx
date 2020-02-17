@@ -6,7 +6,7 @@
     %btn.btn.btn-primary#watch_me{:onclick => "getLocation()"}
       %i.fa.fa-location-arrow
       Watch Position
-    %p#demo
+    %p#demo{"data-user-id" => current_user.id}
     
 
     -#
@@ -174,8 +174,9 @@
       x.innerHTML="Lat: " + position.coords.latitude + 
       "<br>Long: " + position.coords.longitude;
       console.log("position changed");
+      user_id = $("#demo").data( "user-id" );
       $.ajax({
-        url: "/users/2" + "/add_coordinates",
+        url: "/users/" + user_id + "/add_coordinates",
         type: 'get',
         dataType: 'json',
         data: {
