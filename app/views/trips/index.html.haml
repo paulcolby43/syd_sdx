@@ -174,4 +174,13 @@
       x.innerHTML="Lat: " + position.coords.latitude + 
       "<br>Long: " + position.coords.longitude;
       console.log("position changed");
+      $.ajax({
+        url: "/users/2" + "/add_coordinates",
+        type: 'get',
+        dataType: 'json',
+        data: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        }
+      });
   }

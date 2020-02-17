@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
   has_many :inventories
   has_many :event_codes
   
+  serialize :coordinates, Array # Treat coordinates column as an array
+  
   accepts_nested_attributes_for :portal_customers, allow_destroy: true
 
   attr_accessor :password

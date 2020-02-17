@@ -125,6 +125,7 @@ Rails.application.routes.draw do
     member do
       get :confirm_email
       get :update_latitude_and_longitude
+      get :add_coordinates
     end
     collection do
       get :resend_confirmation_instructions

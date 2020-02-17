@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190912213924) do
+ActiveRecord::Schema.define(version: 20200217191301) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string", limit: nil
@@ -227,6 +227,7 @@ ActiveRecord::Schema.define(version: 20190912213924) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.text     "coordinates"
   end
 
 end
