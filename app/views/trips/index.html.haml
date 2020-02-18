@@ -170,11 +170,10 @@
 :javascript
   var x = document.getElementById("demo");
   var geoWatch;
-  var wakeLock;
+  var lock
 
   function getLocation() {
       if (navigator.geolocation) {
-          wakeLock = window.navigator.requestWakeLock('gps');
           geoWatch = navigator.geolocation.watchPosition(showPosition);
       } else { 
           x.innerHTML = "Geolocation is not supported by this browser.";}
@@ -199,10 +198,12 @@
   function stopWatch() {
     navigator.geolocation.clearWatch( geoWatch );
     geoWatch = undefined;
-    wakeLock.unlock();
   }
 
   function getCurrentLocation() {
+    if (navigator.requestWakeLock) {
+      lock = navigator.requestWakeLock('gps');
+    }
     setInterval(function () {
       geo = navigator.geolocation.getCurrentPosition(showPosition)
     }, 2000);
