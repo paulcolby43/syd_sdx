@@ -3,10 +3,14 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %btn.btn.btn-primary#watch_me{:onclick => "getLocation()"}
-      %i.fa.fa-location-arrow
-      Watch Position
-    %p#demo{"data-user-id" => current_user.id}
+    %p
+      %btn.btn.btn-success#watch_me{:onclick => "getLocation(); $(this).hide(); $('#demo').show(); $('#stop_watch').show();"}
+        %i.fa.fa-location-arrow
+        Watch Position
+      %btn.btn.btn-primary#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#demo').hide(); $('#watch_me').show();"}
+        %i.fa.fa-location-arrow
+        Stop Watching Position
+    %p#demo{"data-user-id" => current_user.id, style: 'display:none'}
     
 
     -#
@@ -162,10 +166,11 @@
 
 :javascript
   var x = document.getElementById("demo");
+  var geoWatch;
 
   function getLocation() {
       if (navigator.geolocation) {
-          navigator.geolocation.watchPosition(showPosition);
+          geoWatch = navigator.geolocation.watchPosition(showPosition);
       } else { 
           x.innerHTML = "Geolocation is not supported by this browser.";}
       }
@@ -184,4 +189,9 @@
           longitude: position.coords.longitude
         }
       });
+  }
+
+  function stopWatch() {
+    navigator.geolocation.clearWatch( geoWatch );
+    geoWatch = undefined;
   }
