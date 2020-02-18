@@ -170,7 +170,7 @@
 :javascript
   var x = document.getElementById("demo");
   var geoWatch;
-  var lock
+  var wakelock
 
   function getLocation() {
       if (navigator.geolocation) {
@@ -201,8 +201,8 @@
   }
 
   function getCurrentLocation() {
-    if (navigator.requestWakeLock) {
-      lock = navigator.requestWakeLock('gps');
+    if (window.navigator.requestWakeLock) {
+      wakeLock = window.navigator.requestWakeLock('gps');
     }
     setInterval(function () {
       geo = navigator.geolocation.getCurrentPosition(showPosition)
