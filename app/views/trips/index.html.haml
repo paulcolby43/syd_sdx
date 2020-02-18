@@ -170,9 +170,11 @@
 :javascript
   var x = document.getElementById("demo");
   var geoWatch;
+  var wakeLock;
 
   function getLocation() {
       if (navigator.geolocation) {
+          wakeLock = window.navigator.requestWakeLock('gps');
           geoWatch = navigator.geolocation.watchPosition(showPosition);
       } else { 
           x.innerHTML = "Geolocation is not supported by this browser.";}
@@ -197,6 +199,7 @@
   function stopWatch() {
     navigator.geolocation.clearWatch( geoWatch );
     geoWatch = undefined;
+    wakeLock.unlock();
   }
 
   function getCurrentLocation() {
