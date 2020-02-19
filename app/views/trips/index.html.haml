@@ -3,6 +3,7 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    = audio_tag("sound2", id: 'my_audio', autoplay: true, controls: true)
     %p
       %btn.btn.btn-warning{:onclick => "getCurrentLocation();"}
         Get Current Position Timer
@@ -170,11 +171,14 @@
 :javascript
   var x = document.getElementById("demo");
   var geoWatch;
-  var wakelock
+  var wakelock;
 
   function getLocation() {
       if (navigator.geolocation) {
           geoWatch = navigator.geolocation.watchPosition(showPosition);
+          audio = document.getElementById("my_audio")
+          audio.play(); 
+          audio.loop = true;
       } else { 
           x.innerHTML = "Geolocation is not supported by this browser.";}
       }
@@ -198,13 +202,21 @@
   function stopWatch() {
     navigator.geolocation.clearWatch( geoWatch );
     geoWatch = undefined;
+    audio = document.getElementById("my_audio")
+    audio.pause(); 
+    audio.loop = false;
   }
 
   function getCurrentLocation() {
-    if (window.navigator.requestWakeLock) {
-      wakeLock = window.navigator.requestWakeLock('gps');
-    }
+    //if (window.navigator.requestWakeLock) {
+      //wakeLock = window.navigator.requestWakeLock('gps');
+      //wakeLock = navigator.wakeLock.request("gps")
+      //wakeLock = window.navigator.requestWakeLock('gps');
+    //}
+    
     setInterval(function () {
+      //audio = document.getElementById("my_audio")
+      //audio.play(); 
       geo = navigator.geolocation.getCurrentPosition(showPosition)
     }, 2000);
   }

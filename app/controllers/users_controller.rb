@@ -222,7 +222,8 @@ class UsersController < ApplicationController
   def add_coordinates
     respond_to do |format|
         format.json { 
-          @user.coordinates << {:lat => params[:latitude], :lng => params[:longitude]}
+#          @user.coordinates << {:lat => params[:latitude], :lng => params[:longitude]}
+          @user.coordinates << [params[:latitude], params[:longitude]]
           if @user.save
             render :show, status: :ok, location: @user
           else
