@@ -56,7 +56,7 @@
                         %i= workorder['Notes']
                         %br
                 - unless customer_id.blank? or not current_user.mobile_buy?
-                  %a{href: create_ticket_customer_path(customer_id), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                  %a{href: create_ticket_customer_path(customer_id), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> New Ticket"} }
                     %i.fa.fa-ticket
                     New Ticket
                 -#
