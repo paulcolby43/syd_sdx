@@ -24,6 +24,7 @@
     - unless @trips.blank?
       #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         - @trips.each_with_index do |trip, index|
+          - customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
           .panel.panel-default
             .panel-heading{id: "trip_#{index}", :role => "tab"}
               .pull-right
@@ -54,6 +55,10 @@
                       - Trip.workorders(trip).each do |workorder|
                         %i= workorder['Notes']
                         %br
+                - unless customer_id.blank? or not current_user.mobile_buy?
+                  %a{href: create_ticket_customer_path(customer_id), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                    %i.fa.fa-ticket
+                    Ticket
                 -#
                   %br
                   %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
