@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/tickets_navbar", locals: {title: ticket_status_string(@status)}
+=# render partial: "shared/navbars/tickets_navbar", locals: {title: ticket_status_string(@status)}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -34,10 +34,11 @@
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-dollar.fa-lg
             = "Paid" unless mobile_device?
-      %span.pull-right
-        = form_tag user_setting_path(current_user.user_setting), method: 'put', :class => "form-horizontal" do
-          = hidden_field_tag :status, @status
-          = select_tag "user_setting[currency_id]", options_for_select(@currencies.map{ |currency| ["#{mobile_device? ? currency['Code'] : currency['Description']}", currency['Id']]}, current_user.currency_id ), :class => "form-control input-lg", onchange: "this.form.submit();"
+      -#
+        %span.pull-right
+          = form_tag user_setting_path(current_user.user_setting), method: 'put', :class => "form-horizontal" do
+            = hidden_field_tag :status, @status
+            = select_tag "user_setting[currency_id]", options_for_select(@currencies.map{ |currency| ["#{mobile_device? ? currency['Code'] : currency['Description']}", currency['Id']]}, current_user.currency_id ), :class => "form-control input-lg", onchange: "this.form.submit();"
       
       - unless mobile_device?
         = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|

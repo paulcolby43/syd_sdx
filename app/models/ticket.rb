@@ -223,7 +223,8 @@ class Ticket
     require 'uri'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
-    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
+#    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=60&t=100")
+    api_url = URI.encode("https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/#{status}?q=#{query_string}&d=1200&t=100")
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
