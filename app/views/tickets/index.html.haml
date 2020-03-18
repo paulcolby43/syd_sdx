@@ -34,12 +34,15 @@
           %button{class: 'btn btn-default btn-lg active'}
             %i.fa.fa-dollar.fa-lg
             = "Paid" unless mobile_device?
-      -#
-        %span.pull-right
+      %span.pull-right
+        %a.btn.btn-sm.btn-primary{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> New Ticket"}} 
+          %i.fa.fa-ticket.fa-lg
+          New Ticket
+        -#
           = form_tag user_setting_path(current_user.user_setting), method: 'put', :class => "form-horizontal" do
             = hidden_field_tag :status, @status
             = select_tag "user_setting[currency_id]", options_for_select(@currencies.map{ |currency| ["#{mobile_device? ? currency['Code'] : currency['Description']}", currency['Id']]}, current_user.currency_id ), :class => "form-control input-lg", onchange: "this.form.submit();"
-      
+
       - unless mobile_device?
         = form_tag tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
           = hidden_field_tag :status, @status
