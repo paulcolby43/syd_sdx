@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/pack_shipments_navbar", locals: {title: "Shipments"}
+=# render partial: "shared/navbars/pack_shipments_navbar", locals: {title: "Shipments"}
 
 - @title="Shipments"
 .jumbotron{style: 'background-color: #FFFFFF;'}
@@ -14,6 +14,7 @@
     - unless @pack_shipments.blank?
       %div{id: "pack_shipments"}
         - @pack_shipments.each do |pack_shipment|
+          = render partial: "shipment_files/upload_modal", locals: {pack_shipment: pack_shipment}
           %div.row
             .col-xs-12.col-sm-12.col-md-12
               %div.panel.panel-primary
@@ -22,22 +23,32 @@
                     .pull-right
                       &nbsp;
                       %i.fa.fa-chevron-right.fa-lg
-                    = "#{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"
+                    = pack_shipment['ShipmentNumber']
+                    %small= "#{pack_shipment['CustomerName']}"
                     %small
                       .text-muted
-                        = "#{pack_shipment['ContractDescription']}"
-                        = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
-                        %br
-                        = "Container Number: #{pack_shipment['ContainerNumber']}"
-                        %br
-                        = "Vehicle Number: #{pack_shipment['DeliveryVehicleIdNumber']}"
+                        = "#{pack_shipment['ContractDescription']}" unless pack_shipment['ContractDescription'].blank?
+                        -#
+                          = "#{pack_shipment['DateCreated']}".to_date.strftime("%-m/%-d/%Y")
+                          %br
+                        = "Container: #{pack_shipment['ContainerNumber']}" unless pack_shipment['ContainerNumber'].blank?
+                        = "Vehicle: #{pack_shipment['DeliveryVehicleIdNumber']}" unless pack_shipment['DeliveryVehicleIdNumber'].blank?
                     =# pack_shipment
-                  %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
+                  -#
+                    %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
+                      .pull-right
+                        &nbsp;
+                        %i.fa.fa-chevron-right.fa-lg
+                      %i.fa.fa-camera
+                      Fetch Pictures
+                      %br
+                  %div.list-group-item
+                    = pack_shipment["DateCreated"].to_date.strftime("%m/%d/%y")
                     .pull-right
-                      &nbsp;
-                      %i.fa.fa-chevron-right.fa-lg
-                    %i.fa.fa-camera
-                    Fetch Pictures
+                      %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                        %i.fa.fa-camera
+                        Picture
+                    %br
                     %br
                     
       .row
