@@ -12,14 +12,17 @@
           Home 
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
-        %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
-          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            PURCHASES
-            %b.caret
-          %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1') ? 'active' : ''}"}= link_to 'Closed', tickets_path(status: 1)
-            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3') ? 'active' : ''}"}= link_to 'Paid', tickets_path(status: 3)
+        -#
+          %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              PURCHASES
+              %b.caret
+            %ul.dropdown-menu
+              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
+              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1') ? 'active' : ''}"}= link_to 'Closed', tickets_path(status: 1)
+              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3') ? 'active' : ''}"}= link_to 'Paid', tickets_path(status: 3)
+        %li{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''} "}
+          %a{href: tickets_path(status: 2)} PURCHASES
         %li{:class => "#{(params[:controller] == 'customers') ? 'active' : ''} "}
           %a{href: customers_path} CUSTOMERS
         %li{:class => "#{(params[:controller] == 'commodities') ? 'active' : ''} "}

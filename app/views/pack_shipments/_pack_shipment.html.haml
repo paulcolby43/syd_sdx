@@ -1,33 +1,36 @@
 - @pack_shipments.each do |pack_shipment|
+  = render partial: "shipment_files/upload_modal", locals: {pack_shipment: pack_shipment}
   %div.row
     .col-xs-12.col-sm-12.col-md-12
-      %div.panel.panel-primary
-        %div.list_group
-          %a{href: edit_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
-            .pull-right
-              &nbsp;
-              %i.fa.fa-chevron-right.fa-lg
-            = pack_shipment['ShipmentNumber']
-            %small= "#{pack_shipment['CustomerName']}"
-            %small
-              .text-muted
-                = "#{pack_shipment['ContractDescription']}" unless pack_shipment['ContractDescription'].blank?
-                = "Container: #{pack_shipment['ContainerNumber']}" unless pack_shipment['ContainerNumber'].blank?
-                = "Vehicle: #{pack_shipment['DeliveryVehicleIdNumber']}" unless pack_shipment['DeliveryVehicleIdNumber'].blank?
-            =# pack_shipment
-          -#
-            %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
+      %h4.text-muted
+        %div.panel.panel-primary
+          %div.list_group
+            %a{href: edit_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
               .pull-right
                 &nbsp;
                 %i.fa.fa-chevron-right.fa-lg
-              %i.fa.fa-camera
-              Fetch Pictures
-              %br
-          %div.list-group-item
-            = pack_shipment["DateCreated"].to_date.strftime("%m/%d/%y")
-            .pull-right
-              %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+              %strong= pack_shipment['ShipmentNumber']
+              = "#{pack_shipment['CustomerName']}"
+              - unless pack_shipment['ContractDescription'].blank? and pack_shipment['ContainerNumber'].blank? and pack_shipment['DeliveryVehicleIdNumber'].blank?
+                %br
+                %small
+                  = "#{pack_shipment['ContractDescription']}" unless pack_shipment['ContractDescription'].blank?
+                  = "Container: #{pack_shipment['ContainerNumber']}" unless pack_shipment['ContainerNumber'].blank?
+                  = "Vehicle: #{pack_shipment['DeliveryVehicleIdNumber']}" unless pack_shipment['DeliveryVehicleIdNumber'].blank?
+              =# pack_shipment
+            -#
+              %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
+                .pull-right
+                  &nbsp;
+                  %i.fa.fa-chevron-right.fa-lg
                 %i.fa.fa-camera
-                Picture
-            %br
-            %br
+                Fetch Pictures
+                %br
+            %div.list-group-item
+              = pack_shipment["DateCreated"].to_date.strftime("%m/%d/%y")
+              .pull-right
+                %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                  %i.fa.fa-camera
+                  Picture
+              %br
+              %br
