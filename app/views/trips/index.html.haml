@@ -3,24 +3,8 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %p
-      %btn.btn.btn-success#watch_me{:onclick => "getLocation(); $(this).hide(); $('#demo').show(); $('#stop_watch').show();"}
-        %i.fa.fa-location-arrow
-        Watch Position
-      %btn.btn.btn-primary#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#demo').hide(); $('#watch_me').show();"}
-        %i.fa.fa-location-arrow
-        Stop Watching Position
-    %p#demo{"data-user-id" => current_user.id, style: 'display:none'}
-    
+    %p#current_location{"data-trip-id" => nil, style: 'display:none'}
 
-    -#
-      %a.btn.btn-primary#track_location Track location
-      %p#demo
-
-    -#
-      - @containers.each do |container|
-        .well
-          = container
     - unless @trips.blank?
       #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         - @trips.each_with_index do |trip, index|
@@ -56,9 +40,20 @@
                         %i= workorder['Notes']
                         %br
                 - unless customer_id.blank? or not current_user.mobile_buy?
-                  %a{href: create_ticket_customer_path(customer_id), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> New Ticket"} }
+                  %a{href: create_ticket_customer_path(customer_id), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
                     %i.fa.fa-ticket
-                    New Ticket
+                    Ticket
+                -# %btn.btn.btn-success.btn-sm#watch_me{:onclick => "getLocation(); $(this).hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $('#stop_watch').show();"}
+                %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
+                  %i.fa.fa-location-arrow
+                  Track
+                -# %btn.btn.btn-primary.btn-sm#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide(); $('#watch_me').show();"}
+                %btn.btn.btn-primary.btn-sm.stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide();  $('.watch_me').show();"}
+                  %i.fa.fa-location-arrow
+                  Stop
+                %a{href: locations_trip_path(trip['Id']), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Locations"} }
+                  %i.fa.fa-map-pin
+                  Locations
                 -#
                   %br
                   %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
@@ -170,7 +165,7 @@
 %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
 
 :javascript
-  var x = document.getElementById("demo");
+  var x = document.getElementById("current_location");
   var geoWatch;
   var wakelock;
 
@@ -185,15 +180,18 @@
       x.innerHTML="Lat: " + position.coords.latitude + 
       "<br>Long: " + position.coords.longitude;
       console.log("position changed");
-      user_id = $("#demo").data( "user-id" );
+      trip_id = $("#current_location").data( "trip-id" );
       $.ajax({
-        url: "/users/" + user_id + "/add_coordinates",
+        url: "/trips/" + trip_id + "/log_location",
         type: 'get',
         dataType: 'json',
         data: {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
-        }
+        }, 
+        success: function(data) {
+          console.log(data);
+        } 
       });
   }
 

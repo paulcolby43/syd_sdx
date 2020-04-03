@@ -107,6 +107,34 @@ class TripsController < ApplicationController
     end
   end
   
+  # GET /trips/1/log_location
+  # GET /trips/1/log_location.json
+  def log_location
+    respond_to do |format|
+      format.json {
+        response = Trip.log_location(current_user.token, params[:id], params[:latitude], params[:longitude])
+        unless response.blank?
+          if response["Success"] == "true"
+            render json: {:continue_logging => response["ContinueLogging"]}, :status => :ok
+          else
+            render json: {:error => response["FailureInformation"]}, :status => :ok
+          end
+        else
+          render json: {}, status: :unprocessable_entity
+#          render json: {error: "Log location failed."}, :status => :bad_request
+        end
+      }
+    end
+  end
+  
+  # GET /trips/1/locations
+  # GET /trips/1/locations.json
+  def locations
+    authorize! :show, :trips
+    @trip = Trip.find(current_user.token, params[:id])
+    @locations = Trip.get_locations(current_user.token, params[:id])
+  end
+  
   
   private
 

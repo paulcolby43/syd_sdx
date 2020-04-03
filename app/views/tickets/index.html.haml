@@ -87,10 +87,11 @@
               %h4.text-muted
                 %div.panel.panel-primary
                   %div.list_group
+                    = ticket['TicketItemCollection']
                     - unless current_user.customer? or ticket['Status'] == '3'
                       %a{href: edit_ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
                         .pull-right
-                          = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
+                          =# number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
                           %i.fa.fa-chevron-right.fa-lg
                         %strong= ticket["TicketNumber"]
                         - unless ticket["FirstName"].blank? and ticket["LastName"].blank?

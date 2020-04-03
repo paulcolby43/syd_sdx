@@ -271,4 +271,54 @@ class Trip
     end
   end
   
+  def self.log_location(auth_token, trip_id, latitude, longitude)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/v1/dispatch/logtriplocation"
+    
+    payload = {
+      "Context" => nil,
+      "PersistContext" => false,
+      "BypassSave" => false,
+      "Workstation" => "",
+      "UserId" => "00000000-0000-0000-0000-000000000000",
+      "TripId" => trip_id,
+      "Latitude" => latitude,
+      "Longitude" => longitude,  
+      }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.info json_encoded_payload
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(response)
+    Rails.logger.info "Trip.log_trip_location response: #{data}"
+    unless data["ApiLogTripLocationResponse"].blank?
+      return data["ApiLogTripLocationResponse"]
+    else
+      return nil
+    end
+  end
+  
+  def self.get_locations(auth_token, trip_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/v1/dispatch/GetTripLocations/#{trip_id}"
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(response)
+    Rails.logger.info "*************Trip.get_locations #{data}"
+    unless data["ApiGetTripLocationsResponse"].blank?
+      if data["ApiGetTripLocationsResponse"]["Success"] == 'true'
+        unless data["ApiGetTripLocationsResponse"]["LocationLogs"].blank? or data["ApiGetTripLocationsResponse"]["LocationLogs"]["ApiTripLocationInformation"].blank?
+          return data["ApiGetTripLocationsResponse"]["LocationLogs"]["ApiTripLocationInformation"]
+        else
+          return nil
+        end
+      else
+        return nil
+      end
+    else
+      return nil
+    end
+  end
+  
 end

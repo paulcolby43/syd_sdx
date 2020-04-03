@@ -25,7 +25,7 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Ticket.all_by_status response: #{data}"
+    Rails.logger.info "Ticket.all_by_status_and_yard response: #{data}"
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
     else # Array of results returned
@@ -215,6 +215,23 @@ class Ticket
     user = access_token.user # Get access token's user record
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/#{ticket_id}"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data= Hash.from_xml(xml_content)
+    return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
+  end
+  
+  def self.get_ticket(auth_token, yard_id, ticket_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket/getticket"
+    payload = {
+      "sessionId" => "",
+      "itemId" => ticket_id,
+      "isSessionTakeover" => false,
+      "skipSessionValidation" => false
+      }
+    json_encoded_payload = JSON.generate(payload)
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
     return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
   end

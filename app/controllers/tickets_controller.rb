@@ -140,6 +140,7 @@ class TicketsController < ApplicationController
     @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
     @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
+    @get_ticket_response = Ticket.get_ticket(current_user.token, current_yard_id, params[:id])
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images

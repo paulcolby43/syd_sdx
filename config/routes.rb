@@ -17,6 +17,10 @@ Rails.application.routes.draw do
   end
   
   resources :trips do
+    member do 
+      get 'log_location'
+      get 'locations'
+    end
     collection do
       get :search
     end
