@@ -41,164 +41,166 @@
   %br
   %br
   =# path
-  #map
-  #bar{style: 'display: none;'}
-    %p.auto
-      %input#autoc{:type => "text"}/
-    %p
-      %a#clear{:href => "#"} Click here
-      to clear map.
-  %br
-  %a.btn.btn-primary{"aria-controls" => "positions", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#positions", :role => "button"}
-    Positions
-  #positions.collapse
-    .well
-      - @locations.each do |location|
-        %p
-          = location['EntryDate']
-          %br
-          = location['Latitude']
-          = location['Longitude']
-
+  - unless @locations.blank?
+    #map
+    #bar{style: 'display: none;'}
+      %p.auto
+        %input#autoc{:type => "text"}/
+      %p
+        %a#clear{:href => "#"} Click here
+        to clear map.
+    %br
+    %a.btn.btn-primary{"aria-controls" => "positions", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#positions", :role => "button"}
+      Positions
+    #positions.collapse
+      .well
+        - @locations.each do |location|
+          %p
+            = location['EntryDate']
+            %br
+            = location['Latitude']
+            = location['Longitude']
+  - else
+    %p.lead.text-center No location data
 
 
 -# %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
 
+- unless @locations.blank?
+  :javascript
+    var apiKey = "#{ENV['GOOGLE_MAPS_API_KEY']}";
 
-:javascript
-  var apiKey = "#{ENV['GOOGLE_MAPS_API_KEY']}";
-
-  var map;
-  var drawingManager;
-  var placeIdArray = [];
-  var polylines = [];
-  var snappedCoordinates = [];
+    var map;
+    var drawingManager;
+    var placeIdArray = [];
+    var polylines = [];
+    var snappedCoordinates = [];
 
 
-  function initialize() {
-    mapId = document.getElementById('map');
-    mapId.style.width = "100%";
-    mapId.style.height = "500px";
-    var mapOptions = {
-      zoom: 16,
-      //center: {lat: -33.8667, lng: 151.1955,}
-      center: {lat: #{last_location['Latitude']}, lng: #{last_location['Longitude']},}
-      
-    };
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    snapToRoad(); //Make Snap to Road call automatically on initialization
-    
-    // Adds a Places search box. Searching for a place will center the map on that
-    // location.
-    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
-        document.getElementById('bar'));
-    var autocomplete = new google.maps.places.Autocomplete(
-        document.getElementById('autoc'));
-    autocomplete.bindTo('bounds', map);
-    autocomplete.addListener('place_changed', function() {
-      var place = autocomplete.getPlace();
-      if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
-      } else {
-        map.setCenter(place.geometry.location);
-        map.setZoom(17);
+    function initialize() {
+      mapId = document.getElementById('map');
+      mapId.style.width = "100%";
+      mapId.style.height = "500px";
+      var mapOptions = {
+        zoom: 16,
+        //center: {lat: -33.8667, lng: 151.1955,}
+        center: {lat: #{last_location['Latitude']}, lng: #{last_location['Longitude']},}
+
+      };
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+      snapToRoad(); //Make Snap to Road call automatically on initialization
+
+      // Adds a Places search box. Searching for a place will center the map on that
+      // location.
+      map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+          document.getElementById('bar'));
+      var autocomplete = new google.maps.places.Autocomplete(
+          document.getElementById('autoc'));
+      autocomplete.bindTo('bounds', map);
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+      });
+
+
+      // Enables the polyline drawing control. Click on the map to start drawing a
+      // polyline. Each click will add a new vertice. Double-click to stop drawing.
+      drawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: google.maps.drawing.OverlayType.POLYLINE,
+        drawingControl: true,
+        drawingControlOptions: {
+          position: google.maps.ControlPosition.TOP_CENTER,
+          drawingModes: [
+            google.maps.drawing.OverlayType.POLYLINE
+          ]
+        },
+        polylineOptions: {
+          strokeColor: '#696969',
+          strokeWeight: 2,
+          strokeOpacity: 0.3,
+        }
+      });
+      drawingManager.setMap(map);
+
+      // Snap-to-road when the polyline is completed.
+      drawingManager.addListener('polylinecomplete', function(poly) {
+        var path = poly.getPath();
+        polylines.push(poly);
+        placeIdArray = [];
+        runSnapToRoad(path);
+      });
+
+      // Clear button. Click to remove all polylines.
+      document.getElementById('clear').addEventListener('click', function(event) {
+        event.preventDefault();
+        for (var i = 0; i < polylines.length; ++i) {
+          polylines[i].setMap(null);
+        }
+        polylines = [];
+        return false;
+      });
+    } // End intialize()
+
+    // Snap a user-created polyline to roads and draw the snapped path
+    function runSnapToRoad(path) {
+      var pathValues = [];
+      for (var i = 0; i < path.getLength(); i++) {
+        pathValues.push(path.getAt(i).toUrlValue());
       }
-    });
 
+      $.get('https://roads.googleapis.com/v1/snapToRoads', {
+        interpolate: true,
+        key: apiKey,
+        //path: pathValues.join('|')
+        path: "#{path}"
+      }, function(data) {
+        processSnapToRoadResponse(data);
+        drawSnappedPolyline();
+        console.log(pathValues.join('|'))
+      });
+    }
 
-    // Enables the polyline drawing control. Click on the map to start drawing a
-    // polyline. Each click will add a new vertice. Double-click to stop drawing.
-    drawingManager = new google.maps.drawing.DrawingManager({
-      drawingMode: google.maps.drawing.OverlayType.POLYLINE,
-      drawingControl: true,
-      drawingControlOptions: {
-        position: google.maps.ControlPosition.TOP_CENTER,
-        drawingModes: [
-          google.maps.drawing.OverlayType.POLYLINE
-        ]
-      },
-      polylineOptions: {
-        strokeColor: '#696969',
-        strokeWeight: 2,
-        strokeOpacity: 0.3,
-      }
-    });
-    drawingManager.setMap(map);
+    // Snap to road
+    function snapToRoad() {
+      $.get('https://roads.googleapis.com/v1/snapToRoads', {
+        interpolate: true,
+        key: apiKey,
+        path: "#{path}"
+      }, function(data) {
+        processSnapToRoadResponse(data);
+        drawSnappedPolyline();
+      });
+    }
 
-    // Snap-to-road when the polyline is completed.
-    drawingManager.addListener('polylinecomplete', function(poly) {
-      var path = poly.getPath();
-      polylines.push(poly);
+    // Store snapped polyline returned by the snap-to-road service.
+    function processSnapToRoadResponse(data) {
+      snappedCoordinates = [];
       placeIdArray = [];
-      runSnapToRoad(path);
-    });
-
-    // Clear button. Click to remove all polylines.
-    document.getElementById('clear').addEventListener('click', function(event) {
-      event.preventDefault();
-      for (var i = 0; i < polylines.length; ++i) {
-        polylines[i].setMap(null);
+      for (var i = 0; i < data.snappedPoints.length; i++) {
+        var latlng = new google.maps.LatLng(
+            data.snappedPoints[i].location.latitude,
+            data.snappedPoints[i].location.longitude);
+        snappedCoordinates.push(latlng);
+        placeIdArray.push(data.snappedPoints[i].placeId);
       }
-      polylines = [];
-      return false;
-    });
-  } // End intialize()
-
-  // Snap a user-created polyline to roads and draw the snapped path
-  function runSnapToRoad(path) {
-    var pathValues = [];
-    for (var i = 0; i < path.getLength(); i++) {
-      pathValues.push(path.getAt(i).toUrlValue());
     }
 
-    $.get('https://roads.googleapis.com/v1/snapToRoads', {
-      interpolate: true,
-      key: apiKey,
-      //path: pathValues.join('|')
-      path: "#{path}"
-    }, function(data) {
-      processSnapToRoadResponse(data);
-      drawSnappedPolyline();
-      console.log(pathValues.join('|'))
-    });
-  }
+    // Draws the snapped polyline (after processing snap-to-road response).
+    function drawSnappedPolyline() {
+      var snappedPolyline = new google.maps.Polyline({
+        path: snappedCoordinates,
+        strokeColor: '#add8e6',
+        strokeWeight: 4,
+        strokeOpacity: 0.9,
+      });
 
-  // Snap to road
-  function snapToRoad() {
-    $.get('https://roads.googleapis.com/v1/snapToRoads', {
-      interpolate: true,
-      key: apiKey,
-      path: "#{path}"
-    }, function(data) {
-      processSnapToRoadResponse(data);
-      drawSnappedPolyline();
-    });
-  }
-
-  // Store snapped polyline returned by the snap-to-road service.
-  function processSnapToRoadResponse(data) {
-    snappedCoordinates = [];
-    placeIdArray = [];
-    for (var i = 0; i < data.snappedPoints.length; i++) {
-      var latlng = new google.maps.LatLng(
-          data.snappedPoints[i].location.latitude,
-          data.snappedPoints[i].location.longitude);
-      snappedCoordinates.push(latlng);
-      placeIdArray.push(data.snappedPoints[i].placeId);
+      snappedPolyline.setMap(map);
+      polylines.push(snappedPolyline);
     }
-  }
 
-  // Draws the snapped polyline (after processing snap-to-road response).
-  function drawSnappedPolyline() {
-    var snappedPolyline = new google.maps.Polyline({
-      path: snappedCoordinates,
-      strokeColor: '#add8e6',
-      strokeWeight: 4,
-      strokeOpacity: 0.9,
-    });
-
-    snappedPolyline.setMap(map);
-    polylines.push(snappedPolyline);
-  }
-
-%script{:src => "https://maps.googleapis.com/maps/api/js?libraries=drawing,places&key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
+  %script{:src => "https://maps.googleapis.com/maps/api/js?libraries=drawing,places&key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
