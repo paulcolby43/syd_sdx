@@ -132,14 +132,14 @@
                         .pull-right
                           %a.btn.btn-primary{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
                             %i.fa.fa-camera
-                            Picture
+                            = "Picture" unless mobile_device?
                           %a.btn.btn-default{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
                             %i.fa.fa-envelope
-                            Email
+                            = "Email" unless mobile_device?
                           = render partial: "send_email_modal", locals: {ticket: ticket}
                           %a.btn.btn-default{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), target: '_blank'}
                             %i.fa.fa-file-pdf-o
-                            PDF
+                            = "PDF" unless mobile_device?
                         %br
                         %br
                       -#
