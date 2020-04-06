@@ -132,7 +132,8 @@ class TripsController < ApplicationController
   def locations
     authorize! :show, :trips
     @trip = Trip.find(current_user.token, params[:id])
-    @locations = Trip.get_locations(current_user.token, params[:id]).uniq { |location| [location["Latitude"], location["Longitude"]] }
+    location_results = Trip.get_locations(current_user.token, params[:id])
+    @locations = location_results.uniq { |location| [location["Latitude"], location["Longitude"]] } unless location_results.blank?
   end
   
   
