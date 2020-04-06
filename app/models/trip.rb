@@ -311,13 +311,13 @@ class Trip
         unless data["ApiGetTripLocationsResponse"]["LocationLogs"].blank? or data["ApiGetTripLocationsResponse"]["LocationLogs"]["ApiTripLocationInformation"].blank?
           return data["ApiGetTripLocationsResponse"]["LocationLogs"]["ApiTripLocationInformation"]
         else
-          return nil
+          return []
         end
       else
-        return nil
+        return []
       end
     else
-      return nil
+      return []
     end
   end
   
