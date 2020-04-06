@@ -141,6 +141,22 @@ class TicketsController < ApplicationController
     @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
     @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @get_ticket_response = Ticket.get_ticket(current_user.token, current_yard_id, params[:id])
+    unless @get_ticket_response.blank?
+      if @get_ticket_response["Success"] == "false"
+        unless @get_ticket_response["Session"]["CreatedByUser"]["UserName"] == current_user.username
+          flash[:danger] = "#{@get_ticket_response['FailureInformation']}"
+          redirect_to :back
+        else
+          # The session was created by the current_user
+          @ticket_session_id = @get_ticket_response["Session"]["Id"]
+        end
+      else
+        @ticket_session_id = @get_ticket_response["Session"]["Id"]
+      end
+    else
+      flash[:danger] = "Unable to obtain session information from Dragon.}"
+      redirect_to :back
+    end
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images

@@ -2,6 +2,13 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    .pull-right
+      %small
+        Ticket Session
+        %strong= @ticket_session_id
+  .container
+    .well
+      = @get_ticket_response
     -# .well= @drawers
     -#
       .well
@@ -11,6 +18,7 @@
         =# @commodities
         =# @commodities_grouped_by_type_for_select
     = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
+      = hidden_field_tag "ticket[session_id]", @ticket_session_id
       = hidden_field_tag "ticket[ticket_number]", @ticket_number
       =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
       = hidden_field_tag "ticket[status]", @ticket['Status']

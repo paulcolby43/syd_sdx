@@ -233,7 +233,12 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
+    Rails.logger.info "Ticket.get_ticket response: #{data}"
+    unless data["ApiGetTicketByIdResponse"].blank?
+      return data["ApiGetTicketByIdResponse"]
+    else
+      nil
+    end
   end
   
   def self.search(status, auth_token, yard_id, query_string)

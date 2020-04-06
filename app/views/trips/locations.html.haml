@@ -36,15 +36,17 @@
         %br
         = location['Latitude']
         = location['Longitude']
-  - path = path_values.split(';').join('|')
+  - path = path_values.split(';').join('|') unless path_values.blank?
+  - last_location = @locations.last unless @locations.blank?
 
 .container
   %br
   %br
   %br
   %br
+  =# path
   #map
-  #bar
+  #bar{style: 'display: none;'}
     %p.auto
       %input#autoc{:type => "text"}/
     %p
@@ -52,10 +54,9 @@
       to clear map.
 
 
--# https://roads.googleapis.com/v1/snapToRoads?path=-35.27801,149.12958|-35.28032,149.12907|-35.28099,149.12929|-35.28144,149.12984|-35.28194,149.13003|-35.28282,149.12956|-35.28302,149.12881|-35.28473,149.12836&interpolate=true&key=YOUR_API_KEY
-
 -# %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
-%script{:src => "https://maps.googleapis.com/maps/api/js?libraries=drawing,places&key=#{ENV['GOOGLE_MAPS_API_KEY']}"}
+
+
 :javascript
   var apiKey = "#{ENV['GOOGLE_MAPS_API_KEY']}";
 
@@ -65,13 +66,20 @@
   var polylines = [];
   var snappedCoordinates = [];
 
+
   function initialize() {
+    mapId = document.getElementById('map');
+    mapId.style.width = "100%";
+    mapId.style.height = "500px";
     var mapOptions = {
-      zoom: 17,
-      center: {lat: -33.8667, lng: 151.1955,}
+      zoom: 16,
+      //center: {lat: -33.8667, lng: 151.1955,}
+      center: {lat: #{last_location['Latitude']}, lng: #{last_location['Longitude']},}
+      
     };
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
+    snapToRoad(); //Make Snap to Road call automatically on initialization
+    
     // Adds a Places search box. Searching for a place will center the map on that
     // location.
     map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
@@ -88,6 +96,7 @@
         map.setZoom(17);
       }
     });
+
 
     // Enables the polyline drawing control. Click on the map to start drawing a
     // polyline. Each click will add a new vertice. Double-click to stop drawing.
@@ -116,7 +125,6 @@
       runSnapToRoad(path);
     });
 
-
     // Clear button. Click to remove all polylines.
     document.getElementById('clear').addEventListener('click', function(event) {
       event.preventDefault();
@@ -126,7 +134,7 @@
       polylines = [];
       return false;
     });
-  }
+  } // End intialize()
 
   // Snap a user-created polyline to roads and draw the snapped path
   function runSnapToRoad(path) {
@@ -138,7 +146,21 @@
     $.get('https://roads.googleapis.com/v1/snapToRoads', {
       interpolate: true,
       key: apiKey,
-      path: pathValues.join('|')
+      //path: pathValues.join('|')
+      path: "#{path}"
+    }, function(data) {
+      processSnapToRoadResponse(data);
+      drawSnappedPolyline();
+      console.log(pathValues.join('|'))
+    });
+  }
+
+  // Snap to road
+  function snapToRoad() {
+    $.get('https://roads.googleapis.com/v1/snapToRoads', {
+      interpolate: true,
+      key: apiKey,
+      path: "#{path}"
     }, function(data) {
       processSnapToRoadResponse(data);
       drawSnappedPolyline();
@@ -171,3 +193,4 @@
     polylines.push(snappedPolyline);
   }
 
+%script{:src => "https://maps.googleapis.com/maps/api/js?libraries=drawing,places&key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
