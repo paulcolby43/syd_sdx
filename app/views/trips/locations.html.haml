@@ -5,26 +5,24 @@
   .container
     %br
     %br
-    .well.col-sm-6.col-md-4.col-md-offset-4
-      %p.lead
-        %strong Trip
-        = "#{@trip['TripNumber']}"
       %p.lead
         %strong Locations
-        - unless @locations.blank?
-          - path_values = ""
-          - @locations.each do |location|
-            - path_values = path_values + "#{location['Latitude']},#{location['Longitude']};"
-            -#
-              %p
-                = location['EntryDate']
-                %br
-                = location['Latitude']
-                = location['Longitude']
-          - path = path_values.split(';').join('|')
-          =# path
-        - else
-          None
+        = @locations
+        -#
+          - unless @locations.blank?
+            - path_values = ""
+            - @locations.each do |location|
+              - path_values = path_values + "#{location['Latitude']},#{location['Longitude']};"
+              -#
+                %p
+                  = location['EntryDate']
+                  %br
+                  = location['Latitude']
+                  = location['Longitude']
+            - path = path_values.split(';').join('|')
+            =# path
+          - else
+            None
 
 - unless @locations.blank?
   - path_values = ""
@@ -50,6 +48,18 @@
     %p
       %a#clear{:href => "#"} Click here
       to clear map.
+  %br
+  %a.btn.btn-primary{"aria-controls" => "positions", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#positions", :role => "button"}
+    Positions
+  #positions.collapse
+    .well
+      - @locations.each do |location|
+        %p
+          = location['EntryDate']
+          %br
+          = location['Latitude']
+          = location['Longitude']
+
 
 
 -# %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
