@@ -365,7 +365,7 @@ class Image < ActiveRecord::Base
   end
   
   def Image.google_map(center)
-    return "https://www.google.com/maps/embed/v1/place?key=#{ENV['GOOGLE_MAPS_API_KEY']}&q=#{center}&zoom=19"
+    return "https://www.google.com/maps/embed/v1/place?key=#{ENV['GOOGLE_MAPS_API_KEY']}&q=#{center}&zoom=16"
   end
   
 end

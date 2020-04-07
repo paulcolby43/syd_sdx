@@ -1,65 +1,49 @@
 = render partial: "shared/navbars/show_trip_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
 -@title= "Trip #{@trip['TripNumber']}"
 
--#
-  .container
-    %br
-    %br
-      %p.lead
-        %strong Locations
-        = @locations
-        -#
-          - unless @locations.blank?
-            - path_values = ""
-            - @locations.each do |location|
-              - path_values = path_values + "#{location['Latitude']},#{location['Longitude']};"
-              -#
-                %p
-                  = location['EntryDate']
-                  %br
-                  = location['Latitude']
-                  = location['Longitude']
-            - path = path_values.split(';').join('|')
-            =# path
-          - else
-            None
-
 - unless @locations.blank?
   - path_values = ""
   - @locations.each do |location|
     - path_values = path_values + "#{location['Latitude']},#{location['Longitude']};"
-    -#
-      %p
-        = location['EntryDate']
-        %br
-        = location['Latitude']
-        = location['Longitude']
   - path = path_values.split(';').join('|') unless path_values.blank?
   - last_location = @locations.last unless @locations.blank?
 
 .container
   %br
   %br
-  =# path
-  - unless @locations.blank?
-    #map
-    #bar{style: 'display: none;'}
-      %p.auto
-        %input#autoc{:type => "text"}/
+  - unless last_location.blank?
+    .well.col-sm-12.col-md-6
       %p
-        %a#clear{:href => "#"} Click here
-        to clear map.
-    %br
-    %a.btn.btn-primary{"aria-controls" => "positions", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#positions", :role => "button"}
-      Positions
-    #positions.collapse
-      .well
-        - @locations.each do |location|
-          %p
-            = location['EntryDate']
-            %br
-            = location['Latitude']
-            = location['Longitude']
+        %strong Last Location
+      %p
+        = Trip.location_address(last_location['Latitude'], last_location['Longitude'])
+      .embed-responsive.embed-responsive-16by9
+        %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{last_location['Latitude']},#{last_location['Longitude']}"), :style => "border:0"}
+    
+  - unless @locations.blank?
+    .well.col-sm-12.col-md-12
+      %p
+        %strong Route Taken
+      #map
+      #bar{style: 'display: none;'}
+        %p.auto
+          %input#autoc{:type => "text"}/
+        %p
+          %a#clear{:href => "#"} Click here
+          to clear map.
+    .col-sm-12.col-md-6
+      .row
+        %a.btn.btn-primary{"aria-controls" => "positions", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#positions", :role => "button"}
+          Positions
+          %i.fa.fa-chevron-down
+        #positions.collapse
+          .well
+            - @locations.each do |location|
+              %p
+                = location['EntryDate']
+                %br
+                = location['Latitude']
+                = location['Longitude']
   - else
     %p.lead.text-center No location data
 

@@ -85,9 +85,9 @@
             %b.caret
           %ul.dropdown-menu
             %li{:class => "#{(params[:controller] == 'trips') ? 'active' : ''}"}
-              = link_to "#{current_user.first_name} Trips", trips_path
+              = link_to "Trips", trips_path
             %li{:class => "#{(params[:controller] == 'service_requests') ? 'active' : ''}"}
-              = link_to 'Trips Search', search_trips_path
+              = link_to 'Search', search_trips_path
         -#
           %li
             %a{href: scoreboard_path, target: '_blank'} SCOREBOARD

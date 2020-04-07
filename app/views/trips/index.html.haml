@@ -121,10 +121,11 @@
       // Get ID of single div
       mapId = document.getElementById(maps[i].id);
       var containers = eval(mapId.getAttribute('container-coordinates-hashes-array'));
-      //console.log("containers", containers);
-      //console.log("length", containers.length);
 
       if(containers.length > 0){
+        console.log("containers", containers);
+        console.log("length", containers.length);
+
         // Create new Google Map object for single canvas 
         mapId.style.width = "100%";
         mapId.style.height = "150px";
