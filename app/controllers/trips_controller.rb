@@ -136,6 +136,28 @@ class TripsController < ApplicationController
     @locations = location_results.uniq { |location| [location["Latitude"], location["Longitude"]] }
   end
   
+  # GET /trips/drivers
+  # GET /trips/drivers.json
+  def drivers
+    authorize! :index, :trips
+    @dispatch_information = Trip.dispatch_info_by_user_guid(current_user.token)
+    @trips = Trip.all_by_user(@dispatch_information)
+    @driver_locations = []
+    @trips.each do |trip|
+      locations = Trip.get_locations(current_user.token, trip['Id'])
+      @driver_locations << locations.first unless locations.blank?
+    end
+    @driver_coordinates_hashes_array = []
+    @driver_locations.each do |location|
+      latitude = location['Latitude'].to_f
+      longitude = location['Longitude'].to_f
+      trip_number = @trips.find {|trip| trip['Id'] == location['TripId']}['TripNumber']
+      truck = @trips.find {|trip| trip['Id'] == location['TripId']}['Truck']
+      driver_name = @trips.find {|trip| trip['Id'] == location['TripId']}['Driver']
+      @driver_coordinates_hashes_array << {lat: latitude, lng: longitude, name: driver_name, description: "#{driver_name} #{truck} #{trip_number}"}
+    end
+  end
+  
   
   private
 

@@ -1,0 +1,70 @@
+= render partial: "shared/navbars/drivers_navbar", locals: {title: "Drivers"}
+- @title="Drivers"
+.container
+  %br
+  %br
+  - unless @driver_coordinates_hashes_array.blank?
+    .well.col-sm-12.col-md-12
+      #map{"driver-coordinates-hashes-array" => @driver_locations.map{ |location| {lat: location['Latitude'].to_f, lng: location['Longitude'].to_f}}.compact.to_json.html_safe}
+    .col-sm-12.col-md-6
+      .row
+        %a.btn.btn-primary{"aria-controls" => "positions", "aria-expanded" => "false", "data-toggle" => "collapse", :href => "#positions", :role => "button"}
+          Drivers
+          %i.fa.fa-chevron-down
+        #positions.collapse
+          .well
+            - @driver_coordinates_hashes_array.each do |driver|
+              %p
+                = driver[:description]
+                
+  - else
+    %p.lead.text-center No driver data
+      
+    
+- unless @driver_coordinates_hashes_array.blank?
+  :javascript
+    // Start map of drivers
+    var map;
+    function initialize() {
+      mapId = document.getElementById('map');
+      var drivers = #{@driver_coordinates_hashes_array.compact.to_json.html_safe};
+      mapId.style.width = "100%";
+      mapId.style.height = "500px";
+      map = new google.maps.Map(mapId, {
+        zoom: 10,
+        //center: new google.maps.LatLng(42.178232, -122.670078),
+        center: new google.maps.LatLng(parseFloat(drivers[0].lat), parseFloat(drivers[0].lng)),
+        mapTypeId: 'roadmap',
+        mapTypeControl: true,
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_TOP
+        }
+      });
+      var infowindow = new google.maps.InfoWindow();
+      var marker, j;
+      //var latlng = new google.maps.LatLng(42.178232, -122.670078);
+
+      for (j = 0; j < drivers.length; j++) {
+        var driver = drivers[j];
+        var latlng = new google.maps.LatLng(driver.lat, driver.lng);
+
+        // Create new Google Marker object for new map
+        marker = new google.maps.Marker({
+          // Use our LatLng array below
+          position: latlng,
+          map: map,
+          label: driver.name,
+          title: driver.description
+        });
+
+        google.maps.event.addListener(marker, 'click', (function (marker, j) {
+          return function () {
+            infowindow.setContent(marker.title);
+            infowindow.open(map, marker);
+          }
+        })(marker, j));
+      }
+    }
+    // End map of drivers
+
+  %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}

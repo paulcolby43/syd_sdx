@@ -3,6 +3,13 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    -#
+      .well
+        #map
+    %p
+      %a{href: drivers_trips_path, class: 'btn btn-default  customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Drivers Map"}}
+        %i.fa.fa-map
+        Drivers Map
     %p#current_location{"data-trip-id" => nil, style: 'display:none'}
 
     - unless @trips.blank?
@@ -103,6 +110,50 @@
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}
 
 :javascript
+  /*
+  // Start map of drivers
+  var map;
+  function initialize() {
+    mapId = document.getElementById('map');
+    mapId.style.width = "100%";
+    mapId.style.height = "250px";
+    map = new google.maps.Map(mapId, {
+      zoom: 14,
+      center: new google.maps.LatLng(42.178232, -122.670078),
+      mapTypeId: 'roadmap',
+      mapTypeControl: true,
+      zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_TOP
+      }
+    });
+    var infowindow = new google.maps.InfoWindow();
+    var marker, j;
+    var latlng = new google.maps.LatLng(42.178232, -122.670078);
+
+    for (j = 0; j < 1; j++) {
+      //var container = containers[j];
+      //var latlng = new google.maps.LatLng(container.lat, container.lng);
+
+      // Create new Google Marker object for new map
+      marker = new google.maps.Marker({
+        // Use our LatLng array bellow
+        position: latlng,
+        map: map,
+        title: "Title goes here"
+      });
+
+      google.maps.event.addListener(marker, 'click', (function (marker, j) {
+        return function () {
+          infowindow.setContent(marker.title);
+          infowindow.open(map, marker);
+        }
+      })(marker, j));
+    }
+  }
+  // End map of drivers
+  */
+
+  /*
   var map;
   function initialize() {
     // Get all maps with ".containers_map"
@@ -162,10 +213,12 @@
       }
     }
   }
+  */
 
-%script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
+-# %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
 
 :javascript
+  // Start location tracking
   var x = document.getElementById("current_location");
   var geoWatch;
   var wakelock;
@@ -200,3 +253,4 @@
     navigator.geolocation.clearWatch( geoWatch );
     geoWatch = undefined;
   }
+  // End location tracking

@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/show_trip_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
+= render partial: "shared/navbars/show_trip_locations_navbar", locals: {title: "Trip #{@trip['TripNumber']}"}
 -@title= "Trip #{@trip['TripNumber']}"
 
 - unless @locations.blank?
@@ -6,24 +6,24 @@
   - @locations.each do |location|
     - path_values = path_values + "#{location['Latitude']},#{location['Longitude']};"
   - path = path_values.split(';').join('|') unless path_values.blank?
-  - last_location = @locations.last unless @locations.blank?
+  - most_recent_location = @locations.first unless @locations.blank?
 
 .container
   %br
   %br
-  - unless last_location.blank?
+  - unless most_recent_location.blank?
     .well.col-sm-12.col-md-6
       %p
-        %strong Last Location
+        %strong= "#{@trip['Driver']} #{@trip['Truck']} - #{@trip['TripNumber']} Last Location"
       %p
-        = Trip.location_address(last_location['Latitude'], last_location['Longitude'])
+        = Trip.location_address(most_recent_location['Latitude'], most_recent_location['Longitude'])
       .embed-responsive.embed-responsive-16by9
-        %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{last_location['Latitude']},#{last_location['Longitude']}"), :style => "border:0"}
+        %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{most_recent_location['Latitude']},#{most_recent_location['Longitude']}"), :style => "border:0"}
     
   - unless @locations.blank?
     .well.col-sm-12.col-md-12
       %p
-        %strong Route Taken
+        %strong= "#{@trip['Driver']} #{@trip['Truck']} - #{@trip['TripNumber']} Route Taken"
       #map
       #bar{style: 'display: none;'}
         %p.auto
@@ -68,7 +68,7 @@
       var mapOptions = {
         zoom: 16,
         //center: {lat: -33.8667, lng: 151.1955,}
-        center: {lat: #{last_location['Latitude']}, lng: #{last_location['Longitude']},}
+        center: {lat: #{most_recent_location['Latitude']}, lng: #{most_recent_location['Longitude']},}
 
       };
       map = new google.maps.Map(document.getElementById('map'), mapOptions);
