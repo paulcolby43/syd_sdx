@@ -111,49 +111,6 @@
 
 :javascript
   /*
-  // Start map of drivers
-  var map;
-  function initialize() {
-    mapId = document.getElementById('map');
-    mapId.style.width = "100%";
-    mapId.style.height = "250px";
-    map = new google.maps.Map(mapId, {
-      zoom: 14,
-      center: new google.maps.LatLng(42.178232, -122.670078),
-      mapTypeId: 'roadmap',
-      mapTypeControl: true,
-      zoomControlOptions: {
-          position: google.maps.ControlPosition.RIGHT_TOP
-      }
-    });
-    var infowindow = new google.maps.InfoWindow();
-    var marker, j;
-    var latlng = new google.maps.LatLng(42.178232, -122.670078);
-
-    for (j = 0; j < 1; j++) {
-      //var container = containers[j];
-      //var latlng = new google.maps.LatLng(container.lat, container.lng);
-
-      // Create new Google Marker object for new map
-      marker = new google.maps.Marker({
-        // Use our LatLng array bellow
-        position: latlng,
-        map: map,
-        title: "Title goes here"
-      });
-
-      google.maps.event.addListener(marker, 'click', (function (marker, j) {
-        return function () {
-          infowindow.setContent(marker.title);
-          infowindow.open(map, marker);
-        }
-      })(marker, j));
-    }
-  }
-  // End map of drivers
-  */
-
-  /*
   var map;
   function initialize() {
     // Get all maps with ".containers_map"
@@ -245,6 +202,13 @@
         }, 
         success: function(data) {
           console.log(data);
+          continue_logging = data.continue_logging
+          if (continue_logging == "false") {
+            stopWatch();
+            $('.stop_watch').hide(); 
+            $('#current_location').hide();  
+            $('.watch_me').show();
+          }
         } 
       });
   }
