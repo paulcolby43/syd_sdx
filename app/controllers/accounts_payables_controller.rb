@@ -83,7 +83,7 @@ class AccountsPayablesController < ApplicationController
     @accounts_payable = AccountsPayable.find_by_id(current_user.token, current_yard_id, params[:id])
 #    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_user.token, current_yard_id, @accounts_payable['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @accounts_payable['Id'], @guid, nil)
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'

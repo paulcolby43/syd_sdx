@@ -72,7 +72,7 @@ class CheckingAccountsController < ApplicationController
     @checking_account = CheckingAccount.find_by_id(current_user.token, current_yard_id, params[:id])
 #    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_user.token, current_yard_id, @checking_account['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @checking_account['Id'], @guid, nil)
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'

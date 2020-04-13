@@ -219,6 +219,7 @@ class Ticket
     return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
   end
   
+#  Start Session Methods
   def self.get_ticket(auth_token, yard_id, ticket_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -240,6 +241,49 @@ class Ticket
       nil
     end
   end
+  
+  def self.get_ticket_with_session(auth_token, yard_id, ticket_id, session_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket/getticket"
+    payload = {
+      "sessionId" => session_id,
+      "itemId" => ticket_id,
+      "isSessionTakeover" => false,
+      "skipSessionValidation" => false
+      }
+    json_encoded_payload = JSON.generate(payload)
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "Ticket.get_ticket response: #{data}"
+    unless data["ApiGetTicketByIdResponse"].blank?
+      return data["ApiGetTicketByIdResponse"]
+    else
+      nil
+    end
+  end
+  
+  def self.release_session(auth_token, session_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/v1/sessions/removesession"
+    payload = {
+      "sessionId" => session_id
+      }
+    json_encoded_payload = JSON.generate(payload)
+    xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    data= Hash.from_xml(xml_content)
+    Rails.logger.info "Ticket.release_session response: #{data}"
+#    unless data["ApiGetTicketByIdResponse"].blank?
+#      return data["ApiGetTicketByIdResponse"]
+#    else
+#      nil
+#    end
+  end
+  
+#  End Session Methods
   
   def self.search(status, auth_token, yard_id, query_string)
     require 'uri'
@@ -326,7 +370,7 @@ class Ticket
   end
   
   # Create a new ticket
-  def self.create(auth_token, yard_id, customer_id, guid)
+  def self.create(auth_token, yard_id, customer_id, guid, related_workorder_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
     customer = Customer.find_by_id(auth_token, yard_id, customer_id)
@@ -347,7 +391,8 @@ class Ticket
           "Status" => 2,
           "CurrencyId" => user.user_setting.currency_id,
           "PrintPrices" => true,
-          "DateCreated" => Time.now.utc
+          "DateCreated" => Time.now.utc,
+          "RelatedWorkOrderId" => related_workorder_id
           }
         })
       
@@ -380,7 +425,8 @@ class Ticket
           "VoidedByUserId" => "91560F2C-C390-45B3-B0DE-B64C2DA255C5",
           "PrintPrices" => true,
           "DateCreated" =>  ticket['DateCreated'],
-          "DateClosed" =>  Time.now.utc
+          "DateClosed" =>  Time.now.utc,
+          "RelatedWorkOrderId" =>  ticket['RelatedWorkOrderId'],
           }
         })
       

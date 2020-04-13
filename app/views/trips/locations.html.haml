@@ -38,12 +38,15 @@
           %i.fa.fa-chevron-down
         #positions.collapse
           .well
+            %strong Dragon Locations
             - @locations.each do |location|
               %p
                 = location['EntryDate']
                 %br
                 = location['Latitude']
                 = location['Longitude']
+            %strong Snap to Roads Locations
+            #snap_to_roads
   - else
     %p.lead.text-center No location data
 
@@ -131,6 +134,7 @@
     } // End intialize()
 
     // Snap a user-created polyline to roads and draw the snapped path
+    /*
     function runSnapToRoad(path) {
       var pathValues = [];
       for (var i = 0; i < path.getLength(); i++) {
@@ -145,9 +149,10 @@
       }, function(data) {
         processSnapToRoadResponse(data);
         drawSnappedPolyline();
-        console.log(pathValues.join('|'))
+        console.log(pathValues.join('|'));
       });
     }
+    */
 
     // Snap to road
     function snapToRoad() {
@@ -158,6 +163,7 @@
       }, function(data) {
         processSnapToRoadResponse(data);
         drawSnappedPolyline();
+        console.log(data);
       });
     }
 
@@ -178,11 +184,13 @@
     function drawSnappedPolyline() {
       var snappedPolyline = new google.maps.Polyline({
         path: snappedCoordinates,
-        strokeColor: '#add8e6',
-        strokeWeight: 4,
-        strokeOpacity: 0.9,
+        //strokeColor: '#add8e6',
+        strokeColor: '#333CFF',
+        //strokeWeight: 4,
+        strokeWeight: 6,
+        //strokeOpacity: 0.9,
+        strokeOpacity: 0.5,
       });
-
       snappedPolyline.setMap(map);
       polylines.push(snappedPolyline);
     }
