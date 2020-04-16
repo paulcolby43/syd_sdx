@@ -21,11 +21,11 @@ class Ticket
       "ShowAllYards" => false # Only get this yard's tickets
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info "payload: #{json_encoded_payload}"
+#    Rails.logger.info "payload: #{json_encoded_payload}"
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Ticket.all_by_status_and_yard response: #{data}"
+#    Rails.logger.info "Ticket.all_by_status_and_yard response: #{data}"
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
     else # Array of results returned
@@ -219,7 +219,6 @@ class Ticket
     return data["ApiItemResponseOfApiTicketHead0UdNujZ0"]["Item"]
   end
   
-#  Start Session Methods
   def self.get_ticket(auth_token, yard_id, ticket_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -282,8 +281,6 @@ class Ticket
 #      nil
 #    end
   end
-  
-#  End Session Methods
   
   def self.search(status, auth_token, yard_id, query_string)
     require 'uri'
@@ -435,7 +432,49 @@ class Ticket
       return data["SaveTicketResponse"]["Success"]
   end
   
-  # Update an existing ticket
+  # Save an existing ticket with session
+  def self.save_with_session(auth_token, yard_id, customer_id, guid, ticket_number, status, description, session_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket"
+    customer = Customer.find_by_id(auth_token, yard_id, customer_id)
+    ticket = Ticket.find_by_id(auth_token, yard_id, guid)
+    payload = {
+      "sessionId" => session_id,
+      "skipSessionValidation" => false,
+      "TicketHead" => {
+        "Id" => guid,
+        "Description" => description,
+        "YardId" => yard_id,
+        "CustomerId" => customer_id,
+        "FirstName" => customer.blank? ? "" : customer['FirstName'],
+        "LastName" => customer.blank? ? "" : customer['LastName'],
+        "Company" => customer.blank? ? "" : customer['Company'],
+        "PayToId" => customer_id,
+        "TicketNumber" => ticket_number,
+        "Status" => status,
+        "BalanceDue" => ticket['BalanceDue'],
+        "CurrencyId" => user.user_setting.currency_id,
+        "VoidDate" => nil,
+        "VoidedByUserId" => nil,
+        "UserId" => ticket['UserId'],
+        "JobNumber" => "",
+        "BolNumber" => "",
+        "PrintPrices" => true,
+        "DateCreated" =>  ticket['DateCreated'],
+        "DateClosed" =>  Time.now.utc,
+        "RelatedWorkOrderId" =>  ticket['RelatedWorkOrderId'],
+        }
+      }
+    json_encoded_payload = JSON.generate(payload)
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    Rails.logger.info "Ticket.save_with_session response: #{response}"
+    data= Hash.from_xml(response)
+    return data["ApiSaveTicketResponse"]["Success"]
+  end
+  
+  # Void a ticket
 #  def self.void(auth_token, yard_id, ticket)
   def self.void(auth_token, yard_id, ticket_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
@@ -462,73 +501,43 @@ class Ticket
       return data["SaveTicketResponse"]["Success"]
   end
   
-#  # Add a line item to a ticket
-#  def self.add_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
-#    require 'json'
-#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-#    user = access_token.user # Get access token's user record
-#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
-##    new_id = SecureRandom.uuid
-#    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
-#    commodity_name = commodity["PrintDescription"]
-#    commodity_unit_of_measure = commodity["UnitOfMeasure"]
-#    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
-##    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, "6b5c0f91-e9db-430d-b9d3-5937a15bcdea")
-#    tax_collection_array = []
-#    unless taxes.blank?
-#      taxes.each do |tax|
-#        tax_amount = (tax['TaxPercent'].to_f/100 * amount.to_f)
-#        tax_hash = {
-#          "Id" => SecureRandom.uuid,
-#          "TicketItemId" => new_id,
-#          "SalesTaxId" => tax['Id'],
-#          "TaxName" => tax['TaxName'],
-#          "TaxPercent" => tax['TaxPercent'],
-#          "TaxAmount" => tax_amount,
-#          "TaxAmountInAssignedCurrency" => tax_amount,
-#          "CustomerRateOverride" => false,
-#          "TaxCode" => tax['TaxCode'],
-#          "CurrencyId" => user.user_setting.currency_id,
-#          "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
-#        }
-#        tax_collection_array << tax_hash
-#      end
-#    end
-#    payload = {
-#        "TicketItem"=>{
-#          "CommodityId" => commodity_id,
-#          "CurrencyId" => user.user_setting.currency_id, 
-#          "DateCreated" => Time.now.utc.iso8601, 
-#          "ExtendedAmount" => amount, 
-#          "ExtendedAmountInAssignedCurrency" => amount,
-#          "GrossWeight" => gross,
-##          "Id" => new_id,
-#          "Id" => item_id,
-#          "NetWeight" => net,
-#          "Notes" => notes, 
-#          "Price" => price,
-#          "PriceInAssignedCurrency" => price,
-#          "PrintDescription" => commodity_name, 
-#          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
-#          "ScaleUnitOfMeasure" => "LB", 
-#          "Sequence" => "1", 
-#          "SerialNumber" => serial_number, 
-#          "Status" => 'Hold', 
-#          "TareWeight" => tare, 
-#          "TicketHeadId" => ticket_id,
-#          "UnitOfMeasure" => unit_of_measure,
-#          "TaxCollection" => tax_collection_array
-#          }
-#        }
-#    json_encoded_payload = JSON.generate(payload)
-#    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
-#    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
-#      payload: json_encoded_payload)
-#      
-#    data= Hash.from_xml(response)
-#    return data["SaveTicketItemResponse"]["Success"]
-#  end
-
+  def self.void_with_session(auth_token, yard_id, ticket_id, session_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket"
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket"
+    payload = {
+      "sessionId" => session_id,
+      "skipSessionValidation" => false,
+      "TicketHead" => {
+        "Id" => ticket_id,
+        "Description" => ticket["Description"],
+        "YardId" => yard_id,
+        "CustomerId" => ticket["CustomerId"],
+        "TicketNumber" => ticket["TicketNumber"],
+        "Status" => 5,
+        "BalanceDue" => ticket['BalanceDue'],
+        "CurrencyId" => user.user_setting.currency_id,
+        "VoidDate" => nil,
+        "VoidedByUserId" => nil,
+        "UserId" => ticket['UserId'],
+        "JobNumber" => "",
+        "BolNumber" => "",
+        "PrintPrices" => true,
+        "DateCreated" =>  ticket['DateCreated'],
+        "DateClosed" =>  Time.now.utc,
+        "RelatedWorkOrderId" =>  ticket['RelatedWorkOrderId'],
+        }
+      }
+      json_encoded_payload = JSON.generate(payload)
+      response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+      Rails.logger.info "Ticket.void_with_session response: #{response}"
+      data= Hash.from_xml(response)
+      return data["ApiSaveTicketResponse"]["Success"]
+  end
+  
   # Add a line item to a ticket
   def self.add_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions)
     require 'json'
@@ -620,118 +629,6 @@ class Ticket
     return data["SaveTicketItemResponse"]["Success"]
   end
    
-#  # Update line item of ticket
-#  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure)
-#    require 'json'
-#    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
-#    user = access_token.user # Get access token's user record
-#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
-#    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
-#    commodity_name = commodity["PrintDescription"]
-#    commodity_unit_of_measure = commodity["UnitOfMeasure"]
-#    ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
-#    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
-#
-#    tax_collection_array = []
-#    unless taxes.blank?
-#      # Get line item's current taxes to zero-out
-#      if ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
-#         # Only one line item in the ticket
-#         line_item = ticket["TicketItemCollection"]["ApiTicketItem"]
-#      else
-#         # Multiple line items in the ticket
-#        line_item = ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Id"] == item_id}.first
-#      end
-#      unless line_item.blank? or line_item['TaxCollection'].blank? # This line item doesn't have any taxes
-#        unless line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash
-#          # Multiple taxes on line item
-#          line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
-#            tax_hash = {
-#              "Id" => tax['Id'],
-#              "TicketItemId" => item_id,
-#              "SalesTaxId" => tax['SalesTaxId'],
-#              "TaxName" => tax['TaxName'],
-#              "TaxPercent" => 0,
-#              "TaxAmount" => 0,
-#              "TaxAmountInAssignedCurrency" => 0,
-#              "CustomerRateOverride" => false,
-#              "TaxCode" => tax['TaxCode'],
-#              "CurrencyId" => user.user_setting.currency_id,
-#              "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
-#            }
-#            tax_collection_array << tax_hash
-#          end
-#        else
-#          # One tax on line item
-#          tax_hash = {
-#            "Id" => line_item['TaxCollection']['ApiTicketItemTax']['Id'],
-#            "TicketItemId" => item_id,
-#            "SalesTaxId" => line_item['TaxCollection']['ApiTicketItemTax']['SalesTaxId'],
-#            "TaxName" => line_item['TaxCollection']['ApiTicketItemTax']['TaxName'],
-#            "TaxPercent" => 0,
-#            "TaxAmount" => 0,
-#            "TaxAmountInAssignedCurrency" => 0,
-#            "CustomerRateOverride" => false,
-#            "TaxCode" => line_item['TaxCollection']['ApiTicketItemTax']['TaxCode'],
-#            "CurrencyId" => user.user_setting.currency_id,
-#            "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
-#            }
-#            tax_collection_array << tax_hash
-#        end
-#      end
-#      
-#      taxes.each do |tax|
-#        tax_amount = (tax['TaxPercent'].to_f/100 * amount.to_f)
-#        tax_hash = {
-#          "Id" => SecureRandom.uuid,
-#          "TicketItemId" => item_id,
-#          "SalesTaxId" => tax['Id'],
-#          "TaxName" => tax['TaxName'],
-#          "TaxPercent" => tax['TaxPercent'],
-#          "TaxAmount" => tax_amount,
-#          "TaxAmountInAssignedCurrency" => tax_amount,
-#          "CustomerRateOverride" => false,
-#          "TaxCode" => tax['TaxCode'],
-#          "CurrencyId" => user.user_setting.currency_id,
-#          "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
-#        }
-#        tax_collection_array << tax_hash
-#      end
-#    end
-#    
-#    payload = {
-#        "TicketItem"=>{
-#          "CommodityId" => commodity_id,
-#          "CurrencyId" => user.user_setting.currency_id, 
-#          "ExtendedAmount" => amount, 
-#          "ExtendedAmountInAssignedCurrency" => amount,
-#          "GrossWeight" => gross,
-#          "Id" => item_id, 
-#          "NetWeight" => net,
-#          "Notes" => notes, 
-#          "Price" => price,
-#          "PriceInAssignedCurrency" => price,
-#          "PrintDescription" => commodity_name, 
-#          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
-#          "ScaleUnitOfMeasure" => "LB", 
-#          "Sequence" => "1", 
-#          "SerialNumber" => serial_number, 
-#          "Status" => 'Hold', 
-#          "TareWeight" => tare, 
-#          "TicketHeadId" => ticket_id,
-#          "UnitOfMeasure" => unit_of_measure,
-#          "TaxCollection" => tax_collection_array 
-#          }
-#        }
-#    json_encoded_payload = JSON.generate(payload)
-#    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
-#    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
-#      payload: json_encoded_payload)
-#      
-#      data= Hash.from_xml(response)
-#      return data["SaveTicketItemResponse"]["Success"]
-#  end
-  
   # Update line item of ticket
   def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions)
     require 'json'
@@ -902,6 +799,234 @@ class Ticket
 #      Rails.logger.info response
       data= Hash.from_xml(response)
       return data["SaveTicketItemResponse"]["Success"]
+  end
+  
+  def self.add_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions, session_id)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket/item"
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
+    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
+    tax_collection_array = []
+    unless taxes.blank?
+      taxes.each do |tax|
+        tax_amount = (tax['TaxPercent'].to_f/100 * amount.to_f)
+        tax_hash = {
+          "Id" => SecureRandom.uuid,
+          "TicketItemId" => new_id,
+          "SalesTaxId" => tax['Id'],
+          "TaxName" => tax['TaxName'],
+          "TaxPercent" => tax['TaxPercent'],
+          "TaxAmount" => tax_amount,
+          "TaxAmountInAssignedCurrency" => tax_amount,
+          "CustomerRateOverride" => false,
+          "TaxCode" => tax['TaxCode'],
+          "CurrencyId" => user.user_setting.currency_id,
+          "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
+        }
+        tax_collection_array << tax_hash
+      end
+    end
+    
+    deductions_collection_array = []
+    unless deductions.blank?
+      deductions.each do |deduction|
+        unless (deduction[:deduct_weight_description].blank? and deduction[:deduct_dollar_amount_description].blank?) or (deduction[:deduct_weight].blank? and deduction[:deduct_dollar_amount].blank?) 
+          deduction_hash = {
+              "id" => SecureRandom.uuid,
+              "ticketItemId" => new_id,
+              "deductWeight" => deduction[:deduct_weight].blank? ? '' : deduction[:deduct_weight],
+              "deductWeightDescription" => deduction[:deduct_weight_description].blank? ? '' : deduction[:deduct_weight_description],
+              "deductDollarAmount" => deduction[:deduct_dollar_amount].blank? ? 0 : deduction[:deduct_dollar_amount],
+              "deductDollarAmountInAssignedCurrency" => deduction[:deduct_dollar_amount].blank? ? 0 : deduction[:deduct_dollar_amount],
+              "deductDollarAmountDescription" => deduction[:deduct_dollar_amount_description].blank? ? '' : deduction[:deduct_dollar_amount_description],
+              "status" => 0,
+              "type" => 0,
+              "percentageAmount" => 0,
+              "currencyId" => user.user_setting.currency_id
+            }
+            deductions_collection_array << deduction_hash
+        end
+      end
+    end
+    
+    payload = {
+        "sessionId" => session_id,
+        "skipSessionValidation" => false,
+        "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          "CurrencyId" => user.user_setting.currency_id, 
+          "DateCreated" => Time.now.utc.iso8601, 
+          "ExtendedAmount" => amount, 
+          "ExtendedAmountInAssignedCurrency" => amount,
+          "GrossWeight" => gross,
+#          "Id" => new_id,
+          "Id" => item_id,
+          "NetWeight" => net,
+          "Notes" => notes, 
+          "Price" => price,
+          "PriceInAssignedCurrency" => price,
+          "PrintDescription" => commodity_name, 
+          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => serial_number, 
+          "Status" => 'Hold', 
+          "TareWeight" => tare, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => unit_of_measure,
+          "TaxCollection" => tax_collection_array,
+          "deductionCollection" => deductions_collection_array
+          }
+        }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+    Rails.logger.debug "Ticket.add_item_with_session response: #{response}"
+    data= Hash.from_xml(response)
+    return data["ApiSaveTicketItemResponse"]["Success"]
+  end
+  
+  def self.update_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions, session_id)
+    require 'json'
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item"
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket/item"
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
+    ticket = Ticket.find_by_id(auth_token, yard_id, ticket_id)
+    taxes = Commodity.taxes_by_customer(auth_token, commodity_id, customer_id)
+
+    tax_collection_array = []
+    unless taxes.blank?
+      # Get line item's current taxes to zero-out
+      if ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
+         # Only one line item in the ticket
+         line_item = ticket["TicketItemCollection"]["ApiTicketItem"]
+      else
+         # Multiple line items in the ticket
+        line_item = ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Id"] == item_id}.first
+      end
+      unless line_item.blank? or line_item['TaxCollection'].blank? # This line item doesn't have any taxes
+        unless line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash
+          # Multiple taxes on line item
+          line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+            tax_hash = {
+              "Id" => tax['Id'],
+              "TicketItemId" => item_id,
+              "SalesTaxId" => tax['SalesTaxId'],
+              "TaxName" => tax['TaxName'],
+              "TaxPercent" => 0,
+              "TaxAmount" => 0,
+              "TaxAmountInAssignedCurrency" => 0,
+              "CustomerRateOverride" => false,
+              "TaxCode" => tax['TaxCode'],
+              "CurrencyId" => user.user_setting.currency_id,
+              "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
+            }
+            tax_collection_array << tax_hash
+          end
+        else
+          # One tax on line item
+          tax_hash = {
+            "Id" => line_item['TaxCollection']['ApiTicketItemTax']['Id'],
+            "TicketItemId" => item_id,
+            "SalesTaxId" => line_item['TaxCollection']['ApiTicketItemTax']['SalesTaxId'],
+            "TaxName" => line_item['TaxCollection']['ApiTicketItemTax']['TaxName'],
+            "TaxPercent" => 0,
+            "TaxAmount" => 0,
+            "TaxAmountInAssignedCurrency" => 0,
+            "CustomerRateOverride" => false,
+            "TaxCode" => line_item['TaxCollection']['ApiTicketItemTax']['TaxCode'],
+            "CurrencyId" => user.user_setting.currency_id,
+            "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
+            }
+            tax_collection_array << tax_hash
+        end
+      end
+      
+      taxes.each do |tax|
+        tax_amount = (tax['TaxPercent'].to_f/100 * amount.to_f)
+        tax_hash = {
+          "Id" => SecureRandom.uuid,
+          "TicketItemId" => item_id,
+          "SalesTaxId" => tax['Id'],
+          "TaxName" => tax['TaxName'],
+          "TaxPercent" => tax['TaxPercent'],
+          "TaxAmount" => tax_amount,
+          "TaxAmountInAssignedCurrency" => tax_amount,
+          "CustomerRateOverride" => false,
+          "TaxCode" => tax['TaxCode'],
+          "CurrencyId" => user.user_setting.currency_id,
+          "DateApplied" => Time.now.utc.iso8601 # Remove the UTC from the end
+        }
+        tax_collection_array << tax_hash
+      end
+    end
+    
+    deductions_collection_array = []
+    unless deductions.blank?
+      deductions.each do |deduction|
+        unless (deduction[:deduct_weight_description].blank? and deduction[:deduct_dollar_amount_description].blank?) or (deduction[:deduct_weight].blank? and deduction[:deduct_dollar_amount].blank?) 
+          deduction_hash = {
+              "id" => deduction[:id].blank? ? SecureRandom.uuid : deduction[:id],
+              "ticketItemId" => item_id,
+              "deductWeight" => deduction[:deduct_weight].blank? ? '' : deduction[:deduct_weight],
+              "deductWeightDescription" => deduction[:deduct_weight_description].blank? ? '' : deduction[:deduct_weight_description],
+              "deductDollarAmount" => deduction[:deduct_dollar_amount].blank? ? 0 : deduction[:deduct_dollar_amount],
+              "deductDollarAmountInAssignedCurrency" => deduction[:deduct_dollar_amount].blank? ? 0 : deduction[:deduct_dollar_amount],
+              "deductDollarAmountDescription" => deduction[:deduct_dollar_amount_description].blank? ? '' : deduction[:deduct_dollar_amount_description],
+              "status" => 0,
+              "type" => 0,
+              "percentageAmount" => 0,
+              "currencyId" => user.user_setting.currency_id
+            }
+            deductions_collection_array << deduction_hash
+        end
+      end
+    end
+    
+    payload = {
+        "sessionId" => session_id,
+        "skipSessionValidation" => false,
+        "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          "CurrencyId" => user.user_setting.currency_id, 
+          "ExtendedAmount" => amount, 
+          "ExtendedAmountInAssignedCurrency" => amount,
+          "GrossWeight" => gross,
+          "Id" => item_id, 
+          "NetWeight" => net,
+          "Notes" => notes, 
+          "Price" => price,
+          "PriceInAssignedCurrency" => price,
+          "PrintDescription" => commodity_name, 
+          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => serial_number, 
+          "Status" => 'Hold', 
+          "TareWeight" => tare, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => unit_of_measure,
+          "TaxCollection" => tax_collection_array,
+          "deductionCollection" => deductions_collection_array
+          }
+        }
+    json_encoded_payload = JSON.generate(payload)
+#    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
+      payload: json_encoded_payload)
+      Rails.logger.debug "Ticket.update_item_with_session response: #{response}"
+      data= Hash.from_xml(response)
+      return data["ApiSaveTicketItemResponse"]["Success"]
   end
   
   # Get accounts payable items for ticket (multiple items if partial payments)
@@ -1077,7 +1202,7 @@ class Ticket
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info "Ticket.currencies response: #{data}"
     
     if data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiItemsResponseOfCurrencyInformationb_S917hz8"]["Items"]["CurrencyInformation"]]

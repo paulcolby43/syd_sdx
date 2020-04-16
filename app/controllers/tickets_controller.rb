@@ -162,7 +162,7 @@ class TicketsController < ApplicationController
     end
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
 #    @ticket_number = @ticket["TicketNumber"]
-    @ticket_number = @get_ticket["ItemNumber"]
+    @ticket_number = @get_ticket["Item"]["TicketNumber"]
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
     unless @ticket["TicketItemCollection"].blank?
       unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
@@ -206,17 +206,22 @@ class TicketsController < ApplicationController
           if line_item[:status].blank?
             unless line_item[:commodity].blank?
               # Create new item
-              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+#              Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+#                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
+#                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
+              Ticket.add_item_with_session(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
-                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
+                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions], ticket_params[:session_id])
             end
           else
             unless line_item[:commodity].blank?
               # Update existing item
-              Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+#              Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+#                line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
+#                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
+              Ticket.update_item_with_session(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
                 line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
-                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
-              
+                ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions], ticket_params[:session_id])
             end
           end
         end
@@ -224,19 +229,23 @@ class TicketsController < ApplicationController
       @ticket = "true"
       ### Save Ticket ###
       if params[:save]
-        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
+#        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
+        @ticket = Ticket.save_with_session(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description], ticket_params[:session_id])
       ### End Save Ticket ###
       ### Close Ticket ###
       elsif params[:close_ticket]
-        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description])
+#        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description])
+        @ticket = Ticket.save_with_session(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description], ticket_params[:session_id])
       ### End Close Ticket ###
       ### Close Ticket ###
       elsif params[:void_ticket]
-        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 5, ticket_params[:description])
+#        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 5, ticket_params[:description])
+        @ticket = Ticket.save_with_session(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 5, ticket_params[:description], ticket_params[:session_id])
       ### End Close Ticket ###
       ### Pay Ticket ###
       elsif params[:pay_ticket]
-        Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
+#        Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
+        Ticket.save_with_session(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description], ticket_params[:session_id])
         @accounts_payable_items = Ticket.accounts_payable_items(current_user.token, current_yard_id, params[:id])
         if params[:payment_type] == 'check'
           @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
@@ -247,7 +256,8 @@ class TicketsController < ApplicationController
       ### End Pay Ticket ###
       ### Close & Pay Ticket ###
       elsif params[:close_and_pay_ticket]
-        Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description])
+#        Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description])
+        Ticket.save_with_session(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 1, ticket_params[:description], ticket_params[:session_id])
         @accounts_payable_items = Ticket.accounts_payable_items(current_user.token, current_yard_id, params[:id])
         if params[:payment_type] == 'check'
           @ticket = Ticket.pay_by_check(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last['Id'], params[:drawer_id], 
@@ -257,7 +267,8 @@ class TicketsController < ApplicationController
         end
       ### End Close & Pay Ticket ###
       else
-        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
+#        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description])
+       @ticket = Ticket.save_with_session(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], ticket_params[:status], ticket_params[:description], ticket_params[:session_id])
       ### No button params, so Void Ticket ###
 #        @ticket = Ticket.update(current_user.token, current_yard_id, ticket_params[:customer_id], params[:id], ticket_params[:ticket_number], 0)
       ### End Void Ticket ###
@@ -284,6 +295,7 @@ class TicketsController < ApplicationController
   def line_item_fields
     @ticke_number = params[:ticket_number]
     @ticket_id = params[:ticket_id]
+    @ticket_session_id = params[:session_id]
     
 #    @combolists = Vehicle.combolists(current_user.token)
 #    @combolists = params[:combolists]
@@ -306,8 +318,10 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket = TicketItem.void(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
-          params[:tare], params[:net], params[:price], params[:amount])
+#        @ticket = TicketItem.void(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
+#          params[:tare], params[:net], params[:price], params[:amount])
+        @ticket = TicketItem.void_with_session(current_user.token, current_yard_id, params[:ticket_id], params[:item_id], params[:commodity_id], params[:gross], 
+          params[:tare], params[:net], params[:price], params[:amount], params[:session_id])
         if @ticket == 'true'
           render json: {}, :status => :ok
         else
@@ -352,7 +366,8 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {
 #        if Ticket.void(current_user.token, current_yard_id, params[:ticket]) == 'true'
-        if Ticket.void(current_user.token, current_yard_id, params[:id]) == 'true'
+#        if Ticket.void(current_user.token, current_yard_id, params[:id]) == 'true'
+        if Ticket.void_with_session(current_user.token, current_yard_id, params[:id], params[:session_id]) == 'true'
           flash[:success] = 'Ticket was successfully voided.'
         else
           flash[:danger] = 'Error voiding ticket.'

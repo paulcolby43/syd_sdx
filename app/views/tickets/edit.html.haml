@@ -7,8 +7,9 @@
         Ticket Session
         %strong= @ticket_session_id
   .container
-    .well
-      = @get_ticket
+    -#
+      .well
+        = @get_ticket
     -#
       .well
         = @get_ticket_response
@@ -101,7 +102,7 @@
                         %a.line_item_name.text-primary{"aria-controls" => "collapse#{line_item['Id']}", "aria-expanded" => false, "data-parent" => "#items_accordion", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", :role => "button", class: "collapsed"}
                           = line_item["PrintDescription"]
                       %li.pull-right
-                        %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount']}
+                        %a{href: '#', class: 'void_item remove_field', "data-ticket-id" => @ticket['Id'], "data-session-id" => @ticket_session_id, "data-item-id" => line_item['Id'], "data-commodity-id" => line_item['CommodityId'], "data-gross" => line_item['GrossWeight'], "data-tare" => line_item['TareWeight'], "data-net" => line_item['NetWeight'], "data-price" => line_item['Price'], "data-amount" => line_item['ExtendedAmount'], "data-session-id" => @ticket_session_id}
                           %i.fa.fa-trash.fa-lg.text-danger
                           %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
                 %div{id: "collapse_#{line_item['Id']}", "aria-labelledby" => "heading#{line_item['Id']}", :role => "tabpanel", class: "panel-collapse collapse ", "aria-expanded" => false }
@@ -275,7 +276,7 @@
                       %a.line_item_name.text-primary{"aria-controls" => "collapse#{new_item_id}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", :role => "button", class: "ticket_collapse_link" }
                         Choose an item*
                     %li.pull-right
-                      %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0}
+                      %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0, "data-session-id" => @ticket_session_id}
                         %i.fa.fa-trash.fa-lg.text-danger
                         %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
               %div{id: "collapse_#{new_item_id}", "aria-labelledby" => "heading#{new_item_id}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
@@ -284,7 +285,7 @@
                   = hidden_field_tag "ticket[line_items][][status]", nil
                   =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
-                  = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
+                  = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-session-id" => @ticket_session_id
                   %br
                   %div.input-group.gross_input_group
                     - current_user.scale_devices.each do |scale_device|
@@ -384,11 +385,11 @@
           %div.col-xs-3.col-sm-3
             = image_tag("ajax-loader.gif", :id => "spinner", :alt => "Loading ...", style: "display:none;")
             - unless mobile_device?
-              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id'], session_id: @ticket_session_id), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-lg btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
                 %i.fa.fa-plus
                 Item
             - else
-              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id']), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
+              %a{ href: line_item_fields_tickets_path(ticket_number: @ticket_number, ticket_id: @ticket['Id'], session_id: @ticket_session_id), 'data-remote' => true, id: "add_item_button", class: "btn btn-warning btn-block", onclick: "$(this).hide(); $('#spinner').show();" }
                 %i.fa.fa-plus
                 Item
         %div.col-xs-3.col-sm-3
@@ -449,7 +450,7 @@
         .pull-right
           .col-xs-12.col-sm-2.col-md-2
             -# %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], ticket: @ticket, status: @ticket['Status']), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
-            %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], status: @ticket['Status']), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
+            %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], status: @ticket['Status'], session_id: @ticket_session_id), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
       
     %div#images
 
