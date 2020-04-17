@@ -50,7 +50,7 @@ class ShipmentsController < ApplicationController
   def show
     @shipment = Shipment.api_find_by_capture_sequence_number(params[:id], current_user.company, params[:yard_id].blank? ? current_yard_id : params[:yard_id])
     @ticket_number = @shipment['TICKET_NBR']
-    if @shipment['YARDID'] != current_yard_id or (current_user.customer? and @shipment['HIDDEN'] == '1')
+    if (not current_user.customer? and @shipment['YARDID'] != current_yard_id) or (current_user.customer? and @shipment['HIDDEN'] == '1')
       # Don't allow access if yard ID doesn't match, or if customer user and the shipment image is set to hidden
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
