@@ -63,10 +63,10 @@ class ImagesController < ApplicationController
       redirect_to root_path
     else
       @blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
-      if @blob[0..3] == "%PDF"
-        # Show pdf directly in the browser
-        redirect_to show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR'])
-      end
+#      if @blob[0..3] == "%PDF"
+#        # Show pdf directly in the browser
+#        redirect_to show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR'])
+#      end
     end
 #    respond_with(@image)
   end
@@ -92,12 +92,13 @@ class ImagesController < ApplicationController
   def show_jpeg_image
 #    send_data @image.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
     blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
-    unless blob[0..3] == "%PDF" 
-      send_data blob, :type => 'image/jpeg',:disposition => 'inline'
-    else
-      # PDF file
-      send_data blob, :type => 'application/pdf',:disposition => 'inline'
-    end
+    send_data blob, :type => 'image/jpeg',:disposition => 'inline'
+#    unless blob[0..3] == "%PDF" 
+#      send_data blob, :type => 'image/jpeg',:disposition => 'inline'
+#    else
+#      # PDF file
+#      send_data blob, :type => 'application/pdf',:disposition => 'inline'
+#    end
   end
   
   def show_preview_image
@@ -114,6 +115,11 @@ class ImagesController < ApplicationController
   def send_pdf_data
 #    send_data @image.jpeg_image, :type => 'application/pdf',:disposition => 'attachment'
     send_data Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'application/pdf',:disposition => 'attachment'
+  end
+  
+  def send_jpeg_image_file
+    @jpeg_image_file = Image.jpeg_image_file(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
+    send_file @jpeg_image_file, :type => 'application/pdf', :disposition => 'attachment'
   end
   
   def destroy
