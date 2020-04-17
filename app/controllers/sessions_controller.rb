@@ -51,20 +51,20 @@ class SessionsController < ApplicationController
         unless (user.admin? and user.user_setting.currency_id.blank?) or (user.customer? and params[:customer_needs_to_change_password] == 'true')
           flash[:success] = "You have been logged in."
           unless user.customer?
-            redirect_to root_path
+            redirect_to root_path, protocol: request.protocol
           else
-            redirect_to reports_path
+            redirect_to reports_path, protocol: request.protocol
           end
         else
           if user.admin?
             flash[:danger] = "Please verify your settings before proceeding."
-            redirect_to edit_user_setting_path(user.user_setting)
+            redirect_to edit_user_setting_path(user.user_setting), protocol: request.protocol
           elsif user.customer?
             flash[:danger] = "Please update your password before proceeding."
-            redirect_to edit_user_path(user, customer_needs_to_change_password: true)
+            redirect_to edit_user_path(user, customer_needs_to_change_password: true), protocol: request.protocol
           else
             flash[:success] = "You have been logged in."
-            redirect_to root_path
+            redirect_to root_path, protocol: request.protocol
           end
         end
       else
