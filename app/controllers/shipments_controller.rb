@@ -95,7 +95,7 @@ class ShipmentsController < ApplicationController
   
   def show_preview_image
 #    send_data @shipment.preview, :type => 'image/jpeg',:disposition => 'inline'
-    send_data Shipment.preview(current_user.company, params[:id], current_yard_id), :type => 'image/jpeg',:disposition => 'inline'
+    send_data Shipment.preview(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id]), :type => 'image/jpeg',:disposition => 'inline'
   end
   
   def destroy
