@@ -84,7 +84,7 @@ class ShipmentsController < ApplicationController
   
   def show_jpeg_image
 #    send_data @shipment.jpeg_image, :type => 'image/jpeg',:disposition => 'inline'
-    blob = Shipment.jpeg_image(current_user.company, params[:id], current_yard_id)
+    blob = Shipment.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
     unless blob[0..3] == "%PDF" 
       send_data blob, :type => 'image/jpeg',:disposition => 'inline'
     else
