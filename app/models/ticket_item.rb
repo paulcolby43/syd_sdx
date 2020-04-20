@@ -222,7 +222,8 @@ class TicketItem
     Rails.logger.debug "TicketItem.quick_add_with_session response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiSaveTicketItemResponse"].blank? or data["ApiSaveTicketItemResponse"]["Success"].blank?
-      return data["ApiSaveTicketItemResponse"]["Success"]
+#      return data["ApiSaveTicketItemResponse"]["Success"]
+      return data["ApiSaveTicketItemResponse"]
     else
       return nil
     end

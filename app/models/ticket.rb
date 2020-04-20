@@ -471,7 +471,8 @@ class Ticket
       payload: json_encoded_payload)
     Rails.logger.info "Ticket.save_with_session response: #{response}"
     data= Hash.from_xml(response)
-    return data["ApiSaveTicketResponse"]["Success"]
+#    return data["ApiSaveTicketResponse"]["Success"]
+    return data["ApiSaveTicketResponse"]
   end
   
   # Void a ticket

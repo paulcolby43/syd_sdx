@@ -144,7 +144,7 @@ class TicketsController < ApplicationController
     unless @get_ticket.blank?
       if @get_ticket["Success"] == "false"
         unless @get_ticket["Session"]["CreatedByUser"]["UserName"] == current_user.username and @get_ticket['Session']['SessionType'] == '3'
-          flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]}."
+          flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]},  #{@get_ticket["Session"]["CreatedByWorkstation"]}."
           redirect_to :back
         else
           # The session was created by the current_user
@@ -275,11 +275,11 @@ class TicketsController < ApplicationController
       ### End Void Ticket ###
       end
       format.html { 
-        if @ticket == 'true'
+        if @ticket["Success"] == 'true'
           flash[:success] = 'Ticket was successfully updated.'
           Ticket.release_session(current_user.token, ticket_params[:session_id])
         else
-          flash[:danger] = 'Error updating ticket.'
+          flash[:danger] = "Error updating ticket. #{@ticket['FailureInformation']}"
         end
         if ticket_params[:created_from_trip].blank?
           redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
