@@ -139,13 +139,12 @@ class TicketsController < ApplicationController
     authorize! :edit, :tickets
     @drawers = Drawer.all(current_user.token, current_yard_id, current_user.currency_id)
     @checking_accounts = CheckingAccount.all(current_user.token, current_yard_id)
-    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
+#    @ticket = Ticket.find_by_id(current_user.token, current_yard_id, params[:id])
     @get_ticket = Ticket.get_ticket(current_user.token, current_yard_id, params[:id])
-    @workorder_id = @ticket['RelatedWorkOrderId']
     unless @get_ticket.blank?
       if @get_ticket["Success"] == "false"
         unless @get_ticket["Session"]["CreatedByUser"]["UserName"] == current_user.username and @get_ticket['Session']['SessionType'] == '3'
-          flash[:danger] = "#{@get_ticket['FailureInformation']}"
+          flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]}."
           redirect_to :back
         else
           # The session was created by the current_user
@@ -160,9 +159,11 @@ class TicketsController < ApplicationController
       flash[:danger] = "Unable to obtain session information from Dragon."
       redirect_to :back
     end
+#    @ticket_item = @get_ticket['Item']
+    @ticket = @get_ticket['Item']
     @accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, params[:id])
-#    @ticket_number = @ticket["TicketNumber"]
-    @ticket_number = @get_ticket["ItemNumber"]
+    @ticket_number = @ticket["TicketNumber"]
+    @workorder_id = @ticket['RelatedWorkOrderId']
     @images_array = Image.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id).reverse # Ticket images
     unless @ticket["TicketItemCollection"].blank?
       unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
