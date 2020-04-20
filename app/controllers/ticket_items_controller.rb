@@ -22,8 +22,10 @@ class TicketItemsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-        @ticket_item_quick_add_response = TicketItem.quick_add(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
-          params[:commodity_id], params[:commodity_name], params[:price])
+#        @ticket_item_quick_add_response = TicketItem.quick_add(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
+#          params[:commodity_id], params[:commodity_name], params[:price])
+        @ticket_item_quick_add_response = TicketItem.quick_add_with_session(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
+          params[:commodity_id], params[:commodity_name], params[:price], params[:session_id])
         if @ticket_item_quick_add_response == 'true'
           render json: {}, :status => :ok
         else

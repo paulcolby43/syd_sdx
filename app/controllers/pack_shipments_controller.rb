@@ -128,7 +128,11 @@ class PackShipmentsController < ApplicationController
     @pack_shipment = PackShipment.find(current_user.token, current_yard_id, params[:id])
     @pack_list = PackShipment.pack_list(current_user.token, current_yard_id, params[:id], @pack_shipment['ContractHeadId'])
     @current_packs = PackList.pack_items(current_user.token, current_yard_id, @pack_list['Id'])
-    @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company, current_yard_id).reverse # Shipment images
+    if current_user.customer? and not current_user.customer_guid.blank?
+      @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company, @pack_shipment["YardId"]).reverse # Shipment images
+    else
+      @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company, current_yard_id).reverse # Shipment images
+    end
     @inventory_tags_array = []
     @current_packs.each do |pack|
       @inventory_tags_array << InvTag.api_find_all_by_ticket_number(pack['PackInfo']['TagNumber'], current_user.company, current_yard_id) 

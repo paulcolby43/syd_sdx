@@ -79,7 +79,7 @@ class Shipment < ActiveRecord::Base
   #############################
   
   # Open and read jpegger shipment preview page, over ssl
-  def Shipment.preview(company, capture_sequence_number, yard_id)
+  def self.preview(company, capture_sequence_number, yard_id)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
@@ -87,11 +87,17 @@ class Shipment < ActiveRecord::Base
   end
   
   # Open and read jpegger shipment jpeg_image page, over ssl
-  def Shipment.jpeg_image(company, capture_sequence_number, yard_id)
+  def self.jpeg_image(company, capture_sequence_number, yard_id)
     require "open-uri"
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+  end
+  
+  def self.jpeg_image_file(company, capture_sequence_number, yard_id)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)
   end
 
   def self.api_find_all_by_shipment_number(shipment_number, company, yard_id)
@@ -155,7 +161,7 @@ class Shipment < ActiveRecord::Base
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data = Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
-    
+    Rails.logger.debug "Shipment.api_find_by_capture_sequence_number: #{data}"
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]
     else
