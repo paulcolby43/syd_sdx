@@ -429,7 +429,8 @@ class Ticket
       
       Rails.logger.info "Ticket update response: #{response}"
       data= Hash.from_xml(response)
-      return data["SaveTicketResponse"]["Success"]
+#      return data["SaveTicketResponse"]["Success"]
+      return data["SaveTicketResponse"]
   end
   
   # Save an existing ticket with session
@@ -622,7 +623,7 @@ class Ticket
           }
         }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
+#    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
       
@@ -757,7 +758,7 @@ class Ticket
           }
         }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
+#    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
       

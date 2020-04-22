@@ -22,12 +22,15 @@ class TicketItemsController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json {
-#        @ticket_item_quick_add_response = TicketItem.quick_add(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
-#          params[:commodity_id], params[:commodity_name], params[:price])
-        @ticket_item_quick_add_response = TicketItem.quick_add_with_session(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
-          params[:commodity_id], params[:commodity_name], params[:price], params[:session_id])
+        unless current_user.ticket_sessions?
+          @ticket_item_quick_add_response = TicketItem.quick_add(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
+            params[:commodity_id], params[:commodity_name], params[:price])
+        else
+          @ticket_item_quick_add_response = TicketItem.quick_add_with_session(current_user.token, current_yard_id, params[:id], params[:ticket_id], 
+            params[:commodity_id], params[:commodity_name], params[:price], params[:session_id])
+        end
         if @ticket_item_quick_add_response["Success"] == 'true'
-          render json: {}, :status => :ok
+          render json: {"success" => "true"}, :status => :ok
         elsif @ticket_item_quick_add_response["Success"] == 'false'
           render json: {"success" => "false", "failure_information" => @ticket_item_quick_add_response["FailureInformation"]}, status: :ok
         else

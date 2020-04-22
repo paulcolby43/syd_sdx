@@ -171,13 +171,14 @@ class TicketItem
           }
         }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.debug "******************* TicketItem.quick_add Payload: #{json_encoded_payload}"
+#    Rails.logger.debug "******************* TicketItem.quick_add Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-      
+    Rails.logger.debug "******************* TicketItem.quick_add response #{response}"
     data= Hash.from_xml(response)
     unless data["SaveTicketItemResponse"].blank? or data["SaveTicketItemResponse"]["Success"].blank?
-      return data["SaveTicketItemResponse"]["Success"]
+#      return data["SaveTicketItemResponse"]["Success"]
+      return data["SaveTicketItemResponse"]
     else
       return nil
     end

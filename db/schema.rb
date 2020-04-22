@@ -11,15 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200217191301) do
+ActiveRecord::Schema.define(version: 20200421172354) do
 
   create_table "access_tokens", force: true do |t|
-    t.string   "token_string", limit: nil
+    t.string   "token_string"
     t.integer  "user_id"
     t.datetime "expiration"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "roles"
+    t.string   "api_supported_versions"
   end
 
   create_table "active_admin_comments", force: true do |t|

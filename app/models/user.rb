@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
       Rails.logger.info response
       data = JSON.parse(response)
       unless data.blank? or data["access_token"].blank?
-        access_token_record = AccessToken.create(token_string: data["access_token"], user_id: id, expiration: Time.now + 24.hours)
+        access_token_record = AccessToken.create(token_string: data["access_token"], user_id: id, expiration: Time.now + 24.hours, api_supported_versions: data['supported_versions'])
         return access_token_record
       else
         return nil
@@ -78,9 +78,10 @@ class User < ActiveRecord::Base
     api_url = "https://#{company.dragon_api}/token"
     begin
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: username, password: pass})
-#    Rails.logger.info response
-      access_token_string = JSON.parse(response)["access_token"]
-      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+      Rails.logger.info "********* user.update_scrap_dragon_token(pass) response: #{response}"
+      data = JSON.parse(response)
+      access_token_string = data["access_token"]
+      access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours, api_supported_versions: data['supported_versions'])
       return 'success'
     rescue RestClient::ExceptionWithResponse => e
 #      e.response
@@ -511,6 +512,14 @@ class User < ActiveRecord::Base
     end
   end
   
+  def ticket_sessions?
+    if access_token.api_supported_versions.blank?
+      return false
+    else
+      return true
+    end
+  end
+  
   #############################
   #     Class Methods         #
   #############################
@@ -604,8 +613,9 @@ class User < ActiveRecord::Base
     begin
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
       Rails.logger.info "User.generate_scrap_dragon_token response: #{response}"
-      access_token_string = JSON.parse(response)["access_token"]
-      AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours )
+      data = JSON.parse(response)
+      access_token_string = data["access_token"]
+      AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours, api_supported_versions: data["supported_versions"])
       return 'success'
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
@@ -622,8 +632,9 @@ class User < ActiveRecord::Base
     user = User.find(user_id)
     api_url = "https://#{user.company.dragon_api}/token"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user.username, password: pass})
-    access_token_string = JSON.parse(response)["access_token"]
-    access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours)
+    data = JSON.parse(response)
+    access_token_string = data["access_token"]
+    access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours, api_supported_versions: data["supported_versions"])
   end
   
   def self.create_scrap_dragon_user(user_params)
