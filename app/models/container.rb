@@ -37,7 +37,7 @@ class Container
           }
         })
       
-      Rails.logger.info "Container.update response: #{response}"
+#      Rails.logger.info "Container.update response: #{response}"
       data= Hash.from_xml(response)
       return data["UpdateMobileDispatchTaskResponse"]
   end
@@ -55,7 +55,7 @@ class Container
     
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
       
-    Rails.logger.info "Container.find_by_id response: #{response}"
+#    Rails.logger.info "Container.find_by_id response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiGetDispatchContainerResponse"].blank? or data["ApiGetDispatchContainerResponse"]["DispatchContainer"].blank?
       return data["ApiGetDispatchContainerResponse"]["DispatchContainer"]

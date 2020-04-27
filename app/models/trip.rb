@@ -16,7 +16,7 @@ class Trip
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     
     return data["MobileDispatchInformation"]
   end
@@ -49,7 +49,7 @@ class Trip
     payload: json_encoded_payload)
 #    Rails.logger.info "Trip.search payload: #{json_encoded_payload}"
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Trip.search results: #{data}"
+#    Rails.logger.info "Trip.search results: #{data}"
     unless data["ApiGetDispatchTripsResponse"].blank? or data["ApiGetDispatchTripsResponse"]["Trips"].blank? or data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"].blank?
       if data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
         return [data["ApiGetDispatchTripsResponse"]["Trips"]["DispatchTripInformation"]]
@@ -99,7 +99,7 @@ class Trip
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     
     if data["MobileDispatchInformation"]["Trips"]["MobileDispatchTripInformation"].is_a? Hash # Only one result returned, so put it into an array
       return [data["MobileDispatchInformation"]["Trips"]["MobileDispatchTripInformation"]]
@@ -188,7 +188,7 @@ class Trip
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "*************Trip.task_type_functions: #{data}"
+#    Rails.logger.info "*************Trip.task_type_functions: #{data}"
     unless data["ApiGetDispatchTaskTypeFunctionListResponse"].blank? or data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"].blank? or data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"].blank?
       return data["ApiGetDispatchTaskTypeFunctionListResponse"]["TaskFunctions"]["DispatchTaskTypeFunctionInformation"]
     else
@@ -213,7 +213,7 @@ class Trip
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
-    Rails.logger.info "Trip.create response: #{response}"
+#    Rails.logger.info "Trip.create response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiAddDispatchWorkOrderResponse"].blank?
       return data["ApiAddDispatchWorkOrderResponse"]
@@ -230,7 +230,7 @@ class Trip
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     
-    Rails.logger.info "Trip.update_driver response: #{response}"
+#    Rails.logger.info "Trip.update_driver response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiUpdateDispatchTripResponse"].blank?
       return data["ApiUpdateDispatchTripResponse"]
@@ -247,7 +247,7 @@ class Trip
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     
-    Rails.logger.info "Trip.void response: #{response}"
+#    Rails.logger.info "Trip.void response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiUpdateDispatchTripResponse"].blank?
       return data["ApiUpdateDispatchTripResponse"]
@@ -263,7 +263,7 @@ class Trip
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "*************Trip.drivers: #{data}"
+#    Rails.logger.info "*************Trip.drivers: #{data}"
     unless data["ApiGetDispatchDriverListResponse"].blank? or data["ApiGetDispatchDriverListResponse"]["DriverList"].blank? or data["ApiGetDispatchDriverListResponse"]["DriverList"]["DriverListInformation"].blank?
       return data["ApiGetDispatchDriverListResponse"]["DriverList"]["DriverListInformation"]
     else
@@ -291,7 +291,7 @@ class Trip
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info "Trip.log_trip_location response: #{data}"
+#    Rails.logger.info "Trip.log_trip_location response: #{data}"
     unless data["ApiLogTripLocationResponse"].blank?
       return data["ApiLogTripLocationResponse"]
     else
@@ -305,7 +305,7 @@ class Trip
     api_url = "https://#{user.company.dragon_api}/api/v1/dispatch/GetTripLocations/#{trip_id}"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(response)
-    Rails.logger.info "*************Trip.get_locations #{data}"
+#    Rails.logger.info "*************Trip.get_locations #{data}"
     unless data["ApiGetTripLocationsResponse"].blank?
       if data["ApiGetTripLocationsResponse"]["Success"] == 'true'
         unless data["ApiGetTripLocationsResponse"]["LocationLogs"].blank? or data["ApiGetTripLocationsResponse"]["LocationLogs"]["ApiTripLocationInformation"].blank?

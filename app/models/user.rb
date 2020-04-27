@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
     end
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
-      Rails.logger.info response
+#      Rails.logger.info response
       data = JSON.parse(response)
       unless data.blank? or data["access_token"].blank?
         access_token_record = AccessToken.create(token_string: data["access_token"], user_id: id, expiration: Time.now + 24.hours, api_supported_versions: data['supported_versions'])
@@ -63,10 +63,10 @@ class User < ActiveRecord::Base
       end
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "generate_scrap_dragon_token: #{e.response}"
+#        Rails.logger.info "generate_scrap_dragon_token: #{e.response}"
         return nil
       else
-        Rails.logger.info "generate_scrap_dragon_token: #{e}"
+#        Rails.logger.info "generate_scrap_dragon_token: #{e}"
         return nil
       end
     end
@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
     api_url = "https://#{company.dragon_api}/token"
     begin
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: username, password: pass})
-      Rails.logger.info "********* user.update_scrap_dragon_token(pass) response: #{response}"
+#      Rails.logger.info "********* user.update_scrap_dragon_token(pass) response: #{response}"
       data = JSON.parse(response)
       access_token_string = data["access_token"]
       access_token.update_attributes(token_string: access_token_string, expiration: Time.now + 12.hours, api_supported_versions: data['supported_versions'])
@@ -87,10 +87,10 @@ class User < ActiveRecord::Base
 #      e.response
 #    rescue => exception
       unless e.response.blank?
-        Rails.logger.info e.response
+#        Rails.logger.info e.response
         return e.response
       else
-        Rails.logger.info e
+#        Rails.logger.info e
         return e
       end
     end
@@ -122,7 +122,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data["AddApiUserResponse"]["Success"]
     return data["AddApiUserResponse"]
   end
@@ -149,7 +149,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
     return data["AddApiUserResponse"]
   end
   
@@ -172,7 +172,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
     return data["AddApiCustomerUserResponse"]
   end
   
@@ -187,7 +187,7 @@ class User < ActiveRecord::Base
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{user.token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info "Resetting password: #{data}"
+#    Rails.logger.info "Resetting password: #{data}"
     return data["ResetUserPasswordResponse"]
   end
   
@@ -388,7 +388,7 @@ class User < ActiveRecord::Base
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{token}", :content_type => 'application/json'})
       data= Hash.from_xml(response)
-      Rails.logger.info "Dragon Roles call response: #{data}"
+#      Rails.logger.info "Dragon Roles call response: #{data}"
       unless data["ArrayOfUserRoleInformation"].blank? or data["ArrayOfUserRoleInformation"]["UserRoleInformation"].blank?
         if data["ArrayOfUserRoleInformation"]["UserRoleInformation"].is_a? Hash # Only one result returned, so put it into an array
           return [data["ArrayOfUserRoleInformation"]["UserRoleInformation"]]
@@ -399,7 +399,7 @@ class User < ActiveRecord::Base
         return []
       end
     rescue => e
-      Rails.logger.info "Problem calling user.dragon_role: #{e}"
+#      Rails.logger.info "Problem calling user.dragon_role: #{e}"
       return []
     end
     
@@ -413,7 +413,7 @@ class User < ActiveRecord::Base
   def portal_customers_options_array(auth_token, yard_id)
     customers_array = []
     portal_customers.each do |portal_customer|
-      Rails.logger.debug "portal customer: #{portal_customer}"
+#      Rails.logger.debug "portal customer: #{portal_customer}"
       customers_array << portal_customer.customer(auth_token, yard_id)
     end
     return customers_array
@@ -582,7 +582,7 @@ class User < ActiveRecord::Base
     end
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
-      Rails.logger.info response
+#      Rails.logger.info response
       data = JSON.parse(response)
       unless data.blank? or data["access_token"].blank?
         return data["access_token"]
@@ -591,10 +591,10 @@ class User < ActiveRecord::Base
       end
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "User.new_dragon_token: #{e.response}"
+#        Rails.logger.info "User.new_dragon_token: #{e.response}"
         return nil
       else
-        Rails.logger.info "User.new_dragon_token: #{e}"
+#        Rails.logger.info "User.new_dragon_token: #{e}"
         return nil
       end
     end
@@ -612,17 +612,17 @@ class User < ActiveRecord::Base
     
     begin
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
-      Rails.logger.info "User.generate_scrap_dragon_token response: #{response}"
+#      Rails.logger.info "User.generate_scrap_dragon_token response: #{response}"
       data = JSON.parse(response)
       access_token_string = data["access_token"]
       AccessToken.create(token_string: access_token_string, user_id: user_id, expiration: Time.now + 24.hours, api_supported_versions: data["supported_versions"])
       return 'success'
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "Problem with User.generate_scrap_dragon_token: #{e.response}"
+#        Rails.logger.info "Problem with User.generate_scrap_dragon_token: #{e.response}"
         return e.response
       else
-        Rails.logger.info "Problem with User.generate_scrap_dragon_token: #{e}"
+#        Rails.logger.info "Problem with User.generate_scrap_dragon_token: #{e}"
         return e
       end
     end
@@ -663,14 +663,14 @@ class User < ActiveRecord::Base
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
         payload: json_encoded_payload)
       data= Hash.from_xml(response)
-      Rails.logger.info data
+#      Rails.logger.info data
       return data["AddApiUserResponse"]
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "Problem with User.create_scrap_dragon_user: #{e.response}"
+#        Rails.logger.info "Problem with User.create_scrap_dragon_user: #{e.response}"
         return e.response
       else
-        Rails.logger.info "Problem with User.create_scrap_dragon_user: #{e}"
+#        Rails.logger.info "Problem with User.create_scrap_dragon_user: #{e}"
         return e
       end
     end
@@ -699,14 +699,14 @@ class User < ActiveRecord::Base
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
         payload: json_encoded_payload)
       data= Hash.from_xml(response)
-      Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
+#      Rails.logger.info "create_scrap_dragon_user_for_current_user response data: #{data}"
       return data["AddApiUserResponse"]
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "Problem with User.create_scrap_dragon_user_for_current_user: #{e.response}"
+#        Rails.logger.info "Problem with User.create_scrap_dragon_user_for_current_user: #{e.response}"
         return e.response
       else
-        Rails.logger.info "Problem with User.create_scrap_dragon_user_for_current_user: #{e}"
+#        Rails.logger.info "Problem with User.create_scrap_dragon_user_for_current_user: #{e}"
         return e
       end
     end
@@ -732,14 +732,14 @@ class User < ActiveRecord::Base
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
         payload: json_encoded_payload)
       data= Hash.from_xml(response)
-      Rails.logger.info data
+#      Rails.logger.info data
       return data["AddApiCustomerUserResponse"]
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "Problem with User.create_scrap_dragon_customer_user: #{e.response}"
+#        Rails.logger.info "Problem with User.create_scrap_dragon_customer_user: #{e.response}"
         return e.response
       else
-        Rails.logger.info "Problem with User.create_scrap_dragon_customer_user: #{e}"
+#        Rails.logger.info "Problem with User.create_scrap_dragon_customer_user: #{e}"
         return e
       end
     end
@@ -758,14 +758,14 @@ class User < ActiveRecord::Base
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json'},
         payload: json_encoded_payload)
       data= Hash.from_xml(response)
-      Rails.logger.info "User.current_valid_scrap_dragon_user response data: #{data}"
+#      Rails.logger.info "User.current_valid_scrap_dragon_user response data: #{data}"
       return data["boolean"]
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "Problem with User.current_valid_scrap_dragon_user: #{e.response}"
+#        Rails.logger.info "Problem with User.current_valid_scrap_dragon_user: #{e.response}"
         return e.response
       else
-        Rails.logger.info "Problem with User.current_valid_scrap_dragon_user: #{e}"
+#        Rails.logger.info "Problem with User.current_valid_scrap_dragon_user: #{e}"
         return e
       end
     end

@@ -16,7 +16,7 @@ class DragonRole
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'})
       data= Hash.from_xml(response)
-      Rails.logger.info data
+#      Rails.logger.info data
       
       unless data["ArrayOfRoleInformation"].blank? or data["ArrayOfRoleInformation"]["RoleInformation"].blank?
         if data["ArrayOfRoleInformation"]["RoleInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -28,7 +28,7 @@ class DragonRole
         return []
       end
     rescue => e
-      Rails.logger.info "Problem calling DragonRole.all: #{e.response}"
+#      Rails.logger.info "Problem calling DragonRole.all: #{e.response}"
       return []
     end
   end

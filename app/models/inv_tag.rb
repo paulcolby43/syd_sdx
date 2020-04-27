@@ -67,7 +67,7 @@ class InvTag < ActiveRecord::Base
     
     ssl_client.close
     
-    Rails.logger.debug "***********InvTag.api_find_all response: #{response}"
+#    Rails.logger.debug "***********InvTag.api_find_all response: #{response}"
     
     data= Hash.from_xml(response) # Convert xml response to a hash
     

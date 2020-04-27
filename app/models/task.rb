@@ -38,7 +38,7 @@ class Task
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)
       
-      Rails.logger.info "Task.update response: #{response}"
+#      Rails.logger.info "Task.update response: #{response}"
       data = Hash.from_xml(response)
       return data["ApiUpdateDispatchTaskDetailsResponse"]
   end
@@ -63,7 +63,7 @@ class Task
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)
     
-    Rails.logger.info "Task.add_container response: #{response}"
+#    Rails.logger.info "Task.add_container response: #{response}"
     data = Hash.from_xml(response)
     return data["UpdateMobileDispatchContainerXLinkResponse"]
   end
@@ -88,7 +88,7 @@ class Task
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)
     
-    Rails.logger.info "Task.update_container response: #{response}"
+#    Rails.logger.info "Task.update_container response: #{response}"
     data = Hash.from_xml(response)
     return data["UpdateMobileDispatchContainerXLinkResponse"]
   end
@@ -111,7 +111,7 @@ class Task
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)
     
-    Rails.logger.info "Task.remove_container response: #{response}"
+#    Rails.logger.info "Task.remove_container response: #{response}"
     data = Hash.from_xml(response)
     return data["UpdateMobileDispatchContainerXLinkResponse"]
   end
@@ -132,12 +132,12 @@ class Task
           "longitude" => container_params[:longitude]
           }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"
+#    Rails.logger.info "Task.create_new_container json encoded payload: #{json_encoded_payload}"
     
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", :content_type => 'application/json'},
       payload: json_encoded_payload)
     
-    Rails.logger.info "Task.create_new_container response: #{response}"
+#    Rails.logger.info "Task.create_new_container response: #{response}"
     data = Hash.from_xml(response)
     return data["ApiAddDispatchContainerResponse"]
   end

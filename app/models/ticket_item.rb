@@ -26,11 +26,11 @@ class TicketItem
         }],
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info "payload: #{json_encoded_payload}"
+#    Rails.logger.info "payload: #{json_encoded_payload}"
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     
     return data["SaveVehicleIdentificationNumbersResponse"]
   end
@@ -43,7 +43,7 @@ class TicketItem
       xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
           :content_type => 'application/json', :Accept => "application/xml"})
       data= Hash.from_xml(xml_content)
-      Rails.logger.info data
+#      Rails.logger.info data
 
       unless data["GetVehicleIdentificationNumberListResponse"].blank? or data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"].blank? or data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"].blank?
         if data["GetVehicleIdentificationNumberListResponse"]["VehicleIdentificationNumbers"]["VehicleIdentificationNumberInformation"].is_a? Hash
@@ -57,7 +57,7 @@ class TicketItem
         return []
       end
     rescue RestClient::ExceptionWithResponse => e
-      Rails.logger.info "TicketItem.vins call: no Dragon API"
+#      Rails.logger.info "TicketItem.vins call: no Dragon API"
       return []
     end
   end
@@ -135,7 +135,7 @@ class TicketItem
           "UnitOfMeasure" => "LB"
           }
         })
-      Rails.logger.info "TicketItem.void_with_session response: #{response}"
+#      Rails.logger.info "TicketItem.void_with_session response: #{response}"
       data= Hash.from_xml(response)
       return data["ApiSaveTicketItemResponse"]["Success"]
   end
@@ -174,7 +174,7 @@ class TicketItem
 #    Rails.logger.debug "******************* TicketItem.quick_add Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-    Rails.logger.debug "******************* TicketItem.quick_add response #{response}"
+#    Rails.logger.debug "******************* TicketItem.quick_add response #{response}"
     data= Hash.from_xml(response)
     unless data["SaveTicketItemResponse"].blank? or data["SaveTicketItemResponse"]["Success"].blank?
 #      return data["SaveTicketItemResponse"]["Success"]
@@ -220,7 +220,7 @@ class TicketItem
 #    Rails.logger.debug "******************* TicketItem.quick_add Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-    Rails.logger.debug "TicketItem.quick_add_with_session response: #{response}"
+#    Rails.logger.debug "TicketItem.quick_add_with_session response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiSaveTicketItemResponse"].blank? or data["ApiSaveTicketItemResponse"]["Success"].blank?
 #      return data["ApiSaveTicketItemResponse"]["Success"]

@@ -161,7 +161,7 @@ class Shipment < ActiveRecord::Base
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data = Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
-    Rails.logger.debug "Shipment.api_find_by_capture_sequence_number: #{data}"
+#    Rails.logger.debug "Shipment.api_find_by_capture_sequence_number: #{data}"
     unless data["RESULT"]["ROW"].blank?
       return data["RESULT"]["ROW"]
     else

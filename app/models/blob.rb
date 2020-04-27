@@ -24,7 +24,7 @@ class Blob < ActiveRecord::Base
     
     ssl_client.close
     
-    Rails.logger.debug "***********Blob.api_find_by_id response: #{response}"
+#    Rails.logger.debug "***********Blob.api_find_by_id response: #{response}"
     
     data= Hash.from_xml(response) # Convert xml response to a hash
     

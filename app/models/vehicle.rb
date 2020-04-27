@@ -21,7 +21,7 @@ class Vehicle
 
       return data["GetVehicleComboListsResponse"]
     rescue RestClient::ExceptionWithResponse => e
-      Rails.logger.info "Vehicle.combolists call: no Dragon API"
+#      Rails.logger.info "Vehicle.combolists call: no Dragon API"
       return nil
     end
   end

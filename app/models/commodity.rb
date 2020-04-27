@@ -44,7 +44,7 @@ class Commodity
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/commodity/#{commodity_id}"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
 
     data["ApiItemResponseOfApiCommodity9fKlOoru"]["Item"]
   end
@@ -88,7 +88,7 @@ class Commodity
     
 #    Rails.logger.info data
     types = data["ApiItemsResponseOfApiUserDefinedListValueSoP0f0Yh"]["Items"]["ApiUserDefinedListValue"]
-    Rails.logger.info types
+#    Rails.logger.info types
     types
   end
   
@@ -126,7 +126,7 @@ class Commodity
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data
     return data["BaseResponse"]["Success"]
   end
@@ -165,7 +165,7 @@ class Commodity
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data
     return data["BaseResponse"]["Success"]
   end
@@ -204,7 +204,7 @@ class Commodity
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data
     return data["BaseResponse"]["Success"]
   end
@@ -216,7 +216,7 @@ class Commodity
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
-    Rails.logger.info data
+#    Rails.logger.info data
 #    price = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["Price"]
     response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
     return response
@@ -229,7 +229,7 @@ class Commodity
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
-    Rails.logger.info data
+#    Rails.logger.info data
 #    response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
     price = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["Price"]
     return price
@@ -265,7 +265,7 @@ class Commodity
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
     
-    Rails.logger.info "************************taxes_by_customer: #{data}"
+#    Rails.logger.info "************************taxes_by_customer: #{data}"
 #    response = data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]
 
     if data["ApiItemResponseOfApiCommodityPriceMSmOkoW0"]["Item"]["TaxCollection"].blank?
@@ -303,7 +303,7 @@ class Commodity
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info "unit_of_measure_conversion call response:#{data}"
+#    Rails.logger.info "unit_of_measure_conversion call response:#{data}"
 #    return data
 #    return data["GetConversionFactorResponse"]["ConvertedValue"]
     return data["GetConversionFactorResponse"]

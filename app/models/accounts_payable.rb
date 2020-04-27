@@ -89,7 +89,7 @@ class AccountsPayable
     response = RestClient::Request.execute(method: :put, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
     payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info "*******************Accounts Payable Items Update: #{data}**************"
+#    Rails.logger.info "*******************Accounts Payable Items Update: #{data}**************"
   end
   
 end

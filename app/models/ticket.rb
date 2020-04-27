@@ -145,7 +145,7 @@ class Ticket
       "ShowAllYards" => false # Only tickets from this yard
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.debug "payload: #{json_encoded_payload}"
+#    Rails.logger.debug "payload: #{json_encoded_payload}"
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
@@ -195,13 +195,13 @@ class Ticket
       "ShowAllYards" => true # Pass back tickets from all yards
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info json_encoded_payload
+#    Rails.logger.info json_encoded_payload
     
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
@@ -233,7 +233,7 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Ticket.get_ticket response: #{data}"
+#    Rails.logger.info "Ticket.get_ticket response: #{data}"
     unless data["ApiGetTicketByIdResponse"].blank?
       return data["ApiGetTicketByIdResponse"]
     else
@@ -255,7 +255,7 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Ticket.get_ticket response: #{data}"
+#    Rails.logger.info "Ticket.get_ticket response: #{data}"
     unless data["ApiGetTicketByIdResponse"].blank?
       return data["ApiGetTicketByIdResponse"]
     else
@@ -274,7 +274,7 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Ticket.release_session response: #{data}"
+#    Rails.logger.info "Ticket.release_session response: #{data}"
 #    unless data["ApiGetTicketByIdResponse"].blank?
 #      return data["ApiGetTicketByIdResponse"]
 #    else
@@ -393,7 +393,7 @@ class Ticket
           }
         })
       
-      Rails.logger.info "Ticket.create response: #{response}"
+#      Rails.logger.info "Ticket.create response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
@@ -427,7 +427,7 @@ class Ticket
           }
         })
       
-      Rails.logger.info "Ticket update response: #{response}"
+#      Rails.logger.info "Ticket update response: #{response}"
       data= Hash.from_xml(response)
 #      return data["SaveTicketResponse"]["Success"]
       return data["SaveTicketResponse"]
@@ -470,7 +470,7 @@ class Ticket
     json_encoded_payload = JSON.generate(payload)
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-    Rails.logger.info "Ticket.save_with_session response: #{response}"
+#    Rails.logger.info "Ticket.save_with_session response: #{response}"
     data= Hash.from_xml(response)
 #    return data["ApiSaveTicketResponse"]["Success"]
     return data["ApiSaveTicketResponse"]
@@ -498,7 +498,7 @@ class Ticket
           }
         })
       
-      Rails.logger.info "Ticket void response: #{response}"
+#      Rails.logger.info "Ticket void response: #{response}"
       data= Hash.from_xml(response)
       return data["SaveTicketResponse"]["Success"]
   end
@@ -535,7 +535,7 @@ class Ticket
       json_encoded_payload = JSON.generate(payload)
       response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-      Rails.logger.info "Ticket.void_with_session response: #{response}"
+#      Rails.logger.info "Ticket.void_with_session response: #{response}"
       data= Hash.from_xml(response)
       return data["ApiSaveTicketResponse"]["Success"]
   end
@@ -889,7 +889,7 @@ class Ticket
 #    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-    Rails.logger.debug "Ticket.add_item_with_session response: #{response}"
+#    Rails.logger.debug "Ticket.add_item_with_session response: #{response}"
     data= Hash.from_xml(response)
     return data["ApiSaveTicketItemResponse"]["Success"]
   end
@@ -1026,7 +1026,7 @@ class Ticket
 #    Rails.logger.debug "******************* The Payload: #{json_encoded_payload}"
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
-      Rails.logger.debug "Ticket.update_item_with_session response: #{response}"
+#      Rails.logger.debug "Ticket.update_item_with_session response: #{response}"
       data= Hash.from_xml(response)
       return data["ApiSaveTicketItemResponse"]["Success"]
   end
@@ -1111,7 +1111,7 @@ class Ticket
       payload: json_encoded_payload)
       
     data= Hash.from_xml(response)
-    Rails.logger.info "******************* Pay by check: #{data} *******************************"
+#    Rails.logger.info "******************* Pay by check: #{data} *******************************"
     return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
   end
   
@@ -1416,7 +1416,7 @@ class Ticket
       xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
           :content_type => 'application/json', :Accept => "application/xml"})
       data= Hash.from_xml(xml_content)
-      Rails.logger.info "Ticket.vin_search response: #{data}"
+#      Rails.logger.info "Ticket.vin_search response: #{data}"
       if not data["GetVehicleIdentificationDecodeResponse"].blank? and data["GetVehicleIdentificationDecodeResponse"]["Success"] == 'true'
         unless data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"].blank?
           return data["GetVehicleIdentificationDecodeResponse"]["DecodedVehicleIdentificationNumber"]
@@ -1427,7 +1427,7 @@ class Ticket
         return nil
       end
     rescue RestClient::ExceptionWithResponse => e
-      Rails.logger.info "Ticket.vin_search call: no Dragon API"
+#      Rails.logger.info "Ticket.vin_search call: no Dragon API"
       return nil
     end
   end
@@ -1484,7 +1484,7 @@ class Ticket
         return []
       end
     rescue RestClient::ExceptionWithResponse => e
-      Rails.logger.info "Ticket.deductions call: no Dragon API"
+#      Rails.logger.info "Ticket.deductions call: no Dragon API"
       return nil
     end
   end

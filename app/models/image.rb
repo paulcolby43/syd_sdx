@@ -208,7 +208,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    Rails.logger.debug "*********** Image.api_find_all_by_receipt_number response: #{response}"
+#    Rails.logger.debug "*********** Image.api_find_all_by_receipt_number response: #{response}"
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
@@ -241,7 +241,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    Rails.logger.debug "***********Image.api_find_first_by_ticket_number_and_event_code response: #{response}"
+#    Rails.logger.debug "***********Image.api_find_first_by_ticket_number_and_event_code response: #{response}"
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
@@ -272,7 +272,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    Rails.logger.debug "*********** Image.api_find_all_by_service_request_number response: #{response}"
+#    Rails.logger.debug "*********** Image.api_find_all_by_service_request_number response: #{response}"
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
@@ -365,7 +365,7 @@ class Image < ActiveRecord::Base
         return ""
       end
     rescue => e
-      Rails.logger.info "Image.latitude_and_longitude: #{e}"
+#      Rails.logger.info "Image.latitude_and_longitude: #{e}"
       return ""
     end
   end

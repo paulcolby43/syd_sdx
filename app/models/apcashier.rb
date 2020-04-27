@@ -29,7 +29,7 @@ class Apcashier
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/apcashier/#{cashier_id}"
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data = Hash.from_xml(xml_content)
-    Rails.logger.info data
+#    Rails.logger.info data
     return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Item"]["AccountesPayableLineItemCollection"]["ApiAccountsPayableLineItem"]
   end
   
