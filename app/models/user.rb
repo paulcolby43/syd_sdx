@@ -528,7 +528,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def supported_versions
+  def api_supported_versions
     access_token.api_supported_versions
   end
   
