@@ -582,7 +582,7 @@ class User < ActiveRecord::Base
     end
     begin
       response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, payload: {grant_type: 'password', username: user_params[:username], password: user_params[:password]})
-      Rails.logger.info response
+#      Rails.logger.info response
       data = JSON.parse(response)
       unless data.blank? or data["access_token"].blank?
         return data["access_token"]
@@ -591,10 +591,10 @@ class User < ActiveRecord::Base
       end
     rescue RestClient::ExceptionWithResponse => e
       unless e.response.blank?
-        Rails.logger.info "User.new_dragon_token: #{e.response}"
+#        Rails.logger.info "User.new_dragon_token: #{e.response}"
         return nil
       else
-        Rails.logger.info "User.new_dragon_token: #{e}"
+#        Rails.logger.info "User.new_dragon_token: #{e}"
         return nil
       end
     end
