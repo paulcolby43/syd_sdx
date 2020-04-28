@@ -15,7 +15,7 @@ class Workorder
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Workorder.all response: #{data}"
+#    Rails.logger.info "Workorder.all response: #{data}"
     
     if data["GetUserWorkOrderCollectionResponse"]["Collection"]["WorkOrderInformation"].is_a? Hash # Only one result returned, so put it into an array
       return [data["GetUserWorkOrderCollectionResponse"]["Collection"]["WorkOrderInformation"]]
@@ -31,14 +31,14 @@ class Workorder
     begin
       xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
       data= Hash.from_xml(xml_content)
-      Rails.logger.info "Workorder.all_by_customer response: #{data}"
+#      Rails.logger.info "Workorder.all_by_customer response: #{data}"
       if data["GetWorkOrdersByCustomerIdResponse"]["Collection"]["CustomerWorkOrderInformation"].is_a? Hash # Only one result returned, so put it into an array
         return [data["GetWorkOrdersByCustomerIdResponse"]["Collection"]["CustomerWorkOrderInformation"]]
       else # Array of results returned
         return data["GetWorkOrdersByCustomerIdResponse"]["Collection"]["CustomerWorkOrderInformation"]
       end
     rescue RestClient::ExceptionWithResponse => e
-      Rails.logger.info "Workorder.all_by_customer call: no Dragon API"
+#      Rails.logger.info "Workorder.all_by_customer call: no Dragon API"
       return nil
     end
   end

@@ -125,6 +125,14 @@
                   = "Yard ID"
                   .pull-right
                     = "#{current_yard_id}"
+                %li.list-group-item
+                  = "Supported Versions"
+                  .pull-right
+                    = "#{@supported_versions.blank? ? 'N/A' : @supported_versions}"
+                %li.list-group-item
+                  = "Ticket Sessions"
+                  .pull-right
+                    = "#{@supported_versions.blank? ? 'No' : 'Yes'}"
         #jpegger_service_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           .panel.panel-default
             .panel-heading

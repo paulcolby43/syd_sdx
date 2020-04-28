@@ -8,11 +8,11 @@ class Blob < ActiveRecord::Base
 
   has_one :image
   
-  def self.api_find_by_id(blob_id, company, yard_id)
+  def self.api_find_by_id(blob_id, company)
     require 'socket'
     host = company.jpegger_service_ip
     port = company.jpegger_service_port
-    command = "<FETCH><SQL>select * from blobs where blob_id='#{blob_id}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
+    command = "<FETCH><SQL>select * from blobs where blob_id='#{blob_id}'</SQL><ROWS>100</ROWS></FETCH>"
     
     tcp_client = TCPSocket.new host, port
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
@@ -24,7 +24,7 @@ class Blob < ActiveRecord::Base
     
     ssl_client.close
     
-    Rails.logger.debug "***********Blob.api_find_by_id response: #{response}"
+#    Rails.logger.debug "***********Blob.api_find_by_id response: #{response}"
     
     data= Hash.from_xml(response) # Convert xml response to a hash
     

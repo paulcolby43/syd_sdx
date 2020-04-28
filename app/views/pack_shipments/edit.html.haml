@@ -6,9 +6,12 @@
     %h3
       = "#{@pack_shipment['CustomerName']}"
       .pull-right
-        %a{href: show_pictures_pack_shipment_path(@pack_shipment['Id']), :class => "btn btn-default pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
-          %i.fa.fa-photo.fa-lg
-          Pictures
+        %a{href: fetches_pack_shipment_path(@pack_shipment['Id']), :class => "btn btn-default pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Fetch Pictures"}}
+          %i.fa.fa-camera
+          Fetch Pictures
+        %a{href: show_pictures_pack_shipment_path(@pack_shipment['Id']), :class => "btn btn-default pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> View Pictures"}}
+          %i.fa.fa-photo
+          View Pictures
       %p  
         %a.btn.btn-default{"data-content" => "#{render partial: 'pack_shipment_info', locals: {pack_shipment: @pack_shipment, pack_list: @pack_list}}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Info"}
           %i.fa.fa-info-circle

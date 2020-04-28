@@ -15,7 +15,7 @@ class Location
     
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
       
-    Rails.logger.info "Location.containers response: #{response}"
+#    Rails.logger.info "Location.containers response: #{response}"
     data= Hash.from_xml(response)
     unless data["ApiGetDispatchContainersByLocationIdResponse"].blank? or data["ApiGetDispatchContainersByLocationIdResponse"]["DispatchContainers"].blank? or data["ApiGetDispatchContainersByLocationIdResponse"]["DispatchContainers"]["DispatchContainerInformation"].blank?
       if data["ApiGetDispatchContainersByLocationIdResponse"]["DispatchContainers"]["DispatchContainerInformation"].is_a? Hash # Only one result returned, so put it into an array

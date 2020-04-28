@@ -21,7 +21,7 @@ class PackList
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json'}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Pack Lists response: #{data}"
+#    Rails.logger.info "Pack Lists response: #{data}"
     
     unless data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"].blank?
       if data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -46,7 +46,7 @@ class PackList
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackList.find response: #{data}"
+#    Rails.logger.info "PackList.find response: #{data}"
     
     unless data["GetPackingListResponse"].blank? or data["GetPackingListResponse"]["PackList"].blank?
       return data["GetPackingListResponse"]["PackList"]
@@ -77,7 +77,7 @@ class PackList
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data
     return data["SaveMobilePackListResponse"]["Success"]
   end
@@ -98,7 +98,7 @@ class PackList
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info "*******************PackList.set_shipment_id: #{data}"
+#    Rails.logger.info "*******************PackList.set_shipment_id: #{data}"
 #    return data
     return data["SaveMobilePackListResponse"]["Success"]
   end
@@ -136,13 +136,13 @@ class PackList
       
     json_encoded_payload = JSON.generate(payload)
     
-    Rails.logger.info "Add Pack json_encoded_payload: #{json_encoded_payload}"
+#    Rails.logger.info "Add Pack json_encoded_payload: #{json_encoded_payload}"
     
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackList.add_pack response: #{data}"
+#    Rails.logger.info "PackList.add_pack response: #{data}"
     
     return data["AddPackToPackingListResponse"]
   end
@@ -156,7 +156,7 @@ class PackList
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"})
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackList.remove_pack response: #{data}"
+#    Rails.logger.info "PackList.remove_pack response: #{data}"
     
     return data["RemovePackFromPackListResponse"]
   end
@@ -175,13 +175,13 @@ class PackList
       
     json_encoded_payload = JSON.generate(payload)
     
-    Rails.logger.info "Add pack to contract item json_encoded_payload: #{json_encoded_payload}"
+#    Rails.logger.info "Add pack to contract item json_encoded_payload: #{json_encoded_payload}"
     
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackList.add_pack_to_contract_item response: #{data}"
+#    Rails.logger.info "PackList.add_pack_to_contract_item response: #{data}"
     
     return data["AddPackToContractItemResponse"]
   end

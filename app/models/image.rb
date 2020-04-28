@@ -98,6 +98,12 @@ class Image < ActiveRecord::Base
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   end
   
+  def self.jpeg_image_file(company, capture_sequence_number, yard_id)
+    require "open-uri"
+    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)
+  end
+  
   def self.proper_yardid(current_yard_id)
     where(yardid: current_yard_id)
   end
@@ -202,7 +208,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    Rails.logger.debug "*********** Image.api_find_all_by_receipt_number response: #{response}"
+#    Rails.logger.debug "*********** Image.api_find_all_by_receipt_number response: #{response}"
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     
@@ -235,7 +241,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    Rails.logger.debug "***********Image.api_find_first_by_ticket_number_and_event_code response: #{response}"
+#    Rails.logger.debug "***********Image.api_find_first_by_ticket_number_and_event_code response: #{response}"
 #    data= Hash.from_xml(response.first) # Convert xml response to a hash
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
@@ -266,7 +272,7 @@ class Image < ActiveRecord::Base
     response = ssl_client.sysread(200000) # Read up to 200,000 bytes
     ssl_client.close
     
-    Rails.logger.debug "*********** Image.api_find_all_by_service_request_number response: #{response}"
+#    Rails.logger.debug "*********** Image.api_find_all_by_service_request_number response: #{response}"
 #    data= Hash.from_xml(response) # Convert xml response to a hash
     data= Hash.from_xml(response.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
     unless data["RESULT"]["ROW"].blank?
@@ -358,13 +364,13 @@ class Image < ActiveRecord::Base
         return ""
       end
     rescue => e
-      Rails.logger.info "Image.latitude_and_longitude: #{e}"
+#      Rails.logger.info "Image.latitude_and_longitude: #{e}"
       return ""
     end
   end
   
   def Image.google_map(center)
-    return "https://www.google.com/maps/embed/v1/place?key=#{ENV['GOOGLE_MAPS_API_KEY']}&q=#{center}&zoom=19"
+    return "https://www.google.com/maps/embed/v1/place?key=#{ENV['GOOGLE_MAPS_API_KEY']}&q=#{center}&zoom=16"
   end
   
 end

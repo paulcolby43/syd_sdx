@@ -22,7 +22,7 @@ class Pack
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json'}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Packs response: #{data}"
+#    Rails.logger.info "Packs response: #{data}"
     
     unless data["MobilePackListInformation"].blank? or data["MobilePackListInformation"]["Packs"].blank? or data["MobilePackListInformation"]["Packs"]["PackListInformation"].blank?
       if data["MobilePackListInformation"]["Packs"]["PackListInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -39,7 +39,7 @@ class Pack
     packs = Pack.all(auth_token, yard_id, status)
     # Find pack list within array of hashes
     pack = packs.find {|pack| pack['Id'] == pack_id}
-    Rails.logger.info "Pack.find_by_id response: #{pack}"
+#    Rails.logger.info "Pack.find_by_id response: #{pack}"
     return pack
   end
   
@@ -58,7 +58,7 @@ class Pack
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json'})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Pack.search_by_tag response: #{data}"
+#    Rails.logger.info "Pack.search_by_tag response: #{data}"
     
     unless data["GetMobilePackByTagResponse"]["Pack"].blank? or data["GetMobilePackByTagResponse"]["Success"] == "false"
       return [data["GetMobilePackByTagResponse"]["Pack"]]
@@ -89,7 +89,7 @@ class Pack
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data
     return data["SavePackResponse"]["Success"]
   end

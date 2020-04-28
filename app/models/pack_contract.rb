@@ -21,7 +21,7 @@ class PackContract
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml", 
         :content_type => 'application/json'}, :payload => json_encoded_payload)
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "Pack Contracts response: #{data}"
+#    Rails.logger.info "Pack Contracts response: #{data}"
     
     unless data["GetMobileContractsResponse"]["Contracts"]["ContractListInformation"].blank?
       if data["GetMobileContractsResponse"]["Contracts"]["ContractListInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -60,7 +60,7 @@ class PackContract
     response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json'},
       payload: json_encoded_payload)
     data= Hash.from_xml(response)
-    Rails.logger.info data
+#    Rails.logger.info data
 #    return data
     return data["SavePackResponse"]["Success"]
   end

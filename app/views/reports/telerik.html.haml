@@ -1,0 +1,21 @@
+- @title="Telerik Reports"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    #reportViewer1.k-widget
+      loading...
+
+
+:javascript
+  $("#reportViewer1")
+    .telerik_ReportViewer({
+        serviceUrl: "http://50.192.53.46:50003/api/reports",
+        //templateUrl: /ReportViewer/templates/telerikReportViewerTemplate-FA-x.x.x.x.html
+        reportSource: { 
+            //report: "Adam Test.trdx",
+            report: "AdamTest",
+            parameters: {
+                CultureID: "en"
+            }
+        }
+    });

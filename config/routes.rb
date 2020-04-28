@@ -17,8 +17,13 @@ Rails.application.routes.draw do
   end
   
   resources :trips do
+    member do 
+      get 'log_location'
+      get 'locations'
+    end
     collection do
       get :search
+      get :drivers
     end
   end
   
@@ -55,7 +60,11 @@ Rails.application.routes.draw do
   end
   resources :workorders
   
-  resources :reports
+  resources :reports do 
+    collection do
+      get :telerik
+    end
+  end
   
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
@@ -85,6 +94,7 @@ Rails.application.routes.draw do
       get 'show_preview_image'
       get 'send_pdf_data'
       get 'preview'
+      get 'send_jpeg_image_file'
     end
     collection do
       get 'advanced_search'
@@ -95,6 +105,7 @@ Rails.application.routes.draw do
     member do
       get 'show_jpeg_image'
       get 'show_preview_image'
+      get 'send_jpeg_image_file'
     end
   end
   
@@ -121,6 +132,7 @@ Rails.application.routes.draw do
     member do
       get :confirm_email
       get :update_latitude_and_longitude
+      get :add_coordinates
     end
     collection do
       get :resend_confirmation_instructions

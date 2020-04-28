@@ -1,8 +1,8 @@
 %p
-  %a{:href => trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{current_user.first_name} Trips"}} 
+  %a{:href => trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Trips"}} 
     %i.fa.fa-map-marker
-    = "#{current_user.first_name} Trips"
+    = "Trips"
 %p
-  %a{:href => search_trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Trips Search"}} 
+  %a{:href => search_trips_path, class: "welcome_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
     %i.fa.fa-search
-    Trips Search
+    Search

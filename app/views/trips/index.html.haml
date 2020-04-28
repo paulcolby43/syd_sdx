@@ -3,23 +3,21 @@
 - @title="Trips"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %btn.btn.btn-primary#watch_me{:onclick => "getLocation()"}
-      %i.fa.fa-location-arrow
-      Watch Position
-    %p#demo
-    
-
     -#
-      %a.btn.btn-primary#track_location Track location
-      %p#demo
+      .well
+        #map
+    %p
+      %a{href: drivers_trips_path, class: 'btn btn-default  customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Drivers Map"}}
+        %i.fa.fa-map
+        Drivers Map
+    %p#current_location{"data-trip-id" => nil, style: 'display:none'}
 
-    -#
-      - @containers.each do |container|
-        .well
-          = container
     - unless @trips.blank?
       #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         - @trips.each_with_index do |trip, index|
+          =# trip
+          - workorders = Trip.workorders(trip)
+          - customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
           .panel.panel-default
             .panel-heading{id: "trip_#{index}", :role => "tab"}
               .pull-right
@@ -50,6 +48,22 @@
                       - Trip.workorders(trip).each do |workorder|
                         %i= workorder['Notes']
                         %br
+                - unless customer_id.blank? or not current_user.mobile_buy?
+                  %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorders.blank? ? nil : workorders.first['Id']), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket for this customer/trip?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                    %i.fa.fa-ticket
+                    Ticket
+                -# %btn.btn.btn-success.btn-sm#watch_me{:onclick => "getLocation(); $(this).hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $('#stop_watch').show();"}
+                - if current_user.location_logging?
+                  %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
+                    %i.fa.fa-location-arrow
+                    Track Me
+                  -# %btn.btn.btn-primary.btn-sm#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide(); $('#watch_me').show();"}
+                  %btn.btn.btn-primary.btn-sm.stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide();  $('.watch_me').show();"}
+                    %i.fa.fa-location-arrow
+                    Stop
+                  %a{href: locations_trip_path(trip['Id']), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Locations"} }
+                    %i.fa.fa-map-pin
+                    Locations
                 -#
                   %br
                   %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
@@ -99,6 +113,7 @@
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}
 
 :javascript
+  /*
   var map;
   function initialize() {
     // Get all maps with ".containers_map"
@@ -117,10 +132,11 @@
       // Get ID of single div
       mapId = document.getElementById(maps[i].id);
       var containers = eval(mapId.getAttribute('container-coordinates-hashes-array'));
-      //console.log("containers", containers);
-      //console.log("length", containers.length);
 
       if(containers.length > 0){
+        console.log("containers", containers);
+        console.log("length", containers.length);
+
         // Create new Google Map object for single canvas 
         mapId.style.width = "100%";
         mapId.style.height = "150px";
@@ -157,15 +173,19 @@
       }
     }
   }
+  */
 
-%script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
+-# %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
 
 :javascript
-  var x = document.getElementById("demo");
+  // Start location tracking
+  var x = document.getElementById("current_location");
+  var geoWatch;
+  var wakelock;
 
   function getLocation() {
       if (navigator.geolocation) {
-          navigator.geolocation.watchPosition(showPosition);
+          geoWatch = navigator.geolocation.watchPosition(showPosition);
       } else { 
           x.innerHTML = "Geolocation is not supported by this browser.";}
       }
@@ -174,4 +194,30 @@
       x.innerHTML="Lat: " + position.coords.latitude + 
       "<br>Long: " + position.coords.longitude;
       console.log("position changed");
+      trip_id = $("#current_location").data( "trip-id" );
+      $.ajax({
+        url: "/trips/" + trip_id + "/log_location",
+        type: 'get',
+        dataType: 'json',
+        data: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        }, 
+        success: function(data) {
+          console.log(data);
+          continue_logging = data.continue_logging
+          if (continue_logging == "false") {
+            stopWatch();
+            $('.stop_watch').hide(); 
+            $('#current_location').hide();  
+            $('.watch_me').show();
+          }
+        } 
+      });
   }
+
+  function stopWatch() {
+    navigator.geolocation.clearWatch( geoWatch );
+    geoWatch = undefined;
+  }
+  // End location tracking

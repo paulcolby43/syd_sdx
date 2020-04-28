@@ -1,4 +1,4 @@
-= render partial: "shared/navbars/customers_navbar", locals: {title: "Customers"}
+=# render partial: "shared/navbars/customers_navbar", locals: {title: "Customers"}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
@@ -26,6 +26,10 @@
                 %i.fa.fa-list-alt
                 = "#{license_reader_device.DeviceName}"
                 = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
+        %span.pull-right
+          %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+            %i.fa.fa-user-plus.fa-lg
+            Customer
     %p
       %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
     - unless @customers.blank?

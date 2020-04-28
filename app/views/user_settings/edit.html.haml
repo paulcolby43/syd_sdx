@@ -119,6 +119,14 @@
                   = "Yard ID"
                   .pull-right
                     = "#{current_yard_id}"
+                %li.list-group-item
+                  = "Supported Versions"
+                  .pull-right
+                    = "#{@supported_versions.blank? ? 'N/A' : @supported_versions}"
+                %li.list-group-item
+                  = "Ticket Sessions"
+                  .pull-right
+                    = "#{@supported_versions.blank? ? 'No' : 'Yes'}"
             %div.panel.panel-default
               .panel-heading
                 %h5.panel-title 

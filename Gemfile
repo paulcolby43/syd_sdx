@@ -127,6 +127,10 @@ gem 'exif'
 # Allow Rails request.remote_ip to defer to CloudFlare's connecting IP
 gem 'actionpack-cloudflare'
 
+
+# https://github.com/cyu/rack-cors
+#gem 'rack-cors'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

@@ -5,10 +5,11 @@
         .col-xs-4.col-sm-4
         .col-xs-4.col-sm-4
           - unless @pack_shipment.blank? or current_user.customer?
-            %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
+            -# %a{href: "#upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
+            %a{href: "#pack_shipment_#{@pack_shipment['Id']}_upload_form", "data-toggle" => "modal", :alt => "new_image_file_form"}
               %i.fa.fa-camera.fa-lg
               = "Picture" unless mobile_device?
         .col-xs-4.col-sm-4
           
 
-= render partial: "shipment_files/upload_modal" unless current_user.customer?
+= render partial: "shipment_files/upload_modal", locals: {pack_shipment: @pack_shipment} unless current_user.customer?

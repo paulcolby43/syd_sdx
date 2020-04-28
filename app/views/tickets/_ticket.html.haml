@@ -2,68 +2,69 @@
   = render partial: "image_files/upload_modal", locals: {ticket: ticket}
   %div.row
     .col-xs-12.col-sm-12.col-md-12
-      %div.panel.panel-primary
-        %div.list_group
-          - unless current_user.customer? or ticket['Status'] == '3'
-            %a{href: edit_ticket_path(ticket['Id'], status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}" }}
-              .pull-right
-                = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
-                %i.fa.fa-chevron-right.fa-lg
-              = ticket["TicketNumber"]
-              - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
-                = "#{ticket['FirstName']} #{ticket['LastName']}"
-                %br
-              %small= ticket["Company"]
-          - else
-            %a{href: ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
-              .pull-right
-                = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
-                %i.fa.fa-chevron-right.fa-lg
-              = ticket["TicketNumber"]
-              - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
-                = "#{ticket['FirstName']} #{ticket['LastName']}"
-                %br
-              %small= ticket["Company"]
-          -#
-            %div.list-group-item
-              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-              .pull-right
-                %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
-                  More
-              %br
-              %br
-          -#
-          - if @status == '1' or @status == '3'
-            %div.list-group-item
-              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-              .pull-right
-                %a.btn.btn-default{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
-                  More
-                  %b.caret
-              %br
-              %br
-          - else
-            %div.list-group-item
-              = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
-              .pull-right
-                %a.btn.btn-primary{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
-                  %i.fa.fa-camera.fa-lg
-                  Picture
-                %a.btn.btn-default{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
-                  %i.fa.fa-envelope.fa-lg
-                  Email
-                = render partial: "send_email_modal", locals: {ticket: ticket}
-                %a.btn.btn-default{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), target: '_blank'}
-                  %i.fa.fa-file-pdf-o.fa-lg
-                  PDF
-              %br
-              %br
+      %h4.text-muted
+        %div.panel.panel-primary
+          %div.list_group
+            - unless current_user.customer? or ticket['Status'] == '3'
+              %a{href: edit_ticket_path(ticket['Id'], status: ticket["Status"]), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}" }}
+                .pull-right
+                  = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
+                  %i.fa.fa-chevron-right.fa-lg
+                %strong= ticket["TicketNumber"]
+                - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
+                  = "#{ticket['FirstName']} #{ticket['LastName']}"
+                  %br
+                = ticket["Company"]
+            - else
+              %a{href: ticket_path(ticket['Id'], status: ticket['Status']), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket['TicketNumber']}"}}
+                .pull-right
+                  = number_to_currency(Ticket.line_items_total(ticket['TicketItemCollection']['ApiTicketItem'])) unless ticket['TicketItemCollection'].blank?
+                  %i.fa.fa-chevron-right.fa-lg
+                %strong= ticket["TicketNumber"]
+                - unless ticket["FirstName"].blank? and ticket["LastName"].blank?
+                  = "#{ticket['FirstName']} #{ticket['LastName']}"
+                  %br
+                = ticket["Company"]
             -#
-              %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
+              %div.list-group-item
                 = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
                 .pull-right
-                  %i.fa.fa-file-pdf-o.fa-lg
-                  Print
+                  %a.btn.btn-primary{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                    More
+                %br
+                %br
+            -#
+            - if @status == '1' or @status == '3'
+              %div.list-group-item
+                = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                .pull-right
+                  %a.btn.btn-default{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                    More
+                    %b.caret
+                %br
+                %br
+            - else
+              %div.list-group-item
+                = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                .pull-right
+                  %a.btn.btn-primary{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                    %i.fa.fa-camera.fa-lg
+                    = "Picture" unless mobile_device?
+                  %a.btn.btn-default{href: "#ticket_#{ticket['Id']}_email_modal", id: "ticket_#{ticket['Id']}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
+                    %i.fa.fa-envelope.fa-lg
+                    = "Email" unless mobile_device?
+                  = render partial: "send_email_modal", locals: {ticket: ticket}
+                  %a.btn.btn-default{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), target: '_blank'}
+                    %i.fa.fa-file-pdf-o.fa-lg
+                    = "PDF" unless mobile_device?
+                %br
+                %br
+              -#
+                %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
+                  = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
+                  .pull-right
+                    %i.fa.fa-file-pdf-o.fa-lg
+                    Print
 
 :javascript
   $('[data-toggle="popover"]').popover();

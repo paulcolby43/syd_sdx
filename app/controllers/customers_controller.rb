@@ -138,11 +138,11 @@ class CustomersController < ApplicationController
     @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
 #    @ticket_number = Ticket.next_available_number(current_user.token, current_yard_id)
     @guid = SecureRandom.uuid
-    @ticket = Ticket.create(current_user.token, current_yard_id, @customer['Id'], @guid)
+    @ticket = Ticket.create(current_user.token, current_yard_id, @customer['Id'], @guid, params[:related_workorder_id])
     respond_to do |format|
       format.html { 
         flash[:success] = 'Ticket was successfully created.'
-        redirect_to edit_ticket_path(@guid, status: 2, commodity_id: params[:commodity_id]) 
+        redirect_to edit_ticket_path(@guid, status: 2, commodity_id: params[:commodity_id], created_from_trip: params[:related_workorder_id].blank? ? nil : true) 
         }
     end
   end

@@ -49,7 +49,7 @@ class ImageFile < ActiveRecord::Base
         return ""
       end
     rescue => e
-      Rails.logger.info "image_file.latitude_and_longitude: #{e}"
+#      Rails.logger.info "image_file.latitude_and_longitude: #{e}"
       return ""
     end
   end
@@ -68,7 +68,7 @@ class ImageFile < ActiveRecord::Base
         return ""
       end
     rescue => e
-      Rails.logger.info "image_file.latitude: #{e}"
+#      Rails.logger.info "image_file.latitude: #{e}"
       return ""
     end
   end
@@ -87,7 +87,7 @@ class ImageFile < ActiveRecord::Base
         return ""
       end
     rescue => e
-      Rails.logger.info "image_file.longitude: #{e}"
+#      Rails.logger.info "image_file.longitude: #{e}"
       return ""
     end
   end

@@ -14,6 +14,7 @@ jQuery ->
         e.preventDefault()
         if $(this).hasClass('void_item')
           ticket_id = $(this).data( "ticket-id" )
+          session_id = $(this).data( "session-id" )
           item_id = $(this).data( "item-id" )
           commodity_id = $(this).data( "commodity-id" )
           gross = $(this).data( "gross" )
@@ -26,8 +27,19 @@ jQuery ->
           spinner_icon = $(this).find('.fa-spinner')
           spinner_icon.show()
           $.ajax
-            url: "/tickets/void_item?ticket_id=" + ticket_id + "&item_id=" + item_id + "&commodity_id=" + commodity_id + "&gross=" + gross + "&tare=" + tare + "&net=" + net + "&price=" + price + "&amount=" + amount
+            #url: "/tickets/void_item?ticket_id=" + ticket_id + "&item_id=" + item_id + "&commodity_id=" + commodity_id + "&gross=" + gross + "&tare=" + tare + "&net=" + net + "&price=" + price + "&amount=" + amount
+            url: "/tickets/void_item"
             dataType: 'json'
+            data:
+              ticket_id: ticket_id
+              session_id: session_id
+              item_id: item_id
+              commodity_id: commodity_id
+              gross: gross
+              tare: tare
+              net: net
+              price: price
+              amount: amount
             success: ->
               trash_icon.closest('.panel').remove()
               sum = 0;
@@ -130,12 +142,14 @@ jQuery ->
   $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
     console.log '.item_select changed', 'yes'
     ticket_id = $(this).data( "ticket-id" )
+    session_id = $(this).data( "session-id" )
     item_id = $(this).data( "item-id" )
     commodity_id = $(this).val()
     commodity_name = $(this).find('option:selected').text()
     input_select = $(this)
     current_customer_id = $('#ticket_customer_id').val()
     ticket_item_status = input_select.closest('.panel').find('#ticket_line_items__status:first').val()
+    session_id = $(this).data( "session-id" )
     # Get commodity price, unit of measure, and taxes, then update.
     get_commodity_info_ajax = ->
       $.ajax
@@ -197,13 +211,20 @@ jQuery ->
           commodity_id: commodity_id
           commodity_name: commodity_name
           price: price
+          session_id: session_id
         success: (data) ->
-          console.log 'ticket item quick add successful'
-          input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
-          input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
-          #input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
-          input_select.closest('.panel').find('.remove_field:first').attr 'data-commodity-id', commodity_id
-          $("#more_" + item_id + "_link").show()
+          success = data.success
+          failure_information = data.failure_information
+          if success == 'true' 
+            console.log 'ticket item quick add successful'
+            input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
+            input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
+            #input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
+            input_select.closest('.panel').find('.remove_field:first').attr 'data-commodity-id', commodity_id
+            $("#more_" + item_id + "_link").show()
+          else
+            alert 'Error saving ticket line item. ' + failure_information
+            console.log 'Error saving ticket line item. ' + failure_information
           return
         error: ->
           alert 'Error saving ticket line item.'

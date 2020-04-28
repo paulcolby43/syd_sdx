@@ -16,6 +16,11 @@ class YardsController < ApplicationController
     session[:yard_name] = @yard['Name']
     @currencies = Ticket.currencies(current_user.token)
     cookies[:current_currency_id] = params[:currency_id] unless params[:currency_id].blank?
+    if current_user.mobile_admin?
+      redirect_to tickets_path
+    elsif current_user.mobile_dispatch?
+      redirect_to trips_path
+    end
   end
 
   # GET /yards/new

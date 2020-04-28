@@ -34,4 +34,6 @@
 //= require morris
 //= require quagga
 //= require zxing-js.min
+//= telerikReportViewer.kendo-12.2.18.1129.min.js
+//= require telerikReportViewer-12.2.18.1129.js
 //= require_tree .

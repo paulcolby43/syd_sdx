@@ -17,11 +17,11 @@ class Vehicle
           :content_type => 'application/json', :Accept => "application/xml"})
 #      data= Hash.from_xml(xml_content)
       data= Hash.from_xml(xml_content.gsub(/&/, '/&amp;')) # Convert xml response to a hash, escaping ampersands first
-      Rails.logger.info data
+#      Rails.logger.info data
 
       return data["GetVehicleComboListsResponse"]
     rescue RestClient::ExceptionWithResponse => e
-      Rails.logger.info "Vehicle.combolists call: no Dragon API"
+#      Rails.logger.info "Vehicle.combolists call: no Dragon API"
       return nil
     end
   end

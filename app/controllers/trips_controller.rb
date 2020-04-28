@@ -107,6 +107,59 @@ class TripsController < ApplicationController
     end
   end
   
+  # GET /trips/1/log_location
+  # GET /trips/1/log_location.json
+  def log_location
+    respond_to do |format|
+      format.json {
+        response = Trip.log_location(current_user.token, params[:id], params[:latitude], params[:longitude])
+        unless response.blank?
+          if response["Success"] == "true"
+            render json: {:continue_logging => response["ContinueLogging"]}, :status => :ok
+          else
+            render json: {:error => response["FailureInformation"]}, :status => :ok
+          end
+        else
+          render json: {}, status: :unprocessable_entity
+#          render json: {error: "Log location failed."}, :status => :bad_request
+        end
+      }
+    end
+  end
+  
+  # GET /trips/1/locations
+  # GET /trips/1/locations.json
+  def locations
+    authorize! :show, :trips
+    @trip = Trip.find(current_user.token, params[:id])
+    location_results = Trip.get_locations(current_user.token, params[:id])
+    @locations = location_results.uniq { |location| [location["Latitude"], location["Longitude"]] }
+  end
+  
+  # GET /trips/drivers
+  # GET /trips/drivers.json
+  def drivers
+    authorize! :index, :trips
+    @dispatch_information = Trip.dispatch_info_by_user_guid(current_user.token)
+    @trips = Trip.all_by_user(@dispatch_information)
+    @driver_locations = []
+    @driver_coordinates_hashes_array = []
+    if current_user.location_logging?
+      @trips.each do |trip|
+        locations = Trip.get_locations(current_user.token, trip['Id'])
+        @driver_locations << locations.first unless locations.blank?
+      end
+      @driver_locations.each do |location|
+        latitude = location['Latitude'].to_f
+        longitude = location['Longitude'].to_f
+        trip_number = @trips.find {|trip| trip['Id'] == location['TripId']}['TripNumber']
+        truck = @trips.find {|trip| trip['Id'] == location['TripId']}['Truck']
+        driver_name = @trips.find {|trip| trip['Id'] == location['TripId']}['Driver']
+        @driver_coordinates_hashes_array << {lat: latitude, lng: longitude, name: driver_name, description: "#{driver_name} #{truck} #{trip_number}"}
+      end
+    end
+  end
+  
   
   private
 

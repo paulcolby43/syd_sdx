@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :login_required, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :update_latitude_and_longitude]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :update_latitude_and_longitude, :add_coordinates]
   load_and_authorize_resource  param_method: :user_params, :except => [:new, :create, :confirm_email, :resend_confirmation_instructions]
   
   helper_method :users_sort_column, :users_sort_direction
@@ -215,6 +215,21 @@ class UsersController < ApplicationController
       else
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
+    end
+  end
+  
+  # GET /users/1/add_coordinates.json
+  def add_coordinates
+    respond_to do |format|
+        format.json { 
+#          @user.coordinates << {:lat => params[:latitude], :lng => params[:longitude]}
+          @user.coordinates << [params[:latitude], params[:longitude]]
+          if @user.save
+            render :show, status: :ok, location: @user
+          else
+            render json: @user.errors, status: :unprocessable_entity
+          end
+        }
     end
   end
   

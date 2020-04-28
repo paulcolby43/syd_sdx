@@ -98,7 +98,7 @@ class PackShipment
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.find response: #{data}"
+#    Rails.logger.info "PackShipment.find response: #{data}"
     
     return data["GetShipmentResponse"]["Shipment"]
   end
@@ -111,7 +111,7 @@ class PackShipment
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.pack_list response: #{data}"
+#    Rails.logger.info "PackShipment.pack_list response: #{data}"
     
     unless data["MobilePackListInformation"].blank? or data["MobilePackListInformation"]["PackLists"].blank? or data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"].blank?
       return data["MobilePackListInformation"]["PackLists"]["PackListHeadInformation"]
@@ -138,7 +138,7 @@ class PackShipment
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.contract_items response: #{data}"
+#    Rails.logger.info "PackShipment.contract_items response: #{data}"
     
     unless data["MobilePackListInformation"].blank? or data["MobilePackListInformation"]["ContractItems"].blank? or data["MobilePackListInformation"]["ContractItems"]["ContractItemListInformation"].blank?
       if data["MobilePackListInformation"]["ContractItems"]["ContractItemListInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -162,13 +162,13 @@ class PackShipment
       "EndDate" => "#{end_date} 23:59:59"
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info json_encoded_payload
+#    Rails.logger.info json_encoded_payload
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.all_by_date_customers: #{data}"
+#    Rails.logger.info "PackShipment.all_by_date_customers: #{data}"
     
     if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank? # No results, so put into empty array
       return []
@@ -192,13 +192,13 @@ class PackShipment
       "EndDate" => "#{end_date} 23:59:59"
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info json_encoded_payload
+#    Rails.logger.info json_encoded_payload
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.all_by_date: #{data}"
+#    Rails.logger.info "PackShipment.all_by_date: #{data}"
     
     if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank?# No results, so put into empty array
       return []
@@ -242,7 +242,7 @@ class PackShipment
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"})
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.number_of_closed response: #{data}"
+#    Rails.logger.info "PackShipment.number_of_closed response: #{data}"
     
     unless data["GetShipmentsByStatusForMobileResponse"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"].blank? or data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].blank?
       if data["GetShipmentsByStatusForMobileResponse"]["Shipments"]["ShipmentHeadInformation"].is_a? Hash # Only one result returned, so put it into an array
@@ -266,13 +266,13 @@ class PackShipment
       "EndDate" => "#{Date.today} 23:59:59"
       }
     json_encoded_payload = JSON.generate(payload)
-    Rails.logger.info json_encoded_payload
+#    Rails.logger.info json_encoded_payload
     
     xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
       payload: json_encoded_payload)
     
     data= Hash.from_xml(xml_content)
-    Rails.logger.info "PackShipment.all_by_date: #{data}"
+#    Rails.logger.info "PackShipment.all_by_date: #{data}"
     
     if data["GetShipmentsByCustomerResponse"]["Shipments"]["ShipmentHeadInformation"].blank?# No results, so put into empty array
       return []
