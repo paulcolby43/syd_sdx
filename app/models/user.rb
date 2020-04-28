@@ -520,6 +520,18 @@ class User < ActiveRecord::Base
     end
   end
   
+  def location_logging?
+    if access_token.api_supported_versions.blank?
+      return false
+    else
+      return true
+    end
+  end
+  
+  def supported_versions
+    access_token.api_supported_versions
+  end
+  
   #############################
   #     Class Methods         #
   #############################

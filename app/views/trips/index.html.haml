@@ -53,16 +53,17 @@
                     %i.fa.fa-ticket
                     Ticket
                 -# %btn.btn.btn-success.btn-sm#watch_me{:onclick => "getLocation(); $(this).hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $('#stop_watch').show();"}
-                %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
-                  %i.fa.fa-location-arrow
-                  Track Me
-                -# %btn.btn.btn-primary.btn-sm#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide(); $('#watch_me').show();"}
-                %btn.btn.btn-primary.btn-sm.stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide();  $('.watch_me').show();"}
-                  %i.fa.fa-location-arrow
-                  Stop
-                %a{href: locations_trip_path(trip['Id']), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Locations"} }
-                  %i.fa.fa-map-pin
-                  Locations
+                - if current_user.location_logging?
+                  %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
+                    %i.fa.fa-location-arrow
+                    Track Me
+                  -# %btn.btn.btn-primary.btn-sm#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide(); $('#watch_me').show();"}
+                  %btn.btn.btn-primary.btn-sm.stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide();  $('.watch_me').show();"}
+                    %i.fa.fa-location-arrow
+                    Stop
+                  %a{href: locations_trip_path(trip['Id']), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Locations"} }
+                    %i.fa.fa-map-pin
+                    Locations
                 -#
                   %br
                   %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}

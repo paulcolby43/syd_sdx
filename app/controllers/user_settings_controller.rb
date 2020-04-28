@@ -16,7 +16,7 @@ class UserSettingsController < ApplicationController
 #    @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
     @event_codes = current_user.company.event_codes
-    @supported_versions = current_user.access_token.api_supported_versions
+    @supported_versions = current_user.api_supported_versions
   end
 
   # GET /user_settings/new
