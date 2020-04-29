@@ -1069,7 +1069,8 @@ class Ticket
       
     data= Hash.from_xml(response)
 #    Rails.logger.info "******************* Pay by cash: #{data} *******************************"
-    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
+#    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
+    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]
   end
   
   # Pay ticket by check
@@ -1112,7 +1113,8 @@ class Ticket
       
     data= Hash.from_xml(response)
 #    Rails.logger.info "******************* Pay by check: #{data} *******************************"
-    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
+#    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Success"]
+    return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]
   end
   
   def self.total_paid(auth_token, yard_id, ticket_id)
