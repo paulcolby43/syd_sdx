@@ -4,7 +4,7 @@
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'thumbnail img-responsive')
-        - if File.extname(@shipment['FILE_NAME']) == '.pdf'
+        - if not @shipment['FILE_NAME'].blank? and File.extname(@shipment['FILE_NAME']) == '.pdf'
           %p.lead.text-center
             %a{href: send_jpeg_image_file_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID'])}
               %i.fa.fa-file-pdf-o.fa-lg
