@@ -379,8 +379,12 @@ class TicketsController < ApplicationController
     respond_to do |format|
       format.html {
 #        if Ticket.void(current_user.token, current_yard_id, params[:ticket]) == 'true'
-#        if Ticket.void(current_user.token, current_yard_id, params[:id]) == 'true'
-        if Ticket.void_with_session(current_user.token, current_yard_id, params[:id], params[:session_id]) == 'true'
+        unless current_user.ticket_sessions?
+          void_response = Ticket.void(current_user.token, current_yard_id, params[:id])
+        else
+          void_response = Ticket.void_with_session(current_user.token, current_yard_id, params[:id], params[:session_id])
+        end
+        if void_response == 'true'
           flash[:success] = 'Ticket was successfully voided.'
         else
           flash[:danger] = 'Error voiding ticket.'
