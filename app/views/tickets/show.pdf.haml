@@ -2,6 +2,9 @@
   = @ticket_number
   %br
   =# DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
+  - unless @ticket['Description'].blank?
+    = @ticket['Description']
+    %br
   - if @ticket['Status'] == '1' or @ticket['Status'] == '3'
     = @ticket["DateClosed"].to_datetime.strftime("%a, %d %b %Y %I:%M%p") unless @ticket["DateClosed"].blank?
     %br

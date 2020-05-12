@@ -34,17 +34,15 @@
                 %br
                 %br
             -#
-            - if @status == '1' or @status == '3'
-              %div.list-group-item
+            %div.list-group-item
+              - if @status == '1' or @status == '3'
                 = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
                 .pull-right
                   %a.btn.btn-default{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
                     More
                     %b.caret
                 %br
-                %br
-            - else
-              %div.list-group-item
+              - else
                 = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
                 .pull-right
                   %a.btn.btn-primary{href: "#ticket_#{ticket['Id']}_upload_form", id: "ticket_#{ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
@@ -58,13 +56,16 @@
                     %i.fa.fa-file-pdf-o.fa-lg
                     = "PDF" unless mobile_device?
                 %br
-                %br
               -#
                 %a{href: ticket_path(ticket['Id'], status: ticket['Status'], now: DateTime.now, format: 'pdf'), class: "list-group-item", target: '_blank'}
                   = ticket["DateCreated"].to_date.strftime("%m/%d/%y")
                   .pull-right
                     %i.fa.fa-file-pdf-o.fa-lg
                     Print
+              - unless ticket['Description'].blank?
+                %small= ticket['Description']
+              - else
+                %br
 
 :javascript
   $('[data-toggle="popover"]').popover();
