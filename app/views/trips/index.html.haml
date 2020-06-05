@@ -4,7 +4,7 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     %p.pull-right
-      %a{href: "SDXTripLocationLogger://logLocation?apiAddress=https://#{current_user.company.dragon_api}>&tripId=#{@trips.first['Id']}&tripDesc=some_description"} 
+      %a{href: "SDXTripLocationLogger://logLocation?apiAddress=https://#{current_user.company.dragon_api}&tripId=#{@trips.first['Id']}&tripDesc=some_description"} 
         %i.fa.fa-mobile
         Location Logger App
 
