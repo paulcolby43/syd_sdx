@@ -4,6 +4,12 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     -#
+      %p.pull-right
+        %a{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{@trips.first['Id']}&tripDesc=#{@trips.first['TripNumber']}"} 
+          %i.fa.fa-mobile
+          Location Logger App
+
+    -#
       .well
         #map
     %p
@@ -54,7 +60,11 @@
                     Ticket
                 -# %btn.btn.btn-success.btn-sm#watch_me{:onclick => "getLocation(); $(this).hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $('#stop_watch').show();"}
                 - if current_user.location_logging?
-                  %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
+                  -#
+                    %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
+                      %i.fa.fa-location-arrow
+                      Track Me
+                  %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip['Id']}&tripDesc=#{trip['TripNumber']}"}
                     %i.fa.fa-location-arrow
                     Track Me
                   -# %btn.btn.btn-primary.btn-sm#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide(); $('#watch_me').show();"}

@@ -2,6 +2,9 @@
   = @ticket_number
   %br
   =# DateTime.now.strftime("%a, %d %b %Y %I:%M%p")
+  - unless @ticket['Description'].blank?
+    = @ticket['Description']
+    %br
   - if @ticket['Status'] == '1' or @ticket['Status'] == '3'
     = @ticket["DateClosed"].to_datetime.strftime("%a, %d %b %Y %I:%M%p") unless @ticket["DateClosed"].blank?
     %br
@@ -137,16 +140,16 @@
           %td
             - unless line_item["DeductionCollection"].blank?
               - if line_item["DeductionCollection"].is_a? Hash # Only one line item deduction
-                = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
-                = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
-                = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
-                = number_with_precision(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
+                = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
+                = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
+                = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
+                = number_with_precision(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
               - else
                 - line_item["DeductionCollection"].each do |line_item_deduction|
-                  = line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
-                  = number_to_currency(line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
-                  = line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
-                  = number_with_precision(line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"].blank?
+                  = line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item_deduction["ApiTicketItemDeduction"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
+                  = number_to_currency(line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item_deduction["ApiTicketItemDeduction"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
+                  = line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item_deduction["ApiTicketItemDeduction"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
+                  = number_with_precision(line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item_deduction["ApiTicketItemDeduction"].blank? or line_item_deduction["ApiTicketItemDeduction"]["DeductWeight"].blank?
             - else
               None
           %td= @ticket["TicketItemCollection"]["ApiTicketItem"]['UnitOfMeasure']

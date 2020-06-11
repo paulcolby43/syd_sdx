@@ -2,6 +2,10 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    %br
+    %br
+    %br
+    %br
     #reportViewer1.k-widget
       loading...
 
@@ -9,13 +13,30 @@
 :javascript
   $("#reportViewer1")
     .telerik_ReportViewer({
-        serviceUrl: "http://50.192.53.46:50003/api/reports",
-        //templateUrl: /ReportViewer/templates/telerikReportViewerTemplate-FA-x.x.x.x.html
+        serviceUrl: "https://sddev.scrapdragon.com:50004/api/reports",
         reportSource: { 
-            //report: "Adam Test.trdx",
-            report: "AdamTest",
+            report: "Adams Test.trdx",
             parameters: {
-                CultureID: "en"
+              YardId: "1612C2EA-4891-4F5A-84F6-B8C5F73CEB7C"
             }
         }
     });
+
+-#
+  :javascript
+    $("#reportViewer1")
+      .telerik_ReportViewer({
+          serviceUrl: "https://sddev.scrapdragon.com:50003/api/reports",
+          reportSource: { 
+              report: "Adams Test.trdx",
+              parameterValues: {
+                Yard:  null,
+                CurrentYardId: "1612C2EA-4891-4F5A-84F6-B8C5F73CEB7C",
+                CurrentYardName: "Main Yard",
+                CurrentYardAddress: "4470 Chamblee Dunwoody Rd",
+                CurrentYardCity:  "Dunwoody",
+                CurrentYardState: "GA",
+                CurrentYardZip: "30338"
+              }
+          }
+      });

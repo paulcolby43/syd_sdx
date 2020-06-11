@@ -1,13 +1,16 @@
 = render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
-  - unless @ticket_session_id.blank?
-    .container
-      .pull-right
-        %small
-          Ticket Session
-          %strong= @ticket_session_id
+  -#
+    - unless @ticket_session_id.blank?
+      .container
+        .pull-right
+          %small
+            Ticket Session
+            %strong= @ticket_session_id
   .container
+    - unless @ticket['Description'].blank?
+      %p.text-center= @ticket['Description']
     -#
       .well
         = @get_ticket
