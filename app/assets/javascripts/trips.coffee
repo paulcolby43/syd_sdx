@@ -59,12 +59,12 @@ jQuery ->
 
   $('.container_select').select2(
     theme: 'bootstrap'
-    minimumInputLength: 3
+    #minimumInputLength: 3
     cache: true
-    tags: true
+    #tags: true
     allowClear: true
     selectOnClose: true
-    placeholder: 'Search containers'
+    placeholder: 'Choose container'
     insertTag: (data, tag) ->
       tag.text = 'Create: ' + tag.text
       data.push tag
@@ -164,11 +164,18 @@ jQuery ->
             alert "Task " + $(this).data("sequence-number") + " of this trip still needs to be completed!"
       if all_done == true
         $(this).data 'current-value', input_select.val() # Set the data attribute so can find previous if necessary
-        task_form.submit()
-        alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
-        $(this).closest('.modal').modal('hide')
-        #$(this).closest('.modal-backdrop').remove();
-        $(this).closest('.panel').remove()
+        # alert 'Saving all tasks as complete will complete this trip and remove it from your list.'
+        confirm1 = confirm('Saving all tasks as complete will close this trip and remove it from your list. Are you sure?')
+        if confirm1
+          e.preventDefault()
+          task_form.submit()
+          $(this).closest('.modal').modal('hide')
+          #$(this).closest('.modal-backdrop').remove();
+          $(this).closest('.panel').remove()
+          return
+        else
+          e.preventDefault()
+          return
       else
         if allow_save == true
           $(this).data 'current-value', input_select.val() # Set the data attribute so can find previous if necessary
