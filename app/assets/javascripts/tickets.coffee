@@ -243,6 +243,7 @@ jQuery ->
     $('#hold_close_pay_buttons').hide();
     $('#calculating').show();
     changed_field = $(this)
+    quantity = $(this).closest('.panel').find('#ticket_line_items__quantity').val()
     gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
     tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
     line_item_dollar_amount_deductions_total = 0
@@ -274,6 +275,13 @@ jQuery ->
     price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
     unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
     console.log 'unit of measure', unit_of_measure
+    if unit_of_measure == 'EA'
+      changed_field.closest('.panel').find('#quantity_form_field').show()
+      changed_field.closest('.panel').find('#gross_and_tare_form_field').hide()
+    else
+      changed_field.closest('.panel').find('#quantity_form_field').hide()
+      changed_field.closest('.panel').find('#gross_and_tare_form_field').show()
+      
     #tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     #tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(net))).toFixed(2)
     #total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2)).toFixed(2)
@@ -296,7 +304,10 @@ jQuery ->
           new_weight = data.new_weight
           console.log 'new_weight', data
           if line_item_unit_of_measure != 'LD'
-            amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+            if line_item_unit_of_measure == 'EA'
+              amount = (parseFloat(price) * parseFloat(quantity) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+            else
+              amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
           else 
             amount = (parseFloat(price) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
           console.log 'amount:', amount
@@ -312,7 +323,10 @@ jQuery ->
           changed_field.closest('.panel').find('#ticket_line_items__tax_amount_3').val tax_amount_3
           
           # Update calculation details in panel footer
-          changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
+          if line_item_unit_of_measure == 'EA'
+            changed_field.closest('.panel').find('.calculation_details').html '<strong>Quantity:</strong> ' + quantity + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
+          else
+            changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
           if line_item_dollar_amount_deductions_total > 0
             changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Less:</strong> $' + line_item_dollar_amount_deductions_total
           if line_item_weight_deductions_total > 0
@@ -416,6 +430,16 @@ jQuery ->
     $('input[type=file]').trigger 'click'
     false
   ### End Gross/Tare Picture Uploads ###
+
+  ### Quantity Picture Uploads ###
+  $('.ticket_input_fields_wrap').on 'click', '.quantity_picture_button', ->
+    item_id = $(this).data( "item-id" )
+    item_name = $(this).data( "item-name" )
+    $('#image_file_tare_seq_nbr').val item_id
+    $('#image_file_commodity_name').val item_name
+    $('input[type=file]').trigger 'click'
+    false
+  ### End Quantity Picture Uploads ###
 
   ### Clear the commodity picture upload fields for generic picture uploads ###
   $(document).on 'click', '#picture_upload_modal_link', ->

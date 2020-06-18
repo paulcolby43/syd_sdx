@@ -211,11 +211,11 @@ class TicketsController < ApplicationController
             unless line_item[:commodity].blank?
               # Create new item
               unless current_user.ticket_sessions?
-                Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                Ticket.add_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:quantity], line_item[:gross], 
                   line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
                   ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
               else
-                Ticket.add_item_with_session(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                Ticket.add_item_with_session(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:quantity], line_item[:gross], 
                   line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
                   ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions], ticket_params[:session_id])
               end
@@ -224,11 +224,11 @@ class TicketsController < ApplicationController
             unless line_item[:commodity].blank?
               # Update existing item
               unless current_user.ticket_sessions?
-                Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                Ticket.update_item(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:quantity], line_item[:gross], 
                   line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
                   ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions])
               else
-                Ticket.update_item_with_session(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:gross], 
+                Ticket.update_item_with_session(current_user.token, current_yard_id, params[:id], line_item[:id], line_item[:commodity], line_item[:quantity], line_item[:gross], 
                   line_item[:tare], line_item[:net], line_item[:price], line_item[:amount], line_item[:notes], line_item[:serial_number],
                   ticket_params[:customer_id], line_item[:unit_of_measure], line_item[:deductions], ticket_params[:session_id])
               end
@@ -431,7 +431,7 @@ class TicketsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def ticket_params
       params.require(:ticket).permit(:ticket_number, :customer_id, :id, :status, :description, :session_id, :related_workorder_id, :created_from_trip, 
-        line_items: [:id, :commodity, :gross, :tare, :net, :price,  :amount, :tax_amount, :status, :notes, :serial_number, :unit_of_measure, 
+        line_items: [:id, :commodity, :quantity, :gross, :tare, :net, :price,  :amount, :tax_amount, :status, :notes, :serial_number, :unit_of_measure, 
           :tax_amount_1, :tax_amount_2, :tax_amount_3, :tax_percent_1, :tax_percent_2, :tax_percent_3,
           deductions: [:deduct_weight_description, :deduct_weight, :deduct_dollar_amount_description, :deduct_dollar_amount, :id] ])
     end

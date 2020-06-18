@@ -117,43 +117,53 @@
                     =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, line_item['CommodityId']), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true
                     = select_tag "ticket[line_items][][commodity]", options_for_select([ ["#{line_item['PrintDescription']}", line_item['CommodityId']] ], line_item['CommodityId']), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true
                     %br
-                    %div.input-group.gross_input_group
-                      - current_user.scale_devices.each do |scale_device|
+                    #quantity_form_field{style: "#{line_item['UnitOfMeasure'] == 'EA' ? 'display:block' : 'display:none'}"}
+                      %div.input-group.quantity_input_group
                         %span.input-group-addon
-                          - if scale_device.scale_camera_only?
-                            %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-camera.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                          - else
-                            %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-dashboard.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                      %span.input-group-addon
-                        %i.fa.fa-plus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
-                      %span.input-group-addon
-                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross",  'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
-                          %i.fa.fa-upload.fa-2x
-                    %br
-                    %div.input-group.tare_input_group
-                      - current_user.scale_devices.each do |scale_device|
+                          %i.fa.fa-hashtag{style: "font-size:0.7em;"}
+                        = phone_field_tag "ticket[line_items][][quantity]", number_with_precision(line_item['Quantity'], precision: 1, strip_insignificant_zeros: true), :placeholder => "Quantity", class: "form-control input-lg amount-calculation-field"
                         %span.input-group-addon
-                          - if scale_device.scale_camera_only?
-                            %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-camera.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                          - else
-                            %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                              %i.fa.fa-dashboard.fa-lg
-                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                      %span.input-group-addon
-                        %i.fa.fa-minus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
-                      %span.input-group-addon
-                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
-                          %i.fa.fa-upload.fa-2x
-                    %br
-                    = hidden_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
+                          %a{href: '#', id: 'quantity_picture_button', class: 'quantity_picture_button', 'data-event-code' => "Quantity",  'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
+                            %i.fa.fa-upload.fa-2x
+                      %br
+                    #gross_and_tare_form_field{style: "#{line_item['UnitOfMeasure'] == 'EA' ? 'display:none' : 'display:block'}"}
+                      %div.input-group.gross_input_group
+                        - current_user.scale_devices.each do |scale_device|
+                          %span.input-group-addon
+                            - if scale_device.scale_camera_only?
+                              %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                                %i.fa.fa-camera.fa-lg
+                                %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                            - else
+                              %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                                %i.fa.fa-dashboard.fa-lg
+                                %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                        %span.input-group-addon
+                          %i.fa.fa-plus{style: "font-size:0.7em;"}
+                        = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                        %span.input-group-addon
+                          %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross",  'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
+                            %i.fa.fa-upload.fa-2x
+                      %br
+                      %div.input-group.tare_input_group
+                        - current_user.scale_devices.each do |scale_device|
+                          %span.input-group-addon
+                            - if scale_device.scale_camera_only?
+                              %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                                %i.fa.fa-camera.fa-lg
+                                %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                            - else
+                              %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => line_item["PrintDescription"], 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                                %i.fa.fa-dashboard.fa-lg
+                                %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                        %span.input-group-addon
+                          %i.fa.fa-minus{style: "font-size:0.7em;"}
+                        = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                        %span.input-group-addon
+                          %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
+                            %i.fa.fa-upload.fa-2x
+                      %br
+                      = hidden_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
                     .input-group
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
@@ -206,14 +216,18 @@
                         = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
                 .panel-footer{style: 'padding-top: 0px;'}
                   .calculation_details
-                    %strong Gross:
-                    = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
-                    &nbsp;
-                    %strong Tare:
-                    = "#{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
-                    &nbsp;
-                    %strong Net:
-                    = "#{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)} LB"
+                    - if line_item['UnitOfMeasure'] == 'EA'
+                      %strong Quantity:
+                      = "#{number_with_precision(line_item['Quantity'], :precision => 1, strip_insignificant_zeros: true)}"
+                    - else
+                      %strong Gross:
+                      = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                      &nbsp;
+                      %strong Tare:
+                      = "#{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                      &nbsp;
+                      %strong Net:
+                      = "#{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)} LB"
                     &nbsp;
                     = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
                     &nbsp;
@@ -257,16 +271,6 @@
                         - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
                           - unless tax['TaxAmount'] == '0.00'
                             = "$#{tax['TaxAmount']}"
-                  -#
-                    %br
-                    = "(#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)} - #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}) = #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}LB"
-                    x
-                    = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
-                    = "= $#{line_item['ExtendedAmount']}"
-                  -#
-                    .pull-right
-                      %a.text-success{"aria-controls" => "collapse#{line_item['Id']}", "data-toggle" => "collapse", :href => "#collapse_#{line_item['Id']}", class: 'pull-right ticket_collapse_link' }
-                        %i.fa.fa-3x.collapse_icon
       - else
         / New item
         %div.ticket_input_fields_wrap.new_item
@@ -291,43 +295,53 @@
                   =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-session-id" => @ticket_session_id
                   %br
-                  %div.input-group.gross_input_group
-                    - current_user.scale_devices.each do |scale_device|
+                  #quantity_form_field{style: 'display:none'}
+                    %div.input-group.quantity_input_group
                       %span.input-group-addon
-                        - if scale_device.scale_camera_only?
-                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                            %i.fa.fa-camera.fa-lg
-                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                        - else
-                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                            %i.fa.fa-dashboard.fa-lg
-                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    %span.input-group-addon
-                      %i.fa.fa-plus{style: "font-size:0.7em;"}
-                    = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
-                    %span.input-group-addon
-                      %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => 0}
-                        %i.fa.fa-upload.fa-2x
-                  %br
-                  %div.input-group.tare_input_group
-                    - current_user.scale_devices.each do |scale_device|
+                        %i.fa.fa-hashtag{style: "font-size:0.7em;"}
+                      = phone_field_tag "ticket[line_items][][quantity]", 0, :placeholder => "Quantity", class: "form-control input-lg amount-calculation-field"
                       %span.input-group-addon
-                        - if scale_device.scale_camera_only?
-                          %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                            %i.fa.fa-camera.fa-lg
-                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                        - else
-                          %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
-                            %i.fa.fa-dashboard.fa-lg
-                            %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
-                    %span.input-group-addon
-                      %i.fa.fa-minus{style: "font-size:0.7em;"}
-                    = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
-                    %span.input-group-addon
-                      %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => 0}
-                        %i.fa.fa-upload.fa-2x
-                  %br
-                  = hidden_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
+                        %a{href: '#', id: 'quantity_picture_button', class: 'quantity_picture_button', 'data-event-code' => "Quantity"}
+                          %i.fa.fa-upload.fa-2x
+                    %br
+                  #gross_and_tare_form_field{style: 'display:block'}
+                    %div.input-group.gross_input_group
+                      - current_user.scale_devices.each do |scale_device|
+                        %span.input-group-addon
+                          - if scale_device.scale_camera_only?
+                            %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                              %i.fa.fa-camera.fa-lg
+                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                          - else
+                            %a{href: '#', class: "scale_read_and_camera_trigger", id: 'gross_scale_button', 'data-event-code' => "Gross", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                              %i.fa.fa-dashboard.fa-lg
+                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                      %span.input-group-addon
+                        %i.fa.fa-plus{style: "font-size:0.7em;"}
+                      = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
+                      %span.input-group-addon
+                        %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => 0}
+                          %i.fa.fa-upload.fa-2x
+                    %br
+                    %div.input-group.tare_input_group
+                      - current_user.scale_devices.each do |scale_device|
+                        %span.input-group-addon
+                          - if scale_device.scale_camera_only?
+                            %a{href: '#', style: "color: hotpink;", class: "scale_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                              %i.fa.fa-camera.fa-lg
+                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                          - else
+                            %a{href: '#', class: "scale_read_and_camera_trigger", id: 'tare_scale_button', 'data-event-code' => "Tare", 'data-ticket-number' => @ticket_number, 'data-item-name' => '', 'data-yard-id' => current_yard_id, 'data-device-id' => scale_device.id, title: scale_device.DeviceName, 'data-customer-id' => @ticket['CustomerId'] }
+                              %i.fa.fa-dashboard.fa-lg
+                              %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+                      %span.input-group-addon
+                        %i.fa.fa-minus{style: "font-size:0.7em;"}
+                      = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
+                      %span.input-group-addon
+                        %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => 0}
+                          %i.fa.fa-upload.fa-2x
+                    %br
+                    = hidden_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
                   .input-group
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg

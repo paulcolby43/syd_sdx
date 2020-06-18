@@ -25,12 +25,15 @@ $('.ticket_item_color:last').append(vehicle_color_options).find("option:first").
 
 first_gross_input_group_clone = $(".gross_input_group:first").clone();
 first_tare_input_group_clone = $(".tare_input_group:first").clone();
+first_quantity_input_group_clone = $(".quantity_input_group:first").clone();
 
 first_gross_input_group_clone.find('input').val('0');
 first_tare_input_group_clone.find('input').val('0');
+first_quantity_input_group_clone.find('input').val('0');
 
 $('.gross_input_group:last').replaceWith(first_gross_input_group_clone);
 $('.tare_input_group:last').replaceWith(first_tare_input_group_clone);
+$('.quantity_input_group:last').replaceWith(first_quantity_input_group_clone);
 
 $('#spinner').hide();
 $('#add_item_button').show(); 
