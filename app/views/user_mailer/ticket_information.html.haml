@@ -8,12 +8,16 @@
   - @line_items.each do |line_item|
     %p
       = line_item["PrintDescription"]
-      %br
-      = "Gross: #{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
-      %br
-      = "Tare: #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
-      %br
-      = "Net: #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+      - if line_item['UnitOfMeasure'] == 'EA'
+        %br
+        = "Quantity: #{number_with_precision(line_item['Quantity'], :precision => 1, strip_insignificant_zeros: true)}"
+      - else
+        %br
+        = "Gross: #{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+        %br
+        = "Tare: #{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+        %br
+        = "Net: #{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)}"
       %br
       = "Price: $#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
       %br
