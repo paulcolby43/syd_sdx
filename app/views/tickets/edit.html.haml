@@ -214,7 +214,7 @@
                         = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                         %br
                         = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
-                .panel-footer{style: 'padding-top: 0px;'}
+                .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                   .calculation_details
                     - if line_item['UnitOfMeasure'] == 'EA'
                       %strong Quantity:
@@ -299,7 +299,7 @@
                     %div.input-group.quantity_input_group
                       %span.input-group-addon
                         %i.fa.fa-hashtag{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][quantity]", 0, :placeholder => "Quantity", class: "form-control input-lg amount-calculation-field"
+                      = phone_field_tag "ticket[line_items][][quantity]", 1, :placeholder => "Quantity", class: "form-control input-lg amount-calculation-field"
                       %span.input-group-addon
                         %a{href: '#', id: 'quantity_picture_button', class: 'quantity_picture_button', 'data-event-code' => "Quantity"}
                           %i.fa.fa-upload.fa-2x
@@ -378,7 +378,7 @@
                       = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
                       %br
                       = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-              %div.panel-footer{style: 'padding-top: 0px;'}
+              %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                 .calculation_details
                 .deduction_details
                 -# %ul{class: 'list-inline'}

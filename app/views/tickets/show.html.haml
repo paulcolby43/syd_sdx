@@ -23,7 +23,7 @@
                 %h4.panel-title
                   .line_item_name
                     %div.text-primary= line_item["PrintDescription"]
-              .panel-footer{style: 'padding-top: 0px;'}
+              .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                 .calculation_details
                   %strong Gross:
                   = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
