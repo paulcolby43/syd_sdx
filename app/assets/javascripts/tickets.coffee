@@ -1000,11 +1000,13 @@ jQuery ->
           body_select.val body_id
         else
           alert 'Not a valid VIN'
+          results_div.show()
         return
       error: ->
         search_icon.show()
         spinner_icon.hide()
         alert 'VIN search failed'
+        results_div.show()
         return
     return
   ### End VIN Search ###
