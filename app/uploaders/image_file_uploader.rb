@@ -22,11 +22,11 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     process :cover
 #    process :resize_to_fit => [320, 240]
     process :resize_to_fit => [320, 240]
-    process :convert => :jpg
-
-    def full_filename (for_file = model.source.file)
-      super.chomp(File.extname(super)) + '.jpg'
-    end
+#    process :convert => :jpg
+#
+#    def full_filename (for_file = model.source.file)
+#      super.chomp(File.extname(super)) + '.jpg'
+#    end
   end
   
   version :large, if: :ready_to_process? do

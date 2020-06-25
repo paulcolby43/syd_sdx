@@ -14,11 +14,15 @@
       = hidden_field_tag "ticket[line_items][][status]", nil
       = select_tag "ticket[line_items][][commodity]", "", class: "form-control input-lg item_select", prompt: '-- Choose an item --', required: true, "data-ticket-id" => @ticket_id, "data-item-id" => id, "data-session-id" => @ticket_session_id
       %br
-      %div.input-group.gross_input_group
-      %br
-      %div.input-group.tare_input_group
-      %br
-      = hidden_field_tag "ticket[line_items][][net]", nil, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
+      #quantity_form_field{style: 'display:none;'}
+        %div.input-group.quantity_input_group
+        %br
+      #gross_and_tare_form_field
+        %div.input-group.gross_input_group
+        %br
+        %div.input-group.tare_input_group
+        %br
+        = hidden_field_tag "ticket[line_items][][net]", nil, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
       .input-group
         %span.input-group-addon
           %i.fa.fa-dollar.fa-lg
@@ -26,7 +30,7 @@
         =# hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
         %span.input-group-addon
           %i.fa.fa-balance-scale.fa-lg
-        = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg", required: true
+        = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
       = hidden_field_tag "ticket[line_items][][amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount amount-calculation-field", required: true, readonly: true
       = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
       = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
@@ -62,7 +66,7 @@
           = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
           %br
           = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-  %div.panel-footer{style: 'padding-top: 0px;'}
+  %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
     .calculation_details
     .deduction_details
     / Deduction weights

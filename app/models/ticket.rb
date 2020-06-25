@@ -541,7 +541,7 @@ class Ticket
   end
   
   # Add a line item to a ticket
-  def self.add_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions)
+  def self.add_item(auth_token, yard_id, ticket_id, item_id, commodity_id, quantity, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -602,6 +602,7 @@ class Ticket
           "DateCreated" => Time.now.utc.iso8601, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
+          "Quantity" => quantity,
           "GrossWeight" => gross,
 #          "Id" => new_id,
           "Id" => item_id,
@@ -610,7 +611,6 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => serial_number, 
@@ -632,7 +632,7 @@ class Ticket
   end
    
   # Update line item of ticket
-  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions)
+  def self.update_item(auth_token, yard_id, ticket_id, item_id, commodity_id, quantity, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -738,6 +738,7 @@ class Ticket
           "CurrencyId" => user.user_setting.currency_id, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
+          "Quantity" => quantity,
           "GrossWeight" => gross,
           "Id" => item_id, 
           "NetWeight" => net,
@@ -745,7 +746,6 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => serial_number, 
@@ -781,6 +781,7 @@ class Ticket
           "CurrencyId" => user.user_setting.currency_id,
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
+          "Quantity" => '0',
           "GrossWeight" => gross,
           "Id" => item_id, 
           "NetWeight" => net,
@@ -788,7 +789,6 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => "", 
@@ -803,7 +803,7 @@ class Ticket
       return data["SaveTicketItemResponse"]["Success"]
   end
   
-  def self.add_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions, session_id)
+  def self.add_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, quantity, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions, session_id)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -865,6 +865,7 @@ class Ticket
           "DateCreated" => Time.now.utc.iso8601, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
+          "Quantity" => quantity,
           "GrossWeight" => gross,
 #          "Id" => new_id,
           "Id" => item_id,
@@ -873,7 +874,6 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => serial_number, 
@@ -894,7 +894,7 @@ class Ticket
     return data["ApiSaveTicketItemResponse"]["Success"]
   end
   
-  def self.update_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions, session_id)
+  def self.update_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, quantity, gross, tare, net, price, amount, notes, serial_number, customer_id, unit_of_measure, deductions, session_id)
     require 'json'
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
     user = access_token.user # Get access token's user record
@@ -1003,6 +1003,7 @@ class Ticket
           "CurrencyId" => user.user_setting.currency_id, 
           "ExtendedAmount" => amount, 
           "ExtendedAmountInAssignedCurrency" => amount,
+          "Quantity" => quantity,
           "GrossWeight" => gross,
           "Id" => item_id, 
           "NetWeight" => net,
@@ -1010,7 +1011,6 @@ class Ticket
           "Price" => price,
           "PriceInAssignedCurrency" => price,
           "PrintDescription" => commodity_name, 
-          "Quantity" => "#{commodity_unit_of_measure == 'EA' ? net : '0'}",
           "ScaleUnitOfMeasure" => "LB", 
           "Sequence" => "1", 
           "SerialNumber" => serial_number, 
@@ -1029,6 +1029,45 @@ class Ticket
 #      Rails.logger.debug "Ticket.update_item_with_session response: #{response}"
       data= Hash.from_xml(response)
       return data["ApiSaveTicketItemResponse"]["Success"]
+  end
+  
+  def self.void_item_with_session(auth_token, yard_id, ticket_id, item_id, commodity_id, gross, tare, net, price, amount, session_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+#    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/ticket/item/void"
+    api_url = "https://#{user.company.dragon_api}/api/v1/yard/#{yard_id}/ticket/item/void"
+    commodity = Commodity.find_by_id(auth_token, yard_id, commodity_id)
+    commodity_name = commodity["PrintDescription"]
+    commodity_unit_of_measure = commodity["UnitOfMeasure"]
+    response = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"},
+      payload: {
+        "sessionId" => session_id,
+        "skipSessionValidation" => false,
+        "TicketItem"=>{
+          "CommodityId" => commodity_id,
+          "CurrencyId" => user.user_setting.currency_id,
+          "ExtendedAmount" => amount, 
+          "ExtendedAmountInAssignedCurrency" => amount,
+          "Quantity" => '0',
+          "GrossWeight" => gross,
+          "Id" => item_id, 
+          "NetWeight" => net,
+          "Notes" => "", 
+          "Price" => price,
+          "PriceInAssignedCurrency" => price,
+          "PrintDescription" => commodity_name, 
+          "ScaleUnitOfMeasure" => "LB", 
+          "Sequence" => "1", 
+          "SerialNumber" => "", 
+          "Status" => 'Hold', 
+          "TareWeight" => tare, 
+          "TicketHeadId" => ticket_id,
+          "UnitOfMeasure" => "LB"
+          }
+        })
+#      Rails.logger.info response
+      data= Hash.from_xml(response)
+      return data["SaveTicketItemResponse"]["Success"]
   end
   
   # Get accounts payable items for ticket (multiple items if partial payments)
