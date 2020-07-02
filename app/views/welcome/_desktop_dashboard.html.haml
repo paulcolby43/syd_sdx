@@ -13,7 +13,7 @@
             %span.text-info SCRAP DRAGON
             
         .col-xs-12.col-sm-4
-          %h3.text-center{style: 'color: white;'}
+          %h3.text-center.text-danger
             %i.fa.fa-spinner.fa-spin{id: 'yard_spinner', style: 'display:none;'}
             = @yard['Name']
           %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=#{url_encode(session[:time_zone])}", :width => "100%"}
