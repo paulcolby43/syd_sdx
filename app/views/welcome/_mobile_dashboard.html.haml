@@ -4,7 +4,7 @@
   .container-fluid
     .row
       .col-xs-12
-        .col-xs-12.col-sm-3{style: 'color: white;'}
+        .col-xs-12{style: 'color: white;'}
           %h3.text-center
             - unless current_user.company.logo.url.blank?
               = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive center-block', size: '150x150')
@@ -13,9 +13,11 @@
             %span.text-info SCRAP DRAGON
     .row
       .col-xs-12.col-sm-6
-        %h3.text-center.text-danger
-          %i.fa.fa-spinner.fa-spin{id: 'yard_spinner', style: 'display:none;'}
-          = @yard['Name']
+        %h3.text-center{style: 'color: white;'}
+          %i
+            %strong
+              %i.fa.fa-spinner.fa-spin{id: 'yard_spinner', style: 'display:none;'}
+              = @yard['Name']
       .col-xs-12.col-sm-6
         .text-center{style: 'color: white;'}
           = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
@@ -42,30 +44,36 @@
             %h2.text-center Created
             %h3.text-center
               Today:
-              %span.text-info= "#{@tickets_today.blank? ? 0 : @tickets_today}"
+              %i
+                %strong= "#{@tickets_today.blank? ? 0 : @tickets_today}"
               %br
               30-Day:
-              %span.text-info= "#{@tickets_30_day_average.blank? ? 0 : @tickets_30_day_average.to_f.round}"
+              %i
+                %strong= "#{@tickets_30_day_average.blank? ? 0 : @tickets_30_day_average.to_f.round}"
       .col-xs-12
         .panel{style: 'background-color: #303030; color: white;'}
           .panel-heading
             %h2.text-center Held
             %h3.text-center
               Total:
-              %span.text-info= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
+              %i
+                %strong= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
               %br
               Avg (min):
-              %span.text-info= "#{@average_hold_time.blank? ? 0 : @average_hold_time}"
+              %i
+                %strong= "#{@average_hold_time.blank? ? 0 : @average_hold_time}"
       .col-xs-12
         .panel{style: 'background-color: #303030; color: white;'}
           .panel-heading
             %h2.text-center Paid
             %h3.text-center
               Today:
-              %span.text-info= "#{@paid_tickets_today_count.blank? ? 0 : @paid_tickets_today_count}"
+              %i
+                %strong= "#{@paid_tickets_today_count.blank? ? 0 : @paid_tickets_today_count}"
               %br
               Total:
-              %span.text-info= number_to_currency(@paid_tickets_today_amount.blank? ? 0 : @paid_tickets_today_amount)
+              %i
+                %strong= number_to_currency(@paid_tickets_today_amount.blank? ? 0 : @paid_tickets_today_amount)
       - @commodity_totals_by_type.select {|ct| ct['ReportDescription'] == 'Ferrous' or ct['ReportDescription'] == 'Nonferrous'} .each do |commodity_total|
         .col-xs-12
           .panel{style: 'background-color: #303030; color: white;'}
@@ -93,24 +101,30 @@
             %h2.text-center Held Shipments
             %h3.text-center
               Today:
-              %span.text-info= "#{@held_shipments_count}"
+              %i
+                %strong= "#{@held_shipments_count}"
               - unless @held_shipments_count.blank? or @held_shipments_count == '0' or @held_shipment.blank?
                 %br
-                %span.text-info= @held_shipment['CustomerName'] 
+                %i
+                  %strong= @held_shipment['CustomerName'] 
                 %br
-                %span.text-info= @held_shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @held_shipment['DateCreated'].blank? or @held_shipment['DateCreated'] == '{"i:nil"=>"true"}'
+                %i
+                  %strong= @held_shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @held_shipment['DateCreated'].blank? or @held_shipment['DateCreated'] == '{"i:nil"=>"true"}'
       .col-xs-12
         .panel{style: 'background-color: #303030; color: white;'}
           .panel-heading
             %h2.text-center Sent Shipments
             %h3.text-center
               Today:
-              %span.text-info= "#{@sent_shipments_count}"
+              %i
+                %strong= "#{@sent_shipments_count}"
               - unless @sent_shipments_count.blank? or @sent_shipments_count == '0' or @closed_shipment.blank?
                 %br
-                %span.text-info= @closed_shipment['CustomerName'] 
+                %i
+                  %strong= @closed_shipment['CustomerName'] 
                 %br
-                %span.text-info= @closed_shipment['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @closed_shipment['DateShipped'].blank? or @closed_shipment['DateShipped'] == '{"i:nil"=>"true"}'
+                %i
+                  %strong= @closed_shipment['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @closed_shipment['DateShipped'].blank? or @closed_shipment['DateShipped'] == '{"i:nil"=>"true"}'
                     
       .col-xs-12
         .panel{style: 'background-color: #303030; color: white;'}
