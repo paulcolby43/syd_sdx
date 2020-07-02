@@ -117,6 +117,10 @@ class ReportsController < ApplicationController
     end
     
   end
+  
+  def telerik
+    @cashier_id = params[:cashier_id]
+  end
 
   private
 
