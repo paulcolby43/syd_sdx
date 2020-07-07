@@ -2,6 +2,8 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    .well= @accounts_payable_items
+    .well= @apcashier
     - unless @ticket['Description'].blank?
       %p.text-center= @ticket['Description']
     .panel.panel-default
