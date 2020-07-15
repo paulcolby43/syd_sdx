@@ -66,7 +66,7 @@
                     %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
                       %i.fa.fa-location-arrow
                       Track Me
-                  -# if location_points.blank?
+                  - if location_points.blank?
                     %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip['Id']}&tripDesc=#{trip['TripNumber']}", :onclick => "$(this).fadeOut();"}
                       %i.fa.fa-location-arrow
                       Start Trip
