@@ -12,11 +12,12 @@
     -#
       .well
         #map
-    %p
-      %a{href: drivers_trips_path, class: 'btn btn-default  customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Drivers Map"}}
-        %i.fa.fa-map
-        Drivers Map
-    %p#current_location{"data-trip-id" => nil, style: 'display:none'}
+    -#
+      %p
+        %a{href: drivers_trips_path, class: 'btn btn-default  customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Drivers Map"}}
+          %i.fa.fa-map
+          Drivers Map
+      %p#current_location{"data-trip-id" => nil, style: 'display:none'}
 
     - unless @trips.blank?
       #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
