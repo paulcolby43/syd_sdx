@@ -268,6 +268,10 @@ class User < ActiveRecord::Base
     mobile_admin?
   end
   
+  def portal_greeter?
+    access_token.roles.include?("Portal Greeter")
+  end
+  
   def portal_customer_ids
     ids = []
     if customer? and not customer_guid.blank?

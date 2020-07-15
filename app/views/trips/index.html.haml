@@ -24,6 +24,7 @@
           =# trip
           - workorders = Trip.workorders(trip)
           - customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
+          - location_points = Trip.get_locations(current_user.token, trip['Id'])
           .panel.panel-default
             .panel-heading{id: "trip_#{index}", :role => "tab"}
               .pull-right
@@ -64,16 +65,20 @@
                     %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
                       %i.fa.fa-location-arrow
                       Track Me
-                  %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip['Id']}&tripDesc=#{trip['TripNumber']}"}
-                    %i.fa.fa-location-arrow
-                    Track Me
+                  -# if location_points.blank?
+                    %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip['Id']}&tripDesc=#{trip['TripNumber']}", :onclick => "$(this).fadeOut();"}
+                      %i.fa.fa-location-arrow
+                      Start Trip
                   -# %btn.btn.btn-primary.btn-sm#stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide(); $('#watch_me').show();"}
-                  %btn.btn.btn-primary.btn-sm.stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide();  $('.watch_me').show();"}
-                    %i.fa.fa-location-arrow
-                    Stop
-                  %a{href: locations_trip_path(trip['Id']), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Locations"} }
-                    %i.fa.fa-map-pin
-                    Locations
+                  -#
+                    %btn.btn.btn-primary.btn-sm.stop_watch{style: 'display:none', :onclick => "stopWatch(); $(this).hide(); $('#current_location').hide();  $('.watch_me').show();"}
+                      %i.fa.fa-location-arrow
+                      Stop
+                  -#
+                    %a{href: locations_trip_path(trip['Id']), class: "btn btn-default btn-sm customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Locations"} }
+                      %i.fa.fa-map-pin
+                      Locations
+                  
                 -#
                   %br
                   %button.btn.btn-default.btn-sm{"data-content" => "#{render partial: 'trip_notes', locals: {workorders: Trip.workorders(trip)}}", "data-placement" => 'top', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Trip Notes"}
@@ -188,46 +193,48 @@
 -# %script{:src => "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&callback=initialize"}
 
 :javascript
-  // Start location tracking
-  var x = document.getElementById("current_location");
-  var geoWatch;
-  var wakelock;
+  /*
+    // Start location tracking
+    var x = document.getElementById("current_location");
+    var geoWatch;
+    var wakelock;
 
-  function getLocation() {
-      if (navigator.geolocation) {
-          geoWatch = navigator.geolocation.watchPosition(showPosition);
-      } else { 
-          x.innerHTML = "Geolocation is not supported by this browser.";}
-      }
+    function getLocation() {
+        if (navigator.geolocation) {
+            geoWatch = navigator.geolocation.watchPosition(showPosition);
+        } else { 
+            x.innerHTML = "Geolocation is not supported by this browser.";}
+        }
 
-  function showPosition(position) {
-      x.innerHTML="Lat: " + position.coords.latitude + 
-      "<br>Long: " + position.coords.longitude;
-      console.log("position changed");
-      trip_id = $("#current_location").data( "trip-id" );
-      $.ajax({
-        url: "/trips/" + trip_id + "/log_location",
-        type: 'get',
-        dataType: 'json',
-        data: {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        }, 
-        success: function(data) {
-          console.log(data);
-          continue_logging = data.continue_logging
-          if (continue_logging == "false") {
-            stopWatch();
-            $('.stop_watch').hide(); 
-            $('#current_location').hide();  
-            $('.watch_me').show();
-          }
-        } 
-      });
-  }
+    function showPosition(position) {
+        x.innerHTML="Lat: " + position.coords.latitude + 
+        "<br>Long: " + position.coords.longitude;
+        console.log("position changed");
+        trip_id = $("#current_location").data( "trip-id" );
+        $.ajax({
+          url: "/trips/" + trip_id + "/log_location",
+          type: 'get',
+          dataType: 'json',
+          data: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          }, 
+          success: function(data) {
+            console.log(data);
+            continue_logging = data.continue_logging
+            if (continue_logging == "false") {
+              stopWatch();
+              $('.stop_watch').hide(); 
+              $('#current_location').hide();  
+              $('.watch_me').show();
+            }
+          } 
+        });
+    }
 
-  function stopWatch() {
-    navigator.geolocation.clearWatch( geoWatch );
-    geoWatch = undefined;
-  }
-  // End location tracking
+    function stopWatch() {
+      navigator.geolocation.clearWatch( geoWatch );
+      geoWatch = undefined;
+    }
+    // End location tracking
+  */
