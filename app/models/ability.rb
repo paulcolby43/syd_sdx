@@ -248,22 +248,37 @@ class Ability
     elsif user.basic?
     # Start basic user type
      
+      # Tickets
+      ############
       if user.mobile_buy?
-        # Mobile Buy or Admin Dragon Role
-        # Tickets
-        ############
         can :index, :tickets
         can :show, :tickets
         can :edit, :tickets
         can :void, :tickets
-      
-        # Customers
-        ############
+      end
+      if user.mobile_greeter?
+        can :index, :tickets
+        can :edit, :tickets
+      end
+        
+      # Customers
+      ############
+      if user.mobile_buy? or user.mobile_greeter?
         can :index, :customers
         can :show, :customers
+      end
+      if user.mobile_greeter?
+        can :create, :customers
+        can :edit, :customers
+      end
       
-        # Commodities
-        ############
+      # Commodities
+      ############
+      if user.mobile_buy?
+        can :index, :commodities
+        can :show, :commodities
+      end
+      if user.mobile_greeter?
         can :index, :commodities
         can :show, :commodities
       end

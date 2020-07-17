@@ -291,9 +291,13 @@ class TicketsController < ApplicationController
           flash[:danger] = "Error updating ticket. #{@ticket['FailureInformation']}"
         end
         if ticket_params[:created_from_trip].blank?
-          redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
-          # Redirect to paid tickets list so can print
-          redirect_to tickets_path(status: '3') if params[:pay_ticket] or params[:close_and_pay_ticket]
+          if current_user.mobile_greeter?
+            redirect_to customers_path
+          else
+            redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
+            # Redirect to paid tickets list so can print
+            redirect_to tickets_path(status: '3') if params[:pay_ticket] or params[:close_and_pay_ticket]
+          end
         else
           # Go back to trips since created ticket from trips list
           redirect_to trips_path

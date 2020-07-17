@@ -268,8 +268,8 @@ class User < ActiveRecord::Base
     mobile_admin?
   end
   
-  def portal_greeter?
-    access_token.roles.include?("Portal Greeter")
+  def mobile_greeter?
+    access_token.roles.include?("Mobile Greeter")
   end
   
   def portal_customer_ids

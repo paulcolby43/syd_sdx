@@ -2,9 +2,16 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    .pull-right
+      %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+        %i.fa.fa-user-plus.fa-lg
+        Customer
+    %br
     %p
       = form_tag customers_path, id: 'customer_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
         = select_tag :yard_filter, options_for_select([['All Yards', 'all_yards'], ['My Yard', '1\my_yard']], @yard_filter), class: "form-control input-lg"
+        - if mobile_device?
+          %br
         .input-group
           = search_field_tag :q, params[:q], :placeholder => "Search customers", class: "form-control input-lg"
           = hidden_field_tag :first_name, params[:first_name]
@@ -26,10 +33,7 @@
                 %i.fa.fa-list-alt
                 = "#{license_reader_device.DeviceName}"
                 = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
-        %span.pull-right
-          %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
-            %i.fa.fa-user-plus.fa-lg
-            Customer
+        
     %p
       %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
     - unless @customers.blank?

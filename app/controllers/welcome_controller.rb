@@ -2,6 +2,9 @@ class WelcomeController < ApplicationController
   before_filter :login_required, only: [:kpi_dashboard]
   
   def index
+    if current_user.mobile_greeter?
+      redirect_to customers_path
+    end
   end
   
   def privacy

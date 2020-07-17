@@ -29,7 +29,10 @@
           - unless current_page?(scoreboard_path) or current_page?(telerik_reports_path)
             = render partial: "shared/navbars/base_navbar", locals: {title: "Home"}
         - elsif current_user.basic?
-          = render partial: "shared/navbars/basic_user_navbar", locals: {title: "Home"}
+          - if current_user.mobile_admin?
+            = render partial: "shared/navbars/basic_user_navbar", locals: {title: "Home"}
+          - elsif current_user.mobile_greeter?
+            = render partial: "shared/navbars/mobile_greeter_navbar", locals: {title: "Home"}
         - elsif current_user.customer?
           = render partial: "shared/navbars/customer_user_navbar", locals: {title: "Home"}
     - if logged_in?
