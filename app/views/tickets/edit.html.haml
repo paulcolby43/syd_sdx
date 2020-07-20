@@ -1,8 +1,8 @@
-- if current_user.admin?
+- if current_user and current_user.admin?
   = render partial: "mobile_admin_edit"
-- elsif current_user.mobile_greeter?
+- elsif current_user and current_user.mobile_greeter?
   = render partial: "mobile_greeter_edit"
-- elsif current_user.mobile_inspector?
+- elsif current_user and current_user.mobile_inspector?
   = render partial: "mobile_inspector_edit"
-- else
+- elsif current_user
   = render partial: "mobile_admin_edit"

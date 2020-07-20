@@ -6,7 +6,7 @@ class TicketsController < ApplicationController
   # GET /tickets.json
   def index
     authorize! :index, :tickets
-    @status = "#{params[:status].blank? ? '2' : params[:status]}"
+    @status = "#{(params[:status].blank? or current_user.mobile_inspector?) ? '2' : params[:status]}"
     @currencies = Ticket.currencies(current_user.token)
     @start_date = params[:start_date]
     @end_date = params[:end_date]

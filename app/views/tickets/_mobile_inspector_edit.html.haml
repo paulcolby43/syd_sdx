@@ -14,12 +14,6 @@
           .well
             Amount Due:
             = number_to_currency(accounts_payable_item["AmountDue"])
-      - if @ticket['Status'] == '3'
-        .well
-          %p
-            = "Payment by #{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
-          - if @apcashier['PaymentMethod'] == '1'
-            = "Check Number: #{@apcashier['CheckNumber']}"
 
       #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         .panel.panel-default
