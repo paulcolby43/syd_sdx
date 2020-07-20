@@ -2,3 +2,7 @@
   = render partial: "mobile_admin_edit"
 - elsif current_user.mobile_greeter?
   = render partial: "mobile_greeter_edit"
+- elsif current_user.mobile_inspector?
+  = render partial: "mobile_inspector_edit"
+- else
+  = render partial: "mobile_admin_edit"

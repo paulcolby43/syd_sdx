@@ -256,7 +256,7 @@ class Ability
         can :edit, :tickets
         can :void, :tickets
       end
-      if user.mobile_greeter?
+      if user.mobile_greeter? or user.mobile_inspector?
         can :index, :tickets
         can :edit, :tickets
       end

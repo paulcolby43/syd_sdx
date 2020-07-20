@@ -33,6 +33,8 @@
             = render partial: "shared/navbars/basic_user_navbar", locals: {title: "Home"}
           - elsif current_user.mobile_greeter?
             = render partial: "shared/navbars/mobile_greeter_navbar", locals: {title: "Home"}
+          - elsif current_user.mobile_inspector?
+            = render partial: "shared/navbars/mobile_inspector_navbar", locals: {title: "Home"}
         - elsif current_user.customer?
           = render partial: "shared/navbars/customer_user_navbar", locals: {title: "Home"}
     - if logged_in?
