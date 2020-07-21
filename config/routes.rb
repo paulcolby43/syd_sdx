@@ -214,6 +214,12 @@ Rails.application.routes.draw do
   resources :containers
   resources :locations
   
+  resources :access_tokens do
+    member do
+      get :update_role
+    end
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

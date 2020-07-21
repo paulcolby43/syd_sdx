@@ -276,6 +276,10 @@ class User < ActiveRecord::Base
     access_token.roles.include?("Mobile Inspector")
   end
   
+  def mobile_buyer?
+    access_token.roles.include?("Mobile Buyer")
+  end
+  
   def portal_customer_ids
     ids = []
     if customer? and not customer_guid.blank?
@@ -416,6 +420,10 @@ class User < ActiveRecord::Base
   def dragon_role_names
     # Get unique listing of dragon role names
     dragon_roles.map { |dragon_role| dragon_role['RoleName']}.uniq
+  end
+  
+  def dragon_admin?
+    dragon_role_names.include?("Mobile Admin")
   end
   
   def portal_customers_options_array(auth_token, yard_id)

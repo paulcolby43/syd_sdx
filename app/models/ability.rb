@@ -256,18 +256,18 @@ class Ability
         can :edit, :tickets
         can :void, :tickets
       end
-      if user.mobile_greeter? or user.mobile_inspector?
+      if user.mobile_greeter? or user.mobile_inspector? or user.mobile_buyer?
         can :index, :tickets
         can :edit, :tickets
       end
         
       # Customers
       ############
-      if user.mobile_buy? or user.mobile_greeter?
+      if user.mobile_buy? or user.mobile_greeter? or user.mobile_buyer?
         can :index, :customers
         can :show, :customers
       end
-      if user.mobile_greeter?
+      if user.mobile_greeter? or user.mobile_buyer?
         can :create, :customers
         can :edit, :customers
       end
@@ -308,10 +308,9 @@ class Ability
         end
       end
       
-      if user.mobile_reports?
-        # Mobile Reports or Admin Dragon Role
-        # Reports
-        ############
+      # Reports
+      ############
+      if user.mobile_reports? or user.mobile_buyer?
         can :index, :reports
       end
       
