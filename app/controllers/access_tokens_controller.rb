@@ -19,7 +19,7 @@ class AccessTokensController < InheritedResources::Base
     respond_to do |format|
       if @access_token.update(access_token_params)
         format.html { 
-          flash[:success] = 'Access token was successfully updated.'
+#          flash[:success] = 'Access token was successfully updated.'
 #          redirect_to @access_token
           redirect_to root_path
         }
