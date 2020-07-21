@@ -21,7 +21,7 @@ class AccessTokensController < InheritedResources::Base
         format.html { 
           flash[:success] = 'Access token was successfully updated.'
 #          redirect_to @access_token
-          redirect_to :back
+          redirect_to root_path
         }
         format.json { render :show, status: :ok, location: @access_token }
       else
