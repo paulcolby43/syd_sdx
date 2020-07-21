@@ -5,15 +5,11 @@
     - if current_user.dragon_admin?
       .row
         %span.pull-right
-          .col-xs-12
-            .text-center
-              %strong User View
-            .btn-group
-              = link_to "Admin", update_role_access_token_path(role: "Mobile Admin"), :class => "btn btn-default #{current_user.mobile_admin? ? 'active' : ''}", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Admin"}
-              = link_to "Buyer", update_role_access_token_path(role: "Mobile Buyer"), :class => "btn btn-default #{current_user.mobile_buyer? ? 'active' : ''}", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Buyer"}
-              = link_to "Inspector", update_role_access_token_path(role: "Mobile Inspector"), :class => "btn btn-default #{current_user.mobile_inspector? ? 'active' : ''}", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Inspector"}
+          .text-center
+            %strong User View
+          = form_for current_user.access_token, :class => "form-horizontal" do |f|
+            = f.select :roles, ["Mobile Admin", "Mobile Buyer", "Mobile Inspector"], {prompt: "Select role"}, {name: "access_token[roles][]", :class => "form-control", onchange: "this.form.submit();"}
       %br
-    
     = form_for @user_setting, :class => "form-inline" do |f|
       - @user_setting.errors.each do |attr, msg|
         .alert.alert-danger
