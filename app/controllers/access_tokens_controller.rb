@@ -5,9 +5,9 @@ class AccessTokensController < InheritedResources::Base
   def update_role
     if current_user.dragon_admin?
       @access_token = AccessToken.find(params[:id])
-      Rails.logger.debug "********* #{params[:role]}"
       unless params[:role].blank?
         @access_token.roles = [params[:role]]
+        Rails.logger.debug "************#{@access_token.roles}"
         @access_token.save
       end
     end
