@@ -6,9 +6,9 @@ class AccessTokensController < InheritedResources::Base
     if current_user.dragon_admin?
       @access_token = AccessToken.find(params[:id])
       unless params[:role].blank?
-        @access_token.roles = [params[:role]]
-        Rails.logger.debug "************#{@access_token.roles}"
-        @access_token.save
+#        @access_token.roles = [params[:role]]
+#        @access_token.save
+        @access_token.update_attribute(:roles, [params[:role]])
       end
     end
     redirect_to root_path
