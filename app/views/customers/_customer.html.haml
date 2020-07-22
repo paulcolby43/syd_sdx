@@ -3,20 +3,24 @@
     .col-xs-12.col-sm-12.col-md-12
       %div.panel.panel-primary
         %div.list_group
-          %div.list-group-item
+          %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{customer['FirstName']} #{customer['LastName']}"}, class: "list-group-item customer_button"}
             .pull-right
-              %p
-                %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
-                  %i.fa.fa-ticket
-                  Ticket
-            %p.lead
-              = customer["CustomerNumber"]
-              - unless customer["FirstName"].blank? and customer["LastName"].blank?
-                = "#{customer['FirstName']} #{customer['LastName']}"
+              %i.fa.fa-chevron-right.fa-lg
+            = image_tag('avatar_thumbnail', class: 'thumbnail img-responsive')
+            = customer["CustomerNumber"]
+            - unless customer["FirstName"].blank? and customer["LastName"].blank?
+              = "#{customer['FirstName']} #{customer['LastName']}"
+            - else
+              = "#{customer['Company']}"
+          %div.list-group-item
+            - unless customer["FirstName"].blank? and customer["LastName"].blank?
+              - if customer['Company'].blank?
+                No company name
               - else
                 = "#{customer['Company']}"
-          %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer Details"}, class: "list-group-item customer_button"}
             .pull-right
-              &nbsp;
-              %i.fa.fa-chevron-right.fa-lg
-            Customer Details
+              %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                %i.fa.fa-ticket
+                Ticket
+            %br
+            %br

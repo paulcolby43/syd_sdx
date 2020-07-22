@@ -2,14 +2,18 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    .pull-right
-      %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
-        %i.fa.fa-user-plus.fa-lg
-        Customer
-    %br
+    - if params[:q].blank? or not @search.blank?
+      .pull-right
+        %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+          %i.fa.fa-user-plus.fa-lg
+          Customer
+      %br
     %p
       = form_tag customers_path, id: 'customer_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
-        = select_tag :yard_filter, options_for_select([['All Yards', 'all_yards'], ['My Yard', '1\my_yard']], @yard_filter), class: "form-control input-lg"
+        - unless current_user.mobile_greeter?
+          = select_tag :yard_filter, options_for_select([['All Yards', 'all_yards'], ['My Yard', '1\my_yard']], @yard_filter), class: "form-control input-lg"
+        - else
+          = hidden_field_tag :yard_filter, '1\my_yard'
         - if mobile_device?
           %br
         .input-group
@@ -33,42 +37,52 @@
                 %i.fa.fa-list-alt
                 = "#{license_reader_device.DeviceName}"
                 = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
-        
-    %p
-      %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
+    - unless @search.blank?    
+      %p
+        %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
     - unless @customers.blank?
       %div{id: "customers"}
         - @customers.each do |customer|
           %div.row
             .col-xs-12.col-sm-12.col-md-12
-              %div.panel.panel-primary
-                %div.list_group
-                  %div.list-group-item
-                    .pull-right
-                      %p
-                        %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
-                          %i.fa.fa-ticket
-                          Ticket
-                    -#
-                      - if current_user.user_setting.show_customer_thumbnails? and not Customer.default_cust_pic_id(customer['Id'], current_yard_id).blank?
-                        = image_tag(Customer.default_cust_pic(customer['Id'], current_yard_id).preview_data_uri, class: 'thumbnail img-responsive')
-                    %p.lead
+              %h4.text-muted
+                %div.panel.panel-primary
+                  %div.list_group
+                    %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{customer['FirstName']} #{customer['LastName']}"}, class: "list-group-item customer_button"}
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+                      = image_tag('avatar_thumbnail', class: 'thumbnail img-responsive', style: 'display:inline')
                       = customer["CustomerNumber"]
                       - unless customer["FirstName"].blank? and customer["LastName"].blank?
                         = "#{customer['FirstName']} #{customer['LastName']}"
                       - else
                         = "#{customer['Company']}"
-                  %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer Details"}, class: "list-group-item customer_button"}
-                    .pull-right
-                      &nbsp;
-                      %i.fa.fa-chevron-right.fa-lg
-                    Customer Details
+                    %div.list-group-item
+                      - unless customer["FirstName"].blank? and customer["LastName"].blank?
+                        - if customer['Company'].blank?
+                          No company name
+                        - else
+                          = "#{customer['Company']}"
+                      .pull-right
+                        %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                          %i.fa.fa-ticket
+                          Ticket
+                      %br
+                      %br
       .row
         .text-center
           %div{id: 'endless_page'}
             %p= image_tag("ajax-loader.gif", :id => "more_customers_spinner", :alt => "Loading ...", style: "display:none;")
             %p= link_to 'Load more ...', customers_path(:page => @customers.next_page, :q => params[:q], :yard_filter => params[:yard_filter]), :class => 'load-more-customers btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_customers_spinner').show();" if @customers.next_page
     - else
-      %p No customers found            
+      - unless params[:q].blank?
+        .row
+          .col-xs-12
+            %p.text-center No customers found  
+          .col-xs-12
+            %p.text-center
+              %a.btn.btn-primary.btn-lg{href: new_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob], sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip]), class: "#{mobile_device? ? 'btn-block' : ''} customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+                %i.fa.fa-user-plus.fa-lg
+                Create New Customer
     
 = render partial: "shared/customers_footer_navbar", locals: {title: "Customers"}

@@ -19,6 +19,7 @@
  *= jquery.fileupload-ui.css
  *= require select2
  *= require select2-bootstrap
+ *= require font-awesome
 *= require morris
  *= require_tree .
  *= require_self
