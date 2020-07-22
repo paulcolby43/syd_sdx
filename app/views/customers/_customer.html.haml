@@ -18,6 +18,13 @@
                 No company name
               - else
                 = "#{customer['Company']}"
+            %br
+            = "#{customer['Address1']}"
+            - unless customer['Address2'].blank?
+              %br
+              = "#{customer['Address2']}"
+            %br
+            = "#{customer['City']}, #{customer['State']} #{customer['Zip']}" unless customer['City'].blank? and customer['State'].blank? and customer['Zip'].blank?
             .pull-right
               %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
                 %i.fa.fa-ticket
