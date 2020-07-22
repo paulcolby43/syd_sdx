@@ -6,6 +6,8 @@ class WelcomeController < ApplicationController
       redirect_to customers_path
     elsif current_user and current_user.mobile_inspector?
       redirect_to tickets_path
+    elsif current_user and current_user.mobile_seller?
+      redirect_to pack_shipments_path
     end
   end
   

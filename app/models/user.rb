@@ -280,6 +280,10 @@ class User < ActiveRecord::Base
     access_token.roles.include?("Mobile Buyer")
   end
   
+  def mobile_seller?
+    access_token.roles.include?("Mobile Seller")
+  end
+  
   def portal_customer_ids
     ids = []
     if customer? and not customer_guid.blank?

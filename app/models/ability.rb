@@ -283,7 +283,7 @@ class Ability
         can :show, :commodities
       end
       
-      if user.mobile_sell?
+      if user.mobile_sell? or user.mobile_seller?
         # Mobile Sell or Admin Dragon Role
         # PackShipments
         ############
