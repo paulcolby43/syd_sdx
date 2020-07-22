@@ -8,7 +8,7 @@
           .text-center
             %strong User View
           = form_for current_user.access_token, :class => "form-horizontal" do |f|
-            = f.select :roles, ["Mobile Admin", "Mobile Buyer", "Mobile Inspector"], {prompt: "Select role"}, {name: "access_token[roles][]", :class => "form-control", onchange: "this.form.submit();"}
+            = f.select :roles, ["Mobile Admin", "Mobile Buyer", "Mobile Greeter", "Mobile Inspector"], {prompt: "Select role"}, {name: "access_token[roles][]", :class => "form-control", onchange: "this.form.submit();"}
       %br
     = form_for @user_setting, :class => "form-inline" do |f|
       - @user_setting.errors.each do |attr, msg|
