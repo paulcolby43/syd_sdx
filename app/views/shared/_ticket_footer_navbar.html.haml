@@ -4,6 +4,9 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            %a{href: "#", "data-toggle" => "modal", :alt => "vehicle"}
+              %i.fa.fa-car.fa-lg
+              = "Vehicle" unless mobile_device?
             - current_user.finger_print_reader_devices.each do |finger_print_reader_device|
               %a{href: '#', class: 'finger_print_trigger', 'data-device-id' => finger_print_reader_device.id, 'data-ticket-number' => @ticket_number, 'data-yard-id' => current_yard_id, 'data-customer-name' => @ticket['Company'], 'data-customer-id' => @ticket['CustomerId'] }
                 %i.fa.fa-hand-pointer-o.fa-lg
