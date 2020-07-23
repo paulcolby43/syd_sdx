@@ -240,26 +240,39 @@
                       - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
                         - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
                         - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
-                          %strong Less:
+                          %strong Deduction:
                           = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
                       - else
+                        - line_item_weight_deductions_total = 0
                         - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
                           - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
-                            %strong Less:
-                            = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                            - line_item_weight_deductions_total = line_item_weight_deductions_total + line_item_deduction["DeductWeight"].to_f
+                            -#
+                              %strong Deduction:
+                              = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                        - if line_item_weight_deductions_total > 0
+                          %strong Deduction:
+                          = "#{number_with_precision(line_item_weight_deductions_total, :precision => 3, strip_insignificant_zeros: true)} LB"
+                        
                   / Deduction dollar amounts
                   .dollar_amount_deduction_details
                     - unless line_item["DeductionCollection"].blank?
                       - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
                         - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
                         - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
-                          %strong Less:
+                          %strong Deduction:
                           = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
                       - else
+                        - line_item_dollar_deductions_total = 0
                         - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
                           - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
-                            %strong Less:
-                            = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                            - line_item_dollar_deductions_total = line_item_dollar_deductions_total + line_item_deduction["DeductDollarAmount"].to_f
+                            -#
+                              %strong Deduction:
+                              = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                        - if line_item_dollar_deductions_total > 0
+                          %strong Deduction:
+                          = "$#{number_with_precision(line_item_dollar_deductions_total, :precision => 2, strip_insignificant_zeros: true)}"
                   - unless line_item['TaxCollection'].blank?
                     / Taxes
                     .tax_details

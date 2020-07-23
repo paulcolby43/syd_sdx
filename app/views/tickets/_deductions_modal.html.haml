@@ -34,6 +34,7 @@
                   .row.form-group
                     %div{:class => "col-xs-12"}
                       = phone_field_tag "ticket[line_items][][deductions][][deduct_weight]", line_item_deduction["DeductWeight"], :placeholder => "Weight", class: "form-control input-lg amount-calculation-field deduction_weight"
+                  %hr
               - else
                 - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
                   - unless line_item_deduction["DeductWeightDescription"].blank? and (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
@@ -44,6 +45,21 @@
                     .row.form-group
                       %div{:class => "col-xs-12"}
                         = phone_field_tag "ticket[line_items][][deductions][][deduct_weight]", line_item_deduction["DeductWeight"], :placeholder => "Weight", class: "form-control input-lg amount-calculation-field deduction_weight"
+                    %hr
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = select_tag "ticket[line_items][][deductions][][deduct_weight_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = text_field_tag "ticket[line_items][][deductions][][deduct_weight]", nil, :placeholder => "Weight", class: "form-control input-lg amount-calculation-field deduction_weight"
+            %hr
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = select_tag "ticket[line_items][][deductions][][deduct_weight_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = text_field_tag "ticket[line_items][][deductions][][deduct_weight]", nil, :placeholder => "Weight", class: "form-control input-lg amount-calculation-field deduction_weight"
+            %hr
             .row.form-group
               %div{:class => "col-xs-12"}
                 = select_tag "ticket[line_items][][deductions][][deduct_weight_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
@@ -63,7 +79,11 @@
                       = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, line_item_deduction["DeductDollarAmountDescription"]), prompt: '-- Reason --', class: "form-control input-lg"
                   .row.form-group
                     %div{:class => "col-xs-12"}
-                      = phone_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", line_item_deduction["DeductDollarAmount"], :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                      .input-group
+                        %span.input-group-addon
+                          %i.fa.fa-dollar.fa-lg
+                        = phone_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", line_item_deduction["DeductDollarAmount"], :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                  %hr
               - else
                 - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
                   - unless line_item_deduction["DeductDollarAmountDescription"].blank? and (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
@@ -73,13 +93,40 @@
                         = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, line_item_deduction["DeductDollarAmountDescription"]), prompt: '-- Reason --', class: "form-control input-lg"
                     .row.form-group
                       %div{:class => "col-xs-12"}
-                        = phone_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", line_item_deduction["DeductDollarAmount"], :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                        .input-group
+                          %span.input-group-addon
+                            %i.fa.fa-dollar.fa-lg
+                          = phone_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", line_item_deduction["DeductDollarAmount"], :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                    %hr
             .row.form-group
               %div{:class => "col-xs-12"}
                 = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
             .row.form-group
               %div{:class => "col-xs-12"}
-                = text_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                .input-group
+                  %span.input-group-addon
+                    %i.fa.fa-dollar.fa-lg
+                  = text_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+            %hr
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                .input-group
+                  %span.input-group-addon
+                    %i.fa.fa-dollar.fa-lg
+                  = text_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+            %hr
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
+            .row.form-group
+              %div{:class => "col-xs-12"}
+                .input-group
+                  %span.input-group-addon
+                    %i.fa.fa-dollar.fa-lg
+                  = text_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
               
       .modal-footer
         %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done

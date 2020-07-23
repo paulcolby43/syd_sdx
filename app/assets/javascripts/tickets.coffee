@@ -328,9 +328,9 @@ jQuery ->
           else
             changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
           if line_item_dollar_amount_deductions_total > 0
-            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Less:</strong> $' + line_item_dollar_amount_deductions_total
+            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Deduction:</strong> $' + line_item_dollar_amount_deductions_total
           if line_item_weight_deductions_total > 0
-            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Less:</strong> ' + line_item_weight_deductions_total + ' LB'
+            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Deduction:</strong> ' + line_item_weight_deductions_total + ' LB'
           if total_tax_amount > 0
             changed_field.closest('.panel').find('.tax_details').html '<strong>Taxes:</strong> $' + total_tax_amount
               
