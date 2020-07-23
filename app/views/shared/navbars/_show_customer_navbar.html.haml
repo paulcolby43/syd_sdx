@@ -4,7 +4,11 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
-            %a{href: customers_path}
+            -#
+              %a{href: customers_path}
+                %i.fa.fa-chevron-left
+                Back
+            %a{href: 'javascript:history.back()'}
               %i.fa.fa-chevron-left
               Back
         .col-xs-4.col-sm-4

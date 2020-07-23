@@ -83,6 +83,10 @@
               
       .modal-footer
         %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
+        %a.btn.btn-primary.btn-lg.save_deduction_info_button 
+          %i.fa.fa-spinner.fa-spin{style: 'display:none;'}
+          %i.fa.fa-cloud-upload
+          Save
 
 :javascript
   $('.modal').on('shown.bs.modal', function() {
