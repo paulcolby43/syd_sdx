@@ -1168,6 +1168,20 @@ jQuery ->
   
   ### End VIN Barcode Scanner ###
 
+  ### Dynamically add deduction fields ###
+  $('.ticket_input_fields_wrap').on 'click', '.add_dollar_amount_deduction', ->
+    tab_pane = $(this).closest('.tab-pane')
+    dollar_amount_deductions = tab_pane.find('.dollar_amount_deductions:first')
+    deduction_field = dollar_amount_deductions.find('.dollar_amount_deduction_field:first').clone().css("display", "")
+    dollar_amount_deductions.append deduction_field
+    return
+  $('.ticket_input_fields_wrap').on 'click', '.add_weight_deduction', ->
+    tab_pane = $(this).closest('.tab-pane')
+    weight_deductions = tab_pane.find('.weight_deductions:first')
+    deduction_field = weight_deductions.find('.weight_deduction_field:first').clone().css("display", "")
+    weight_deductions.append deduction_field
+    return
+
   ### Don't submit form if press enter key when in the serial number field ###
   $(document).on 'keydown', '.serial_number_field', (e) ->
     code = e.keyCode or e.which
