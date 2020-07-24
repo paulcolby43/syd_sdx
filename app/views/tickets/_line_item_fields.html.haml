@@ -45,6 +45,10 @@
             %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
               More
           %div.collapse{id: "more_#{id}"}
+            %p
+              = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
+              %br
+              = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
             %ul{class: 'list-inline'}
               %li
                 %a.btn.btn-default{href: "#item_#{id}_deductions_modal", id: "#item_#{id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
@@ -64,9 +68,6 @@
                     %i.fa.fa-car.fa-lg
                     Car
                   = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
-            = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-            %br
-            = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
   %div.panel-footer{style: "#{current_user.mobile_greeter? ? 'display:none;' : 'padding-top: 0px; font-size: 16px;'}"}
     .calculation_details
     .deduction_details

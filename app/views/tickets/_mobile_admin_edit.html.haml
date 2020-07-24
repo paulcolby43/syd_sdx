@@ -199,6 +199,10 @@
                         %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
                           More
                       %div.collapse{id: "more_#{line_item['Id']}"}
+                        %p
+                          = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
+                          %br
+                          = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
                         %ul{class: 'list-inline'}
                           %li
                             %a.btn.btn-default{href: "#item_#{line_item['Id']}_deductions_modal", id: "#item_#{line_item['Id']}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
@@ -211,9 +215,7 @@
                                 %i.fa.fa-car.fa-lg
                                 Car
                               = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
-                        = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-                        %br
-                        = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
+                        
                 .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                   .calculation_details
                     - if line_item['UnitOfMeasure'] == 'EA'
@@ -376,6 +378,10 @@
                       %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
                         More
                     %div.collapse{id: "more_#{new_item_id}"}
+                      %p
+                        = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
+                        %br
+                        = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
                       %ul{class: 'list-inline'}
                         %li
                           %a.btn.btn-default{href: "#item_#{new_item_id}_deductions_modal", id: "#item_#{new_item_id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
@@ -388,9 +394,6 @@
                               %i.fa.fa-car.fa-lg
                               Car
                             = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
-                      = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-                      %br
-                      = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
               %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                 .calculation_details
                 .deduction_details
