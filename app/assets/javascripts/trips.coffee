@@ -266,6 +266,7 @@ jQuery ->
       map_marker_icon.hide()
 
       success = (position) ->
+        locate_button.hide()
         map_marker_icon_spinner.hide()
         map_marker_icon.show()
         location_data.show()
@@ -280,6 +281,7 @@ jQuery ->
         output.appendChild img
         update_container_ajax()
         update_user_ajax()
+        alert "Container location saved!"
       error = ->
         map_marker_icon_spinner.hide()
         map_marker_icon.show()

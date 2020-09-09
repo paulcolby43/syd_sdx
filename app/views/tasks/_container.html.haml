@@ -8,7 +8,7 @@
             %i.fa.fa-camera.fa-lg
           &nbsp;
           &nbsp;
-          %a.locate_container{"data-placement" => 'right', "data-html" => "false", "data-toggle" => "tooltip", :tabindex => "0", title: "Click to Save location.", id: "container_#{@container_id}_locate_button", "data-container-id" => @container_id, "data-google-maps-api-key" => ENV["GOOGLE_MAPS_API_KEY"], "data-task-id" => @task_id, "data-user-id" => current_user.id, :href => "#", :style => "text-decoration: none;", :title => "Save location"}
+          %a.locate_container{id: "container_#{@container_id}_locate_button", "data-container-id" => @container_id, "data-google-maps-api-key" => ENV["GOOGLE_MAPS_API_KEY"], "data-task-id" => @task_id, "data-user-id" => current_user.id, :href => "#", :style => "text-decoration: none;", :title => "Save location"}
             %i.fa.fa-map-marker.fa-lg
             %i.fa.fa-spinner.fa-spin.fa-lg{:style => "display:none;"}
           &nbsp;

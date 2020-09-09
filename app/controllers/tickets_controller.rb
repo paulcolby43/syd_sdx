@@ -146,8 +146,9 @@ class TicketsController < ApplicationController
       @get_ticket = Ticket.get_ticket(current_user.token, current_yard_id, params[:id])
       unless @get_ticket.blank?
         if @get_ticket["Success"] == "false"
-          unless @get_ticket["Session"]["CreatedByUser"]["UserName"] == current_user.username and @get_ticket['Session']['SessionType'] == '3'
-            flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]},  #{@get_ticket["Session"]["CreatedByWorkstation"]}."
+          unless @get_ticket["Session"]["CreatedByUser"]["UserName"] == current_user.username and @get_ticket['Session']['SessionType'] == '3' # Web API session type
+#            flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]},  #{@get_ticket["Session"]["CreatedByWorkstation"]}."
+            flash[:danger] = "#{@get_ticket['FailureInformation']}"
             redirect_to :back
           else
             # The session was created by the current_user
