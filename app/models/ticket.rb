@@ -1262,7 +1262,7 @@ class Ticket
     xml.instruct!
     xml.LeadsOnlineUpload do
       xml.software do
-        xml.name("Scrap Yard Dog")
+        xml.name("Portal")
         xml.version("1.0")
       end
       xml.store_info do

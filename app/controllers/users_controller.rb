@@ -105,7 +105,7 @@ class UsersController < ApplicationController
               end
             else
               # current_valid_scrap_dragon_user_response did not return true, so password is incorrect for existing dragon user
-              flash[:danger] = "Problem adding Scrap Dragon user to Scrap Yard Dog: username already exists, or password is incorrect."
+              flash[:danger] = "Problem adding Scrap Dragon user to Portal: username already exists, or password is incorrect."
               redirect_to login_path if current_user.blank?
               redirect_to users_path unless current_user.blank?
             end
