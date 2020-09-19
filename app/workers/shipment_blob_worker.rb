@@ -35,7 +35,7 @@ class ShipmentBlobWorker
                 <BOOKING_NBR>#{shipment_file.booking_number}</BOOKING_NBR>
                 <CONTR_NBR>#{shipment_file.contract_number}</CONTR_NBR>
                 <CAMERA_NAME>#{"user_#{shipment_file.user.username}"}</CAMERA_NAME>
-                <CAMERA_GROUP>Scrap Yard Dog</CAMERA_GROUP>
+                <CAMERA_GROUP>Portal</CAMERA_GROUP>
                 <CUST_NBR>#{shipment_file.customer_number}</CUST_NBR>
                 <CUST_NAME>#{shipment_file.customer_name}</CUST_NAME>
               </APPEND>"

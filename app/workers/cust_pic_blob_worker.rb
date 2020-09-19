@@ -26,7 +26,7 @@ class CustPicBlobWorker
                 <EVENT_CODE>#{cust_pic_file.event_code}</EVENT_CODE>
                 <YARDID>#{cust_pic_file.yard_id}</YARDID>
                 <CAMERA_NAME>#{"user_#{cust_pic_file.user.username}"}</CAMERA_NAME>
-                <CAMERA_GROUP>Scrap Yard Dog</CAMERA_GROUP>
+                <CAMERA_GROUP>Portal</CAMERA_GROUP>
                 <CUST_NBR>#{cust_pic_file.customer_number}</CUST_NBR>
                 <VIN>#{cust_pic_file.vin_number}</VIN>
                 <TAGNBR>#{cust_pic_file.tag_number}</TAGNBR>
