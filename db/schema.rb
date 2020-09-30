@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200421172354) do
+ActiveRecord::Schema.define(version: 20200930140626) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string"
@@ -180,6 +180,16 @@ ActiveRecord::Schema.define(version: 20200421172354) do
     t.datetime "updated_at"
     t.string   "customer_name"
     t.integer  "event_code_id"
+  end
+
+  create_table "suspect_lists", force: true do |t|
+    t.string   "name"
+    t.string   "file"
+    t.string   "delimiter"
+    t.integer  "user_id"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "user_settings", force: true do |t|

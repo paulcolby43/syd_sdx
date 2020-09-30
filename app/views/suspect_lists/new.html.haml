@@ -1,0 +1,11 @@
+.container-fluid
+  .row
+    .col-sm-6.offset-sm-3
+      .card
+        .card-header
+          %h4.card-title.text-center 
+            New Suspect List
+            .pull-right
+              = link_to "<i class='fa fa-close fa-lg'></i>".html_safe, :back
+        .card-body
+          = render 'form'

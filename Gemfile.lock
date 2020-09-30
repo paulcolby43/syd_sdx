@@ -51,6 +51,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
     akami (1.3.1)
       gyoku (>= 0.4.0)
       nokogiri
@@ -95,6 +97,8 @@ GEM
       warden (~> 1.2.3)
     domain_name (0.5.20160216)
       unf (>= 0.0.5, < 1.0.0)
+    down (5.1.0)
+      addressable (~> 2.5)
     erubis (2.7.0)
     exception_notification (4.1.1)
       actionmailer (>= 3.0.4)
@@ -176,6 +180,8 @@ GEM
     orm_adapter (0.5.0)
     polyamorous (1.2.0)
       activerecord (>= 3.0)
+    public_suffix (3.1.1)
+    puma (3.11.4)
     rack (1.5.5)
     rack-protection (1.5.3)
       rack
@@ -246,6 +252,9 @@ GEM
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       redis (~> 3.2, >= 3.2.1)
+    simple_form (4.0.0)
+      actionpack (> 4)
+      activemodel (> 4)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -299,6 +308,7 @@ GEM
     wicked_pdf (0.11.0)
       rails
     wkhtmltopdf-binary (0.9.9.3)
+    zip_tricks (5.3.1)
 
 PLATFORMS
   ruby
@@ -314,6 +324,7 @@ DEPENDENCIES
   carrierwave
   coffee-rails (~> 4.1.0)
   devise
+  down
   exception_notification
   exif
   figaro
@@ -327,6 +338,7 @@ DEPENDENCIES
   morrisjs-rails
   nested_form_fields
   polyamorous
+  puma
   rails (= 4.1.8)
   ransack
   raphael-rails
@@ -338,6 +350,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   select2-rails
   sidekiq
+  simple_form
   sinatra
   sqlite3
   therubyracer
@@ -350,3 +363,10 @@ DEPENDENCIES
   whenever
   wicked_pdf
   wkhtmltopdf-binary
+  zip_tricks
+
+RUBY VERSION
+   ruby 2.1.2p95
+
+BUNDLED WITH
+   1.17.3

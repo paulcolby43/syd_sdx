@@ -1,0 +1,45 @@
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container-fluid
+    %h2
+      = "#{@suspect_list.name}"
+      .pull-right
+        %ul.list-inline
+          %li.list-inline-item
+            = button_to images_download_suspect_list_path(@suspect_list), method: :post, data: { "no-turbolink" => true }, class: 'btn btn-default' do
+              %i.fa.fa-download
+              Download Images
+            -#
+              %a{href: images_download_suspect_list_path(@suspect_list), method: :post, data: { "no-turbolink" => true }, class: 'btn btn-default'}
+                %i.fa.fa-download
+                Download
+          %li.list-inline-item
+            %a{href: edit_suspect_list_path(@suspect_list), class: 'btn btn-primary'}
+              %i.fa.fa-pencil-square-o
+              Edit
+    =# "#{pluralize(number_with_delimiter(@number_of_table_rows), 'row')}" unless @number_of_table_rows.blank?
+  .container-fluid
+    - unless @csv_table.blank?
+      .table-responsive
+        %table.table
+          %tr
+            %th
+            - @headers.each do |header|
+              %th= header
+            - @csv_table.each_with_index do |row, index|
+              %tr.accordion-toggle.collapsed{"data-toggle" => "collapse", :href => "##{index}_details"}
+                %td.expand-button.text-primary
+                - row.each do |element|
+                  %td= element[1]
+              %tr.hide-table-padding
+                %td{:colspan => "100"}
+                  .collapse{id: "#{index}_details"}
+                    - images = Image.api_find_all_by_ticket_number(row.first[1], current_user.company, current_yard_id)
+                    %ul.list-inline
+                      - images.each do |image|
+                        %li.list-inline-item
+                          %a{href: image_path(image['CAPTURE_SEQ_NBR'])}
+                            = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+
+      = paginate @csv_table
+      .pull-right
+        = link_to "<i class='fa fa-trash'></i> Delete".html_safe, @suspect_list, :method => :delete, class: 'btn btn-danger btn-sm', :data => { :confirm => 'Are you sure you want to delete this Suspect List?' }

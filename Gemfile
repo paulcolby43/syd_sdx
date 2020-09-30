@@ -10,6 +10,8 @@ ruby '2.1.2'
 gem 'rails', '4.1.8'
 #ruby-gemset=rails418
 
+gem 'puma'
+
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use SCSS for stylesheets
@@ -124,6 +126,13 @@ gem 'exif'
 gem 'actionpack-cloudflare'
 
 gem "font-awesome-rails"
+
+gem 'simple_form'
+
+gem 'zip_tricks'
+
+# Better downloading
+gem 'down'
 
 
 # https://github.com/cyu/rack-cors

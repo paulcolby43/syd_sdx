@@ -216,6 +216,12 @@ Rails.application.routes.draw do
   
   resources :access_tokens
   
+  resources :suspect_lists do
+    member do
+      post :images_download, to: "suspect_lists#images_download"
+    end
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
