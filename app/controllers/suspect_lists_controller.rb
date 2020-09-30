@@ -9,12 +9,14 @@ class SuspectListsController < ApplicationController
   # GET /suspect_lists
   # GET /suspect_lists.json
   def index
+    authorize! :index, :suspect_lists
     @suspect_lists = SuspectList.all
   end
 
   # GET /suspect_lists/1
   # GET /suspect_lists/1.json
   def show
+    authorize! :show, :suspect_lists
     require 'csv'
     unless @suspect_list.file.blank? or @suspect_list.file.path.blank?
       @headers = @suspect_list.csv_file_headers
@@ -26,11 +28,13 @@ class SuspectListsController < ApplicationController
 
   # GET /suspect_lists/new
   def new
+    authorize! :create, :suspect_lists
     @suspect_list = SuspectList.new
   end
 
   # GET /suspect_lists/1/edit
   def edit
+    authorize! :edit, :suspect_lists
   end
 
   # POST /suspect_lists
@@ -72,6 +76,7 @@ class SuspectListsController < ApplicationController
   # DELETE /suspect_lists/1
   # DELETE /suspect_lists/1.json
   def destroy
+    authorize! :edit, :suspect_lists
     @suspect_list.destroy
     respond_to do |format|
       format.html { 

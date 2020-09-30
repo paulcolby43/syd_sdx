@@ -243,6 +243,13 @@ class Ability
       ############
       can :show, :workorders
       
+      # SuspectLists
+      ############
+      can :index, :suspect_lists
+      can :show, :suspect_lists
+      can :create, :suspect_lists
+      can :edit, :suspect_lists
+      
     # End admin user role
     
     elsif user.basic?
