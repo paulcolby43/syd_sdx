@@ -16,7 +16,8 @@ jQuery ->
   ### End endless page stuff ###
 
   ### File upload ###
-  $("#new_shipment_file").fileupload
+  #$("#new_shipment_file").fileupload
+  $(".shipment_file_upload_form").fileupload
     dataType: "script"
     disableImageResize: false
     imageMaxWidth: 1024
