@@ -2,8 +2,8 @@ class SuspectListsController < ApplicationController
   before_filter :login_required
   before_action :set_suspect_list, only: [:show, :edit, :update, :destroy, :images_download]
   
-  include ActionController::Live # required for streaming download
-  include ZipTricks::RailsStreaming
+#  include ActionController::Live # required for streaming download
+#  include ZipTricks::RailsStreaming
   
 
   # GET /suspect_lists
