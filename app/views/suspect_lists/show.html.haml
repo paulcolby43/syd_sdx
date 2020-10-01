@@ -21,9 +21,9 @@
     
   .container-fluid
     %p
-      %a{href: nil, onclick: "$('.collapse').collapse('show')", title: 'Expand All'}
+      %a{href: nil, onclick: "$('.collapse').collapse('show')", title: 'Expand All', class: 'text-muted'}
         %i.fa.fa-plus-square
-      %a{href: nil, onclick: "$('.collapse').collapse('hide')", title: 'Collapse All'}
+      %a{href: nil, onclick: "$('.collapse').collapse('hide')", title: 'Collapse All', class: 'text-muted'}
         %i.fa.fa-minus-square
     - unless @csv_table.blank?
       .table-responsive
