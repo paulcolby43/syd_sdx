@@ -248,7 +248,8 @@ jQuery ->
   ### Pack shipment picture event code chosen ###
   #$(".event_code_radio").on 'click', ->
   $('.shipment_file_upload_form').on 'click', '.event_code_radio', (e) ->
-    $('#upload_button').show()
+    $(this).closest('.modal-body').find('#upload_button').show()
+    #$('#upload_button').show()
 
   ### Start Barcode Scanner ###
   order_by_occurrence = (arr) ->

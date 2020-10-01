@@ -5,6 +5,8 @@
   .form-group
     = f.input :name, required: true, autofocus: true, :input_html => { class: 'form-control' }
   .form-group
+    = f.input :table, as: :radio_buttons, collection: [['images', 'Images'], ['shipments', 'Shipment']], label_method: :second, value_method: :first
+  .form-group
     = f.input :file, as: :file, required: true, :input_html => { onchange: "$('#current_csv').hide();", class: 'form-control' }
     %span
       #current_csv

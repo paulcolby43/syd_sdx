@@ -29,6 +29,14 @@ class SuspectList < ActiveRecord::Base
     return csv_table
   end
   
+  def images_table?
+    table == "images"
+  end
+  
+  def shipments_table?
+    table == "shipments"
+  end
+  
   #############################
   #     Class Methods         #
   #############################

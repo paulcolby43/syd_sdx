@@ -10,8 +10,6 @@ ruby '2.1.2'
 gem 'rails', '4.1.8'
 #ruby-gemset=rails418
 
-gem 'puma'
-
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use SCSS for stylesheets
@@ -130,6 +128,7 @@ gem "font-awesome-rails"
 gem 'simple_form'
 
 gem 'zip_tricks'
+gem 'zipline'
 
 # Better downloading
 gem 'down'

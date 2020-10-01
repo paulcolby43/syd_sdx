@@ -185,6 +185,7 @@ ActiveRecord::Schema.define(version: 20200930140626) do
   create_table "suspect_lists", force: true do |t|
     t.string   "name"
     t.string   "file"
+    t.string   "table"
     t.string   "delimiter"
     t.integer  "user_id"
     t.integer  "company_id"

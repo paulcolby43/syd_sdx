@@ -12,7 +12,9 @@
           = f.input :company_id, as: :hidden, :input_html => { :value => current_user.company_id }
           = f.input :delimiter, as: :hidden, :input_html => { :value => 'comma' }
           .form-group
-            = f.input :name, required: true, autofocus: true, :input_html => { class: 'form-control' }
+            = f.input :name, required: true, :input_html => { class: 'form-control', autofocus: true }
+          .form-group
+            = f.input :table, as: :radio_buttons, collection: [['images', 'Images'], ['shipments', 'Shipment']], checked: 'images', label_method: :second, value_method: :first
           =# f.label :file, "<i class='fa fa-upload fa-2x text-primary'></i> --Choose CSV--".html_safe, :class => "control-label"
           =# f.file_field :file, class: 'form-control-file', onchange: "PreviewCSV();", required: true
           .form-group
@@ -51,3 +53,8 @@
               -#
                 = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg') do
                   Save
+
+:javascript
+  $('.modal').on('shown.bs.modal', function() {
+    $(this).find('[autofocus]').first().focus();
+  });

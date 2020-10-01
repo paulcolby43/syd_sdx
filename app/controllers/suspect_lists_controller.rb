@@ -22,7 +22,7 @@ class SuspectListsController < ApplicationController
       @headers = @suspect_list.csv_file_headers
       csv_table = @suspect_list.csv_file_table
       @number_of_table_rows = csv_table.count unless csv_table.blank?
-      @csv_table = Kaminari.paginate_array(csv_table).page(params[:page]).per(10)
+      @csv_table = Kaminari.paginate_array(csv_table).page(params[:page]).per(20)
     end
   end
 
@@ -116,7 +116,9 @@ class SuspectListsController < ApplicationController
 #            file = Down::NetHttp.open(show_jpeg_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: current_yard_id))
 #            file = Down::NetHttp.open(send_jpeg_image_file_image_url(image['CAPTURE_SEQ_NBR'], yard_id: current_yard_id))
 #            file_writer << file.read
-            file_writer << Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
+#            file_writer << Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
+            url = "https://71.41.52.58:3334/sdcgi?image=y&table=images&capture_seq_nbr=1055&yardid=1612c2ea-4891-4f5a-84f6-b8c5f73ceb7c"
+            file_writer << Down.download(url)
           end
         end
       end
@@ -133,6 +135,6 @@ class SuspectListsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def suspect_list_params
-      params.require(:suspect_list).permit(:name, :file, :delimiter, :user_id, :company_id)
+      params.require(:suspect_list).permit(:name, :file, :table, :delimiter, :user_id, :company_id)
     end
 end
