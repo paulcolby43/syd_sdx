@@ -219,6 +219,7 @@ Rails.application.routes.draw do
   resources :suspect_lists do
     member do
       post :images_download, to: "suspect_lists#images_download"
+      get :images_zip, to: "suspect_lists#images_zip"
     end
   end
   

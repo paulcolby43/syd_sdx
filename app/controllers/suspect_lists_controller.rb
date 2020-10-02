@@ -1,6 +1,6 @@
 class SuspectListsController < ApplicationController
   before_filter :login_required
-  before_action :set_suspect_list, only: [:show, :edit, :update, :destroy, :images_download]
+  before_action :set_suspect_list, only: [:show, :edit, :update, :destroy, :images_download, :images_zip]
   
 #  include ActionController::Live # required for streaming download
 #  include ZipTricks::RailsStreaming
@@ -125,6 +125,27 @@ class SuspectListsController < ApplicationController
     end
   ensure
     response.stream.close
+  end
+  
+  def images_zip
+    require 'zip'
+
+    @temp_file = Tempfile.new("zip-temp")
+
+    Zip::OutputStream.open(@temp_file.path) do |zos|
+      @suspect_list.csv_file_table.uniq.each do |row|
+        ticket_number = row.first[1]
+        images = Image.api_find_all_by_ticket_number(ticket_number, current_user.company, current_yard_id)
+        images.each do |image|
+          file_name = "ticket_#{ticket_number}/ticket_#{ticket_number}_id_#{image['CAPTURE_SEQ_NBR']}.jpg"
+          zos.put_next_entry(file_name)
+#          zos.print IO.read(open(media.url_resource, :allow_redirections => :all))
+          zos.print Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
+        end
+      end
+    end
+    send_file @temp_file, :type => 'application/zip', :disposition => 'attachment'
+    
   end
 
   private

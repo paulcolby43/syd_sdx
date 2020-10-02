@@ -6,9 +6,10 @@
       .pull-right
         %ul.list-inline
           %li.list-inline-item
-            = button_to images_download_suspect_list_path(@suspect_list), method: :post, data: { "no-turbolink" => true }, class: 'btn btn-default' do
-              %i.fa.fa-download
-              Download Images
+            -#
+              = button_to images_download_suspect_list_path(@suspect_list), method: :post, data: { "no-turbolink" => true }, class: 'btn btn-default' do
+                %i.fa.fa-download
+                Download Images
             -#
               %a{href: images_download_suspect_list_path(@suspect_list), method: :post, data: { "no-turbolink" => true }, class: 'btn btn-default'}
                 %i.fa.fa-download
