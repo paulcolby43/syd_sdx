@@ -110,7 +110,7 @@ class Shipment < ActiveRecord::Base
 
   def self.api_find_all_by_shipment_number(shipment_number, company, yard_id)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/shipments/?ticket_nbr=#{shipment_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
     end
@@ -157,7 +157,7 @@ class Shipment < ActiveRecord::Base
   
   def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/shipments?capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank? 
       return JSON.parse(response).first
     end

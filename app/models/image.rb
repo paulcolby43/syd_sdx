@@ -123,7 +123,7 @@ class Image < ActiveRecord::Base
   # Get all jpegger images for this company with this ticket number
   def self.api_find_all_by_ticket_number(ticket_number, company, yard_id)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/images/?ticket_nbr=#{ticket_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
     end
@@ -170,7 +170,7 @@ class Image < ActiveRecord::Base
   # Get all the data for the image with this capture sequence number
   def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/images?capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank? 
       return JSON.parse(response).first
     end
@@ -213,7 +213,7 @@ class Image < ActiveRecord::Base
   def self.api_find_all_by_receipt_number(receipt_number, company, yard_id)
     
     api_url = "http://#{company.jpegger_service_ip}/api/v1/images/?receipt_nbr=#{receipt_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
     end
@@ -253,7 +253,7 @@ class Image < ActiveRecord::Base
   # Get first jpegger image for this company with this ticket number and event code
   def self.api_find_first_by_ticket_number_and_event_code(ticket_number, company, yard_id, event_code)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/images/?ticket_nbr=#{ticket_number}&event_code=#{event_code}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
     end
@@ -290,7 +290,7 @@ class Image < ActiveRecord::Base
   # Get all jpegger images for this company with this service request number
   def self.api_find_all_by_service_request_number(service_request_number, company, yard_id)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/images/?service_req_nbr=#{service_request_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
     end
@@ -330,7 +330,7 @@ class Image < ActiveRecord::Base
   # Get all jpegger images for this company with this ticket number
   def self.api_find_all_by_container_number_and_service_request_number(container_number, service_request_number, company, yard_id)
     api_url = "http://#{company.jpegger_service_ip}/api/v1/images/?service_req_nbr=#{service_request_number}&container_nbr=#{container_number}&yardid=#{yard_id}"
-    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
     end
