@@ -30,7 +30,7 @@ jQuery ->
         $('#cust_pics').prepend('<div class="row"><div class="col-xs-12 col-sm-2 col-md-2 col-lg-2"><div class="thumbnail"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $(".picture_loading_spinner").show()
       else
-        alert "" + file.name + " is not a gif, jpeg, or png picture file"
+        alert "" + file.name + " is not a gif, jpeg, png, or pdf file"
 
     progress: (e, data) ->
       if data.context

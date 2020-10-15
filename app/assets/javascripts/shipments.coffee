@@ -43,7 +43,7 @@ jQuery ->
         $('#shipment_images').prepend('<div class="row"><div class="col-xs-12 col-sm-2 col-md-2 col-lg-2"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $(".picture_loading_spinner").show()
       else
-        alert "" + file.name + " is not a gif, jpeg, or png picture file"
+        alert "" + file.name + " is not a gif, jpeg, png, or pdf file"
 
     progress: (e, data) ->
       if data.context
@@ -77,7 +77,7 @@ jQuery ->
         $('#event_code_' + event_code_id + '_pictures').prepend('<div class="row"><div class="col-xs-12"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $('#event_code_' + event_code_id + '_shipment_file_spinner').show()
       else
-        alert "" + file.name + " is not a gif, jpeg, or png picture file"
+        alert "" + file.name + " is not a gif, jpeg, png, or pdf file"
 
     progress: (e, data) ->
       if data.context
