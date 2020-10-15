@@ -137,9 +137,6 @@ gem 'simple_form'
 # https://github.com/cyu/rack-cors
 #gem 'rack-cors'
 
-# https://github.com/rails/activeresource
-gem 'activeresource', :require => 'active_resource' 
-
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
