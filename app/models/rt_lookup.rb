@@ -10,7 +10,7 @@ class RtLookup < ActiveRecord::Base
   #############################
   
   def self.api_find_all_by_ticket_number(ticket_number, company, yard_id)
-    api_url = "http://#{company.jpegger_service_ip}/api/v1/rt_lookups/?ticket_nbr=#{ticket_number}&yardid=#{yard_id}"
+    api_url = "#{company.jpegger_service_ip}/api/v1/rt_lookups/?ticket_nbr=#{ticket_number}&yardid=#{yard_id}"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)

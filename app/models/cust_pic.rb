@@ -114,16 +114,16 @@ class CustPic < ActiveRecord::Base
 #  end
 
   def self.uri(azure_url, company)
-    "http://#{company.jpegger_service_ip}/#{azure_url}"
+    "#{company.jpegger_service_ip}/#{azure_url}"
   end
   
   def self.thumbnail_uri(thumbnail_url, company)
-    "http://#{company.jpegger_service_ip}/#{thumbnail_url}"
+    "#{company.jpegger_service_ip}/#{thumbnail_url}"
   end
   
   # Get all jpegger cust_pics for this company with this customer number
   def self.api_find_all_by_customer_number(customer_number, company, yard_id)
-    api_url = "http://#{company.jpegger_service_ip}/api/v1/cust_pics/?cust_nbr=#{customer_number}&yardid=#{yard_id}"
+    api_url = "#{company.jpegger_service_ip}/api/v1/cust_pics/?cust_nbr=#{customer_number}&yardid=#{yard_id}"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank?
       return JSON.parse(response)
@@ -168,7 +168,7 @@ class CustPic < ActiveRecord::Base
   end
   
   def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
-    api_url = "http://#{company.jpegger_service_ip}/api/v1/cust_pics?capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+    api_url = "#{company.jpegger_service_ip}/api/v1/cust_pics?capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
     unless response.blank? 
       return JSON.parse(response).first

@@ -10,7 +10,7 @@ class ShipmentBlobWorker
     
     # Create blob
     blob_data = open(shipment_file.file.path)
-    api_url = "http://#{shipment_file.user.company.jpegger_service_ip}/api/v1/shipments"
+    api_url = "#{shipment_file.user.company.jpegger_service_ip}/api/v1/shipments"
 
     params = {:shipment => {:file => blob_data, :branch_code => shipment_file.branch_code, :yardid => shipment_file.yard_id, :ticket_nbr => shipment_file.ticket_number,
       :container_nbr => shipment_file.container_number, :booking_nbr => shipment_file.booking_number, :contr_nbr => shipment_file.contract_number, :camera_name => shipment_file.user.email, 

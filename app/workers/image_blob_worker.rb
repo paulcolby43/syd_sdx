@@ -21,7 +21,7 @@ class ImageBlobWorker
     
     # Create blob
       blob_data = open(image_file.file.path)
-      api_url = "http://#{image_file.user.company.jpegger_service_ip}/api/v1/images"
+      api_url = "#{image_file.user.company.jpegger_service_ip}/api/v1/images"
       
       params = {:image => {:file => blob_data, :branch_code => image_file.branch_code, :yardid => image_file.yard_id, :ticket_nbr => image_file.ticket_number,
       :container_nbr => image_file.container_number, :booking_nbr => image_file.booking_number, :contr_nbr => image_file.contract_number, :camera_name => "user_#{image_file.user.username}", :camera_group => "Portal",
@@ -31,7 +31,6 @@ class ImageBlobWorker
     
       RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: params)
       
-    
 #    require "rmagick"
 #    image_file = ImageFile.find(image_file_id)
 #    image_file.update_attribute(:process, true)

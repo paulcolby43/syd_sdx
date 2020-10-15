@@ -8,7 +8,7 @@ class CustPicBlobWorker
 
     # Create blob
     blob_data = open(cust_pic_file.file.path)
-    api_url = "http://#{cust_pic_file.user.company.jpegger_service_ip}/api/v1/cust_pics"
+    api_url = "#{cust_pic_file.user.company.jpegger_service_ip}/api/v1/cust_pics"
     
     params = {:cust_pic => {:file => blob_data, :yardid => cust_pic_file.yard_id, :camera_name => "user_#{cust_pic_file.user.username}", :camera_group => "Portal",
       :sys_date_time => cust_pic_file.created_at, :event_code => cust_pic_file.event_code, :cust_nbr => cust_pic_file.customer_number, :hidden => cust_pic_file.hidden,
