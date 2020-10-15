@@ -47,7 +47,7 @@ gem 'unicorn'
 gem 'haml'
 
 # REST api calls
-gem 'rest-client', require: 'rest-client'
+gem 'rest-client', '~> 1.8.0', require: 'rest-client'
 
 # Twitter Bootstrap styling
 gem 'twbs_sass_rails'
