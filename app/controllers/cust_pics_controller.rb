@@ -39,7 +39,7 @@ class CustPicsController < ApplicationController
   def show
 #    respond_with(@cust_pic)
     @cust_pic = CustPic.api_find_by_capture_sequence_number(params[:id], current_user.company, current_yard_id)
-    if @cust_pic['YARDID'] != current_yard_id
+    if @cust_pic['yardid'] != current_yard_id
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
     end

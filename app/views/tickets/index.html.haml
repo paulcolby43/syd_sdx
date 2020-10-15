@@ -161,7 +161,7 @@
           .text-center
             %div{id: 'endless_page'}
               -# %p= image_tag("ajax-loader.gif", :id => "more_tickets_spinner", :alt => "Loading ...", style: "display:none;")
-              %i.fa.fa-refresh.fa-spin.fa-3x{:id => "more_tickets_spinner", style: "display:none;"}
+              %i.fa.fa-spinner.fa-spin.fa-3x{:id => "more_tickets_spinner", style: "display:none;"}
               %p= link_to 'Load more ...', tickets_path(page: @tickets.next_page, q: params[:q], status: @status, start_date: @start_date, end_date: @end_date, sort_column: @sort_column, sort_direction: @sort_direction), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
       - else
         %p.text-center No tickets found            

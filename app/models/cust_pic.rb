@@ -1,190 +1,209 @@
 class CustPic < ActiveRecord::Base
-  #  new columns need to be added here to be writable through mass assignment
-#  attr_accessible :capture_seq_nbr, :blob_id, :camera_name, :camera_group, :sys_date_time, :location,
-#    :branch_code, :cust_nbr, :event_code, :ticket_nbr, :contr_nbr, :booking_nbr, :container_nbr, :cust_name, :thumbnail
-
-  establish_connection :jpegger
-
-  self.primary_key = 'capture_seq_nbr'
-  self.table_name = 'CUST_PICS_data'
-  
-  belongs_to :blob
-
-  #############################
-  #     Instance Methods      #
-  ############################
-  
-  def jpeg_image
-    blob.jpeg_image
-  end
-
-  def preview
-    blob.preview
-  end
-  
-  def jpeg_image_data_uri
-    unless jpeg_image.blank?
-      "data:image/jpg;base64, #{Base64.encode64(jpeg_image)}"
-    else
-      nil
-    end
-  end
-  
-  def jpeg_image_base_64
-    unless jpeg_image.blank?
-      Base64.encode64(jpeg_image)
-    else
-      nil
-    end
-  end
-  
-  def preview_data_uri
-    unless preview.blank?
-      "data:image/jpg;base64, #{Base64.encode64(preview)}"
-    else
-      nil
-    end
-  end
-  
-  def preview_base_64
-    unless preview.blank?
-      Base64.encode64(preview)
-    else
-      nil
-    end
-  end
-  
-  def customer_photo?
-    event_code == "Customer Photo"
-  end
-  
-  def photo_id?
-    event_code == "Photo ID"
-  end
-  
-  def leads_online_code
-    if customer_photo?
-      "C"
-    elsif photo_id?
-      "I"
-    else
-      "C"
-    end
-  end
-  
-  def pdf?
-    unless jpeg_image.blank?
-      blob.jpeg_image[0..3] == "%PDF" 
-    else
-      return false
-    end
-  end
-  
-  #############################
-  #     Class Methods         #
-  #############################
-  
+#  #  new columns need to be added here to be writable through mass assignment
+##  attr_accessible :capture_seq_nbr, :blob_id, :camera_name, :camera_group, :sys_date_time, :location,
+##    :branch_code, :cust_nbr, :event_code, :ticket_nbr, :contr_nbr, :booking_nbr, :container_nbr, :cust_name, :thumbnail
+#
+#  establish_connection :jpegger
+#
+#  self.primary_key = 'capture_seq_nbr'
+#  self.table_name = 'CUST_PICS_data'
+#  
+#  belongs_to :blob
+#
+#  #############################
+#  #     Instance Methods      #
+#  ############################
+#  
+#  def jpeg_image
+#    blob.jpeg_image
+#  end
+#
+#  def preview
+#    blob.preview
+#  end
+#  
+#  def jpeg_image_data_uri
+#    unless jpeg_image.blank?
+#      "data:image/jpg;base64, #{Base64.encode64(jpeg_image)}"
+#    else
+#      nil
+#    end
+#  end
+#  
+#  def jpeg_image_base_64
+#    unless jpeg_image.blank?
+#      Base64.encode64(jpeg_image)
+#    else
+#      nil
+#    end
+#  end
+#  
+#  def preview_data_uri
+#    unless preview.blank?
+#      "data:image/jpg;base64, #{Base64.encode64(preview)}"
+#    else
+#      nil
+#    end
+#  end
+#  
+#  def preview_base_64
+#    unless preview.blank?
+#      Base64.encode64(preview)
+#    else
+#      nil
+#    end
+#  end
+#  
+#  def customer_photo?
+#    event_code == "Customer Photo"
+#  end
+#  
+#  def photo_id?
+#    event_code == "Photo ID"
+#  end
+#  
+#  def leads_online_code
+#    if customer_photo?
+#      "C"
+#    elsif photo_id?
+#      "I"
+#    else
+#      "C"
+#    end
+#  end
+#  
+#  def pdf?
+#    unless jpeg_image.blank?
+#      blob.jpeg_image[0..3] == "%PDF" 
+#    else
+#      return false
+#    end
+#  end
+#  
+#  #############################
+#  #     Class Methods         #
+#  #############################
+#  
   # Open and read jpegger cust_pic preview page, over ssl
-  def CustPic.preview(company, capture_sequence_number, yard_id)
-    require "open-uri"
-    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
-    
-    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+#  def CustPic.preview(company, capture_sequence_number, yard_id)
+#    require "open-uri"
+#    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?preview=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+#    
+#    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+#  end
+#  
+#  # Open and read jpegger cust_pic jpeg_image page, over ssl
+#  def CustPic.jpeg_image(company, capture_sequence_number, yard_id)
+#    require "open-uri"
+#    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+#    
+#    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
+#  end
+#
+#  ### SEARCH WITH RANSACK ###
+#  def self.ransack_search(query, sort, direction)
+#    search = CustPic.ransack(query)
+#    search.sorts = "#{sort} #{direction}"
+#    cust_pics = search.result
+#
+#    return cust_pics
+#  end
+#  
+#  def self.table_exists?
+#    CustPic.connection.table_exists? 'CUST_PICS_data'
+#  end
+
+  def self.uri(azure_url, company)
+    "http://#{company.jpegger_service_ip}/#{azure_url}"
   end
   
-  # Open and read jpegger cust_pic jpeg_image page, over ssl
-  def CustPic.jpeg_image(company, capture_sequence_number, yard_id)
-    require "open-uri"
-    url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=cust_pics&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
-    
-    return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
-  end
-
-  ### SEARCH WITH RANSACK ###
-  def self.ransack_search(query, sort, direction)
-    search = CustPic.ransack(query)
-    search.sorts = "#{sort} #{direction}"
-    cust_pics = search.result
-
-    return cust_pics
-  end
-  
-  def self.table_exists?
-    CustPic.connection.table_exists? 'CUST_PICS_data'
+  def self.thumbnail_uri(thumbnail_url, company)
+    "http://#{company.jpegger_service_ip}/#{thumbnail_url}"
   end
   
   # Get all jpegger cust_pics for this company with this customer number
   def self.api_find_all_by_customer_number(customer_number, company, yard_id)
-    require 'socket'
-    host = company.jpegger_service_ip
-    port = company.jpegger_service_port
-    
-    # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from cust_pics where cust_nbr='#{customer_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
-    
-    # SSL TCP socket communication with jpegger
-    tcp_client = TCPSocket.new host, port
-    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
-    ssl_client.connect
-    ssl_client.sync_close = true
-    ssl_client.puts command
-    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
-    ssl_client.close
-    
-    # Non-SSL TCP socket communication with jpegger
-#    socket = TCPSocket.open(host,port) # Connect to server
-#    socket.send(command, 0)
-#    sleep 2 # Give socket a little time to send, then receive
-#    response = socket.recvfrom(200000)
-#    socket.close
-    
-#    data= Hash.from_xml(response.first) # Convert xml response to a hash
-    data= Hash.from_xml(response) # Convert xml response to a hash
-    
-    unless data["RESULT"]["ROW"].blank?
-      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
-        return [data["RESULT"]["ROW"]]
-      else
-        return data["RESULT"]["ROW"]
-      end
-    else
-      return [] # No cust_pics found
+    api_url = "http://#{company.jpegger_service_ip}/api/v1/cust_pics/?cust_nbr=#{customer_number}&yardid=#{yard_id}"
+    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    unless response.blank?
+      return JSON.parse(response)
     end
+    
+#    require 'socket'
+#    host = company.jpegger_service_ip
+#    port = company.jpegger_service_port
+#    
+#    # SQL command that gets sent to jpegger service
+#    command = "<FETCH><SQL>select * from cust_pics where cust_nbr='#{customer_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
+#    
+#    # SSL TCP socket communication with jpegger
+#    tcp_client = TCPSocket.new host, port
+#    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+#    ssl_client.connect
+#    ssl_client.sync_close = true
+#    ssl_client.puts command
+#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+#    ssl_client.close
+#    
+#    # Non-SSL TCP socket communication with jpegger
+##    socket = TCPSocket.open(host,port) # Connect to server
+##    socket.send(command, 0)
+##    sleep 2 # Give socket a little time to send, then receive
+##    response = socket.recvfrom(200000)
+##    socket.close
+#    
+##    data= Hash.from_xml(response.first) # Convert xml response to a hash
+#    data= Hash.from_xml(response) # Convert xml response to a hash
+#    
+#    unless data["RESULT"]["ROW"].blank?
+#      if data["RESULT"]["ROW"].is_a? Hash # Only one result returned, so put it into an array
+#        return [data["RESULT"]["ROW"]]
+#      else
+#        return data["RESULT"]["ROW"]
+#      end
+#    else
+#      return [] # No cust_pics found
+#    end
     
   end
   
   def self.api_find_by_capture_sequence_number(capture_sequence_number, company, yard_id)
-    require 'socket'
-    host = company.jpegger_service_ip
-    port = company.jpegger_service_port
-    
-    # SQL command that gets sent to jpegger service
-    command = "<FETCH><SQL>select * from cust_pics where capture_seq_nbr='#{capture_sequence_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
-    
-    # SSL TCP socket communication with jpegger
-    tcp_client = TCPSocket.new host, port
-    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
-    ssl_client.connect
-    ssl_client.sync_close = true
-    ssl_client.puts command
-    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
-    ssl_client.close
-    
-    # Non-SSL TCP socket communication with jpegger
-#    socket = TCPSocket.open(host,port) # Connect to server
-#    socket.send(command, 0)
-#    response = socket.recvfrom(200000)
-#    socket.close
-    
-#    data= Hash.from_xml(response.first) # Convert xml response to a hash
-    data= Hash.from_xml(response) # Convert xml response to a hash
-    
-    unless data["RESULT"]["ROW"].blank?
-      return data["RESULT"]["ROW"]
-    else
-      return nil # No cust_pic image found
+    api_url = "http://#{company.jpegger_service_ip}/api/v1/cust_pics?capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+    response = RestClient::Request.execute(method: :get, url: api_url, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    unless response.blank? 
+      return JSON.parse(response).first
     end
-
+    
+#    require 'socket'
+#    host = company.jpegger_service_ip
+#    port = company.jpegger_service_port
+#    
+#    # SQL command that gets sent to jpegger service
+#    command = "<FETCH><SQL>select * from cust_pics where capture_seq_nbr='#{capture_sequence_number}' and yardid='#{yard_id}'</SQL><ROWS>100</ROWS></FETCH>"
+#    
+#    # SSL TCP socket communication with jpegger
+#    tcp_client = TCPSocket.new host, port
+#    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+#    ssl_client.connect
+#    ssl_client.sync_close = true
+#    ssl_client.puts command
+#    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+#    ssl_client.close
+#    
+#    # Non-SSL TCP socket communication with jpegger
+##    socket = TCPSocket.open(host,port) # Connect to server
+##    socket.send(command, 0)
+##    response = socket.recvfrom(200000)
+##    socket.close
+#    
+##    data= Hash.from_xml(response.first) # Convert xml response to a hash
+#    data= Hash.from_xml(response) # Convert xml response to a hash
+#    
+#    unless data["RESULT"]["ROW"].blank?
+#      return data["RESULT"]["ROW"]
+#    else
+#      return nil # No cust_pic image found
+#    end
   end
-  
+#  
 end

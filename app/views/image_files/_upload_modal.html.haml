@@ -1,4 +1,32 @@
 -# %div{:id => "upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+-#
+  %div{:id => "ticket_#{ticket['Id']}_upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+    .modal-dialog.modal-sm
+      .modal-content
+        .modal-body
+          -#
+            = form_tag("/images", method: :post) do
+              = hidden_field_tag "image[ticket_nbr]", ticket["TicketNumber"]
+              = hidden_field_tag "image[yardid]", current_yard_id
+              %label{:for => 'image[file]'} File to Upload
+              = file_field_tag "image[file]"
+              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+                Save
+
+          = form_for Image.new do |f|
+            = f.hidden_field :ticket_nbr, value: ticket["TicketNumber"]
+            = f.hidden_field :yardid, value: current_yard_id
+            .form-group
+              = f.label "Event Code", :class => 'control-label'
+              = f.text_field :event_code, placeholder: 'Event Code', class: "form-control input-lg"
+            .form-group
+              = f.label "File Attachment", :class => 'control-label'
+              = f.file_field :file, :type => 'file', required: true
+            .modal-footer
+              = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+                Save
+    
+-#
 %div{:id => "ticket_#{ticket['Id']}_upload_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
   = form_for ImageFile.new, html: {class: 'image_file_upload_form'} do |f|
     .modal-dialog.modal-sm
@@ -39,7 +67,7 @@
           .form-group{id: 'tag_form_group', style: 'display:none;'}
             = f.label "License Plate", :class => 'control-label'
             = f.text_field :tag_number, :placeholder => "License Plate Number", class: "form-control input-lg", required: true
-          
+
           %div{:id => 'uploads', :style => 'display:block;'}
             %p{id: "upload_button", style: "display:none;"}
               %label.btn.btn-primary.btn-block.btn-lg
@@ -92,6 +120,6 @@
           %script{:id => "template-download", :type => "text/x-tmpl"}
             .download
               {%=o.name%}
-        
+
         .modal-footer
           %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done

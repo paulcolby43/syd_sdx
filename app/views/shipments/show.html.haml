@@ -1,71 +1,83 @@
-= render partial: "shared/search_navbar", locals: {title: "#{@shipment['TICKET_NBR']}"}
+= render partial: "shared/search_navbar", locals: {title: "#{@shipment['ticket_nbr']}"}
 .jumbotron{style: 'background-color: white;'}
   .container
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'thumbnail img-responsive')
-        - if not @shipment['FILE_NAME'].blank? and File.extname(@shipment['FILE_NAME']) == '.pdf'
+        -#
+          - if not @shipment['FILE_NAME'].blank? and File.extname(@shipment['FILE_NAME']) == '.pdf'
+            %p.lead.text-center
+              %a{href: send_jpeg_image_file_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID'])}
+                %i.fa.fa-file-pdf-o.fa-lg
+                Download PDF
+        - unless @shipment['content_type'].start_with? 'image'
           %p.lead.text-center
-            %a{href: send_jpeg_image_file_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID'])}
+            - if @shipment['content_type'] == "application/pdf"
               %i.fa.fa-file-pdf-o.fa-lg
-              Download PDF
+            - else
+              %i.fa.fa-file.fa-lg
+            %a{href: Shipment.uri(@shipment['azure_url'], current_user.company)}
+              Download File
         - else
-          = link_to image_tag(show_jpeg_image_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID']), alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
-    %div{:id => "shipment_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
-      .modal-dialog.modal-lg
-        .modal-content
-          .modal-body
-            =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive')
-            = image_tag(show_jpeg_image_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID']), alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+          =# link_to image_tag(show_jpeg_image_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID']), alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive'), "#shipment_popup", "data-toggle" => "modal", :alt => "Shipment", :class => 'thumbnail'
+          = image_tag(Shipment.uri(@shipment['azure_url'], current_user.company), alt: @shipment['capture_seq_nbr'], class: 'img-responsive')
+    -#
+      %div{:id => "shipment_popup", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+        .modal-dialog.modal-lg
+          .modal-content
+            .modal-body
+              =# image_tag(show_jpeg_image_shipment_path(@shipment), alt: @shipment.id, class: 'img-responsive')
+              = image_tag(show_jpeg_image_shipment_path(@shipment['CAPTURE_SEQ_NBR'], yard_id: @shipment['YARDID']), alt: @shipment['CAPTURE_SEQ_NBR'], class: 'img-responsive')
     %div.row
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
-        %div.panel.panel-primary
-          %div.list_group
-            -#
-              %div.list-group-item
-                %strong= "Ticket:"
-                .pull-right
-                  = "#{@shipment['TICKET_NBR']}"
-            - unless @shipment['EVENT_CODE'].blank?
-              %div.list-group-item
-                %strong= "Event:"
-                .pull-right
-                  = "#{@shipment['EVENT_CODE']}"
-            -#
-              - unless @shipment.cust_name.blank?
+        %p
+          %div.panel.panel-primary
+            %div.list_group
+              -#
                 %div.list-group-item
-                  %strong= "Customer:"
+                  %strong= "Ticket:"
                   .pull-right
-                    = "#{@shipment['CUST_NAME']}"
-              - unless @shipment.container_nbr.blank?
+                    = "#{@shipment['TICKET_NBR']}"
+              - unless @shipment['event_code'].blank?
                 %div.list-group-item
-                  %strong= "Container:"
+                  %strong= "Event:"
                   .pull-right
-                    = "#{@shipment.container_nbr}"
-              - unless @shipment.booking_nbr.blank?
+                    = "#{@shipment['event_code']}"
+              -#
+                - unless @shipment.cust_name.blank?
+                  %div.list-group-item
+                    %strong= "Customer:"
+                    .pull-right
+                      = "#{@shipment['CUST_NAME']}"
+                - unless @shipment['container_nbr'].blank?
+                  %div.list-group-item
+                    %strong= "Container:"
+                    .pull-right
+                      = "#{@shipment['container_nbr']}"
+                - unless @shipment['booking_nbr'].blank?
+                  %div.list-group-item
+                    %strong= "Booking:"
+                    .pull-right
+                      = "#{@shipment['booking_nbr']}"
+                - unless @shipment['contr_nbr'].blank?
+                  %div.list-group-item
+                    %strong= "Contract:"
+                    .pull-right
+                      = "#{@shipment['contr_nbr']}"
+              - unless @shipment['camera_name'].blank?
                 %div.list-group-item
-                  %strong= "Booking:"
+                  %strong= "Camera:"
                   .pull-right
-                    = "#{@shipment.booking_nbr}"
-              - unless @shipment.contr_nbr.blank?
-                %div.list-group-item
-                  %strong= "Contract:"
-                  .pull-right
-                    = "#{@shipment.contr_nbr}"
-            - unless @shipment['CAMERA_NAME'].blank?
+                    = "#{@shipment['camera_name']}"
               %div.list-group-item
-                %strong= "Camera:"
+                %strong= "Date/Time:"
                 .pull-right
-                  = "#{@shipment['CAMERA_NAME']}"
-            %div.list-group-item
-              %strong= "Date/Time:"
-              .pull-right
-                = "#{@shipment['SYS_DATE_TIME']}"
-            - if @shipment['HIDDEN'] == '1'
-              %div.list-group-item
-                %strong= "Hidden:"
-                .pull-right
-                  Yes
+                  = "#{@shipment['sys_date_time']}"
+              - if @shipment['hidden'] == '1'
+                %div.list-group-item
+                  %strong= "Hidden:"
+                  .pull-right
+                    Yes
     -#        
       %div.row
         .text-center

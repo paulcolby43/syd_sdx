@@ -115,10 +115,20 @@
           - cust_pics.each do |cust_pic|
             .col-xs-12.col-sm-2.col-md-2
               .thumbnail
-                %a{href: cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                %a{href: cust_pic_path(cust_pic['capture_seq_nbr']), class: 'thumbnail'}
+                  - unless cust_pic['thumbnail_url'].blank?
+                    = image_tag(CustPic.thumbnail_uri(cust_pic['thumbnail_url'], current_user.company), alt: cust_pic['capture_seq_nbr'], class: 'img-responsive')
+                  - else
+                    - if cust_pic['content_type'] == "application/pdf"
+                      %i.fa.fa-file-pdf-o.fa-lg
+                    - else
+                      %i.fa.fa-file.fa-lg
+                    File
+                -#
+                  %a{href: cust_pic_path(cust_pic['capture_seq_nbr']), class: 'thumbnail'}
+                    = image_tag(show_preview_image_cust_pic_path(cust_pic['CAPTURE_SEQ_NBR']), alt: cust_pic['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                 .text-center
-                  %small.text-muted= cust_pic['EVENT_CODE']
+                  %small.text-muted= cust_pic['event_code']
     - else
       None
     -#

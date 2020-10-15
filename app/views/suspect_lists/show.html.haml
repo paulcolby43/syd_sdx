@@ -59,7 +59,7 @@
       .row
         .text-center
           %div{id: 'endless_page'}
-            %i.fa.fa-refresh.fa-spin.fa-3x{:id => "more_tickets_spinner", style: "display:none;"}
+            %i.fa.fa-spinner.fa-spin.fa-3x{:id => "more_tickets_spinner", style: "display:none;"}
             %p= link_to 'Load more ...', suspect_list_path(@suspect_list, page: @csv_table.next_page), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @csv_table.next_page
       -#
         .pull-right

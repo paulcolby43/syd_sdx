@@ -54,15 +54,26 @@ class ImagesController < ApplicationController
   end
 
   def show
+#    @image = Image.find(:all, :params => {capture_seq_nbr: params[:id], yardid: params[:yard_id].blank? ? current_yard_id : params[:yard_id]}).first
+#    if @image.blank?
+#      flash[:danger] = "Not found."
+#      redirect_to root_path
+#    elsif current_user.customer? and @image.hidden?
+#      # Don't allow access if yard ID doesn't match, or if customer user and the image is set to hidden
+#      flash[:danger] = "You don't have access to that page."
+#      redirect_to root_path
+#    end
+    
+    
     @image = Image.api_find_by_capture_sequence_number(params[:id], current_user.company, params[:yard_id].blank? ? current_yard_id : params[:yard_id])
-    @ticket_number = @image['TICKET_NBR']
+    @ticket_number = @image['ticket_nbr']
     @latitude_and_longitude = Image.latitude_and_longitude(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
-    if current_user.customer? and @image['HIDDEN'] == '1'
+    if current_user.customer? and @image['hidden'] == '1'
       # Don't allow access if yard ID doesn't match, or if customer user and the image is set to hidden
       flash[:danger] = "You don't have access to that page."
       redirect_to root_path
     else
-      @blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
+#      @blob = Image.jpeg_image(current_user.company, params[:id], params[:yard_id].blank? ? current_yard_id : params[:yard_id])
 #      if @blob[0..3] == "%PDF"
 #        # Show pdf directly in the browser
 #        redirect_to show_jpeg_image_image_path(@image['CAPTURE_SEQ_NBR'])
@@ -79,9 +90,11 @@ class ImagesController < ApplicationController
   end
 
   def create
-    @image = Image.new(image_params)
-    @image.save
-    respond_with(@image)
+#    @image = Image.new(image_params)
+#    @image.save
+#    respond_with(@image)
+    Image.multipart_create(params.except(:utf8, :authenticity_token, :button, :action, :controller))
+    redirect_to :back
   end
 
   def update
@@ -146,8 +159,8 @@ class ImagesController < ApplicationController
       @image = Image.find(params[:id])
     end
 
-    def image_params
-      params.require(:image).permit(:ticket_nbr)
-    end
+#    def image_params
+#      params.require(:image).permit(:ticket_nbr, :yardid, :event_code, :file)
+#    end
     
 end

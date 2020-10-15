@@ -357,3 +357,8 @@ jQuery ->
   $('#save_customer_navbar_link').click ->
     $('#customer_form').submit()
     return
+
+  ### CustPic picture event code chosen ###
+  $('.cust_pic_file_upload_form').on 'click', '.event_code_radio', (e) ->
+    form = $(this).closest("form")
+    form.find('#cust_pic_file_file').click()

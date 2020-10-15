@@ -1,44 +1,14 @@
 = render partial: "shared/navbars/edit_ticket_navbar", locals: {title: @ticket_number, total: number_to_currency(@ticket['BalanceDue'])}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
-  -#
-    - unless @ticket_session_id.blank?
-      .container
-        .pull-right
-          %small
-            Ticket Session
-            %strong= @ticket_session_id
   .container
     - unless @ticket['Description'].blank?
       %p.text-center= @ticket['Description']
-    -#
-      .well
-        = @get_ticket
-    -#
-      .well
-        = @get_ticket_response
-      .well
-        = @get_ticket_response['Session']['SessionType']
-    -# .well= @drawers
-    -# .well= @ticket
-    -#
-      .well
-        = @ticket
-      .well
-        =# @commodity_types
-        =# @commodities
-        =# @commodities_grouped_by_type_for_select
     = form_tag ticket_path, method: 'put', id: 'edit_ticket_form', :class => "form-horizontal" do
       = hidden_field_tag "ticket[created_from_trip]", params[:created_from_trip] unless params[:created_from_trip].blank?
       = hidden_field_tag "ticket[session_id]", @ticket_session_id unless @ticket_session_id.blank?
       = hidden_field_tag "ticket[ticket_number]", @ticket_number
-      =# hidden_field_tag "ticket[customer_id]", @ticket["CustomerId"]
       = hidden_field_tag "ticket[status]", @ticket['Status']
-      =# hidden_field_tag "ticket[id]", @ticket['Id']
-      =# hidden_field_tag :drawer_id, @drawers.first['CashDrawerId'] unless @drawers.blank?
-      =# select_tag :drawer_id, options_for_select(@drawers.map{ |drawer| [drawer['DrawerName'], drawer['CashDrawerId']] }), prompt: 'Choose a drawer' unless @drawers.blank?
-      =# hidden_field_tag :accounts_payable_id, @accounts_payable_items.last['Id'] unless @accounts_payable_items.blank?
-      =# @accounts_payable_items
       - unless @accounts_payable_items.blank?
         - @accounts_payable_items.each do |accounts_payable_item|
           .well
@@ -47,37 +17,13 @@
             =# accounts_payable_item
       - if @ticket['Status'] == '3'
         .well
-          =# @accounts_payable_items.first
-          =# @apcashier
           %p
             = "Payment by #{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}: #{number_to_currency(@accounts_payable_items.first['PaidAmount'])}"
           - if @apcashier['PaymentMethod'] == '1'
             = "Check Number: #{@apcashier['CheckNumber']}"
 
-      =# @combolists
-      -#
-        .well
-          %strong Makes
-          - @vehicle_makes.each do |make|
-            %p= make["Make"]
-        .well
-          %strong Models
-          - @vehicle_models.each do |model|
-            %p= model["Model"]
-        .well
-          %strong Bodies
-          - @body_styles.each do |body|
-            %p= body["ReportDescription"]
-        .well
-          %strong Colors
-          - @vehicle_colors.each do |color|
-            %p= color["ReportDescription"]
-        
       #vendor_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         .panel.panel-default
-          -#
-            .well
-              = @ticket
           %div.panel-heading{:role => "tab", id: "vendor_heading"}
             %h4.panel-title
               %a.text-primary{"aria-controls" => "collapseVendor", "aria-expanded" => "true", "data-parent" => "#vendor_accordion", "data-toggle" => "collapse", :href => "#collapseVendor", :role => "button" }
@@ -90,14 +36,11 @@
             .panel-body
               = select_tag "ticket[customer_id]", options_for_select([ ["#{@ticket['FirstName']} #{@ticket['LastName']}", @ticket['CustomerId']] ], @ticket['CustomerId']), prompt: 'Choose a customer', class: "", style: "width: 100%;", required: true
               = hidden_field_tag "ticket[description]", "#{@ticket['Description'].blank? ? "" : @ticket['Description']}"
-              =# render partial: 'new_customer_modal'
       - unless @line_items.blank?
         / Line items
         %div.ticket_input_fields_wrap
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             - @line_items.each do |line_item|
-              -#
-                .well= line_item
               .panel.panel-default.line-item
                 %div.panel-heading{:role => "tab", id: "heading#{line_item['Id']}"}
                   %h4.panel-title
@@ -113,8 +56,6 @@
                   .panel-body
                     = hidden_field_tag "ticket[line_items][][id]", line_item['Id']
                     = hidden_field_tag "ticket[line_items][][status]", line_item['Status']
-                    =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, line_item['CommodityId']), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true
-                    =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, line_item['CommodityId']), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true
                     = select_tag "ticket[line_items][][commodity]", options_for_select([ ["#{line_item['PrintDescription']}", line_item['CommodityId']] ], line_item['CommodityId']), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true
                     %br
                     #quantity_form_field{style: "#{line_item['UnitOfMeasure'] == 'EA' ? 'display:block' : 'display:none'}"}
@@ -168,7 +109,6 @@
                       %span.input-group-addon
                         %i.fa.fa-dollar.fa-lg
                       = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                      =# hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg  amount-calculation-field", required: true
                       %span.input-group-addon
                         %i.fa.fa-balance-scale.fa-lg
                       = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations, line_item['UnitOfMeasure']), class: "form-control input-lg amount-calculation-field", required: true
@@ -234,8 +174,7 @@
                     = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
                     &nbsp;
                     %strong= "$#{line_item['ExtendedAmount']}"
-                  / Deduction weights
-                  -# unless line_item["DeductionCollection"].blank?
+                  
                   / Deduction weights
                   .weight_deduction_details
                     - unless line_item["DeductionCollection"].blank?
@@ -249,9 +188,6 @@
                         - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
                           - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
                             - line_item_weight_deductions_total = line_item_weight_deductions_total + line_item_deduction["DeductWeight"].to_f
-                            -#
-                              %strong Deduction:
-                              = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
                         - if line_item_weight_deductions_total > 0
                           %strong Deduction:
                           = "#{number_with_precision(line_item_weight_deductions_total, :precision => 3, strip_insignificant_zeros: true)} LB"
@@ -269,9 +205,6 @@
                         - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
                           - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
                             - line_item_dollar_deductions_total = line_item_dollar_deductions_total + line_item_deduction["DeductDollarAmount"].to_f
-                            -#
-                              %strong Deduction:
-                              = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
                         - if line_item_dollar_deductions_total > 0
                           %strong Deduction:
                           = "$#{number_with_precision(line_item_dollar_deductions_total, :precision => 2, strip_insignificant_zeros: true)}"
@@ -306,8 +239,6 @@
                 .panel-body
                   = hidden_field_tag "ticket[line_items][][id]", new_item_id
                   = hidden_field_tag "ticket[line_items][][status]", nil
-                  =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
-                  =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
                   = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-session-id" => @ticket_session_id
                   %br
                   #quantity_form_field{style: 'display:none'}
@@ -361,7 +292,6 @@
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                    =# hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                     %span.input-group-addon
                       %i.fa.fa-balance-scale.fa-lg
                     = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
@@ -397,18 +327,12 @@
               %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                 .calculation_details
                 .deduction_details
-                -# %ul{class: 'list-inline'}
                 / Deduction weights
                 .weight_deduction_details
                 / Deduction dollar amounts
                 .dollar_amount_deduction_details
                 / Taxes
                 .tax_details
-                -#
-                  - unless mobile_device?
-                    .pull-right
-                      %a.text-muted{"aria-controls" => "collapse#{new_item_id}", "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", class: 'pull-right ticket_collapse_link' }
-                        %i.fa.fa-check-square.fa-2x.collapse_icon
       .row.form-group{id: 'calculating', style: 'display:none;'}
         %div.col-xs-12
           %h5.text-center
@@ -483,7 +407,6 @@
       .row
         .pull-right
           .col-xs-12.col-sm-2.col-md-2
-            -# %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], ticket: @ticket, status: @ticket['Status']), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
             %p= link_to '<i class="fa fa-warning"></i> Void'.html_safe, ticket_path(@ticket['Id'], status: @ticket['Status'], session_id: @ticket_session_id), :method => :delete, :data => { :confirm => 'Are you sure you want to void this ticket?', disable_with: "<i class='fa fa-spinner fa-spin'></i> Void" }, class: 'btn btn-sm btn-danger'
       
     %div#images
@@ -491,16 +414,20 @@
     - @images_array.each_slice(6) do |images|
       .row
         - images.each do |image|
-          -# if current_user.view_images?
-          - unless image['HIDDEN'] == '1' or not current_user.view_images?
+          - unless image['hidden'] == '1' or not current_user.view_images?
             .col-xs-12.col-sm-2.col-md-2
               .thumbnail
-                %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
-                -#
-                  .text-center= image.event_code
+                %a{href: image_path(image['capture_seq_nbr']), class: 'thumbnail'}
+                  - unless image['thumbnail_url'].blank?
+                    = image_tag(Image.thumbnail_uri(image['thumbnail_url'], current_user.company), alt: image['capture_seq_nbr'], class: 'img-responsive')
+                  - else
+                    - if image['content_type'] == "application/pdf"
+                      %i.fa.fa-file-pdf-o.fa-lg
+                    - else
+                      %i.fa.fa-file.fa-lg
+                    File
                 .text-center
-                  %small.text-muted= image['EVENT_CODE']
+                  %small.text-muted= image['event_code']
     
 = render partial: "shared/ticket_footer_navbar", locals: {title: "Ticket"}
 

@@ -57,7 +57,7 @@
         .text-center
           %div{id: 'endless_page'}
             -# %p= image_tag("ajax-loader.gif", :id => "more_pack_shipments_spinner", :alt => "Loading ...", style: "display:none;")
-            %i.fa.fa-refresh.fa-spin.fa-3x{:id => "more_pack_shipments_spinner", style: "display:none;"}
+            %i.fa.fa-spinner.fa-spin.fa-3x{:id => "more_pack_shipments_spinner", style: "display:none;"}
             %p= link_to 'Load more ...', pack_shipments_path(:status => @status, :page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
     - else
       %p.text-center No pack shipments found

@@ -34,19 +34,29 @@
           - @images_array.each_slice(6) do |images|
             .row
               - images.each do |image|
-                - unless current_user.customer? and image['HIDDEN'] == '1'
+                - unless current_user.customer? and image['hidden'] == '1'
                   .col-xs-12.col-sm-2.col-md-2
                     .thumbnail
-                      %a{href: shipment_path(image['CAPTURE_SEQ_NBR'], yard_id: @pack_shipment['YardId']), class: 'thumbnail'}
-                        = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR'], yard_id: @pack_shipment['YardId']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                      %a{href: shipment_path(image['capture_seq_nbr'], yard_id: @pack_shipment['YardId']), class: 'thumbnail'}
+                        - unless image['thumbnail_url'].blank?
+                          = image_tag(Shipment.thumbnail_uri(image['thumbnail_url'], current_user.company), alt: image['capture_seq_nbr'], class: 'img-responsive')
+                        - else
+                          - if image['content_type'] == "application/pdf"
+                            %i.fa.fa-file-pdf-o.fa-lg
+                          - else
+                            %i.fa.fa-file.fa-lg
+                          File
+                      -#
+                        %a{href: shipment_path(image['CAPTURE_SEQ_NBR'], yard_id: @pack_shipment['YardId']), class: 'thumbnail'}
+                          = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR'], yard_id: @pack_shipment['YardId']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                       .text-center
-                        %small.text-muted= image['EVENT_CODE']
+                        %small.text-muted= image['event_code']
           - @inventory_tags_array.each_slice(6) do |inventory_tags|
             .row
               - inventory_tags.each do |inv_tag|
                 .col-xs-12.col-sm-2.col-md-2
                   .thumbnail
-                    %a{href: inv_tag_path(inv_tag['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    %a{href: inv_tag_path(inv_tag['capture_seq_nbr']), class: 'thumbnail'}
                       = image_tag(show_preview_image_inv_tag_path(inv_tag['CAPTURE_SEQ_NBR']), alt: inv_tag['CAPTURE_SEQ_NBR'], class: 'img-responsive')
                     .text-center
                       %small.text-muted= inv_tag['EVENT_CODE']
