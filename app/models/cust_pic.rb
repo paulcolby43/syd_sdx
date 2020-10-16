@@ -114,11 +114,11 @@ class CustPic < ActiveRecord::Base
 #  end
 
   def self.uri(azure_url, company)
-    "#{company.jpegger_service_ip}/#{azure_url}"
+    "#{company.jpegger_service_ip}#{azure_url}"
   end
   
   def self.thumbnail_uri(thumbnail_url, company)
-    "#{company.jpegger_service_ip}/#{thumbnail_url}"
+    "#{company.jpegger_service_ip}#{thumbnail_url}"
   end
   
   # Get all jpegger cust_pics for this company with this customer number
