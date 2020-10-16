@@ -399,11 +399,21 @@
       .row
         - images.each do |image|
           -# if current_user.view_images?
-          - unless image['HIDDEN'] == '1' or not current_user.view_images?
+          - unless image['hidden'] == '1' or not current_user.view_images?
             .col-xs-12.col-sm-2.col-md-2
               .thumbnail
-                %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                -#
+                  %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                %a{href: image_path(image['capture_seq_nbr']), class: 'thumbnail'}
+                  - unless image['thumbnail_url'].blank?
+                    = image_tag(Image.thumbnail_uri(image['thumbnail_url'], current_user.company), alt: image['capture_seq_nbr'], class: 'img-responsive')
+                  - else
+                    - if image['content_type'] == "application/pdf"
+                      %i.fa.fa-file-pdf-o.fa-lg
+                    - else
+                      %i.fa.fa-file.fa-lg
+                    File
                 -#
                   .text-center= image.event_code
                 .text-center
