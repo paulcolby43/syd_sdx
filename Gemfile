@@ -38,7 +38,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use Unicorn as the app server
-gem 'unicorn'
+gem 'unicorn', '~> 5.0.1'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -127,12 +127,12 @@ gem "font-awesome-rails"
 
 gem 'simple_form'
 
-#gem 'zip_tricks'
-#gem 'zipline'
+gem 'zip_tricks'
+gem 'zipline'
 #gem 'rubyzip'
 
 # Better downloading
-#gem 'down'
+gem 'down'
 
 # https://github.com/cyu/rack-cors
 #gem 'rack-cors'

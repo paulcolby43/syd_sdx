@@ -2,8 +2,10 @@ class SuspectListsController < ApplicationController
   before_filter :login_required
   before_action :set_suspect_list, only: [:show, :edit, :update, :destroy, :images_download, :images_zip]
   
-#  include ActionController::Live # required for streaming download
-#  include ZipTricks::RailsStreaming
+  include ActionController::Live # required for streaming download
+#  include ActionController::Streaming # required for streaming download
+  include ZipTricks::RailsStreaming
+#  include Zipline
   
 
   # GET /suspect_lists
@@ -89,11 +91,12 @@ class SuspectListsController < ApplicationController
   
   # POST /suspect_lists/1/images_download
   def images_download
-#    require 'open-uri'
+    require 'open-uri'
 #    files = [ ['http://www.example.com/user1.png', 'test.jpg'] ]
 #    zipline(files, "test.zip")
     
     require 'down'
+    require "down/net_http"
     zipname = "Suspect_List_#{@suspect_list.name}_#{@suspect_list.id}.zip"
     disposition = "attachment; filename=\"#{zipname}\""
     response.headers["Content-Disposition"] = disposition
@@ -109,16 +112,17 @@ class SuspectListsController < ApplicationController
       @suspect_list.csv_file_table.uniq.each do |row|
         ticket_number = row.first[1]
         images = Image.api_find_all_by_ticket_number(ticket_number, current_user.company, current_yard_id)
-        images.each do |image|
-          file_name = "/ticket_#{ticket_number}/ticket_#{ticket_number}_id_#{image['CAPTURE_SEQ_NBR']}.jpg"
+        images.each_with_index do |image, index|
+          file_name = "/ticket_#{ticket_number}/#{index+1}_ticket_#{ticket_number}_id_#{image['capture_seq_nbr']}#{Rack::Mime::MIME_TYPES.invert[image['content_type']]}"
           zip.write_deflated_file(file_name) do |file_writer|
 #            file = Down::NetHttp.open("#{request.protocol}#{request.host}#{image.url}", ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
 #            file = Down::NetHttp.open(show_jpeg_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: current_yard_id))
 #            file = Down::NetHttp.open(send_jpeg_image_file_image_url(image['CAPTURE_SEQ_NBR'], yard_id: current_yard_id))
 #            file_writer << file.read
 #            file_writer << Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
-            url = "https://71.41.52.58:3334/sdcgi?image=y&table=images&capture_seq_nbr=1055&yardid=1612c2ea-4891-4f5a-84f6-b8c5f73ceb7c"
-            file_writer << Down.download(url)
+#            url = "https://71.41.52.58:3334/sdcgi?image=y&table=images&capture_seq_nbr=1055&yardid=1612c2ea-4891-4f5a-84f6-b8c5f73ceb7c"
+            file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+            file_writer << file.read
           end
         end
       end
@@ -126,6 +130,21 @@ class SuspectListsController < ApplicationController
   ensure
     response.stream.close
   end
+
+#  def images_download
+##    require 'open-uri'
+#    require 'rack/mime'
+#
+#    all_images = []
+#    files = []
+#    @suspect_list.csv_file_table.uniq.each do |row|
+#      ticket_number = row.first[1]
+#      images = Image.api_find_all_by_ticket_number(ticket_number, current_user.company, current_yard_id)
+#      files = files + images.map.with_index{ |image,index| [Image.uri(image['azure_url'], current_user.company), "/ticket_#{ticket_number}/#{index+1}_ticket_#{ticket_number}_id_#{image['capture_seq_nbr']}#{Rack::Mime::MIME_TYPES.invert[image['content_type']]}"]}
+#    end
+#    Rails.logger.debug "**********#{files}"
+#    zipline(files, 'suspect_list.zip')
+#  end
   
   def images_zip
     require 'zip'
