@@ -127,8 +127,8 @@ class SuspectListsController < ApplicationController
         end
       end
     end
-  ensure
-    response.stream.close
+#  ensure
+#    response.stream.close
   end
 
 #  def images_download
