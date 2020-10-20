@@ -161,8 +161,9 @@ class SuspectListsController < ApplicationController
 #          zos.print IO.read(open(media.url_resource, :allow_redirections => :all))
 #          zos.print Image.jpeg_image(current_user.company, image['capture_seq_nbr'], current_yard_id)
 #          zos.print IO.read(open(Image.uri(image['azure_url'], current_user.company)))
-          file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-          zos.print file.read
+#          file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+#          zos.print file.read
+          zos.print Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE, max_redirects: 5).read
         end
       end
     end
