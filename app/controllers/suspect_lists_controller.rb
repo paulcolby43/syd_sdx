@@ -149,17 +149,20 @@ class SuspectListsController < ApplicationController
   def images_zip
     require 'zip'
 
-    @temp_file = Tempfile.new("zip-temp")
+    @temp_file = Tempfile.new(["Suspect_List_#{@suspect_list.name}_#{@suspect_list.id}", '.zip'])
 
     Zip::OutputStream.open(@temp_file.path) do |zos|
       @suspect_list.csv_file_table.uniq.each do |row|
         ticket_number = row.first[1]
         images = Image.api_find_all_by_ticket_number(ticket_number, current_user.company, current_yard_id)
-        images.each do |image|
-          file_name = "ticket_#{ticket_number}/ticket_#{ticket_number}_id_#{image['CAPTURE_SEQ_NBR']}.jpg"
+        images.each_with_index do |image, index|
+          file_name = "ticket_#{ticket_number}/#{index+1}_ticket_#{ticket_number}_id_#{image['capture_seq_nbr']}#{Rack::Mime::MIME_TYPES.invert[image['content_type']]}"
           zos.put_next_entry(file_name)
 #          zos.print IO.read(open(media.url_resource, :allow_redirections => :all))
-          zos.print Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
+#          zos.print Image.jpeg_image(current_user.company, image['capture_seq_nbr'], current_yard_id)
+#          zos.print IO.read(open(Image.uri(image['azure_url'], current_user.company)))
+          file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+          zos.print file.read
         end
       end
     end

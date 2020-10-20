@@ -129,7 +129,7 @@ gem 'simple_form'
 
 gem 'zip_tricks'
 gem 'zipline'
-#gem 'rubyzip'
+gem 'rubyzip'
 
 # Better downloading
 gem 'down'
