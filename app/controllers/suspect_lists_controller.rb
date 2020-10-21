@@ -3,9 +3,9 @@ class SuspectListsController < ApplicationController
   before_action :set_suspect_list, only: [:show, :edit, :update, :destroy, :images_download, :images_zip]
   
   include ActionController::Live # required for streaming download
-#  include ActionController::Streaming # required for streaming download
+  include ActionController::Streaming # required for streaming download
   include ZipTricks::RailsStreaming
-#  include Zipline
+  include Zipline
   
 
   # GET /suspect_lists
@@ -121,8 +121,9 @@ class SuspectListsController < ApplicationController
 #            file_writer << file.read
 #            file_writer << Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
 #            url = "https://71.41.52.58:3334/sdcgi?image=y&table=images&capture_seq_nbr=1055&yardid=1612c2ea-4891-4f5a-84f6-b8c5f73ceb7c"
-            file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-            file_writer << file.read
+#            file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+#            file_writer << file.read
+            file_writer << Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
           end
         end
       end
