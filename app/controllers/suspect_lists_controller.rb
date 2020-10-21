@@ -2,10 +2,10 @@ class SuspectListsController < ApplicationController
   before_filter :login_required
   before_action :set_suspect_list, only: [:show, :edit, :update, :destroy, :images_download, :images_zip]
   
-  include ActionController::Live # required for streaming download
-  include ActionController::Streaming # required for streaming download
-  include ZipTricks::RailsStreaming
-  include Zipline
+#  include ActionController::Live # required for streaming download
+#  include ActionController::Streaming # required for streaming download
+#  include ZipTricks::RailsStreaming
+#  include Zipline
   
 
   # GET /suspect_lists
@@ -92,8 +92,6 @@ class SuspectListsController < ApplicationController
   # POST /suspect_lists/1/images_download
   def images_download
     require 'open-uri'
-#    files = [ ['http://www.example.com/user1.png', 'test.jpg'] ]
-#    zipline(files, "test.zip")
     
     require 'down'
     require "down/net_http"
@@ -115,64 +113,19 @@ class SuspectListsController < ApplicationController
         images.each_with_index do |image, index|
           file_name = "/ticket_#{ticket_number}/#{index+1}_ticket_#{ticket_number}_id_#{image['capture_seq_nbr']}#{Rack::Mime::MIME_TYPES.invert[image['content_type']]}"
           zip.write_deflated_file(file_name) do |file_writer|
-#            file = Down::NetHttp.open("#{request.protocol}#{request.host}#{image.url}", ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-#            file = Down::NetHttp.open(show_jpeg_image_image_url(image['CAPTURE_SEQ_NBR'], yard_id: current_yard_id))
-#            file = Down::NetHttp.open(send_jpeg_image_file_image_url(image['CAPTURE_SEQ_NBR'], yard_id: current_yard_id))
-#            file_writer << file.read
-#            file_writer << Image.jpeg_image(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id)
-#            url = "https://71.41.52.58:3334/sdcgi?image=y&table=images&capture_seq_nbr=1055&yardid=1612c2ea-4891-4f5a-84f6-b8c5f73ceb7c"
-#            file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-#            file_writer << file.read
             file_writer << Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
           end
         end
       end
     end
-#  ensure
-#    response.stream.close
+  ensure
+    response.stream.close
   end
 
-#  def images_download
-##    require 'open-uri'
-#    require 'rack/mime'
-#
-#    all_images = []
-#    files = []
-#    @suspect_list.csv_file_table.uniq.each do |row|
-#      ticket_number = row.first[1]
-#      images = Image.api_find_all_by_ticket_number(ticket_number, current_user.company, current_yard_id)
-#      files = files + images.map.with_index{ |image,index| [Image.uri(image['azure_url'], current_user.company), "/ticket_#{ticket_number}/#{index+1}_ticket_#{ticket_number}_id_#{image['capture_seq_nbr']}#{Rack::Mime::MIME_TYPES.invert[image['content_type']]}"]}
-#    end
-#    Rails.logger.debug "**********#{files}"
-#    zipline(files, 'suspect_list.zip')
-#  end
-  
   def images_zip
     @suspect_list.sidekiq_create_zip_file(current_yard_id)
     flash[:success] = "Your suspect list zip file download is being generated! Once finished, an email will be sent to you with a link to your download."
     redirect_to @suspect_list
-#    require 'zip'
-#
-#    @temp_file = Tempfile.new(["Suspect_List_#{@suspect_list.name}_#{@suspect_list.id}", '.zip'])
-#
-#    Zip::OutputStream.open(@temp_file.path) do |zos|
-#      @suspect_list.csv_file_table.uniq.each do |row|
-#        ticket_number = row.first[1]
-#        images = Image.api_find_all_by_ticket_number(ticket_number, current_user.company, current_yard_id)
-#        images.each_with_index do |image, index|
-#          file_name = "ticket_#{ticket_number}/#{index+1}_ticket_#{ticket_number}_id_#{image['capture_seq_nbr']}#{Rack::Mime::MIME_TYPES.invert[image['content_type']]}"
-#          zos.put_next_entry(file_name)
-##          zos.print IO.read(open(media.url_resource, :allow_redirections => :all))
-##          zos.print Image.jpeg_image(current_user.company, image['capture_seq_nbr'], current_yard_id)
-##          zos.print IO.read(open(Image.uri(image['azure_url'], current_user.company)))
-##          file = Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-##          zos.print file.read
-#          zos.print Down::NetHttp.open(Image.uri(image['azure_url'], current_user.company), ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE, max_redirects: 5).read
-#        end
-#      end
-#    end
-#    send_file @temp_file, :type => 'application/zip', :disposition => 'attachment'
-    
   end
 
   private

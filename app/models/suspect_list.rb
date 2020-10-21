@@ -46,5 +46,18 @@ class SuspectList < ActiveRecord::Base
   #     Class Methods         #
   #############################
   
+  def self.delete_zip_files
+    require 'pathname'
+    require 'fileutils'
+    
+    SuspectList.where('created_at < ? and created_at > ?', 1.months.ago, 2.months.ago).each do |suspect_list|
+      unless suspect_list.zip_file.blank? or suspect_list.zip_file.url.blank?
+        pn = Pathname.new(suspect_list.zip_file.url) # Get the path to the file
+        suspect_list.remove_zip_file! # Remove the file and its versions
+        FileUtils.remove_dir "#{Rails.root}/public#{pn.dirname}" # Remove the now empty directory
+      end
+    end
+    
+  end
   
 end
