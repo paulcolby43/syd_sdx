@@ -43,5 +43,13 @@ class UserMailer < ActionMailer::Base
     @images_array = images_array
     mail(to: @to, subject: "Scrap Dragon Ticket #{@ticket['TicketNumber']}")
   end
+  
+  def new_suspect_list_zip_created(suspect_list)
+    @suspect_list = suspect_list
+    @user = suspect_list.user
+    @to = @user.email
+    @url = Rails.configuration.action_mailer.asset_host + suspect_list.zip_file.url
+    mail(to: @to, subject: "Suspect List #{@suspect_list.name} zip file created")
+  end
 
 end

@@ -1,0 +1,22 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+  %body
+    %p
+      Hello
+      = @user.email
+    %p
+      = "The zip file download for Suspect List #{@suspect_list.name} has been created. You can download all the media by clicking the following link, or pasting the url into your browser:"
+    %p
+      = link_to "Gallery Download", @url
+    %p
+      If you have any questions, please contact our friendly support team at 727-568-7074.
+    %p
+      = link_to 'TranAct', 'http://tranact.com'
+      •
+      = link_to 'Scrap Dragon', 'https://scrapdragon.com'
+      •
+      = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
+      •
+      = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'

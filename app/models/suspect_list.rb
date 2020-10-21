@@ -4,6 +4,7 @@ class SuspectList < ActiveRecord::Base
   belongs_to :company
   
   mount_uploader :file, SuspectListFileUploader
+  mount_uploader :zip_file, SuspectListZipFileUploader
   
   #############################
   #     Instance Methods      #
@@ -35,6 +36,10 @@ class SuspectList < ActiveRecord::Base
   
   def shipments_table?
     table == "shipments"
+  end
+  
+  def sidekiq_create_zip_file(yard_id)
+    SuspectListImagesZipFileWorker.perform_async(self.id, yard_id)
   end
   
   #############################
