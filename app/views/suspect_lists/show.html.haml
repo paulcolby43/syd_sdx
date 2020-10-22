@@ -22,8 +22,8 @@
               %i.fa.fa-pencil-square-o
               Edit
     =# "#{pluralize(number_with_delimiter(@number_of_table_rows), 'row')}" unless @number_of_table_rows.blank?
-    - unless @suspect_list.zip_file.blank? or @suspect_list.zip_file.path.blank?
-      %a{href: @suspect_list.zip_file.path}
+    - unless @suspect_list.zip_file.blank? or @suspect_list.zip_file.url.blank?
+      %a{href: @suspect_list.zip_file.url}
         %i.fa.fa-download
         Zip File
     
