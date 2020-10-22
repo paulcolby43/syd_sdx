@@ -15,8 +15,8 @@
           - images.each do |image|
             %li.list-inline-item
               - if @suspect_list.images_table?
-                %a{href: image_path(image['CAPTURE_SEQ_NBR'])}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                %a{href: image_path(image['capture_seq_nbr'])}
+                  = image_tag(show_preview_image_image_path(image['capture_seq_nbr']), alt: image['capture_seq_nbr'], class: 'img-responsive')
               - elsif @suspect_list.shipments_table?
-                %a{href: shipment_path(image['CAPTURE_SEQ_NBR'])}
-                  = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                %a{href: shipment_path(image['capture_seq_nbr'])}
+                  = image_tag(show_preview_image_shipment_path(image['capture_seq_nbr']), alt: image['capture_seq_nbrR'], class: 'img-responsive')
