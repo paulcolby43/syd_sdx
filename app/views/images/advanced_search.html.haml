@@ -3,47 +3,98 @@
 .container
   %br
   %br
-  .well
-    = search_form_for @search, url: advanced_search_images_path, method: :get do |f|
-      = f.condition_fields do |c|
-        = render "condition_fields", f: c
-      %p= link_to_add_fields "Add Conditions", f, :condition
-      %hr
-      %div.row.form-group
-        %div{:class => "col-xs-12 col-sm-4 col-md-4"}
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
-            Search
+  - column_names = Image.column_names(current_user.company)
+  = form_tag advanced_search_images_path, method: 'get', role: 'search' do |f|
+    .row.form-group
+      %div{id: "column_select", :class => "col-sm-12 col-md-4"}
+        = select_tag :column, options_for_select(column_names), prompt: 'Search Column', class: "form-control input-lg"
+    .row.form-group#date_span
+      %div{:class => "col-sm-12 col-md-2"}
+        = label_tag "Start Date", nil, :class => 'control-label'
+        =# text_field_tag "search[start_date]", params[:search][:start_date], :placeholder => "yyyy-mm-dd", class: "form-control input-lg datepicker"
+        = text_field_tag "search[start_date]", nil, :placeholder => "Start Date", value: @search_params[:start_date], class: "form-control input-lg", autocomplete: 'off', 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true #, readonly: true
+      %div{:class => "col-sm-12 col-md-2"}
+        = label_tag "End Date", nil, :class => 'control-label'
+        =# text_field_tag "search[end_date]", params[:search][:end_date], :placeholder => "yyyy-mm-dd", class: "form-control input-lg datepicker"
+        = text_field_tag "search[end_date]", nil, :placeholder => "End Date", value: @search_params[:end_date], class: "form-control input-lg", autocomplete: 'off', 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true #, readonly: true
+    -#
+      .row.form-group#ticket_nbr
+        %div{:class => "col-sm-12 col-md-6"}
+          = label_tag "Ticket Number", nil, :class => 'control-label'
+          = text_field_tag "search[ticket_nbr]", params[:search][:ticket_nbr], :placeholder => "Ticket Number", class: "form-control input-lg"
+    - column_names.each do |column_name|
+      .row.form-group{id: "#{column_name}_form_group", style: params[:search]["#{column_name}"].blank? ? 'display:none;' : 'display:block;'}
+        %div{:class => "col-sm-12 col-md-4"}
+          = label_tag column_name, nil, :class => 'control-label'
+          .input-group
+            = text_field_tag "search[#{column_name}]", @search_params["#{column_name}"], :placeholder => column_name, class: "form-control input-lg"
+            %span.input-group-addon 
+              %a{href: '#', onclick: "$('#search_#{column_name}').val(''); $('##{column_name}_form_group').hide();"}
+                %i.fa.fa-remove.fa-lg
+    .row.form-group
+      %div{:class => "col-sm-12 col-md-6"}
+        %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+          %i.fa.fa-search
+          Search
+  -#
+    .well
+      = search_form_for @search, url: advanced_search_images_path, method: :get do |f|
+        = f.condition_fields do |c|
+          = render "condition_fields", f: c
+        %p= link_to_add_fields "Add Conditions", f, :condition
+        %hr
+        %div.row.form-group
+          %div{:class => "col-xs-12 col-sm-4 col-md-4"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+              Search
   - if @images.blank?
-    .jumbotron
-      %p.text-center No results found
+    - unless @search_params.blank?
+      .jumbotron
+        %p.text-center No results found
   - else
     %div{id: "images"}
       %p.text-muted
-        = "#{@search.result.count} results found"
+        = "#{@all_images.count} results found"
       - @images.each_slice(6) do |images|
         %div.row
           - images.each do |image|
             .col-xs-12.col-sm-2.col-md-2
               %div.panel.panel-primary
                 %div.list_group
-                  %a{href: image_path(image), class: "list-group-item"}
-                    - unless image.hidden? or not current_user.show_thumbnails?
-                      = image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
-                    = image.ticket_nbr
+                  %a{href: image_path(image['capture_seq_nbr']), class: "list-group-item"}
+                    - unless image['hidden'] == '1' or not current_user.view_images?
+                      - unless image['thumbnail_url'].blank?
+                        = image_tag(Image.thumbnail_uri(image['thumbnail_url'], current_user.company), alt: image['capture_seq_nbr'], class: 'img-responsive')
+                      - else
+                        - if image['content_type'] == "application/pdf"
+                          %i.fa.fa-file-pdf-o.fa-lg
+                        - else
+                          %i.fa.fa-file.fa-lg
+                        File
+                    = image['ticket_nbr']
                     .pull-right
                       %i.fa.fa-chevron-right
-                    - unless image.event_code.blank?
+                    - unless image['event_code'].blank?
                       %br/
-                      %small= image.event_code
-                    - unless image.camera_name.blank?
+                      %small= image['event_code']
+                    - unless image['camera_name'].blank?
                       %br/
-                      %small= image.camera_name
+                      %small= image['camera_name']
                     %br/
-                    %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
-  .row
-    .text-center
-      %div{id: 'endless_page'}
-        %p= image_tag("ajax-loader.gif", :id => "more_images_spinner", :alt => "Loading ...", style: "display:none;")
-        %p= link_to 'Load more ...', advanced_search_images_path(:page => @images.next_page, :q => params[:q], :one_image_per_ticket => params[:one_image_per_ticket]), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" if @images.next_page
+                    %small.text-muted= image['sys_date_time']
+    -#
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %i.fa.fa-spinner.fa-spin.fa-3x{:id => "more_images_spinner", style: "display:none;"}
+            %p
+              =# link_to 'Load more ...', advanced_search_images_path(:page => @images.next_page, :q => params[:q], :one_image_per_ticket => params[:one_image_per_ticket]), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" if @images.next_page
+              = link_to 'Load more ...', advanced_search_images_path("search[page]" => @images.next_page, :search => @search_params), :class => 'load-more-images btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_images_spinner').show();" if @images.next_page
   
-= render partial: "shared/footer_navbar", locals: {title: "Images"}
+=# render partial: "shared/footer_navbar", locals: {title: "Images"}
+
+:javascript
+  $(document).ready(function(){
+    $('.datepicker').datepicker();
+  });
+

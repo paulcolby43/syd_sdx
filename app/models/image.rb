@@ -374,6 +374,14 @@ class Image < ActiveRecord::Base
     
   end
   
+  def self.search(params, company, yard_id)
+    api_url = "#{company.jpegger_service_ip}/api/v1/images/?yardid=#{yard_id}"
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: params)
+    unless response.blank?
+      return JSON.parse(response)
+    end
+  end
+  
   def self.preview_data_uri(preview_image)
     unless preview_image.blank?
       "data:image/jpg;base64, #{Base64.encode64(preview_image)}"
@@ -426,6 +434,14 @@ class Image < ActiveRecord::Base
   def self.multipart_create(params, company)
     api_url = "https://#{company.jpegger_service_ip}/images"
     RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, payload: params)
+  end
+  
+  def self.column_names(company)
+    api_url = "#{company.jpegger_service_ip}/api/v1/images/column_names"
+    response = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:content_type => 'application/json', :Accept => "application/json"}, payload: {})
+    unless response.blank?
+      return JSON.parse(response)
+    end
   end
   
 end

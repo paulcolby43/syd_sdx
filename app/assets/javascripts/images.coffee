@@ -26,3 +26,8 @@ jQuery ->
       regexp = new RegExp($(this).data('id'), 'g')
       $(this).before($(this).data('fields').replace(regexp, time))
       event.preventDefault()
+
+  $('#column_select').on 'change', '#column', ->
+    column_name = $(this).val()
+    $('#' + column_name + '_form_group').show();
+    

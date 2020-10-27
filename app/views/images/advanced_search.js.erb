@@ -1,9 +1,12 @@
-$('#images').append('<div class="row"><%= j render @images %></div>');
+$('#images').append('<%= j render(:partial => 'image') %>');
 $('#more_images_spinner').hide();
 
 <% if @images.next_page %>
   $('a.load-more-images').show();
-  $('a.load-more-images').attr('href', '<%= advanced_search_images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');
+  <% if false %>
+    $('a.load-more-images').attr('href', '<%= advanced_search_images_path page: @images.next_page, q: params[:q], one_image_per_ticket: params[:one_image_per_ticket] %>');
+  <% end %>
+  $('a.load-more-images').attr('href', '<%= advanced_search_images_path "search[page]" => @images.next_page, search: @search_params %>');
 <% else %>
   $(window).off('scroll');
   $('a.load-more-images').attr('href', '#');

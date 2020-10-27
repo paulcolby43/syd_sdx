@@ -1,27 +1,56 @@
-.col-xs-12.col-sm-2.col-md-2
-  %div.panel.panel-primary
-    %div.list_group
-      - unless @today == true or params[:q].blank? or (@ticket_number.blank? and params[:one_image_per_ticket] != '0' and params[:action]=='index')
-        %a{href: image_path(image), class: "list-group-item"}
-          - unless image.hidden? or not current_user.show_ticket_thumbnails?
-            =# image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
-            = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'thumbnail img-responsive')
-          = image.ticket_nbr
-          .pull-right
-            %i.fa.fa-chevron-right
-          - unless image.event_code.blank?
+%div.row
+  - @images.each do |image|
+    here we are!
+    .col-xs-12.col-sm-2.col-md-2
+      %div.panel.panel-primary
+        %div.list_group
+          %a{href: image_path(image['capture_seq_nbr']), class: "list-group-item"}
+            - unless image['hidden'] == '1' or not current_user.view_images?
+              - unless image['thumbnail_url'].blank?
+                = image_tag(Image.thumbnail_uri(image['thumbnail_url'], current_user.company), alt: image['capture_seq_nbr'], class: 'img-responsive')
+              - else
+                - if image['content_type'] == "application/pdf"
+                  %i.fa.fa-file-pdf-o.fa-lg
+                - else
+                  %i.fa.fa-file.fa-lg
+                File
+            = image['ticket_nbr']
+            .pull-right
+              %i.fa.fa-chevron-right
+            - unless image['event_code'].blank?
+              %br/
+              %small= image['event_code']
+            - unless image['camera_name'].blank?
+              %br/
+              %small= image['camera_name']
             %br/
-            %small= image.event_code
-          - unless image.camera_name.blank?
+            %small.text-muted= image['sys_date_time']
+
+-#
+  .col-xs-12.col-sm-2.col-md-2
+    %div.panel.panel-primary
+      %div.list_group
+        - unless @today == true or params[:q].blank? or (@ticket_number.blank? and params[:one_image_per_ticket] != '0' and params[:action]=='index')
+          %a{href: image_path(image), class: "list-group-item"}
+            - unless image.hidden? or not current_user.show_ticket_thumbnails?
+              =# image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+              = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'thumbnail img-responsive')
+            = image.ticket_nbr
+            .pull-right
+              %i.fa.fa-chevron-right
+            - unless image.event_code.blank?
+              %br/
+              %small= image.event_code
+            - unless image.camera_name.blank?
+              %br/
+              %small= image.camera_name
             %br/
-            %small= image.camera_name
-          %br/
-          %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
-      - else
-        %a{href: images_path("q[ticket_nbr_eq]" => image.ticket_nbr, "q[yardid_eq]" => current_yard_id), class: "list-group-item"}
-          - unless image.hidden? or not current_user.show_ticket_thumbnails?
-            =# image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
-            = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'thumbnail img-responsive')
-          = image.ticket_nbr
-          .pull-right
-            %i.fa.fa-chevron-right
+            %small.text-muted= image.sys_date_time.strftime("%-m/%-d/%y %l:%M %p")
+        - else
+          %a{href: images_path("q[ticket_nbr_eq]" => image.ticket_nbr, "q[yardid_eq]" => current_yard_id), class: "list-group-item"}
+            - unless image.hidden? or not current_user.show_ticket_thumbnails?
+              =# image_tag(image.preview_data_uri, alt: image.id, class: 'thumbnail img-responsive')
+              = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'thumbnail img-responsive')
+            = image.ticket_nbr
+            .pull-right
+              %i.fa.fa-chevron-right

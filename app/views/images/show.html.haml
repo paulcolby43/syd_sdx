@@ -10,14 +10,18 @@
       .col-xs-12.col-sm-12.col-md-6.col-md-offset-3
         =# link_to image_tag("https://#{current_user.company.jpegger_service_ip}:#{current_user.company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{@image['CAPTURE_SEQ_NBR']}", alt: @image['CAPTURE_SEQ_NBR'], class: 'img-responsive center-block'), "#image_popup", "data-toggle" => "modal", :alt => "Image", :class => 'thumbnail'
         -# if not @image['FILE_NAME'].blank? and File.extname(@image['FILE_NAME']) == '.pdf'
-        - unless @image['content_type'].start_with? 'image'
+        - unless @image['content_type'] and @image['content_type'].start_with? 'image'
           %p.lead.text-center
             - if @image['content_type'] == "application/pdf"
               %i.fa.fa-file-pdf-o.fa-lg
             - else
               %i.fa.fa-file.fa-lg
-            %a{href: Image.uri(@image['azure_url'], current_user.company)}
-              Download File
+            - unless @image['azure_url'].blank?
+              %a{href: Image.uri(@image['azure_url'], current_user.company)}
+                Download File
+            - else
+              %a{href: Image.uri(@image['azure_url'], current_user.company)}
+                Download File
             -#
               %a{href: send_jpeg_image_file_image_path(@image['CAPTURE_SEQ_NBR'], yard_id: @image['YARDID'])}
                 %i.fa.fa-file-pdf-o.fa-lg

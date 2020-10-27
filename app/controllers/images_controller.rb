@@ -142,21 +142,36 @@ class ImagesController < ApplicationController
   
   def advanced_search
     authorize! :advance_search, :images
-    unless params[:q].blank?
-      @search = Image.search(params[:q].merge(proper_yardid: current_yard_id))
-      @images = @search.result.page(params[:page]).per(6)
+#    @column_names = Image.column_names(current_user.company)
+    @search_params = search_params
+    unless search_params.blank?
+#      @images = Image.search(search_params, current_user.company, current_yard_id)
+      @all_images = Image.search(search_params, current_user.company, current_yard_id)
+#      @images = Kaminari.paginate_array(@all_images).page(search_params[:page]).per(10)
+      @images = @all_images
     else
-      # Default search to today's images
-      params[:q] = {:cust_nbr_eq => "#{current_user.customer_guid.blank? ? 'fubar' : current_user.customer_guid}", :sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, proper_yardid: current_yard_id}
-      @search = Image.ransack(params[:q])
-      @images = @search.result.page(params[:page]).per(6)
+      @images = []
     end
-    @search.build_condition if @search.conditions.blank?
+#    unless params[:q].blank?
+#      @search = Image.search(params[:q].merge(proper_yardid: current_yard_id))
+#      @images = @search.result.page(params[:page]).per(6)
+#    else
+#      # Default search to today's images
+#      params[:q] = {:cust_nbr_eq => "#{current_user.customer_guid.blank? ? 'fubar' : current_user.customer_guid}", :sys_date_time_gteq => Date.today.beginning_of_day, :sys_date_time_lteq => Date.today.end_of_day, proper_yardid: current_yard_id}
+#      @search = Image.ransack(params[:q])
+#      @images = @search.result.page(params[:page]).per(6)
+#    end
+#    @search.build_condition if @search.conditions.blank?
   end
   
   private
     def set_image
       @image = Image.find(params[:id])
+    end
+    
+    def search_params
+      params.fetch(:search, {}).permit(:start_date, :end_date, :capture_seq_nbr, :ticket_nbr, :yardid, :receipt_nbr, :transaction_type, :custid, :cust_name, :event_code, :camera_name,
+      :camera_group, :cmdy_nbr, :cmdy_name, :service_req_nbr, :container_nbr, :senttoleads, :hidden, :page, :per_page)
     end
 
 #    def image_params

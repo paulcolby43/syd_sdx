@@ -24,7 +24,7 @@
         - @trips.each_with_index do |trip, index|
           =# trip
           - workorders = Trip.workorders(trip)
-          - customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
+          -# customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
           - location_points = Trip.get_locations(current_user.token, trip['Id'])
           .panel.panel-default
             .panel-heading{id: "trip_#{index}", :role => "tab"}
@@ -56,10 +56,11 @@
                       - Trip.workorders(trip).each do |workorder|
                         %i= workorder['Notes']
                         %br
-                - unless customer_id.blank? or not current_user.mobile_buy?
-                  %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorders.blank? ? nil : workorders.first['Id']), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket for this customer/trip?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
-                    %i.fa.fa-ticket
-                    Ticket
+                -#
+                  - unless customer_id.blank? or not current_user.mobile_buy?
+                    %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorders.blank? ? nil : workorders.first['Id']), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket for this customer/trip?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                      %i.fa.fa-ticket
+                      Ticket
                 -# %btn.btn.btn-success.btn-sm#watch_me{:onclick => "getLocation(); $(this).hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $('#stop_watch').show();"}
                 - if current_user.location_logging?
                   -#
@@ -89,6 +90,8 @@
               %ul.list-group
                 - Trip.tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
                   - workorder = Trip.workorders(trip).find{|w| w["WorkOrderNumber"] == service_request_number}
+                  - workorder_id = workorder["Id"] unless workorder.blank?
+                  - customer_id = workorder["CustomerId"] unless workorder.blank?
                   .list-group-item
                     %strong Service Request
                     = service_request_number
@@ -98,6 +101,11 @@
                     %br
                     %strong Commodity
                     = workorder['Commodity'].blank? ? 'None' : workorder['Commodity'] unless workorder.blank?
+                    - unless customer_id.blank? or workorder_id.blank? or not current_user.mobile_buy?
+                      %br
+                      %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                        %i.fa.fa-ticket
+                        Ticket
                   - tasks.each do |task|
                     %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
                       = task['Sequence']
