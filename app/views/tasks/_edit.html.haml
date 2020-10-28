@@ -1,3 +1,21 @@
+.text-center
+  %strong= task['Customer']
+  %br
+  = "Service Request #{task['WorkOrderNumber']}"
+  %br
+  = task_type_string(task['TaskType'])
+  %br
+  - unless task['ToLocation'].blank?
+    %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+      = "#{task['ToLocation']}"
+  - else
+    %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+      7100 30th Ave N
+  %br
+  - unless workorder.blank? or workorder['Phone'].blank?
+    %a{href: "tel:#{workorder['Phone']}"}
+      = workorder['Phone']
+
 %ul.nav.nav-tabs
   %li.active
     %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
@@ -17,52 +35,67 @@
 .tab-content
   .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
     %br
+    -#
+      %div
+        %strong= "Customer:"
+        .pull-right
+          = task['Customer']
+        %br
+        %strong= "At:"
+        .pull-right
+          - unless task['ToLocation'].blank?
+            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+              %i.fa.fa-map
+              = "#{task['ToLocation']}"
+          - else
+            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+              7100 30th Ave N
+        %br
+        %strong= "Phone:"
+        .pull-right
+          - unless workorder.blank? or workorder['Phone'].blank?
+            %a{href: "tel:#{workorder['Phone']}"}
+              = workorder['Phone']
     %div
-      %strong= "Customer:"
-      .pull-right
-        = task['Customer']
-      %br
-      %strong= "At:"
-      .pull-right
-        - unless task['ToLocation'].blank?
-          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-            %i.fa.fa-map
-            = "#{task['ToLocation']}"
-        - else
-          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
-            7100 30th Ave N
-      %br
-      %strong= "Phone:"
-      .pull-right
-        - unless workorder.blank? or workorder['Phone'].blank?
-          %a{href: "tel:#{workorder['Phone']}"}
-            = workorder['Phone']
-    %div
-      %strong= "Type:"
-      .pull-right
-        = task_type_string(task['TaskType'])
-      %br
-      %strong= "Service Request:"
-      .pull-right
-        = task['WorkOrderNumber']
-      %br
-      %strong Current Containers
-      .pull-right
-        %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
-          %i.fa.fa-map-marker
-          Show All
-      %br 
-      %br
+      -#
+        %strong= "Type:"
+        .pull-right
+          = task_type_string(task['TaskType'])
+        %br
+        %strong= "Service Request:"
+        .pull-right
+          = task['WorkOrderNumber']
+        %br
+        %strong Current Containers
+      
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
         =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
-        .row.form-group
+        %div
+          %span.pull-right
+            %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
+              %i.fa.fa-external-link
+              Containers
+          %a{href: nil, onclick: "$('#mileage_task_#{task['Id']}').toggle(); $('#plus_mileage_task_#{task['Id']}').toggle(); $('#minus_mileage_task_#{task['Id']}').toggle();"} 
+            %i.fa.fa-plus{id: "plus_mileage_task_#{task['Id']}"}
+            %i.fa.fa-minus{id: "minus_mileage_task_#{task['Id']}", style: 'display:none;'}
+            Mileage
+        .row.form-group{id: "mileage_task_#{task['Id']}", style: 'display:none;'}
           %div{:class => "col-xs-6"}
             = label_tag "Start Mileage", nil, :class => 'control-label'
             = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
           %div{:class => "col-xs-6"}
             = label_tag "End Mileage", nil, :class => 'control-label'
             = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
+        %br
+        -#
+          .row.form-group
+            %div{:class => "col-xs-6"}
+              = label_tag "Start Mileage", nil, :class => 'control-label'
+              = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
+            %div{:class => "col-xs-6"}
+              = label_tag "End Mileage", nil, :class => 'control-label'
+              = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Notes", nil, :class => 'control-label'
