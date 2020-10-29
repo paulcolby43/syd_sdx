@@ -37,20 +37,20 @@
                       %i.fa.fa-times-circle
                   .panel-title{style: "font-size: 24px;"}
                     %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip['Id']}", :role => "button"}
-                      %strong= "#{trip['TripNumber']}"
+                      %strong= "Trip #{trip['TripNumber']}"
                       =# Trip.tasks(trip).first['Customer']
                       %br
                       %small
                         - unless session[:time_zone].blank?
-                          = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M')}"
+                          = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
                         - else
-                          = "#{trip['BeginDate'].to_datetime.strftime('%l:%M')}"
+                          = "#{trip['BeginDate'].to_datetime.strftime('%l:%M%P')}"
                         - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
                           = " - "
                           - unless session[:time_zone].blank?
-                            = "#{trip['EndDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M')}"
+                            = "#{trip['EndDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
                           - else
-                            = "#{trip['EndDate'].to_datetime.strftime('%l:%M')}"
+                            = "#{trip['EndDate'].to_datetime.strftime('%l:%M%P')}"
                         %br
                         -#
                           %br
@@ -58,10 +58,11 @@
                             = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
                         = trip['Truck']
                         %br
-                        - Trip.workorders(trip).each do |workorder|
-                          - unless workorder['Notes'].blank?
-                            %i= workorder['Notes']
-                            %br
+                        -#
+                          - Trip.workorders(trip).each do |workorder|
+                            - unless workorder['Notes'].blank?
+                              %i= workorder['Notes']
+                              %br
                     -#
                       - unless customer_id.blank? or not current_user.mobile_buy?
                         %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorders.blank? ? nil : workorders.first['Id']), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket for this customer/trip?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
@@ -114,6 +115,9 @@
                         - unless workorder.blank? or workorder['Commodity'].blank?
                           Commodity
                           = workorder['Commodity']
+                          %br
+                        - unless workorder.blank? or workorder['Notes'].blank?
+                          = workorder['Notes']
                           %br
                         - unless customer_id.blank? or workorder_id.blank? or not current_user.mobile_buy?
                           %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }

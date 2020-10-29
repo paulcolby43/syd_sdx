@@ -13,6 +13,7 @@
       7100 30th Ave N
   %br
   - unless workorder.blank? or workorder['Phone'].blank?
+    = workorder['Contact']
     %a{href: "tel:#{workorder['Phone']}"}
       = workorder['Phone']
 
