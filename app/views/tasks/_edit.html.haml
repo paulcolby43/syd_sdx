@@ -1,13 +1,15 @@
 .text-center
-  %strong= task['Customer']
+  %strong= task['Company']
   %br
   = "Service Request #{task['WorkOrderNumber']}"
   %br
   = task_type_string(task['TaskType'])
   %br
-  - unless task['ToLocation'].blank?
-    %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-      = "#{task['ToLocation']}"
+  = task['CustomerAddress']
+  %br
+  - unless task['FromLocation'].blank?
+    %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
+      = "#{task['FromLocation']}"
   - else
     %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
       7100 30th Ave N
@@ -74,7 +76,7 @@
         = hidden_field_tag "task[id]", task['Id']
         %div
           %span.pull-right
-            %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
+            %a{href: location_path(task['FromLocationId'], address: task['FromLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
               %i.fa.fa-external-link
               Containers
           %a{href: nil, onclick: "$('#mileage_task_#{task['Id']}').toggle(); $('#plus_mileage_task_#{task['Id']}').toggle(); $('#minus_mileage_task_#{task['Id']}').toggle();"} 

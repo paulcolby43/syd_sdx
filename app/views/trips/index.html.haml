@@ -4,6 +4,10 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     -#
+      .well= @dispatch_information
+      .well= @drivers
+      .well= @trips
+    -#
       %p.pull-right
         %a{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{@trips.first['Id']}&tripDesc=#{@trips.first['TripNumber']}"} 
           %i.fa.fa-mobile
@@ -25,7 +29,8 @@
           - trips.each do |trip|
             %p
               =# trip
-              - workorders = Trip.workorders(trip)
+              - service_requests = Trip.service_requests(trip)
+              -# workorders = Trip.workorders(trip)
               -# customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
               - location_points = Trip.get_locations(current_user.token, trip['Id'])
               = begin_date
@@ -35,9 +40,9 @@
                     &nbsp;
                     %a{href: nil, class: 'hide_trip_icon'}
                       %i.fa.fa-times-circle
-                  .panel-title{style: "font-size: 24px;"}
-                    %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip['Id']}", :role => "button"}
-                      %strong= "Trip #{trip['TripNumber']}"
+                  %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip['Id']}", :role => "button"}
+                    .panel-title{style: "font-size: 24px;"}
+                      %strong= service_requests.first['Customer'] unless service_requests.blank? or service_requests.first['Customer'].blank?
                       =# Trip.tasks(trip).first['Customer']
                       %br
                       %small
@@ -69,6 +74,7 @@
                           %i.fa.fa-ticket
                           Ticket
                     -# %btn.btn.btn-success.btn-sm#watch_me{:onclick => "getLocation(); $(this).hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $('#stop_watch').show();"}
+                    .pull-right= "Trip #{trip['TripNumber']}"
                     - if current_user.location_logging?
                       -#
                         %btn.btn.btn-success.btn-sm.watch_me{:onclick => "getLocation(); $('.watch_me').hide(); $('#current_location').data('trip-id', '#{trip['Id']}'); $('#current_location').show(); $(this).closest('.panel').find('.stop_watch').show();"}
@@ -95,30 +101,39 @@
                         Notes
                 .panel-collapse.collapse{id: "collapse_#{trip['Id']}", "aria-labelledby" => "trip_#{trip['Id']}", :role => "tabpanel"}
                   %ul.list-group
-                    - Trip.tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
-                      - workorder = Trip.workorders(trip).find{|w| w["WorkOrderNumber"] == service_request_number}
+                    -# Trip.tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
+                    - Trip.service_request_tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
+                      
+                      -# workorder = Trip.workorders(trip).find{|w| w["WorkOrderNumber"] == service_request_number}
+                      - workorder = service_requests.find{|sr| sr["WorkOrderNumber"] == service_request_number}
                       - workorder_id = workorder["Id"] unless workorder.blank?
                       - customer_id = workorder["CustomerId"] unless workorder.blank?
                       .list-group-item
-                        %strong= tasks.first['Customer']
-                        %br
+                        -#
+                          %strong
+                            =# tasks.first['Company']
+                            = workorder['Customer']
+                          %br
                         - unless workorder.blank?
-                          = @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
+                          =# @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
+                          = workorder['TaskType']
                           %br
                         Service Request
                         = service_request_number
                         %br
-                        - unless workorder.blank? or (workorder['DispatchContainer'].blank? and workorder['ContainerType'].blank?)
+                        -# unless workorder.blank? or (workorder['DispatchContainer'].blank? and workorder['ContainerType'].blank?)
+                        - unless workorder.blank? or workorder['ContainerType'] == {"i:nil"=>"true"} or workorder['ContainerType'].blank?
                           Container
-                          = "#{workorder['DispatchContainer']} - #{workorder['ContainerType']}"
+                          = "#{workorder['ContainerType']}"
                           %br
-                        - unless workorder.blank? or workorder['Commodity'].blank?
+                        - unless workorder.blank? or workorder['Commodity'] == {"i:nil"=>"true"} or workorder['Commodity'].blank?
                           Commodity
                           = workorder['Commodity']
                           %br
-                        - unless workorder.blank? or workorder['Notes'].blank?
-                          = workorder['Notes']
-                          %br
+                        -#
+                          - unless workorder.blank? or workorder['Notes'].blank?
+                            = workorder['Notes']
+                            %br
                         - unless customer_id.blank? or workorder_id.blank? or not current_user.mobile_buy?
                           %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
                             %i.fa.fa-ticket
@@ -128,10 +143,12 @@
                           %strong
                             = task['Sequence']
                             = task_type_string(task['TaskType'])
+                          %br
                           %small
+                            = task['CustomerAddress']
                             %br
-                            - unless task['ToLocation'].blank?
-                              = task['ToLocation']
+                            - unless task['FromLocation'].blank?
+                              = task['FromLocation']
                             - else
                               7100 30th Ave N
                             %br

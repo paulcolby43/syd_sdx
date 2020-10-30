@@ -7,11 +7,14 @@ class TripsController < ApplicationController
   def index
     authorize! :index, :trips
     @dispatch_information = Trip.dispatch_info_by_user_guid(current_user.token)
-    @trips = Trip.all_by_user(@dispatch_information)
+#    @trips = Trip.all_by_user(@dispatch_information)
+    @trips = Trip.search(current_user.token, nil, nil, nil)
 #    @trucks = Trip.all_trucks(@dispatch_information)
     @containers = Container.all_by_dispatch_information(@dispatch_information)
     @task_functions = Trip.task_functions(@dispatch_information)
     @container_types = Trip.container_types(@dispatch_information)
+#    @drivers = Trip.drivers(current_user.token)
+#    @get_trips = Trip.search(current_user.token, nil, nil, nil)
   end
   
   # GET /trips/1

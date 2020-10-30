@@ -42,7 +42,7 @@ class Trip
     payload = {
       "statuses" => status.blank? ? [] : [status],
       "startingdate"=> start_date.blank? ? nil : "#{start_date}T00:00:00", 
-      "driverId"=> driver_id
+      "driverId"=> driver_id.blank? ? nil : driver_id
       }
     json_encoded_payload = JSON.generate(payload)
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :content_type => 'application/json', :Accept => "application/xml"},
