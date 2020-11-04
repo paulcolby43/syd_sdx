@@ -148,7 +148,7 @@
                             = task_type_string(task['InternalTaskType'])
                           %br
                           %small
-                            = task['CustomerAddress']
+                            = task['CustomerAddressName']
                             %br
                             = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
                             -#

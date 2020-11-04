@@ -5,7 +5,7 @@
   %br
   = task_type_string(task['InternalTaskType'])
   %br
-  = task['CustomerAddress']
+  = task['CustomerAddressName']
   %br
   %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
     = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
@@ -65,25 +65,10 @@
             %a{href: "tel:#{workorder['Phone']}"}
               = workorder['Phone']
     %div
-      -#
-        %strong= "Type:"
-        .pull-right
-          = task_type_string(task['InternalTaskType'])
-        %br
-        %strong= "Service Request:"
-        .pull-right
-          = task['WorkOrderNumber']
-        %br
-        %strong Current Containers
-      
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
         =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
         %div
-          %span.pull-right
-            %a{href: location_path(task['FromLocationId'], address: task['FromLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
-              %i.fa.fa-external-link
-              Containers
           %a{href: nil, onclick: "$('#mileage_task_#{task['Id']}').toggle(); $('#plus_mileage_task_#{task['Id']}').toggle(); $('#minus_mileage_task_#{task['Id']}').toggle();"} 
             %i.fa.fa-plus{id: "plus_mileage_task_#{task['Id']}"}
             %i.fa.fa-minus{id: "minus_mileage_task_#{task['Id']}", style: 'display:none;'}
@@ -129,7 +114,9 @@
             %i.fa.fa-map-marker
             Find my location
       .location_data
-        
+      %a{href: location_path(task['FromLocationId'], address: task['FromLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
+        %i.fa.fa-external-link
+        Existing Container Lookup
       %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
         - unless task_containers.blank?
           -# %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
