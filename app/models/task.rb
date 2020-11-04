@@ -142,4 +142,10 @@ class Task
     return data["ApiAddDispatchContainerResponse"]
   end
   
+  def self.full_address(task)
+    unless (task['CustomerAddress1'].blank? and task['CustomerAddressCity'].blank? and task['CustomerAddressState'].blank? and task['CustomerAddressZip'].blank?)
+      "#{task['CustomerAddress1']}<br>#{task['CustomerAddress2'].blank? ? '' : task['CustomerAddress2'] + '<br>'} #{task['CustomerAddressCity']} #{task['CustomerAddressState']} #{task['CustomerAddressZip']}"
+    end
+  end
+  
 end

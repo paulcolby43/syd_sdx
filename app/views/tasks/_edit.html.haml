@@ -3,31 +3,36 @@
   %br
   = "Service Request #{task['WorkOrderNumber']}"
   %br
-  = task_type_string(task['TaskType'])
+  = task_type_string(task['InternalTaskType'])
   %br
   = task['CustomerAddress']
   %br
-  - unless task['FromLocation'].blank?
-    %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
-      = "#{task['FromLocation']}"
-  - else
-    %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
-      7100 30th Ave N
-  %br
-  - unless workorder.blank? or workorder['Phone'].blank?
+  %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
+    = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
+  -#
+    - unless task['FromLocation'].blank?
+      %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
+        = "#{task['FromLocation']}"
+    - else
+      %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+        7100 30th Ave N
+    %br
+  - unless workorder.blank? or workorder['Contact'].blank?
     = workorder['Contact']
-    %a{href: "tel:#{workorder['Phone']}"}
-      = workorder['Phone']
+    %br
+  - unless task['CustomerPhone'].blank?
+    %a{href: "tel:#{task['CustomerPhone']}"}
+      = task['CustomerPhone']
 
 %ul.nav.nav-tabs
   %li.active
     %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
       Details
-  - if task['TaskType'] == '0' or task['TaskType'] == '1'
+  - if task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1'
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
         Container
-  - if task['TaskType'] == '1'
+  - if task['InternalTaskType'] == '1'
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature", :data => {:toggle => "tab"}}
         Signature
@@ -63,7 +68,7 @@
       -#
         %strong= "Type:"
         .pull-right
-          = task_type_string(task['TaskType'])
+          = task_type_string(task['InternalTaskType'])
         %br
         %strong= "Service Request:"
         .pull-right
@@ -107,7 +112,7 @@
           %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Status", nil, :class => 'control-label'
             / Don't show Completed option if Pickup/Drop Container and no containers yet
-            - if (task['TaskType'] == '0' or task['TaskType'] == '1') and task_containers.blank? 
+            - if (task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1') and task_containers.blank? 
               = select_tag "task[status]", options_for_select(task_status_array_without_completed, task['TaskStatus']), "data-sequence-number" => task['Sequence'], "data-current-value" => task['TaskStatus'], :class => "form-control input-lg task_status"
             - else
               = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), "data-sequence-number" => task['Sequence'], "data-current-value" => task['TaskStatus'], :class => "form-control input-lg task_status"
@@ -115,7 +120,7 @@
           %div{:class => "col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block task_save_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
               Save
-  - if task['TaskType'] == '0' or task['TaskType'] == '1'
+  - if task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1'
     .tab-pane.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
       %br
       -#
@@ -141,7 +146,7 @@
                   %div.panel.panel-primary
                     .panel-body
                       .pull-right 
-                        %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
+                        %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['InternalTaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
                           %i.fa.fa-camera.fa-lg
                         &nbsp;
                         &nbsp;
@@ -213,7 +218,7 @@
               = hidden_field_tag "task[container_number]"
               = hidden_field_tag "task[customer]", task['Customer']
               = hidden_field_tag "task[work_order_number]", task['WorkOrderNumber']
-              = hidden_field_tag "task[type]", task['TaskType']
+              = hidden_field_tag "task[InternalTaskType]", task['InternalTaskType']
               -#
                 %p= text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
                 %p= text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
@@ -228,7 +233,7 @@
               %div{:class => "col-xs-12 col-sm-12 col-md-12"}
                 = hidden_field_tag "container[customer]", task['Customer']
                 = hidden_field_tag "container[work_order_number]", task['WorkOrderNumber']
-                = hidden_field_tag "container[type]", task['TaskType']
+                = hidden_field_tag "container[type]", task['InternalTaskType']
                 .row.form-group
                   %div{:class => "col-xs-12"}
                     = label_tag "Container Type", nil, :class => 'control-label'
@@ -261,7 +266,7 @@
           %p You are not allowed to create containers
           = link_to 'Search Again', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show(); $('#task_#{task['Id']}_container_select').select2('val', '');"
 
-  - if task['TaskType'] == '1' 
+  - if task['InternalTaskType'] == '1' 
     .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
       = render partial: "tasks/signature", locals: {task: task, task_containers: task_containers, containers: @containers}
 

@@ -15,6 +15,7 @@ class TripsController < ApplicationController
     @container_types = Trip.container_types(@dispatch_information)
 #    @drivers = Trip.drivers(current_user.token)
 #    @get_trips = Trip.search(current_user.token, nil, nil, nil)
+    @task_type_functions = Trip.task_type_functions(current_user.token)
   end
   
   # GET /trips/1

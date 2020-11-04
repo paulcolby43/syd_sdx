@@ -28,7 +28,9 @@
         - @trips.group_by { |t| t['BeginDate'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
           - trips.each do |trip|
             %p
-              =# trip
+              -#
+                .well
+                  %pre= JSON.pretty_generate(trip)
               - service_requests = Trip.service_requests(trip)
               -# workorders = Trip.workorders(trip)
               -# customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
@@ -142,16 +144,19 @@
                         %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
                           %strong
                             = task['Sequence']
-                            = task_type_string(task['TaskType'])
+                            =# task_type_string(task['TaskType'])
+                            = task_type_string(task['InternalTaskType'])
                           %br
                           %small
                             = task['CustomerAddress']
                             %br
-                            - unless task['FromLocation'].blank?
-                              = task['FromLocation']
-                            - else
-                              7100 30th Ave N
-                            %br
+                            = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
+                            -#
+                              - unless task['FromLocation'].blank?
+                                = task['FromLocation']
+                              - else
+                                7100 30th Ave N
+                              %br
                             %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
                         / Modal
                         .modal{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
