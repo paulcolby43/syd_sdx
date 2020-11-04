@@ -44,9 +44,10 @@
                       %i.fa.fa-times-circle
                   %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip['Id']}", :role => "button"}
                     .panel-title{style: "font-size: 24px;"}
-                      %strong= service_requests.first['Customer'] unless service_requests.blank? or service_requests.first['Customer'].blank?
+                      - unless service_requests.blank? or service_requests.count > 1 or service_requests.first['Customer'].blank?
+                        %strong= service_requests.first['Customer']
+                        %br
                       =# Trip.tasks(trip).first['Customer']
-                      %br
                       %small
                         - unless session[:time_zone].blank?
                           = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
@@ -110,8 +111,8 @@
                       - workorder = service_requests.find{|sr| sr["WorkOrderNumber"] == service_request_number}
                       - workorder_id = workorder["Id"] unless workorder.blank?
                       - customer_id = workorder["CustomerId"] unless workorder.blank?
-                      .list-group-item
-                        -#
+                      .list-group-item.active
+                        - unless service_requests.blank? or service_requests.count == 1
                           %strong
                             =# tasks.first['Company']
                             = workorder['Customer']
@@ -157,7 +158,7 @@
                               - else
                                 7100 30th Ave N
                               %br
-                            %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
+                            -# %div{id: "task_#{task['Id']}_status_string"}= task_status_string(task['TaskStatus'])
                         / Modal
                         .modal{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
                           -# .modal-dialog{class: "#{mobile_device? ? '' : 'modal-lg'}", :role => "document"}
