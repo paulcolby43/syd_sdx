@@ -73,8 +73,13 @@
                 %td
                   - unless ticket['Status'] == '1'  # Don't show for closed tickets
                     =# "#{payment_method_string(AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'])}"
-                    - payment_status = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'] rescue '4'
+                    - accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id'])
+                    -# payment_status = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'] rescue '4'
+                    - payment_status = accounts_payable_items.find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'] rescue '4'
                     = payment_method_string(payment_status)
+                    - apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, accounts_payable_items.first['CashierId'])
+                    - if apcashier and apcashier['PaymentMethod'] == '1'
+                      = "##{apcashier['CheckNumber']}"
                   - else
                     N/A
                 -# %td= ticket
