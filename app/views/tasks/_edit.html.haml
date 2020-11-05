@@ -19,7 +19,6 @@
     %br
   - unless workorder.blank? or workorder['Contact'].blank?
     = workorder['Contact']
-    %br
   - unless task['CustomerPhone'].blank?
     %a{href: "tel:#{task['CustomerPhone']}"}
       = task['CustomerPhone']
