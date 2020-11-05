@@ -4,9 +4,13 @@
   .container
     -#
       .well= @accounts_payable_items
-      .well= @apcashier
     - unless @ticket['Description'].blank?
       %p.text-center= @ticket['Description']
+    - unless @accounts_payable_items.blank?
+      %p
+        = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}"
+        - if @apcashier and @apcashier['PaymentMethod'] == '1'
+          = "# #{@apcashier['CheckNumber']}"
     .panel.panel-default
       %div.panel-heading{:role => "tab", id: "vendor_heading"}
         %h4.panel-title
