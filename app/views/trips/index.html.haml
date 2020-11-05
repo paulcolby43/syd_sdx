@@ -46,7 +46,9 @@
                     .panel-title{style: "font-size: 24px;"}
                       - unless service_requests.blank? or service_requests.count > 1 or service_requests.first['Customer'].blank?
                         %strong= service_requests.first['Customer']
-                        %br
+                      - else
+                        %strong Multiple Customers
+                      %br
                       =# Trip.tasks(trip).first['Customer']
                       %small
                         - unless session[:time_zone].blank?
