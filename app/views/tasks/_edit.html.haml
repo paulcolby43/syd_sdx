@@ -24,13 +24,14 @@
       = task['CustomerPhone']
 
 %ul.nav.nav-tabs
-  %li.active
-    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
-      Details
+  
   - if task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1'
-    %li
+    %li.active
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
         Container
+  %li{class: "#{task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1' ? '' : 'active'}"}
+    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
+      Details
   - if task['InternalTaskType'] == '1'
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature", :data => {:toggle => "tab"}}
@@ -40,7 +41,7 @@
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
         Images
 .tab-content
-  .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
+  .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", class: "#{task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1' ? '' : 'active'}"}
     %br
     -#
       %div
@@ -105,7 +106,7 @@
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block task_save_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
               Save
   - if task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1'
-    .tab-pane.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
+    .tab-pane.active.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
       %br
       -#
         %p
