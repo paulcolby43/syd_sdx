@@ -77,8 +77,9 @@
                     -# payment_status = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'] rescue '4'
                     - payment_status = accounts_payable_items.find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}['PaymentMethod'] rescue '4'
                     = payment_method_string(payment_status)
-                    - apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, accounts_payable_items.first['CashierId'])
-                    - if apcashier and apcashier['PaymentMethod'] == '1'
+                    - apcashiers = Apcashier.find_all_by_id(current_user.token, current_yard_id, accounts_payable_items.first['CashierId']) if ticket['Status'] == '3'
+                    - apcashier = apcashiers.first unless apcashiers.blank?
+                    - if not apcashier.blank? and apcashier['PaymentMethod'] == '1'
                       = "##{apcashier['CheckNumber']}"
                   - else
                     N/A

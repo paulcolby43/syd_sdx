@@ -75,7 +75,9 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
-    @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+#    @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    apcashiers = Apcashier.find_all_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @apcashier = apcashiers.first unless apcashiers.blank?
     unless @ticket["TicketItemCollection"].blank?
       unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
         @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} 
@@ -183,7 +185,9 @@ class TicketsController < ApplicationController
 #    @commodities_grouped_by_type_for_select = Commodity.all_by_type_grouped_for_select(@commodity_types, @commodities)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
 #    @contract = Yard.contract(current_yard_id)
-    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+#    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    apcashiers = Apcashier.find_all_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @apcashier = apcashiers.first unless apcashiers.blank?
 #    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id)
     rt_lookups.each do |rt_lookup|
