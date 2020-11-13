@@ -2,6 +2,8 @@ class ReportsController < ApplicationController
   before_filter :login_required
   #load_and_authorize_resource
   #before_action :set_report, only: [:show, :edit, :update]
+  
+  helper_method :sort_column, :sort_direction
 
   # GET /reports
   # GET /reports.json
@@ -121,6 +123,33 @@ class ReportsController < ApplicationController
   def telerik
     @cashier_id = params[:cashier_id]
   end
+  
+  def shipments
+    @sort_column = sort_column
+    @sort_direction = sort_direction
+    @start_date = report_params[:start_date].blank? ? Date.today.to_s : report_params[:start_date]# Default to today
+    @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
+    @customer_user = User.where(customer_guid: params[:customer_id], yard_id: current_yard_id).last # Look for customer user if admin is viewing through iframe on customer show page
+    @user = @customer_user.blank? ? current_user : @customer_user
+    unless sort_direction == "desc"
+#      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column] } if (current_user.customer? or @customer_user.present?)
+#      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column] } unless (current_user.customer? or @customer_user.present?)
+      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
+      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
+    else
+#      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column] }.reverse if (current_user.customer? or @customer_user.present?)
+#      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column]}.reverse unless (current_user.customer? or @customer_user.present?)
+      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
+      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
+    end
+    
+    respond_to do |format|
+      format.html {}
+      format.csv { 
+        send_data PackShipment.customer_summary_to_csv(@pack_shipments), filename: "shipments-report-#{@start_date}-#{@end_date}.csv" 
+      }
+    end
+  end
 
   private
 
@@ -128,5 +157,15 @@ class ReportsController < ApplicationController
     def report_params
 #      params.require(:report).permit(:start_date, :end_date, :type)
       params.fetch(:report, {}).permit(:start_date, :end_date, :type, :status)
+    end
+    
+    ### Secure the shipments sort direction ###
+    def sort_direction
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : "desc"
+    end
+
+    ### Secure the shipments sort column name ###
+    def sort_column
+      ["DateShipped", "ShipmentNumber", "ContractDescription", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:sort]) ? params[:sort] : "DateShipped"
     end
 end

@@ -63,6 +63,7 @@ Rails.application.routes.draw do
   resources :reports do 
     collection do
       get :telerik
+      get :shipments
     end
   end
   
