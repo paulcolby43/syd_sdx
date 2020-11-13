@@ -131,17 +131,8 @@ class ReportsController < ApplicationController
     @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
     @customer_user = User.where(customer_guid: params[:customer_id], yard_id: current_yard_id).last # Look for customer user if admin is viewing through iframe on customer show page
     @user = @customer_user.blank? ? current_user : @customer_user
-    unless sort_direction == "desc"
-#      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column] } if (current_user.customer? or @customer_user.present?)
-#      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column] } unless (current_user.customer? or @customer_user.present?)
-      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
-      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
-    else
-#      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column] }.reverse if (current_user.customer? or @customer_user.present?)
-#      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date).sort_by{ |ps| ps[sort_column].blank? ? '1' : ps[sort_column]}.reverse unless (current_user.customer? or @customer_user.present?)
-      @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
-      @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
-    end
+    @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
+    @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
     
     respond_to do |format|
       format.html {}
