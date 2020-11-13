@@ -59,6 +59,11 @@ module ApplicationHelper
     return status_hash[status_number]
   end
   
+  def shipment_type_string(shipment_type_number)
+    type_hash = {"1" => "Packed", "0" => "Loose"}
+    return type_hash[shipment_type_number]
+  end
+  
   def empty_guid
     '00000000-0000-0000-0000-000000000000'
   end

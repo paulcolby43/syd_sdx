@@ -33,6 +33,8 @@
                   %th= shipments_sortable 'DateShipped', 'Date'
                   %th= shipments_sortable 'ShipmentNumber', 'Shipment'
                   %th= shipments_sortable 'ContractDescription', 'Description'
+                  %th= shipments_sortable 'Material', 'Material'
+                  %th= shipments_sortable 'ShipmentType', 'Type'
                   %th= shipments_sortable 'OrderNumber', 'Order'
                   %th= shipments_sortable 'BookingNumber', 'Booking'
                   %th= shipments_sortable 'SealNumber', 'Seal'
@@ -51,6 +53,8 @@
                     %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y")
                     %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
                     %td= pack_shipment['ContractDescription']
+                    %td= pack_shipment['Material']
+                    %td= shipment_type_string(pack_shipment['ShipmentType'])
                     %td= pack_shipment['OrderNumber']
                     %td= pack_shipment['BookingNumber']
                     %td= pack_shipment['SealNumber']
