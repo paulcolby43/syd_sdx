@@ -157,6 +157,6 @@ class ReportsController < ApplicationController
 
     ### Secure the shipments sort column name ###
     def sort_column
-      ["DateShipped", "ShipmentNumber", "ContractDescription", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:sort]) ? params[:sort] : "DateShipped"
+      ["DateShipped", "ShipmentNumber", "ContractDescription", "Material", "ShipmentType", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:sort]) ? params[:sort] : "DateShipped"
     end
 end
