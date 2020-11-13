@@ -71,6 +71,8 @@
                   %td
                   %td
                   %td
+                  %td
+                  %td
                     %strong= "#{number_with_delimiter(pack_shipments.map { |ps| ps['NetWeight'].to_d }.sum.round(3))}"
     - else
       %br
