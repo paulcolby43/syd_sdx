@@ -33,7 +33,6 @@
                   %th= shipments_sortable 'DateShipped', 'Date'
                   %th= shipments_sortable 'ShipmentNumber', 'Shipment'
                   %th= shipments_sortable 'ContractDescription', 'Description'
-                  %th= shipments_sortable 'Material', 'Material'
                   %th= shipments_sortable 'ShipmentType', 'Type'
                   %th= shipments_sortable 'OrderNumber', 'Order'
                   %th= shipments_sortable 'BookingNumber', 'Booking'
@@ -53,7 +52,6 @@
                     %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y")
                     %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
                     %td= pack_shipment['ContractDescription']
-                    %td= pack_shipment['Material']
                     %td= shipment_type_string(pack_shipment['ShipmentType'])
                     %td= pack_shipment['OrderNumber']
                     %td= pack_shipment['BookingNumber']
@@ -62,7 +60,6 @@
                     %td= "#{number_with_delimiter(pack_shipment['TareWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
                     %td= "#{number_with_delimiter(pack_shipment['NetWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
                 %tr
-                  %td
                   %td
                   %td
                   %td
