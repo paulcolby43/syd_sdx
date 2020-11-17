@@ -257,6 +257,6 @@ class ReportsController < ApplicationController
     end
     
     def ticket_sort_column
-      ["DateCreated", "GrossWeight", "TareWeight", "NetWeight", "ExtendedAmount"].include?(params[:ticket_sort]) ? params[:ticket_sort] : "DateCreated"
+      ["DateCreated", "TicketNumber", "GrossWeight", "TareWeight", "NetWeight", "ExtendedAmount"].include?(params[:ticket_sort]) ? params[:ticket_sort] : "DateCreated"
     end
 end

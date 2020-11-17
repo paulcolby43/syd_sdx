@@ -9,7 +9,7 @@
             CSV
         %br
         = "#{pluralize(@tickets.count, "ticket")} found"
-  - unless mobile_device?
+  -#
     .col-xs-12.col-sm-8
       - unless @tickets.blank?
         .text-center
@@ -20,19 +20,19 @@
             = "Customer by Amount ($)"
             = content_tag :div, "", id: "ticket-customer-amount-summary-donut", data: {tickets: ticket_customer_amount_donut_data(@tickets)}
 
-  .col-xs-12.col-sm-4
-    %p
-      Cash
-      = number_to_currency(@cash_total)
-      %br
-      Check
-      = number_to_currency(@check_total)
-      %br
-      EZcash
-      = number_to_currency(@ezcash_total)
-      %br
-      %strong Total
-      = number_to_currency(@line_items_total)
+    .col-xs-12.col-sm-4
+      %p
+        Cash
+        = number_to_currency(@cash_total)
+        %br
+        Check
+        = number_to_currency(@check_total)
+        %br
+        EZcash
+        = number_to_currency(@ezcash_total)
+        %br
+        %strong Total
+        = number_to_currency(@line_items_total)
 
 -# @tickets.group_by{ |t| t['Company']}.each_with_index do |(ticket_group, tickets), index|
 - unless @tickets.blank?
@@ -41,9 +41,9 @@
       .table-responsive{style: "border: none;"}
         %table.table.table-hover{"data-provides" => "rowlink"}
           %caption
-            &nbsp;
-            = ticket_group
-            = "No name" if ticket_group.blank?
+            %h4
+              = ticket_group
+              = "No name" if ticket_group.blank?
           -#
             %div.panel.panel-default
               %div.panel-heading
@@ -55,10 +55,8 @@
                       = number_to_currency(tickets.map { |t| Ticket.line_items_total(t['TicketItemCollection']['ApiTicketItem']).to_d }.sum)
           %thead
             %tr
-              %th
-                Date
-              %th
-                Ticket
+              %th= tickets_sortable 'DateCreated', 'Date'
+              %th= tickets_sortable 'TicketNumber', 'Ticket'
               - unless @status == '1' # Don't need to show for closed tickets
                 %th
                   Method
@@ -103,18 +101,16 @@
     .col-xs-12
       %p.text-center.lead None found
 
-- if mobile_device?
-  %hr
-  .pull-right
-    %p.lead
-      Cash
-      = number_to_currency(@cash_total)
-      %br
-      Check
-      = number_to_currency(@check_total)
-      %br
-      EZcash
-      = number_to_currency(@ezcash_total)
-      %br
-      %strong Total
-      = number_to_currency(@line_items_total)
+.pull-right
+  %p.lead
+    Cash
+    = number_to_currency(@cash_total)
+    %br
+    Check
+    = number_to_currency(@check_total)
+    %br
+    EZcash
+    = number_to_currency(@ezcash_total)
+    %br
+    %strong Total
+    = number_to_currency(@line_items_total)

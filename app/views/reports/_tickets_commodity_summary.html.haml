@@ -9,7 +9,7 @@
             CSV
         %br
         = "#{pluralize(@tickets.count, "ticket")} found"
-  - unless mobile_device?
+  -#
     .col-xs-12.col-sm-8
       - unless @line_items.blank?
         .text-center
@@ -39,18 +39,12 @@
       .table-responsive{style: "border: none;"}
         %table.table.table-hover{"data-provides" => "rowlink"}
           %caption
-            &nbsp;
-            = line_item_group
+            %h4= line_item_group
           %thead
             %tr
               %th= tickets_sortable 'DateCreated', 'Date'
-              %th Description
               %th Ticket
-              %th Job
-              %th BOL
-              %th PO
               %th Customer
-              %th Customer Ref #
               %th= tickets_sortable 'GrossWeight', 'Gross'
               %th= tickets_sortable 'TareWeight', 'Tare'
               %th= tickets_sortable 'NetWeight', 'Net'
@@ -69,17 +63,17 @@
                 %td
                   =# line_item["DateCreated"].to_date.strftime("%m/%d/%y")
                   = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["DateCreated"].to_date.strftime("%m/%d/%y")
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue 'N/A'
+                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue 'N/A'
                 %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'], yard_id: @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["YardId"])
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue 'N/A'
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue 'N/A'
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue 'N/A'
+                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue 'N/A'
+                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue 'N/A'
+                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue 'N/A'
                 %td
                   - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
                     = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
                   - else
                     = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-                %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue 'N/A'
+                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue 'N/A'
                 -#
                   %td= "#{DateTime.parse(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]) rescue '2000-01-01'}".to_date.strftime("%m/%d/%y")
                 %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
@@ -111,11 +105,6 @@
               %td
               %td
               %td
-              %td
-              %td
-              %td
-              %td
-              %td
                 %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
               %td
               %td
@@ -127,18 +116,16 @@
     .col-xs-12
       %p.text-center.lead None found
 
-- if mobile_device?
-  %hr
-  .pull-right
-    %p.lead
-      Cash
-      = number_to_currency(@cash_total)
-      %br
-      Check
-      = number_to_currency(@check_total)
-      %br
-      EZcash
-      = number_to_currency(@ezcash_total)
-      %br
-      %strong Total
-      = number_to_currency(@line_items_total)
+.pull-right
+  %p.lead
+    Cash
+    = number_to_currency(@cash_total)
+    %br
+    Check
+    = number_to_currency(@check_total)
+    %br
+    EZcash
+    = number_to_currency(@ezcash_total)
+    %br
+    %strong Total
+    = number_to_currency(@line_items_total)
