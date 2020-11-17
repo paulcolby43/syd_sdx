@@ -1,36 +1,46 @@
 .row
-  .col-xs-12.col-sm-6
-    %p.lead 
-      Tickets Commodity Summary Report
-      - unless @line_items.blank? 
-        %a{href: reports_path(format: "csv", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
-          %i.fa.fa-download
-          CSV
+  -#
+    .col-xs-12.col-sm-6
+      %p.lead 
+        Tickets Commodity Summary Report
+        - unless @line_items.blank? 
+          %a{href: reports_path(format: "csv", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+            %i.fa.fa-download
+            CSV
+        %br
+        = "#{pluralize(@tickets.count, "ticket")} found"
+  .col-xs-12.col-sm-8
+    - unless @line_items.blank?
+      .col-xs-6
+        =# "Commodity by Weight"
+        = content_tag :div, "", id: "ticket-commodity-weight-summary-donut", data: {items: ticket_commodity_weight_donut_data(@line_items)}
+      .col-xs-6
+        =# "Commodity by Amount ($)"
+        = content_tag :div, "", id: "ticket-commodity-amount-summary-donut", data: {items: ticket_commodity_amount_donut_data(@line_items)}
+  -#
+    .col-xs-12.col-sm-4
+      - unless @line_items.blank?
+        %table.table
+          - @line_items.each do |line_item|
+            %tr
+              %td= line_item['PrintDescription']
+              %td= line_item['NetWeight']
+              %td= line_item['ExtendedAmount']
+        
+    
+  .col-xs-12.col-sm-4
+    %p
+      Cash
+      = number_to_currency(@cash_total)
       %br
-      = "#{pluralize(@tickets.count, "ticket")} found"
-  .col-xs-12.col-sm-6
-    .pull-right
-      %p.lead
-        Cash
-        = number_to_currency(@cash_total)
-        %br
-        Check
-        = number_to_currency(@check_total)
-        %br
-        EZcash
-        = number_to_currency(@ezcash_total)
-        %br
-        %strong Total
-        = number_to_currency(@line_items_total)
-
-- unless @line_items.blank?
-  .row
-    .well.col-xs-12.col-sm-6
-      %p.text-center= "Commodity by Weight"
-      = content_tag :div, "", id: "ticket-commodity-weight-summary-donut", data: {items: ticket_commodity_weight_donut_data(@line_items)}
-    .well.col-xs-12.col-sm-6
-      %p.text-center= "Commodity by Amount ($)"
-      = content_tag :div, "", id: "ticket-commodity-amount-summary-donut", data: {items: ticket_commodity_amount_donut_data(@line_items)}
+      Check
+      = number_to_currency(@check_total)
+      %br
+      EZcash
+      = number_to_currency(@ezcash_total)
+      %br
+      %strong Total
+      = number_to_currency(@line_items_total)
 
 - @line_items.group_by{ |i| i['PrintDescription'] }.each_with_index do |(line_item_group, line_items), index|
   .row

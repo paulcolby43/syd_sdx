@@ -20,6 +20,7 @@
               %a{href: shipments_reports_path(format: "csv", 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-success'}
                 %i.fa.fa-download
                 = "CSV" unless mobile_device?
+    %hr
     - unless @pack_shipments.blank?
       - @pack_shipments.group_by{ |ps| "#{ps['CustomerName']}"}.each_with_index do |(pack_shipment_group, pack_shipments), index|
         .row

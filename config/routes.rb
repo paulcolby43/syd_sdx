@@ -64,6 +64,7 @@ Rails.application.routes.draw do
     collection do
       get :telerik
       get :shipments
+      get :tickets
     end
   end
   
