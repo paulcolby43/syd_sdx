@@ -1,4 +1,4 @@
-.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+.navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation'}
   .container-fluid
     .navbar-header
       %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
@@ -7,7 +7,8 @@
         %span.icon-bar
         %span.icon-bar
       %a{class: 'navbar-brand', :href => reports_path}
-        Home
+        = image_tag('dragon_spiral_navbar_logo.png')
+        -# Home
         =# image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav

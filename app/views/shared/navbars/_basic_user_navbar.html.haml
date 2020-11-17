@@ -1,4 +1,4 @@
-.navbar.navbar-default.navbar-fixed-top{ role: 'navigation', style: 'background-color: lightgreen;'}
+.navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation''}
   .container-fluid
     .navbar-header
       %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
@@ -7,8 +7,10 @@
         %span.icon-bar
         %span.icon-bar
       %a{class: 'navbar-brand', :href => root_path}
-        - unless current_page? root_path
-          Home 
+        = image_tag('dragon_spiral_navbar_logo.png')
+        -#
+          - unless current_page? root_path
+            Home 
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         - if current_user.mobile_buy? or current_user.mobile_admin?
