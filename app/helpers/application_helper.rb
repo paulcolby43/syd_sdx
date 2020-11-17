@@ -240,10 +240,17 @@ end
   
   def shipments_sortable(column, title = nil)
     title ||= column.titleize
-    css_class = (column == sort_column) ? "sortable-current #{sort_direction}" : nil
-    direction = (column == sort_column && sort_direction == "asc") ? "desc" : "asc"
+    css_class = (column == shipment_sort_column) ? "sortable-current #{sort_direction}" : nil
+    direction = (column == shipment_sort_column && sort_direction == "asc") ? "desc" : "asc"
 #    link_to title, {:sort => column, :direction => direction}, {:class => css_class}
-    link_to title, params.merge(:sort => column, :direction => direction), {:class => css_class}
+    link_to title, params.merge(:shipment_sort => column, :direction => direction), {:class => css_class}
+  end
+  
+  def tickets_sortable(column, title = nil)
+    title ||= column.titleize
+    css_class = (column == ticket_sort_column) ? "sortable-current #{sort_direction}" : nil
+    direction = (column == ticket_sort_column && sort_direction == "asc") ? "desc" : "asc"
+    link_to title, params.merge(:ticket_sort => column, :direction => direction), {:class => css_class}
   end
 
 end

@@ -3,12 +3,14 @@ class ReportsController < ApplicationController
   #load_and_authorize_resource
   #before_action :set_report, only: [:show, :edit, :update]
   
-  helper_method :sort_column, :sort_direction
+  helper_method :shipment_sort_column, :sort_direction, :ticket_sort_column
 
   # GET /reports
   # GET /reports.json
   def index
     authorize! :index, :reports
+    @sort_column = ticket_sort_column
+    @sort_direction = sort_direction
     @status = "#{report_params[:status].blank? ? '3,1' : report_params[:status]}" # Default status to 1 (closed tickets)
     @type = report_params[:type] || 'commodity_summary' # Default to commodity summary
     @start_date = report_params[:start_date].blank? ? Date.today.to_s : report_params[:start_date]# Default to today
@@ -126,7 +128,7 @@ class ReportsController < ApplicationController
   
   def shipments
     authorize! :index, :reports
-    @sort_column = sort_column
+    @sort_column = shipment_sort_column
     @sort_direction = sort_direction
     @start_date = report_params[:start_date].blank? ? Date.today.to_s : report_params[:start_date]# Default to today
     @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
@@ -145,7 +147,7 @@ class ReportsController < ApplicationController
   
   def tickets
     authorize! :index, :reports
-    @sort_column = sort_column
+    @sort_column = ticket_sort_column
     @sort_direction = sort_direction
     @status = "#{report_params[:status].blank? ? '3,1' : report_params[:status]}" # Default status to 1 (closed tickets)
     @type = report_params[:type] || 'commodity_summary' # Default to commodity summary
@@ -250,7 +252,11 @@ class ReportsController < ApplicationController
     end
 
     ### Secure the shipments sort column name ###
-    def sort_column
-      ["DateShipped", "ShipmentNumber", "ContractDescription", "Material", "ShipmentType", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:sort]) ? params[:sort] : "DateShipped"
+    def shipment_sort_column
+      ["DateShipped", "ShipmentNumber", "ContractDescription", "Material", "ShipmentType", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:shipment_sort]) ? params[:shipment_sort] : "DateShipped"
+    end
+    
+    def ticket_sort_column
+      ["DateCreated", "GrossWeight", "TareWeight", "NetWeight", "ExtendedAmount"].include?(params[:ticket_sort]) ? params[:ticket_sort] : "DateCreated"
     end
 end
