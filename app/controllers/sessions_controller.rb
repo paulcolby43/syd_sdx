@@ -63,7 +63,8 @@ class SessionsController < ApplicationController
               redirect_to root_path
             end
           else
-            redirect_to reports_path
+#            redirect_to reports_path
+            redirect_to root_path
           end
         else
           if user.admin?

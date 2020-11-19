@@ -21,8 +21,17 @@
         %li{:class => "#{(params[:controller] == 'customers') ? 'active' : ''} "}
           %a{href: customers_path}
             CUSTOMERS
-        %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
-          %a{href: reports_path} REPORTS
+        %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            REPORTS
+            %b.caret
+          %ul.dropdown-menu
+            - if current_user.company.include_shipments?
+              %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'shipments') ? 'active' : ''}"}= link_to 'Shipments', shipments_reports_path
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'tickets') ? 'active' : ''}"}= link_to 'Tickets', tickets_reports_path
+        -#
+          %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
+            %a{href: reports_path} REPORTS
           
       %ul.nav.navbar-nav.navbar-right
         %li.dropdown{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}
