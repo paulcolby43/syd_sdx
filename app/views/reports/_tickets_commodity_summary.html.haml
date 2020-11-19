@@ -55,8 +55,8 @@
                 %th= tickets_sortable 'ExtendedAmount', 'Amount'
             %tbody
               - if ['GrossWeight', 'TareWeight', 'NetWeight', 'ExtendedAmount'].include?(@sort_column)
-                - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column].to_d}.reverse if @sort_direction == "desc"
-                - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column].to_d} if @sort_direction == "asc"
+                - items = line_items.sort_by{|li| li[@sort_column].blank? ? 0 : li[@sort_column].to_d}.reverse if @sort_direction == "desc"
+                - items = line_items.sort_by{|li| li[@sort_column].blank? ? 0 : li[@sort_column].to_d} if @sort_direction == "asc"
               - else
                 - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column]}.reverse if @sort_direction == "desc"
                 - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column]} if @sort_direction == "asc"

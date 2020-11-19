@@ -66,6 +66,12 @@
                   Amount
 
             %tbody
+              - if ['Staus'].include?(@sort_column)
+                - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '0' : li[@sort_column].to_d}.reverse if @sort_direction == "desc"
+                - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '0' : li[@sort_column].to_d} if @sort_direction == "asc"
+              - else
+                - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '1' : t[@sort_column]}.reverse if @sort_direction == "desc"
+                - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '1' : t[@sort_column]} if @sort_direction == "asc"
               - tickets.each do |ticket|
                 %tr
                   %td
