@@ -45,9 +45,9 @@
               %br
               %br
             %div.input-group
-              = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{params[:q].present? ? nil : (@start_date.blank? ? Date.today : @start_date)}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 3.months.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
+              = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 1.year.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
               %span.input-group-addon To
-              = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{params[:q].present? ? nil : (@end_date.blank? ? Date.today : @end_date)}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 3.months.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
+              = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 1.year.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
             - if mobile_device?
               %br
             = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}, title: "Search") do
