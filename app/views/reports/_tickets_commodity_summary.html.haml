@@ -35,97 +35,104 @@
         = number_to_currency(@line_items_total)
 - unless @line_items.blank?
   - @line_items.group_by{ |i| i['PrintDescription'] }.each_with_index do |(line_item_group, line_items), index|
-    .row
-      .table-responsive{style: "border: none;"}
-        %table.table.table-hover{"data-provides" => "rowlink"}
-          %caption
-            %h4= line_item_group
-          %thead
-            %tr
-              %th= tickets_sortable 'DateCreated', 'Date'
-              %th Ticket
-              %th Customer
-              %th= tickets_sortable 'GrossWeight', 'Gross'
-              %th= tickets_sortable 'TareWeight', 'Tare'
-              %th= tickets_sortable 'NetWeight', 'Net'
-              %th Deduction
-              %th Price
-              %th= tickets_sortable 'ExtendedAmount', 'Amount'
-          %tbody
-            - if ['GrossWeight', 'TareWeight', 'NetWeight', 'ExtendedAmount'].include?(@sort_column)
-              - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column].to_d}.reverse if @sort_direction == "desc"
-              - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column].to_d} if @sort_direction == "asc"
-            - else
-              - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column]}.reverse if @sort_direction == "desc"
-              - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column]} if @sort_direction == "asc"
-            - items.each do |line_item|
+    - if @commodity.blank? or @commodity == line_item_group
+      .row
+        .table-responsive{style: "border: none;"}
+          %table.table.table-hover{"data-provides" => "rowlink"}
+            %caption
+              %h4= line_item_group
+            %thead
+              %tr
+                %th= tickets_sortable 'DateCreated', 'Date'
+                %th Ticket
+                %th Customer
+                %th Status
+                %th= tickets_sortable 'GrossWeight', 'Gross'
+                %th= tickets_sortable 'TareWeight', 'Tare'
+                %th= tickets_sortable 'NetWeight', 'Net'
+                %th Deduction
+                %th Price
+                %th= tickets_sortable 'ExtendedAmount', 'Amount'
+            %tbody
+              - if ['GrossWeight', 'TareWeight', 'NetWeight', 'ExtendedAmount'].include?(@sort_column)
+                - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column].to_d}.reverse if @sort_direction == "desc"
+                - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column].to_d} if @sort_direction == "asc"
+              - else
+                - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column]}.reverse if @sort_direction == "desc"
+                - items = line_items.sort_by{|li| li[@sort_column].blank? ? '1' : li[@sort_column]} if @sort_direction == "asc"
+              - items.each do |line_item|
+                - ticket = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}
+                %tr
+                  %td
+                    =# line_item["DateCreated"].to_date.strftime("%m/%d/%y")
+                    = ticket['DateCreated'].to_date.strftime("%m/%d/%y")
+                  -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue 'N/A'
+                  %td= link_to ticket["TicketNumber"], ticket_path(ticket["Id"], status: params['status'], yard_id: ticket["YardId"])
+                  -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue 'N/A'
+                  -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue 'N/A'
+                  -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue 'N/A'
+                  %td
+                    - unless ticket["Company"].blank?
+                      = ticket["Company"]
+                    - else
+                      = "#{ticket["FirstName"]} #{ticket["LastName"]}"
+                  %td
+                    = ticket_status_string(ticket['Status'])
+                  -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue 'N/A'
+                  -#
+                    %td= "#{DateTime.parse(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]) rescue '2000-01-01'}".to_date.strftime("%m/%d/%y")
+                  %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                  %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                  %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} "
+                  %td
+                    - unless line_item["DeductionCollection"].blank?
+                      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                        = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
+                        = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
+                        = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
+                        = number_with_precision(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
+                      - else
+                        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                          = line_item_deduction["DeductDollarAmountDescription"] unless line_item_deduction["DeductDollarAmountDescription"].blank?
+                          = number_to_currency(line_item_deduction["DeductDollarAmount"]) unless line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?
+                          = line_item_deduction["DeductWeightDescription"] unless line_item_deduction["DeductWeightDescription"].blank?
+                          = number_with_precision(line_item_deduction["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item_deduction["DeductWeight"].blank?
+                    - else
+                      None
+                  %td= "#{number_to_currency(line_item['Price'])} / #{line_item['UnitOfMeasure']}"
+                  %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
+                  -#
+                    %td= line_item
               %tr
                 %td
-                  =# line_item["DateCreated"].to_date.strftime("%m/%d/%y")
-                  = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["DateCreated"].to_date.strftime("%m/%d/%y")
-                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Description"] rescue 'N/A'
-                %td= link_to @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["TicketNumber"], ticket_path(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Id"], status: params['status'], yard_id: @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["YardId"])
-                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["JobNumber"] rescue 'N/A'
-                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["BolNumber"] rescue 'N/A'
-                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["PurchaseOrderNumber"] rescue 'N/A'
                 %td
-                  - unless @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"].blank?
-                    = @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Company"]
-                  - else
-                    = "#{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["FirstName"]} #{@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["LastName"]}"
-                -# %td= @tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue 'N/A'
-                -#
-                  %td= "#{DateTime.parse(@tickets.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"]) rescue '2000-01-01'}".to_date.strftime("%m/%d/%y")
-                %td= "#{number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true)} "
-                %td= "#{number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true)} "
-                %td= "#{number_with_precision(line_item['NetWeight'], precision: 2, strip_insignificant_zeros: true)} "
                 %td
-                  - unless line_item["DeductionCollection"].blank?
-                    - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
-                      = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
-                      = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
-                      = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
-                      = number_with_precision(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
-                    - else
-                      - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
-                        = line_item_deduction["DeductDollarAmountDescription"] unless line_item_deduction["DeductDollarAmountDescription"].blank?
-                        = number_to_currency(line_item_deduction["DeductDollarAmount"]) unless line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?
-                        = line_item_deduction["DeductWeightDescription"] unless line_item_deduction["DeductWeightDescription"].blank?
-                        = number_with_precision(line_item_deduction["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item_deduction["DeductWeight"].blank?
-                  - else
-                    None
-                %td= "#{number_to_currency(line_item['Price'])} / #{line_item['UnitOfMeasure']}"
-                %td= "#{number_to_currency(line_item['ExtendedAmount'])}"
-                -#
-                  %td= line_item
-            %tr
-              %td
-              %td
-              %td
-              %td
-              %td
-              %td
-                %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
-              %td
-              %td
-              %td
-                %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
+                %td
+                %td
+                %td
+                %td
+                  %strong= "#{number_with_delimiter(line_items.map { |i| i['NetWeight'].to_d }.sum.round(3))}"
+                %td
+                %td
+                %td
+                  %strong= number_to_currency(line_items.map { |i| i['ExtendedAmount'].to_d }.sum)
 - else
   %br
   .row
     .col-xs-12
       %p.text-center.lead None found
 
-.pull-right
-  %p.lead
-    Cash
-    = number_to_currency(@cash_total)
-    %br
-    Check
-    = number_to_currency(@check_total)
-    %br
-    EZcash
-    = number_to_currency(@ezcash_total)
-    %br
-    %strong Total
-    = number_to_currency(@line_items_total)
+- if @commodity.blank?
+  .pull-right
+    %p.lead
+      Cash
+      = number_to_currency(@cash_total)
+      %br
+      Check
+      = number_to_currency(@check_total)
+      %br
+      EZcash
+      = number_to_currency(@ezcash_total)
+      %br
+      %strong Total
+      = number_to_currency(@line_items_total)

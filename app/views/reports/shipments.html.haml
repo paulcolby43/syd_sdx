@@ -7,17 +7,16 @@
       = form_tag shipments_reports_path, :method => 'get', :class => "form-inline" do
         = hidden_field_tag :customer_id, params[:customer_id] unless params[:customer_id].blank?
         .row.form-group
-          %div{:class => "col-xs-8 col-sm-7"}
+          %div{:class => "col-xs-12"}
             %div.input-group
               = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{params[:q].present? ? nil : (@start_date.blank? ? Date.today : @start_date)}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 3.months.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
               %span.input-group-addon To
               = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{params[:q].present? ? nil : (@end_date.blank? ? Date.today : @end_date)}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 3.months.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
-          %div{:class => "col-xs-4 col-sm-5"}
-            = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Search'}"}) do
+            = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Search'}"}, title: "Search") do
               %i.fa.fa-search
               = "Search" unless mobile_device?
             - unless @pack_shipments.blank? 
-              %a{href: shipments_reports_path(format: "csv", 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+              %a{href: shipments_reports_path(format: "csv", 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default', title: "CSV Download"}
                 %i.fa.fa-download
                 = "CSV" unless mobile_device?
     %hr

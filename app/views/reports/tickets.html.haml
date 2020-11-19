@@ -8,11 +8,41 @@
         = hidden_field_tag :customer_id, params[:customer_id] unless params[:customer_id].blank?
         .row.form-group
           %div{:class => "col-xs-12"}
-            = select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control"
+            =# select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control"
+            .btn-group{"data-toggle" => "buttons"}
+              %label.btn.btn-default{class: "#{@type == 'commodity_summary' ? 'active' : ''}"}
+                %input{:name => "report[type]", :type => "radio", :value => "commodity_summary", checked: @type == 'commodity_summary' ? true : false}>/
+                Commodity
+              %label.btn.btn-default{class: "#{@type == 'customer_summary' ? 'active' : ''}"}
+                %input{:name => "report[type]", :type => "radio", :value => "customer_summary", checked: @type == 'customer_summary' ? true : false}>/
+                Customer
             - if mobile_device?
               %br
-            = select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control"
+              %br
+            =# select_tag 'report[status]', options_for_select([['Closed Tickets', '1'],['Paid Tickets', '3'], ['Paid & Closed', '3,1']], @status), class: "form-control"
+            - if @type == 'commodity_summary' and not @line_items.blank?
+              = select_tag 'report[commodity]', options_for_select(@line_items.map{ |item| [item["PrintDescription"]] }.uniq, @commodity), prompt: "All", class: "form-control"
+              - if mobile_device?
+                %br
+                %br
+            - if @type == 'customer_summary' and not @tickets.blank?
+              = select_tag 'report[customer]', options_for_select(@tickets.map{ |ticket| ["#{ticket['FirstName']} #{ticket['LastName']}"] }.uniq, @customer), prompt: "All", class: "form-control"
+              - if mobile_device?
+                %br
+                %br
+            .btn-group{"data-toggle" => "buttons"}
+              %label.btn.btn-default{class: "#{@status.include?('1') ? 'active' : ''}"}
+                %input{:id => "report_closed", :name => "report[closed]", :type => "checkbox", :value => "1", checked: @status.include?('1') ? true : false}>/
+                Closed
+              %label.btn.btn-default{class: "#{@status.include?('3') ? 'active' : ''}"}
+                %input{:id => "report_paid", :name => "report[paid]", :type => "checkbox", :value => "3", checked: @status.include?('3') ? true : false}>/
+                Paid
+              - unless current_user.customer?
+                %label.btn.btn-default{class: "#{@status.include?('2') ? 'active' : ''}"}
+                  %input{:id => "report_held", :name => "report[held]", :type => "checkbox", :value => "2", checked: @status.include?('2') ? true : false}>/
+                  Held
             - if mobile_device?
+              %br
               %br
             %div.input-group
               = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{params[:q].present? ? nil : (@start_date.blank? ? Date.today : @start_date)}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 3.months.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
@@ -20,13 +50,12 @@
               = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{params[:q].present? ? nil : (@end_date.blank? ? Date.today : @end_date)}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 3.months.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
             - if mobile_device?
               %br
-            = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Search'}"}) do
+            = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}, title: "Search") do
               %i.fa.fa-search
-              Search
             - unless @tickets.blank? 
-              %a{href: tickets_reports_path(format: "csv", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default'}
+              %a{href: tickets_reports_path(format: "csv", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default', title: "CSV Download"}
                 %i.fa.fa-download
-                CSV
+                
     %hr
     - unless @tickets.blank?
       - unless @type == 'commodity_summary'

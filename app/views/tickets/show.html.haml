@@ -21,7 +21,7 @@
           %h4.panel-title No ticket items
     - else
       -# unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
-      - unless false
+      - unless @line_items.blank?
         #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
           -# @ticket["TicketItemCollection"]["ApiTicketItem"].each do |line_item|
           - @line_items.each do |line_item|

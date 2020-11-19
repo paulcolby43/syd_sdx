@@ -1,8 +1,9 @@
 .text-center
   %strong= task['Company']
   %br
-  = "Service Request #{task['WorkOrderNumber']}"
-  %br
+  -#
+    = "Service Request #{task['WorkOrderNumber']}"
+    %br
   = task_type_string(task['InternalTaskType'])
   %br
   = task['CustomerAddressName']
