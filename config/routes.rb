@@ -63,6 +63,8 @@ Rails.application.routes.draw do
   resources :reports do 
     collection do
       get :telerik
+      get :shipments
+      get :tickets
     end
   end
   
@@ -213,6 +215,15 @@ Rails.application.routes.draw do
   
   resources :containers
   resources :locations
+  
+  resources :access_tokens
+  
+  resources :suspect_lists do
+    member do
+      post :images_download, to: "suspect_lists#images_download"
+      get :images_zip, to: "suspect_lists#images_zip"
+    end
+  end
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

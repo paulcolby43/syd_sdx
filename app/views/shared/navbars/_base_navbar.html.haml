@@ -1,4 +1,4 @@
-.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+.navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation'}
   .container-fluid
     .navbar-header
       %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
@@ -8,8 +8,10 @@
         %span.icon-bar
       %a{class: 'navbar-brand', :href => root_path}
         =# image_tag('syd_logo_20x37.png')
-        - unless current_page? root_path
-          Home 
+        = image_tag('dragon_spiral_navbar_logo.png')
+        -#
+          - unless current_page? root_path
+            Home 
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         -#
@@ -74,8 +76,17 @@
           %a{href: "#{current_user.company.include_shipments? ? inventories_path : '#'}"} INVENTORY
         %li{:class => "#{(params[:controller] == 'pack_shipments') ? 'active' : ''} #{current_user.company.include_shipments? ? '' : 'disabled'} "}
           %a{href: "#{current_user.company.include_shipments? ? pack_shipments_path : '#'}", disabled: current_user.company.include_shipments? ? false:true} SHIPMENTS
-        %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
-          %a{href: reports_path} REPORTS
+        -#
+          %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
+            %a{href: reports_path} REPORTS
+        %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            REPORTS
+            %b.caret
+          %ul.dropdown-menu
+            - if current_user.company.include_shipments?
+              %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'shipments') ? 'active' : ''}"}= link_to 'Shipments', shipments_reports_path
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'tickets') ? 'active' : ''}"}= link_to 'Tickets', tickets_reports_path
         -#
           %li{:class => "#{(params[:controller] == 'trips') ? 'active' : ''} #{current_user.company.include_dispatch? ? '' : 'disabled'} "}
             %a{href: "#{current_user.company.include_dispatch? ? trips_path : '#'}", disabled: current_user.company.include_dispatch? ? false:true} DISPATCH
@@ -125,5 +136,7 @@
             - if current_user.admin?
               %li{:class => "#{( current_page? users_path) ? 'active' : ''}"}= link_to 'Users', users_path
               %li= link_to "Scoreboard", scoreboard_path, target: '_blank'
+              %li{:class => "#{(params[:controller] == 'suspect_lists') ? 'active' : ''} "}
+                %a{href: suspect_lists_path} Suspect Lists
             %li{:class => "#{( current_page? user_settings_path) ? 'active' : ''}"}= link_to 'Settings', user_setting_path(current_user.user_setting)
         %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }

@@ -2,6 +2,19 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    - if current_user.dragon_admin?
+      .row
+        %span.pull-right
+          .col-xs-12
+            .well
+              .text-center
+                %strong User View
+                %br
+                = "Admin" if current_user.mobile_admin?
+                = "Buyer" if current_user.mobile_buyer?
+                = "Inspector" if current_user.mobile_inspector?
+      %br
+              
     .row
       .col-xs-12.col-sm-6
         #defaults_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}

@@ -52,7 +52,7 @@ class ImageBlobWorker
                 <BOOKING_NBR>#{image_file.booking_number}</BOOKING_NBR>
                 <CONTR_NBR>#{image_file.contract_number}</CONTR_NBR>
                 <CAMERA_NAME>#{"user_#{image_file.user.username}"}</CAMERA_NAME>
-                <CAMERA_GROUP>Scrap Yard Dog</CAMERA_GROUP>
+                <CAMERA_GROUP>Portal</CAMERA_GROUP>
                 <CUST_NBR>#{image_file.customer_number}</CUST_NBR>
                 <CUST_NAME>#{image_file.customer_name}</CUST_NAME>
                 <TARE_SEQ_NBR>#{image_file.tare_seq_nbr}</TARE_SEQ_NBR>

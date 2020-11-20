@@ -3,9 +3,6 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %h2.text-center
-      = link_to "Scrap Dragon", 'http://www.scrapdragon.com', target: '_blank'
-      Portal
     = form_tag reports_path, :method => 'get', :class => "form-inline" do
       = hidden_field_tag :customer_id, params[:customer_id]
       - if mobile_device?
@@ -56,7 +53,7 @@
         %p
           - unless @status == 'shipments'
             = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
-          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+          = button_tag(:type => 'submit', :class => 'btn btn-default btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
             %i.fa.fa-search
             Search
 

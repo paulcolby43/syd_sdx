@@ -1,22 +1,32 @@
 - @customers.each do |customer|
   %div.row
     .col-xs-12.col-sm-12.col-md-12
-      %div.panel.panel-primary
-        %div.list_group
-          %div.list-group-item
-            .pull-right
-              %p
-                %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+      %h4.text-muted
+        %div.panel.panel-primary
+          %div.list_group
+            %div.list-group-item
+              .pull-right
+                %a{href: create_ticket_customer_path(customer['Id']), class: "btn btn-primary btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
                   %i.fa.fa-ticket
                   Ticket
-            %p.lead
+              = image_tag('avatar_thumbnail', class: 'thumbnail img-responsive')
               = customer["CustomerNumber"]
               - unless customer["FirstName"].blank? and customer["LastName"].blank?
                 = "#{customer['FirstName']} #{customer['LastName']}"
               - else
                 = "#{customer['Company']}"
-          %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer Details"}, class: "list-group-item customer_button"}
-            .pull-right
-              &nbsp;
-              %i.fa.fa-chevron-right.fa-lg
-            Customer Details
+            %a{href: customer_path(customer['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{customer['Company']}"}, class: "list-group-item customer_button"}
+              - unless customer["FirstName"].blank? and customer["LastName"].blank?
+                - if customer['Company'].blank?
+                  No company name
+                - else
+                  = "#{customer['Company']}"
+              %br
+              = "#{customer['Address1']}"
+              - unless customer['Address2'].blank?
+                %br
+                = "#{customer['Address2']}"
+              %br
+              = "#{customer['City']}, #{customer['State']} #{customer['Zip']}" unless customer['City'].blank? and customer['State'].blank? and customer['Zip'].blank?
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg

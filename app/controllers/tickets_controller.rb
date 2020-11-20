@@ -6,7 +6,7 @@ class TicketsController < ApplicationController
   # GET /tickets.json
   def index
     authorize! :index, :tickets
-    @status = "#{params[:status].blank? ? '2' : params[:status]}"
+    @status = "#{(params[:status].blank? or current_user.mobile_inspector?) ? '2' : params[:status]}"
     @currencies = Ticket.currencies(current_user.token)
     @start_date = params[:start_date]
     @end_date = params[:end_date]
@@ -75,7 +75,9 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find_by_id(current_user.token, params[:yard_id].blank? ? current_yard_id : params[:yard_id], params[:id])
     @ticket_number = @ticket["TicketNumber"]
     @accounts_payable_items = AccountsPayable.all(current_user.token, @ticket["YardId"], params[:id])
-    @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+#    @apcashier = Apcashier.find_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    apcashiers = Apcashier.find_all_by_id(current_user.token, @ticket["YardId"], @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @apcashier = apcashiers.first unless apcashiers.blank?
     unless @ticket["TicketItemCollection"].blank?
       unless @ticket["TicketItemCollection"]["ApiTicketItem"].is_a? Hash
         @line_items = @ticket["TicketItemCollection"]["ApiTicketItem"].select {|i| i["Status"] == '0'} 
@@ -146,8 +148,9 @@ class TicketsController < ApplicationController
       @get_ticket = Ticket.get_ticket(current_user.token, current_yard_id, params[:id])
       unless @get_ticket.blank?
         if @get_ticket["Success"] == "false"
-          unless @get_ticket["Session"]["CreatedByUser"]["UserName"] == current_user.username and @get_ticket['Session']['SessionType'] == '3'
-            flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]},  #{@get_ticket["Session"]["CreatedByWorkstation"]}."
+          unless @get_ticket["Session"]["CreatedByUser"]["UserName"] == current_user.username and @get_ticket['Session']['SessionType'] == '3' # Web API session type
+#            flash[:danger] = "#{@get_ticket['FailureInformation']}. Currently it is held by #{@get_ticket["Session"]["CreatedByUser"]["FirstName"]} #{@get_ticket["Session"]["CreatedByUser"]["LastName"]},  #{@get_ticket["Session"]["CreatedByWorkstation"]}."
+            flash[:danger] = "#{@get_ticket['FailureInformation']}"
             redirect_to :back
           else
             # The session was created by the current_user
@@ -182,7 +185,9 @@ class TicketsController < ApplicationController
 #    @commodities_grouped_by_type_for_select = Commodity.all_by_type_grouped_for_select(@commodity_types, @commodities)
 #    @images = Image.where(ticket_nbr: @ticket["TicketNumber"], yardid: current_yard_id)
 #    @contract = Yard.contract(current_yard_id)
-    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+#    @apcashier = Apcashier.find_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    apcashiers = Apcashier.find_all_by_id(current_user.token, current_yard_id, @accounts_payable_items.first['CashierId']) if @ticket['Status'] == '3'
+    @apcashier = apcashiers.first unless apcashiers.blank?
 #    AccountsPayable.update(current_user.token, current_yard_id, params[:id], @accounts_payable_items.last)
     rt_lookups = RtLookup.api_find_all_by_ticket_number(@ticket_number, current_user.company, current_yard_id)
     rt_lookups.each do |rt_lookup|
@@ -291,9 +296,13 @@ class TicketsController < ApplicationController
           flash[:danger] = "Error updating ticket. #{@ticket['FailureInformation']}"
         end
         if ticket_params[:created_from_trip].blank?
-          redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
-          # Redirect to paid tickets list so can print
-          redirect_to tickets_path(status: '3') if params[:pay_ticket] or params[:close_and_pay_ticket]
+          if current_user.mobile_greeter?
+            redirect_to customers_path
+          else
+            redirect_to tickets_path(status: ticket_params[:status]) unless params[:pay_ticket] or params[:close_and_pay_ticket]
+            # Redirect to paid tickets list so can print
+            redirect_to tickets_path(status: '3') if params[:pay_ticket] or params[:close_and_pay_ticket]
+          end
         else
           # Go back to trips since created ticket from trips list
           redirect_to trips_path

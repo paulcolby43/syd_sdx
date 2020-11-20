@@ -19,6 +19,7 @@
  *= jquery.fileupload-ui.css
  *= require select2
  *= require select2-bootstrap
+ *= require font-awesome
 *= require morris
  *= require_tree .
  *= require_self
@@ -204,3 +205,13 @@ canvas.drawing, canvas.drawingBuffer {
   box-sizing: border-box;
 }
 /* End Google Maps Snap to Road */
+
+.sortable-current {
+/*  padding-right: 16px;
+  background-repeat: no-repeat;
+  background-position: right center;*/
+/*  background-color: #C0C0C0;*/
+  /*text-decoration:underline;*/
+  /*color: #B7410E;*/
+  border-bottom: 3px solid #B7410E;
+}

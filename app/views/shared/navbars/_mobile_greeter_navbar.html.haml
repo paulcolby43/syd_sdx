@@ -1,0 +1,35 @@
+.navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
+        %span.sr-only= t('.toggle_navigation')
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      %a{class: 'navbar-brand', :href => root_path}
+        %strong Mobile Greeter
+    .collapse.navbar-collapse
+      %ul.nav.navbar-nav
+        %li.dropdown{:class => "#{(params[:controller] == 'tickets') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            PURCHASES
+            %b.caret
+          %ul.dropdown-menu
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2' or params[:status].blank?) ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1') ? 'active' : ''}"}= link_to 'Closed', tickets_path(status: 1)
+            %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3') ? 'active' : ''}"}= link_to 'Paid', tickets_path(status: 3)
+        %li{:class => "#{(params[:controller] == 'customers') ? 'active' : ''} "}
+          %a{href: customers_path}
+            CUSTOMERS
+          
+      %ul.nav.navbar-nav.navbar-right
+        %li.dropdown{:class => "#{(params[:controller] == 'user_settings') ? 'active' : ''}"}
+          %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+            More
+            %b.caret
+          %ul.dropdown-menu
+            %li{:class => "#{(params[:controller] == 'users') ? 'active' : ''}"}= link_to "Mobile Greeter: <strong>#{current_user.username}</strong>".html_safe, current_user
+            %li{:class => "#{(params[:controller] == 'yards') ? 'active' : ''}"}= link_to "Yard: <strong>#{current_yard_name}</strong>".html_safe, yard_path(current_yard_id)
+            %li{role: "separator", class: "divider"}
+            %li= link_to 'Settings', edit_user_setting_path(current_user.user_setting)
+        %li= link_to 'Log out', logout_path, method: :delete, data: { confirm: 'Are you sure you want to log out?' }

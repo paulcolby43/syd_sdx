@@ -1,4 +1,4 @@
-.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+.navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation'}
   .container-fluid
     .navbar-header
       %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
@@ -6,8 +6,10 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      %a{class: 'navbar-brand', :href => reports_path}
-        Home
+      -# %a{class: 'navbar-brand', :href => reports_path}
+      %a{class: 'navbar-brand', :href => root_path}
+        = image_tag('dragon_spiral_navbar_logo.png')
+        -# Home
         =# image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
@@ -35,15 +37,18 @@
                   Paid
         %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
-            %i.fa.fa-file-text
             REPORTS
             %b.caret
           %ul.dropdown-menu
-            %li{:class => "#{(params[:controller] == 'reports') and (@type == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
-            %li{:class => "#{(params[:controller] == 'reports') and (@type == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
+            - if current_user.company.include_shipments?
+              %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'shipments') ? 'active' : ''}"}= link_to 'Shipments', shipments_reports_path
+            %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'tickets') ? 'active' : ''}"}= link_to 'Tickets', tickets_reports_path
+            -#
+              %li{:class => "#{(params[:controller] == 'reports') and (@type == 'customer_summary') ? 'active' : ''}"}= link_to 'Customer Summary', reports_path('report[type]' => 'customer_summary')
+              %li{:class => "#{(params[:controller] == 'reports') and (@type == 'commodity_summary') ? 'active' : ''}"}= link_to 'Commodity Summary', reports_path('report[type]' => 'commodity_summary')
         %li
           %a{href: service_requests_customers_path}
-            Service Requests
+            SERVICE REQUESTS
 
         -# 
           = form_tag reports_path, id: 'ticket_search_form', method: 'get', :class => "navbar-form navbar-left", role: 'search' do |f|

@@ -11,7 +11,7 @@
             %i.fa.fa-camera.fa-lg
             = "Pictures" unless mobile_device?
         .col-xs-4.col-sm-4
-          %a{href: create_ticket_customer_path(@customer['Id']), class: "customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+          %a{href: create_ticket_customer_path(@customer['Id']), class: "customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>#{mobile_device? ? '' : ' Ticket'}"} }
             %i.fa.fa-ticket.fa-lg
             = Ticket unless mobile_device?
 

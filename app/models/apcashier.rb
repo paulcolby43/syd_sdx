@@ -33,4 +33,18 @@ class Apcashier
     return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Item"]["AccountesPayableLineItemCollection"]["ApiAccountsPayableLineItem"]
   end
   
+  def self.find_all_by_id(auth_token, yard_id, cashier_id)
+    access_token = AccessToken.where(token_string: auth_token).last # Find access token record
+    user = access_token.user # Get access token's user record
+    api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/apcashier/#{cashier_id}"
+    xml_content = RestClient::Request.execute(method: :get, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", :Accept => "application/xml"})
+    data = Hash.from_xml(xml_content)
+#    Rails.logger.info data
+    if data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Item"]["AccountesPayableLineItemCollection"]["ApiAccountsPayableLineItem"].is_a? Hash # Only one result returned, so put it into an array
+      return [data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Item"]["AccountesPayableLineItemCollection"]["ApiAccountsPayableLineItem"]]
+    else
+      return data["ApiItemResponseOfApiAccountsPayableCashierFk1NORs_P"]["Item"]["AccountesPayableLineItemCollection"]["ApiAccountsPayableLineItem"]
+    end
+  end
+  
 end

@@ -45,8 +45,8 @@ module ApplicationHelper
   end
   
   def ticket_status_string(status_number)
-    status_hash = {"1" => "Closed", "2" => "Held", "3" => "Paid"}
-    return status_hash[status_number]
+    status_hash = {"1" => "Closed", "2" => "Held", "3" => "Paid", "5" => "Void", "7" => "Awaiting Approval"}
+    status_hash[status_number]
   end
   
   def payment_method_string(method_number)
@@ -57,6 +57,11 @@ module ApplicationHelper
   def shipment_status_string(status_number)
     status_hash = {"1" => "Held", "0" => "Closed"}
     return status_hash[status_number]
+  end
+  
+  def shipment_type_string(shipment_type_number)
+    type_hash = {"1" => "Packed", "0" => "Loose"}
+    return type_hash[shipment_type_number]
   end
   
   def empty_guid
@@ -231,6 +236,21 @@ end
     asset = open(url, "r:UTF-8", {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}) { |f| f.read }
     base64 = Base64.encode64(asset.to_s).gsub(/\s+/, "")
     "data:#{content_type};base64,#{Rack::Utils.escape(base64)}"
+  end
+  
+  def shipments_sortable(column, title = nil)
+    title ||= column.titleize
+    css_class = (column == shipment_sort_column) ? "sortable-current #{sort_direction}" : nil
+    direction = (column == shipment_sort_column && sort_direction == "asc") ? "desc" : "asc"
+#    link_to title, {:sort => column, :direction => direction}, {:class => css_class}
+    link_to title, params.merge(:shipment_sort => column, :direction => direction), {:class => css_class}
+  end
+  
+  def tickets_sortable(column, title = nil)
+    title ||= column.titleize
+    css_class = (column == ticket_sort_column) ? "sortable-current #{sort_direction}" : nil
+    direction = (column == ticket_sort_column && sort_direction == "asc") ? "desc" : "asc"
+    link_to title, params.merge(:ticket_sort => column, :direction => direction), {:class => css_class}
   end
 
 end

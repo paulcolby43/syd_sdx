@@ -1,12 +1,39 @@
+.text-center
+  %strong= task['Company']
+  %br
+  -#
+    = "Service Request #{task['WorkOrderNumber']}"
+    %br
+  = task_type_string(task['InternalTaskType'])
+  %br
+  = task['CustomerAddressName']
+  %br
+  %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
+    = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
+  -#
+    - unless task['FromLocation'].blank?
+      %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['FromLocation'])}", target: '_blank'}
+        = "#{task['FromLocation']}"
+    - else
+      %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+        7100 30th Ave N
+    %br
+  - unless workorder.blank? or workorder['Contact'].blank?
+    = workorder['Contact']
+  - unless task['CustomerPhone'].blank?
+    %a{href: "tel:#{task['CustomerPhone']}"}
+      = task['CustomerPhone']
+
 %ul.nav.nav-tabs
-  %li.active
-    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
-      Details
-  - if task['TaskType'] == '0' or task['TaskType'] == '1'
-    %li
+  
+  - if task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1'
+    %li.active
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers", :data => {:toggle => "tab"}}
         Container
-  - if task['TaskType'] == '1'
+  %li{class: "#{task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1' ? '' : 'active'}"}
+    %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", :data => {:toggle => "tab"}}
+      Details
+  - if task['InternalTaskType'] == '1'
     %li
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature", :data => {:toggle => "tab"}}
         Signature
@@ -15,54 +42,54 @@
       %a{:href => "#trip_#{task['DispatchTripId']}_task_#{task['Id']}_images", :data => {:toggle => "tab"}}
         Images
 .tab-content
-  .tab-pane.active{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details"}
+  .tab-pane{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_details", class: "#{task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1' ? '' : 'active'}"}
     %br
+    -#
+      %div
+        %strong= "Customer:"
+        .pull-right
+          = task['Customer']
+        %br
+        %strong= "At:"
+        .pull-right
+          - unless task['ToLocation'].blank?
+            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
+              %i.fa.fa-map
+              = "#{task['ToLocation']}"
+          - else
+            %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
+              7100 30th Ave N
+        %br
+        %strong= "Phone:"
+        .pull-right
+          - unless workorder.blank? or workorder['Phone'].blank?
+            %a{href: "tel:#{workorder['Phone']}"}
+              = workorder['Phone']
     %div
-      %strong= "Customer:"
-      .pull-right
-        = task['Customer']
-      %br
-      %strong= "At:"
-      .pull-right
-        - unless task['ToLocation'].blank?
-          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task['ToLocation'])}", target: '_blank'}
-            %i.fa.fa-map
-            = "#{task['ToLocation']}"
-        - else
-          %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode('7100 30th Ave N')}", target: '_blank'}
-            7100 30th Ave N
-      %br
-      %strong= "Phone:"
-      .pull-right
-        - unless workorder.blank? or workorder['Phone'].blank?
-          %a{href: "tel:#{workorder['Phone']}"}
-            = workorder['Phone']
-    %div
-      %strong= "Type:"
-      .pull-right
-        = task_type_string(task['TaskType'])
-      %br
-      %strong= "Service Request:"
-      .pull-right
-        = task['WorkOrderNumber']
-      %br
-      %strong Current Containers
-      .pull-right
-        %a{href: location_path(task['ToLocationId'], address: task['ToLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
-          %i.fa.fa-map-marker
-          Show All
-      %br 
-      %br
       = form_tag task_path(task["Id"]), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
         =# hidden_field_tag "task[trip_id]", task['DispatchTripId']
         = hidden_field_tag "task[id]", task['Id']
-        .row.form-group
+        %div
+          %a{href: nil, onclick: "$('#mileage_task_#{task['Id']}').toggle(); $('#plus_mileage_task_#{task['Id']}').toggle(); $('#minus_mileage_task_#{task['Id']}').toggle();"} 
+            %i.fa.fa-plus{id: "plus_mileage_task_#{task['Id']}"}
+            %i.fa.fa-minus{id: "minus_mileage_task_#{task['Id']}", style: 'display:none;'}
+            Mileage
+        .row.form-group{id: "mileage_task_#{task['Id']}", style: 'display:none;'}
           %div{:class => "col-xs-6"}
             = label_tag "Start Mileage", nil, :class => 'control-label'
             = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
           %div{:class => "col-xs-6"}
             = label_tag "End Mileage", nil, :class => 'control-label'
             = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
+        %br
+        -#
+          .row.form-group
+            %div{:class => "col-xs-6"}
+              = label_tag "Start Mileage", nil, :class => 'control-label'
+              = text_field_tag "task[starting_mileage]", task['StartingMileage'], :placeholder => "Start Mileage", class: "form-control input-lg"
+            %div{:class => "col-xs-6"}
+              = label_tag "End Mileage", nil, :class => 'control-label'
+              = text_field_tag "task[ending_mileage]", task['EndingMileage'], :placeholder => "End Mileage", class: "form-control input-lg"
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Notes", nil, :class => 'control-label'
@@ -71,7 +98,7 @@
           %div{:class => "col-sm-12 col-md-12"}
             = label_tag "Status", nil, :class => 'control-label'
             / Don't show Completed option if Pickup/Drop Container and no containers yet
-            - if (task['TaskType'] == '0' or task['TaskType'] == '1') and task_containers.blank? 
+            - if (task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1') and task_containers.blank? 
               = select_tag "task[status]", options_for_select(task_status_array_without_completed, task['TaskStatus']), "data-sequence-number" => task['Sequence'], "data-current-value" => task['TaskStatus'], :class => "form-control input-lg task_status"
             - else
               = select_tag "task[status]", options_for_select(task_status_array, task['TaskStatus']), "data-sequence-number" => task['Sequence'], "data-current-value" => task['TaskStatus'], :class => "form-control input-lg task_status"
@@ -79,8 +106,8 @@
           %div{:class => "col-sm-12 col-md-12"}
             = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block task_save_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
               Save
-  - if task['TaskType'] == '0' or task['TaskType'] == '1'
-    .tab-pane.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
+  - if task['InternalTaskType'] == '0' or task['InternalTaskType'] == '1'
+    .tab-pane.active.containers_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_containers"}
       %br
       -#
         %p
@@ -88,7 +115,9 @@
             %i.fa.fa-map-marker
             Find my location
       .location_data
-        
+      %a{href: location_path(task['FromLocationId'], address: task['FromLocation'], work_order_number: task['WorkOrderNumber']), target: '_blank'}
+        %i.fa.fa-external-link
+        Existing Container Lookup
       %div{id: "task_#{task['Id']}_containers", class: 'task_containers'}
         - unless task_containers.blank?
           -# %div.containers_map{id: "task_#{task['Id']}_containers_map", "container-coordinates-hashes-array" => task_containers.map{ |c| Container.latitude_and_longitude_by_container_id(@containers, c['ContainerId'])}.compact.to_json.html_safe}
@@ -105,7 +134,7 @@
                   %div.panel.panel-primary
                     .panel-body
                       .pull-right 
-                        %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['TaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
+                        %a{href: '#', id: "container_#{container['ContainerId']}_picture_button", class: 'container_picture_button', 'data-event-code' => task_type_string(task['InternalTaskType']),  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => task['Customer'], "data-work-order-number" => task['WorkOrderNumber'], "data-container-id" => container['ContainerId'], style: "text-decoration: none;"}
                           %i.fa.fa-camera.fa-lg
                         &nbsp;
                         &nbsp;
@@ -176,7 +205,7 @@
               = hidden_field_tag "task[container_number]"
               = hidden_field_tag "task[customer]", task['Customer']
               = hidden_field_tag "task[work_order_number]", task['WorkOrderNumber']
-              = hidden_field_tag "task[type]", task['TaskType']
+              = hidden_field_tag "task[InternalTaskType]", task['InternalTaskType']
               -#
                 %p= text_field_tag "container[latitude]", nil, :placeholder => "Latitude", class: "form-control input-lg"
                 %p= text_field_tag "container[longitude]", nil, :placeholder => "Longitude", class: "form-control input-lg"
@@ -191,7 +220,7 @@
               %div{:class => "col-xs-12 col-sm-12 col-md-12"}
                 = hidden_field_tag "container[customer]", task['Customer']
                 = hidden_field_tag "container[work_order_number]", task['WorkOrderNumber']
-                = hidden_field_tag "container[type]", task['TaskType']
+                = hidden_field_tag "container[type]", task['InternalTaskType']
                 .row.form-group
                   %div{:class => "col-xs-12"}
                     = label_tag "Container Type", nil, :class => 'control-label'
@@ -224,7 +253,7 @@
           %p You are not allowed to create containers
           = link_to 'Search Again', '#', onclick: "$('#task_#{task['Id']}_create_new_container').hide(); $('#task_#{task['Id']}_form').show(); $('#task_#{task['Id']}_container_select').select2('val', '');"
 
-  - if task['TaskType'] == '1' 
+  - if task['InternalTaskType'] == '1' 
     .tab-pane.signature_tab{:id => "trip_#{task['DispatchTripId']}_task_#{task['Id']}_signature"}
       = render partial: "tasks/signature", locals: {task: task, task_containers: task_containers, containers: @containers}
 

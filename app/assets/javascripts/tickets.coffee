@@ -140,7 +140,7 @@ jQuery ->
 
   ### Line item changed ###
   $('.ticket_input_fields_wrap').on 'change', '.item_select', ->
-    console.log '.item_select changed', 'yes'
+    # console.log '.item_select changed', 'yes'
     ticket_id = $(this).data( "ticket-id" )
     session_id = $(this).data( "session-id" )
     item_id = $(this).data( "item-id" )
@@ -161,13 +161,13 @@ jQuery ->
           name = data.name
           price = parseFloat(data.price).toFixed(3)
           unit_of_measure = data.unit_of_measure
-          console.log 'price', price
+          # console.log 'price', price
           tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
           tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
           tax_percent_3 = parseFloat(data.tax_percent_3).toFixed(2)
-          console.log 'tax percent 1:', tax_percent_1
-          console.log 'tax percent 2:', tax_percent_2
-          console.log 'tax percent 3:', tax_percent_3
+          # console.log 'tax percent 1:', tax_percent_1
+          # console.log 'tax percent 2:', tax_percent_2
+          # console.log 'tax percent 3:', tax_percent_3
           #console.log 'unit of measure:', unit_of_measure
           net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
           input_select.closest('.panel').find('.calculation_details').text ''
@@ -198,7 +198,7 @@ jQuery ->
           return
         error: ->
           alert 'Error getting commodity price.'
-          console.log 'Error getting commodity price.'
+          # console.log 'Error getting commodity price.'
           return
     ticket_item_add_ajax = ->
       price = input_select.closest('.panel').find('#ticket_line_items__price:first').val()
@@ -216,7 +216,7 @@ jQuery ->
           success = data.success
           failure_information = data.failure_information
           if success == 'true' 
-            console.log 'ticket item quick add successful'
+            # console.log 'ticket item quick add successful'
             input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
             input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
             #input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
@@ -224,11 +224,11 @@ jQuery ->
             $("#more_" + item_id + "_link").show()
           else
             alert 'Error saving ticket line item. ' + failure_information
-            console.log 'Error saving ticket line item. ' + failure_information
+            # console.log 'Error saving ticket line item. ' + failure_information
           return
         error: ->
           alert 'Error saving ticket line item.'
-          console.log 'Error saving ticket line item.'
+          # console.log 'Error saving ticket line item.'
           return
     if commodity_id != ''
       # Only get commodity info if there is a commodity item
@@ -239,7 +239,7 @@ jQuery ->
   ### Line item calculation field value changed ###
   # $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
   $('.ticket_input_fields_wrap').on 'change', '.amount-calculation-field', ->
-    console.log '.amount-calculation-field changed', 'yes'
+    # console.log '.amount-calculation-field changed', 'yes'
     $('#hold_close_pay_buttons').hide();
     $('#calculating').show();
     changed_field = $(this)
@@ -274,7 +274,7 @@ jQuery ->
     #description = $(this).closest('.panel').find('#item_description').val()
     price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
     unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
-    console.log 'unit of measure', unit_of_measure
+    # console.log 'unit of measure', unit_of_measure
     if unit_of_measure == 'EA'
       changed_field.closest('.panel').find('#quantity_form_field').show()
       changed_field.closest('.panel').find('#gross_and_tare_form_field').hide()
@@ -302,7 +302,7 @@ jQuery ->
           unit_of_measure: line_item_unit_of_measure
         success: (data) ->
           new_weight = data.new_weight
-          console.log 'new_weight', data
+          # console.log 'new_weight', data
           if line_item_unit_of_measure != 'LD'
             if line_item_unit_of_measure == 'EA'
               amount = (parseFloat(price) * parseFloat(quantity) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
@@ -310,7 +310,7 @@ jQuery ->
               amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
           else 
             amount = (parseFloat(price) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
-          console.log 'amount:', amount
+          # console.log 'amount:', amount
           changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
 
           # Update tax amount to account for possibility that unit of measure is different than price measurement, making a 'new weight'
@@ -328,9 +328,9 @@ jQuery ->
           else
             changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
           if line_item_dollar_amount_deductions_total > 0
-            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Less:</strong> $' + line_item_dollar_amount_deductions_total
+            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Deduction:</strong> $' + line_item_dollar_amount_deductions_total
           if line_item_weight_deductions_total > 0
-            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Less:</strong> ' + line_item_weight_deductions_total + ' LB'
+            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Deduction:</strong> ' + line_item_weight_deductions_total + ' LB'
           if total_tax_amount > 0
             changed_field.closest('.panel').find('.tax_details').html '<strong>Taxes:</strong> $' + total_tax_amount
               
@@ -357,7 +357,7 @@ jQuery ->
           return
         error: ->
           alert 'Error getting commodity unit of measure conversion.'
-          console.log 'Error getting commodity unit of measure conversion.'
+          # console.log 'Error getting commodity unit of measure conversion.'
           $('#hold_close_pay_buttons').show();
           $('#calculating').hide();
           return
@@ -482,7 +482,7 @@ jQuery ->
       url: "/checking_accounts/" + checking_account_id
       dataType: 'json'
       success: (data) ->
-        #console.log 'success', data
+        # console.log 'success', data
         $('#finding_check_number_spinner').hide()
         $('.fa-hashtag').show()
         $('#checking_account_payment_check_number').val data.NextNo
@@ -514,7 +514,7 @@ jQuery ->
       url: "/checking_accounts/" + checking_account_id
       dataType: 'json'
       success: (data) ->
-        #console.log 'success', data
+        # console.log 'success', data
         $('#finding_check_number_spinner').hide()
         $('.fa-hashtag').show()
         $('#checking_account_payment_check_number').val data.NextNo
@@ -1055,7 +1055,7 @@ jQuery ->
         if success == 'true'
           #alert 'success'
           existing_car_details_div.prepend( '<div class="well">' + vehicle_id_number + '<br>' + year + ' ' + color + ' ' + make + ' ' + model + ' ' + body + '</div>')
-          console.log 'save VIN successful'
+          # console.log 'save VIN successful'
         else
           alert failure_information
         modal.modal('hide')
@@ -1130,8 +1130,8 @@ jQuery ->
           if last_result.length > 20
             code = order_by_occurrence(last_result)[0]
             last_result = []
-            console.log code
-            console.log result.codeResult.format
+            # console.log code
+            # console.log result.codeResult.format
             $('.vin_search_field').val(code)
             Quagga.stop()
             $('.vin_barcode_scanner').empty()
@@ -1167,6 +1167,20 @@ jQuery ->
     load_vin_barcode_scanner(item_id)
   
   ### End VIN Barcode Scanner ###
+
+  ### Dynamically add deduction fields ###
+  $('.ticket_input_fields_wrap').on 'click', '.add_dollar_amount_deduction', ->
+    tab_pane = $(this).closest('.tab-pane')
+    dollar_amount_deductions = tab_pane.find('.dollar_amount_deductions:first')
+    deduction_field = dollar_amount_deductions.find('.dollar_amount_deduction_field:first').clone().css("display", "")
+    dollar_amount_deductions.append deduction_field
+    return
+  $('.ticket_input_fields_wrap').on 'click', '.add_weight_deduction', ->
+    tab_pane = $(this).closest('.tab-pane')
+    weight_deductions = tab_pane.find('.weight_deductions:first')
+    deduction_field = weight_deductions.find('.weight_deduction_field:first').clone().css("display", "")
+    weight_deductions.append deduction_field
+    return
 
   ### Don't submit form if press enter key when in the serial number field ###
   $(document).on 'keydown', '.serial_number_field', (e) ->

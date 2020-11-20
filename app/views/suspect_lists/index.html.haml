@@ -1,0 +1,27 @@
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .row
+      .col-lg-12.col-md-12
+        %h2
+          Suspect Lists
+          .pull-right
+            -# %a{:href => new_suspect_list_path, class: 'btn btn-primary'}
+            %a{:href => "#upload_modal", class: 'btn btn-primary', "data-toggle" => "modal"}
+              %i.fa.fa-search-plus
+              New Suspect List
+        - unless @suspect_lists.blank?
+          %table.table.table-hover
+            %thead
+              %th Name
+              %th File
+            %tbody
+              - @suspect_lists.each do |suspect_list|
+                %tr
+                  %td
+                    = link_to suspect_list.name, suspect_list_path(suspect_list)
+                  %td= suspect_list.file.url unless suspect_list.file.blank?
+        - else
+          %p None
+        =# paginate @suspect_lists
+
+= render partial: 'upload_modal'

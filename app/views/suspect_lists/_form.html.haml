@@ -1,0 +1,60 @@
+= simple_form_for @suspect_list do |f|
+  = f.input :user_id, as: :hidden, :input_html => { :value => current_user.id }
+  = f.input :company_id, as: :hidden, :input_html => { :value => current_user.company_id }
+  = f.input :delimiter, as: :hidden, :input_html => { :value => 'comma' }
+  .form-group
+    = f.input :name, required: true, autofocus: true, :input_html => { class: 'form-control' }
+  .form-group
+    = f.input :table, as: :radio_buttons, collection: [['images', 'Images'], ['shipments', 'Shipment']], label_method: :second, value_method: :first
+  .form-group
+    = f.input :file, as: :file, required: true, :input_html => { onchange: "$('#current_csv').hide();", class: 'form-control' }
+    %span
+      #current_csv
+        - unless @suspect_list.file.blank? or @suspect_list.file.url.blank?
+          = @suspect_list.file.url
+  = link_to "Cancel", :back, class: 'btn btn-default'
+  %button.btn.btn-primary{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}} Save
+
+-#
+  = simple_form_for @suspect_list do |f|
+    = f.error_notification
+    .form-inputs
+      = f.input :user_id, as: :hidden, :input_html => { :value => current_user.id }
+      = f.input :company_id, as: :hidden, :input_html => { :value => current_user.company_id }
+      = f.input :delimiter, as: :hidden, :input_html => { :value => 'comma' }
+      .row
+        .col-xs-12.col-sm-6
+          = f.input :name, required: true, autofocus: true
+      .row
+        .col-xs-12.col-sm-12
+          .form-group
+            = f.label :file, "<i class='fa fa-upload fa-2x text-primary'></i> --Choose CSV--".html_safe, :class => "control-label"
+            = f.file_field :file, class: 'form-control-file', onchange: "PreviewCSV();", required: true
+            =# f.input :file, as: :file, label: false, required: true
+            %span
+              #current_csv
+                - unless @suspect_list.file.blank? or @suspect_list.file.url.blank?
+                  = @suspect_list.file.url
+
+      %button.btn.btn-primary{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}} 
+        Save
+
+-#
+  = form_for @suspect_list do |f|
+    - if @suspect_list.errors.any?
+      #error_explanation
+        %h2= "#{pluralize(@suspect_list.errors.count, "error")} prohibited this suspect_list from being saved:"
+        %ul
+          - @suspect_list.errors.full_messages.each do |message|
+            %li= message
+    = f.hidden_field :user_id, value: current_user.id
+    = f.hidden_field :company_id, value: current_user.company.id
+    = f.hidden_field :delimiter, value: 'comma'
+    .field
+      = f.label :name
+      = f.text_field :name
+    .field
+      = f.label :file
+      = f.file_field :file
+    .actions
+      = f.submit 'Save'

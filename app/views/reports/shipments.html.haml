@@ -1,0 +1,77 @@
+- @title="Shipments"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %h3 Shipments
+    .text-center
+      = form_tag shipments_reports_path, :method => 'get', :class => "form-inline" do
+        = hidden_field_tag :customer_id, params[:customer_id] unless params[:customer_id].blank?
+        .row.form-group
+          %div{:class => "col-xs-12"}
+            %div.input-group
+              = text_field_tag 'report[start_date]', nil, :placeholder => "Start Date", value: "#{@start_date.blank? ? Date.today : @start_date}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 1.year.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
+              %span.input-group-addon To
+              = text_field_tag 'report[end_date]', nil, :placeholder => "End Date", value: "#{@end_date.blank? ? Date.today : @end_date}", class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-start-date' => 1.year.ago.to_date, 'data-date-end-date' => Date.today.to_date, 'data-date-autoclose' => true, readonly: true
+            = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Search'}"}, title: "Search") do
+              %i.fa.fa-search
+              = "Search" unless mobile_device?
+            - unless @pack_shipments.blank? 
+              %a{href: shipments_reports_path(format: "csv", 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default', title: "CSV Download"}
+                %i.fa.fa-download
+                = "CSV" unless mobile_device?
+    %hr
+    - unless @pack_shipments.blank?
+      - @pack_shipments.group_by{ |ps| "#{ps['CustomerName']}"}.each_with_index do |(pack_shipment_group, pack_shipments), index|
+        .row
+          .table-responsive{style: "border: none;"}
+            %table.table.table-hover{"data-provides" => "rowlink"}
+              %caption
+                %h4= pack_shipment_group.blank? ? 'No name' : pack_shipment_group
+              %thead
+                %tr
+                  %th= shipments_sortable 'DateShipped', 'Date'
+                  %th= shipments_sortable 'ShipmentNumber', 'Shipment'
+                  %th= shipments_sortable 'ContractDescription', 'Description'
+                  %th= shipments_sortable 'ShipmentType', 'Type'
+                  %th= shipments_sortable 'OrderNumber', 'Order'
+                  %th= shipments_sortable 'BookingNumber', 'Booking'
+                  %th= shipments_sortable 'SealNumber', 'Seal'
+                  %th= shipments_sortable 'GrossWeight', 'Gross'
+                  %th= shipments_sortable 'TareWeight', 'Tare'
+                  %th= shipments_sortable 'NetWeight', 'Net'
+              %tbody
+                - if ['GrossWeight', 'TareWeight', 'NetWeight'].include?(@sort_column)
+                  - shipments = pack_shipments.sort_by{|ps| ps[@sort_column].blank? ? '1' : ps[@sort_column].to_d}.reverse if @sort_direction == "desc"
+                  - shipments = pack_shipments.sort_by{|ps| ps[@sort_column].blank? ? '1' : ps[@sort_column].to_d} if @sort_direction == "asc"
+                - else
+                  - shipments = pack_shipments.sort_by{|ps| ps[@sort_column].blank? ? '1' : ps[@sort_column]}.reverse if @sort_direction == "desc"
+                  - shipments = pack_shipments.sort_by{|ps| ps[@sort_column].blank? ? '1' : ps[@sort_column]} if @sort_direction == "asc"
+                - shipments.each do |pack_shipment|
+                  %tr
+                    %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y")
+                    %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
+                    %td= pack_shipment['ContractDescription']
+                    %td= shipment_type_string(pack_shipment['ShipmentType'])
+                    %td= pack_shipment['OrderNumber']
+                    %td= pack_shipment['BookingNumber']
+                    %td= pack_shipment['SealNumber']
+                    %td= "#{number_with_delimiter(pack_shipment['GrossWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
+                    %td= "#{number_with_delimiter(pack_shipment['TareWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
+                    %td= "#{number_with_delimiter(pack_shipment['NetWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
+                %tr
+                  %td
+                  %td
+                  %td
+                  %td
+                  %td
+                  %td
+                  %td
+                  %td
+                  %td
+                  %td
+                    %strong= "#{number_with_delimiter(pack_shipments.map { |ps| ps['NetWeight'].to_d }.sum.round(3))}"
+    - else
+      %br
+      .row
+        .col-xs-12
+          %p.text-center.lead None found

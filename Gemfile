@@ -127,6 +127,17 @@ gem 'exif'
 # Allow Rails request.remote_ip to defer to CloudFlare's connecting IP
 gem 'actionpack-cloudflare'
 
+gem "font-awesome-rails"
+
+gem 'simple_form'
+
+#gem 'zip_tricks'
+#gem 'zipline'
+#gem 'rubyzip'
+
+# Better downloading
+#gem 'down'
+
 
 # https://github.com/cyu/rack-cors
 #gem 'rack-cors'

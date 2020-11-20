@@ -243,32 +243,54 @@ class Ability
       ############
       can :show, :workorders
       
+      # SuspectLists
+      ############
+      can :index, :suspect_lists
+      can :show, :suspect_lists
+      can :create, :suspect_lists
+      can :edit, :suspect_lists
+      
     # End admin user role
     
     elsif user.basic?
     # Start basic user type
      
+      # Tickets
+      ############
       if user.mobile_buy?
-        # Mobile Buy or Admin Dragon Role
-        # Tickets
-        ############
         can :index, :tickets
         can :show, :tickets
         can :edit, :tickets
         can :void, :tickets
-      
-        # Customers
-        ############
+      end
+      if user.mobile_greeter? or user.mobile_inspector? or user.mobile_buyer?
+        can :index, :tickets
+        can :edit, :tickets
+      end
+        
+      # Customers
+      ############
+      if user.mobile_buy? or user.mobile_greeter? or user.mobile_buyer?
         can :index, :customers
         can :show, :customers
+      end
+      if user.mobile_greeter? or user.mobile_buyer?
+        can :create, :customers
+        can :edit, :customers
+      end
       
-        # Commodities
-        ############
+      # Commodities
+      ############
+      if user.mobile_buy?
+        can :index, :commodities
+        can :show, :commodities
+      end
+      if user.mobile_greeter?
         can :index, :commodities
         can :show, :commodities
       end
       
-      if user.mobile_sell?
+      if user.mobile_sell? or user.mobile_seller?
         # Mobile Sell or Admin Dragon Role
         # PackShipments
         ############
@@ -293,10 +315,9 @@ class Ability
         end
       end
       
-      if user.mobile_reports?
-        # Mobile Reports or Admin Dragon Role
-        # Reports
-        ############
+      # Reports
+      ############
+      if user.mobile_reports? or user.mobile_buyer?
         can :index, :reports
       end
       

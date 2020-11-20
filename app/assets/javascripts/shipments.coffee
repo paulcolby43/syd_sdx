@@ -16,7 +16,8 @@ jQuery ->
   ### End endless page stuff ###
 
   ### File upload ###
-  $("#new_shipment_file").fileupload
+  #$("#new_shipment_file").fileupload
+  $(".shipment_file_upload_form").fileupload
     dataType: "script"
     disableImageResize: false
     imageMaxWidth: 1024
@@ -37,7 +38,8 @@ jQuery ->
           current_data.fileupload 'process', data
         ).done ->
           data.submit()
-        $('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
+        form = $(this).closest("form")
+        form.find('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $('#shipment_images').prepend('<div class="row"><div class="col-xs-12 col-sm-2 col-md-2 col-lg-2"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>')
         $(".picture_loading_spinner").show()
       else

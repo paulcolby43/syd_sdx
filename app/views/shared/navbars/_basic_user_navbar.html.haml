@@ -1,4 +1,4 @@
-.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+.navbar.navbar-inverse.navbar-fixed-top{ role: 'navigation''}
   .container-fluid
     .navbar-header
       %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
@@ -7,8 +7,10 @@
         %span.icon-bar
         %span.icon-bar
       %a{class: 'navbar-brand', :href => root_path}
-        - unless current_page? root_path
-          Home 
+        = image_tag('dragon_spiral_navbar_logo.png')
+        -#
+          - unless current_page? root_path
+            Home 
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         - if current_user.mobile_buy? or current_user.mobile_admin?
@@ -17,7 +19,7 @@
               PURCHASES
               %b.caret
             %ul.dropdown-menu
-              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2') ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
+              %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '2' or params[:status].blank?) ? 'active' : ''}"}= link_to 'Held', tickets_path(status: 2)
               %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '1') ? 'active' : ''}"}= link_to 'Closed', tickets_path(status: 1)
               %li{:class => "#{(params[:controller] == 'tickets') and (params[:status] == '3') ? 'active' : ''}"}= link_to 'Paid', tickets_path(status: 3)
           %li{:class => "#{(params[:controller] == 'customers') ? 'active' : ''} "}
@@ -30,8 +32,17 @@
           %li{:class => "#{(params[:controller] == 'pack_shipments') ? 'active' : ''} #{current_user.company.include_shipments? ? '' : 'disabled'} "}
             %a{href: "#{current_user.company.include_shipments? ? pack_shipments_path : '#'}", disabled: current_user.company.include_shipments? ? false:true} SHIPMENTS
         - if current_user.mobile_reports? or current_user.mobile_admin?
-          %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
-            %a{href: reports_path} REPORTS
+          %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
+            %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+              REPORTS
+              %b.caret
+            %ul.dropdown-menu
+              - if current_user.company.include_shipments?
+                %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'shipments') ? 'active' : ''}"}= link_to 'Shipments', shipments_reports_path
+              %li{:class => "#{(params[:controller] == 'reports') and (params[:action] == 'tickets') ? 'active' : ''}"}= link_to 'Tickets', tickets_reports_path
+          -#
+            %li{:class => "#{(params[:controller] == 'reports') ? 'active' : ''} "}
+              %a{href: reports_path} REPORTS
         - if current_user.mobile_dispatch? or current_user.mobile_admin?
           %li{:class => "#{(params[:controller] == 'trips') ? 'active' : ''} #{current_user.company.include_dispatch? ? '' : 'disabled'} "}
             %a{href: "#{current_user.company.include_dispatch? ? trips_path : '#'}", disabled: current_user.company.include_dispatch? ? false:true} DISPATCH

@@ -1,0 +1,11 @@
+$('#tickets_table').append('<%= j render(:partial => 'ticket_row') %>');
+$('#more_tickets_spinner').hide();
+
+<% if @csv_table.next_page %>
+  $('a.load-more-tickets').show();
+  $('a.load-more-tickets').attr('href', '<%= suspect_list_path(@suspect_list, page: @csv_table.next_page) %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-tickets').attr('href', '#');
+  $('a.reload-tickets').show();
+<% end %>
