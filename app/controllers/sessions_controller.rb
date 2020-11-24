@@ -64,7 +64,7 @@ class SessionsController < ApplicationController
             end
           else
 #            redirect_to reports_path
-            redirect_to root_path
+            redirect_to tickets_reports_path
           end
         else
           if user.admin?

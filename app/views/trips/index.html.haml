@@ -48,6 +48,7 @@
                         %strong= service_requests.first['Customer']
                       - else
                         %strong Multiple Customers
+                      = service_requests.first['TaskType'] unless service_requests.blank?
                       %br
                       =# Trip.tasks(trip).first['Customer']
                       %small
@@ -119,13 +120,10 @@
                             =# tasks.first['Company']
                             = workorder['Customer']
                           %br
-                        - unless workorder.blank?
-                          =# @task_functions.find {|task_function| task_function['Id'] == workorder['TaskTypeFunctionId']}['Name']
-                          = workorder['TaskType']
-                          %br
-                        Service Request
-                        = service_request_number
-                        %br
+                        -#
+                          - unless workorder.blank?
+                            = workorder['TaskType']
+                            %br
                         -# unless workorder.blank? or (workorder['DispatchContainer'].blank? and workorder['ContainerType'].blank?)
                         - unless workorder.blank? or workorder['ContainerType'] == {"i:nil"=>"true"} or workorder['ContainerType'].blank?
                           Container
@@ -144,6 +142,9 @@
                           %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
                             %i.fa.fa-ticket
                             Ticket
+                        .pull-right
+                          Service Request
+                          = service_request_number
                       - tasks.each do |task|
                         %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
                           %strong

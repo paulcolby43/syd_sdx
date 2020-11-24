@@ -2,6 +2,11 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
+    - if current_user.customer? 
+      - unless current_user.company.logo.file.nil?
+        = image_tag(current_user.company.logo.url, alt: 'company_logo', class: 'img-responsive center-block')
+      - else
+        = image_tag('dragon_logo_small.png', alt: 'dragon_logo.png', class: 'img-responsive center-block')
     %h3 Tickets
     = form_tag tickets_reports_path, :method => 'get', :class => "form-inline" do
       .text-center
