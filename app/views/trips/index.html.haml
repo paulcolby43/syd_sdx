@@ -142,6 +142,10 @@
                           %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
                             %i.fa.fa-ticket
                             Ticket
+                        - else
+                          %a{href: nil, class: "btn btn-default btn-sm disabled customer_button"}
+                            %i.fa.fa-ticket
+                            Ticket
                         .pull-right
                           Service Request
                           = service_request_number
