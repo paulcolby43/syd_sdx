@@ -30,7 +30,7 @@
             %p
               -#
                 .well
-                  %pre= JSON.pretty_generate(trip)
+                  = trip
               - service_requests = Trip.service_requests(trip)
               -# workorders = Trip.workorders(trip)
               -# customer_id = trip['WorkOrders']['MobileWorkOrderInformation']['CustomerId'] unless trip['WorkOrders'].blank? or trip['WorkOrders']['MobileWorkOrderInformation'].blank?
