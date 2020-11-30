@@ -6,17 +6,22 @@
   = "#{@user.company.name}."
 
 %p
+  = link_to "Click here to access your account", root_url
+
+%p
   Please call your representative at
   = "#{@user.company.name}"
   for additional information.
 
-%p Welcome to the Tranact - Scrap Dragon Family!
+-#
 
-%p
-  = link_to 'TranAct', 'http://tranact.com'
-  •
-  = link_to 'Scrap Dragon', 'https://scrapdragon.com'
-  •
-  = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
-  •
-  = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'
+  %p Welcome to the Tranact - Scrap Dragon Family!
+
+  %p
+    = link_to 'TranAct', 'http://tranact.com'
+    •
+    = link_to 'Scrap Dragon', 'https://scrapdragon.com'
+    •
+    = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
+    •
+    = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'

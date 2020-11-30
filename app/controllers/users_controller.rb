@@ -176,10 +176,9 @@ class UsersController < ApplicationController
     if user
       user.email_activate
       user.send_after_confirmation_info_email
-      flash[:success] = "Welcome to the Scrap Dragon Portal! Your email has been confirmed.
-      Please sign in to continue."
+      flash[:success] = "Welcome to the Scrap Dragon Portal! Your email has been confirmed. Please sign in to continue."
       if user.customer?
-        redirect_to login_path(customer_guid: user.customer_guid, account_number: user.dragon_account_number)
+        redirect_to login_path(customer_guid: user.customer_guid, account_number: user.dragon_account_number, email: user.email)
       else
         redirect_to login_path
       end
