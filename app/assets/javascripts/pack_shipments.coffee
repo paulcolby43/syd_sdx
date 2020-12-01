@@ -342,9 +342,9 @@ jQuery ->
   load_pack_shipment_qrcode_scanner = ->
     codeReader = new (ZXing.BrowserQRCodeReader)
     console.log 'ZXing code reader initialized'
-    #codeReader.getVideoInputDevices().then (videoInputDevices) ->
-    #  sourceSelect = document.getElementById('sourceSelect')
-    #  firstDeviceId = videoInputDevices[0].deviceId
+    codeReader.getVideoInputDevices().then (videoInputDevices) ->
+      sourceSelect = document.getElementById('sourceSelect')
+      firstDeviceId = videoInputDevices[0].deviceId
       ###
       if videoInputDevices.length > 1
         videoInputDevices.forEach (element) ->
@@ -358,14 +358,14 @@ jQuery ->
       ###
       # codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
       # By passing 'undefined' for the device id parameter, the library will automatically choose the camera, preferring the main (environment facing) camera if more are available
-    codeReader.decodeFromInputVideoDevice(undefined, 'video').then((result) ->
-      console.log result.text
-      $('#qrcode_scanner_modal').modal('hide')
-      $('.shipment_pack_select').select2('open')
-      $('.shipment_pack_select').click()
-      $('.select2-search__field:first').val(result.text).trigger 'keyup'
-      codeReader.reset()
-      console.log 'ZXing code reader reset'
+      codeReader.decodeFromInputVideoDevice(undefined, 'video').then((result) ->
+        console.log result.text
+        $('#qrcode_scanner_modal').modal('hide')
+        $('.shipment_pack_select').select2('open')
+        $('.shipment_pack_select').click()
+        $('.select2-search__field:first').val(result.text).trigger 'keyup'
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
 
       $('#qrcode_scanner_modal').on 'hidden.bs.modal', (e) ->
         codeReader.reset()
