@@ -344,7 +344,7 @@ jQuery ->
     console.log 'ZXing code reader initialized'
     codeReader.getVideoInputDevices().then (videoInputDevices) ->
       sourceSelect = document.getElementById('sourceSelect')
-      firstDeviceId = videoInputDevices[0].deviceId
+      firstDeviceId = videoInputDevices[1].deviceId
       ###
       if videoInputDevices.length > 1
         videoInputDevices.forEach (element) ->
