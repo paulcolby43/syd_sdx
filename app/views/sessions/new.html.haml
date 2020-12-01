@@ -17,7 +17,7 @@
         = hidden_field_tag :time_zone
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
-            = text_field_tag :username, nil, :placeholder => "Username or Email", :class => "form-control input-lg", autofocus: true
+            = text_field_tag :username, params[:email], :placeholder => "Username or Email", :class => "form-control input-lg", autofocus: true
         .row.form-group
           %div{:class => "col-sm-12 col-md-12"}
             - unless params[:customer_guid].blank?

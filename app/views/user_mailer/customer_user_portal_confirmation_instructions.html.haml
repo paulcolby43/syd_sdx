@@ -2,9 +2,7 @@
   Hey #{@user.first_name},
 
 %p 
-  Please confirm your account through the link below.
-  %br
-  Simply enter your email address and create a password.
+  Please confirm your account by clicking the link below, entering your email address, and creating a password.
 
 - unless @user.dragon_account_number.blank?
   %p
@@ -22,16 +20,18 @@
   = "#{@user.company.name}"
   for additional information.
 
-%p Welcome to the Tranact - Scrap Dragon Family!
+-#
 
-%p
-  = link_to 'TranAct', 'http://tranact.com'
-  •
-  = link_to 'Scrap Dragon', 'https://scrapdragon.com'
-  •
-  = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
-  •
-  = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'
+  %p Welcome to the Tranact - Scrap Dragon Family!
+
+  %p
+    = link_to 'TranAct', 'http://tranact.com'
+    •
+    = link_to 'Scrap Dragon', 'https://scrapdragon.com'
+    •
+    = link_to 'Facebook', 'https://www.facebook.com/ScrapDragon.TransactPaymentSystems'
+    •
+    = link_to 'LinkedIn', 'https://www.linkedin.com/company-beta/1771958'
 
 
 -#

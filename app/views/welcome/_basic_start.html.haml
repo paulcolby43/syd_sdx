@@ -58,7 +58,7 @@
           %div.row
             %p
               .col-xs-12
-                %a.btn.btn-default.btn-lg.btn-block{:href => reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Management Reports"}} 
+                %a.btn.btn-default.btn-lg.btn-block{:href => tickets_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Management Reports"}} 
                   = "Management Reports"
         - if current_user.mobile_dispatch? or current_user.mobile_admin?
           %div.row

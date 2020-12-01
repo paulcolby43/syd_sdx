@@ -15,7 +15,7 @@ class UserSettingsController < ApplicationController
   def show
 #    @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
-    @event_codes = current_user.company.event_codes
+    @event_codes = current_user.company.event_codes.order(:name)
     @supported_versions = current_user.api_supported_versions
   end
 
@@ -27,7 +27,7 @@ class UserSettingsController < ApplicationController
   def edit
 #    @contract = Yard.contract(current_yard_id)
     @currencies = Ticket.currencies(current_user.token)
-    @event_codes = current_user.company.event_codes
+    @event_codes = current_user.company.event_codes.order(:name)
   end
 
   # POST /user_settings

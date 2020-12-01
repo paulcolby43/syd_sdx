@@ -7,7 +7,7 @@ class EventCodesController < InheritedResources::Base
   # GET /event_codes.json
   def index
 #    @event_codes = EventCode.all
-    @event_codes = current_user.company.event_codes
+    @event_codes = current_user.company.event_codes.order(:name)
   end
 
   # GET /event_codes/1
