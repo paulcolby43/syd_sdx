@@ -356,7 +356,8 @@ jQuery ->
         sourceSelectPanel = document.getElementById('sourceSelectPanel')
         sourceSelectPanel.style.display = 'block'
       ###
-      codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
+      # codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
+      codeReader.decodeFromInputVideoDevice(undefined, 'video').then((result) ->
         console.log result.text
         $('#qrcode_scanner_modal').modal('hide')
         $('.shipment_pack_select').select2('open')
