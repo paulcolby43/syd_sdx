@@ -356,7 +356,9 @@ jQuery ->
         sourceSelectPanel = document.getElementById('sourceSelectPanel')
         sourceSelectPanel.style.display = 'block'
       ###
-      codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
+      # codeReader.decodeFromInputVideoDevice(firstDeviceId, 'video').then((result) ->
+      # By passing 'undefined' for the device id parameter, the library will automatically choose the camera, preferring the main (environment facing) camera if more are available
+      codeReader.decodeFromInputVideoDevice(undefined, 'video').then((result) ->
         console.log result.text
         $('#qrcode_scanner_modal').modal('hide')
         $('.shipment_pack_select').select2('open')
