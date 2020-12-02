@@ -7,11 +7,16 @@ class PackShipmentsController < ApplicationController
     authorize! :index, :pack_shipments
 #    @query_string = params[:q].blank? ? '' : "%#{params[:q]}%"
     @status = "#{params[:status].blank? ? 'held' : params[:status]}"
+    @q = params[:q]
     if @status == 'held'
-      @pack_shipments = Kaminari.paginate_array(PackShipment.all_held(current_user.token, current_yard_id)).page(params[:page]).per(10)
+      pack_shipments = PackShipment.all_held(current_user.token, current_yard_id)
     elsif @status == 'closed'
-      @pack_shipments = Kaminari.paginate_array(PackShipment.all_closed(current_user.token, current_yard_id)).page(params[:page]).per(10)
+      pack_shipments = PackShipment.all_closed(current_user.token, current_yard_id)
     end
+    unless @q.blank?
+      pack_shipments = PackShipment.shipments_search(pack_shipments, @q)
+    end
+    @pack_shipments = Kaminari.paginate_array(pack_shipments).page(params[:page]).per(10)
   end
 
   # GET /pack_shipments/1
