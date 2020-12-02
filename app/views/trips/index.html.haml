@@ -25,7 +25,7 @@
     - unless @trips.blank?
       #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         -# @trips.each_with_index do |trip, index|
-        - @trips.group_by { |t| t['BeginDate'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
+        - @trips.group_by { |t| t['DateCreated'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
           - trips.each do |trip|
             %p
               -#
@@ -52,10 +52,11 @@
                       %br
                       =# Trip.tasks(trip).first['Customer']
                       %small
-                        - unless session[:time_zone].blank?
-                          = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
-                        - else
-                          = "#{trip['BeginDate'].to_datetime.strftime('%l:%M%P')}"
+                        - unless trip['BeginDate'].blank? or trip['BeginDate'].is_a? Hash
+                          - unless session[:time_zone].blank?
+                            = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
+                          - else
+                            = "#{trip['BeginDate'].to_datetime.strftime('%l:%M%P')}"
                         - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
                           = " - "
                           - unless session[:time_zone].blank?
