@@ -9,11 +9,11 @@ class Task
   #############################
   
   def self.containers(task)
-    unless task['ContainerXLinks'].blank? or task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation'].blank?
-      if task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation'].is_a? Hash # Only one result returned, so put it into an array
-        return [task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation']]
+    unless task['ContainerXLinks'].blank? or task['ContainerXLinks']['DispatchTaskContainerXLinkInformation'].blank?
+      if task['ContainerXLinks']['DispatchTaskContainerXLinkInformation'].is_a? Hash # Only one result returned, so put it into an array
+        return [task['ContainerXLinks']['DispatchTaskContainerXLinkInformation']]
       else
-        return task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation']
+        return task['ContainerXLinks']['DispatchTaskContainerXLinkInformation']
       end
     else
       return [] # No containers in task
