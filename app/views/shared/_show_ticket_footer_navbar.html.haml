@@ -9,13 +9,15 @@
               = "Home" unless mobile_device?
         .col-xs-4.col-sm-4
           -# %a{href: "#upload_form", id: 'picture_upload_modal_link', "data-toggle" => "modal", :alt => "new_image_file_form"}
-          %a{href: "#ticket_#{@ticket['Id']}_upload_form", id: "ticket_#{@ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
-            %i.fa.fa-camera.fa-lg
-            = "Picture" unless mobile_device?
+          - unless current_user.customer?
+            %a{href: "#ticket_#{@ticket['Id']}_upload_form", id: "ticket_#{@ticket['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+              %i.fa.fa-camera.fa-lg
+              = "Picture" unless mobile_device?
         .col-xs-4.col-sm-4
           %a{href: ticket_path(@ticket['Id'], status: @ticket['Status'], now: DateTime.now, format: 'pdf'), target: '_blank'}
             %i.fa.fa-file-pdf-o.fa-lg
             = "Print" unless mobile_device?
 
 =# render partial: "image_files/upload_modal"
-%div#individual_ticket_upload= render partial: "image_files/upload_modal", locals: {ticket: @ticket}
+- unless current_user.customer?
+  %div#individual_ticket_upload= render partial: "image_files/upload_modal", locals: {ticket: @ticket}
