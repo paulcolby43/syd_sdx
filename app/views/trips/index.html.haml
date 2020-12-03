@@ -25,7 +25,7 @@
     - unless @trips.blank?
       #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
         -# @trips.each_with_index do |trip, index|
-        - @trips.group_by { |t| t['DateCreated'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
+        - @trips.sort_by{ |t| t['DateCreated'] }.group_by{ |t| t['DateCreated'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
           - trips.each do |trip|
             %p
               -#
