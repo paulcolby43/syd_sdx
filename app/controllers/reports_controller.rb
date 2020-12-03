@@ -132,11 +132,14 @@ class ReportsController < ApplicationController
     @sort_direction = sort_direction
     @start_date = report_params[:start_date].blank? ? Date.today.to_s : report_params[:start_date]# Default to today
     @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
+    @q = params[:q]
     @customer_user = User.where(customer_guid: params[:customer_id], yard_id: current_yard_id).last # Look for customer user if admin is viewing through iframe on customer show page
     @user = @customer_user.blank? ? current_user : @customer_user
     @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
     @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
-    
+    unless @q.blank?
+      @pack_shipments = PackShipment.shipments_search(@pack_shipments, @q)
+    end
     respond_to do |format|
       format.html {}
       format.csv { 
@@ -249,7 +252,7 @@ class ReportsController < ApplicationController
 
     ### Secure the shipments sort column name ###
     def shipment_sort_column
-      ["DateShipped", "ShipmentNumber", "ContractDescription", "Material", "ShipmentType", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:shipment_sort]) ? params[:shipment_sort] : "DateShipped"
+      ["DateShipped", "ShipmentNumber", "ContractDescription", "ContainerNumber", "Material", "ShipmentType", "OrderNumber", "BookingNumber", "SealNumber", "GrossWeight", "TareWeight", "NetWeight"].include?(params[:shipment_sort]) ? params[:shipment_sort] : "DateShipped"
     end
     
     def ticket_sort_column

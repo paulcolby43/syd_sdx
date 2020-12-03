@@ -3,14 +3,24 @@
 - @title="Shipments"
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    %p
+    = form_tag pack_shipments_path, id: 'pack_shipments_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
       .btn-group{"aria-label" => "shipment_status", :role => "group"}
-        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'held'), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+        %a.btn.btn-default{:href => pack_shipments_path(status: 'held', container_number: @container_number), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
           %i.fa.fa-folder-open-o.fa-lg
           Held
-        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'closed'), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+        %a.btn.btn-default{:href => pack_shipments_path(status: 'closed', container_number: @container_number), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
           %i.fa.fa-folder.fa-lg
           Closed
+      - if mobile_device?
+        %br
+        %br
+      = hidden_field_tag :status, @status
+      .input-group
+        = search_field_tag :q, @q, :placeholder => "Search", class: "form-control"
+        .input-group-btn
+          %button.btn.btn-primary{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+            %i.fa.fa-search
+            Search
     - unless @pack_shipments.blank?
       %div{id: "pack_shipments"}
         - @pack_shipments.each do |pack_shipment|
@@ -40,9 +50,13 @@
                         %br
                     %div.list-group-item
                       .pull-right
-                        %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                        %a.btn.btn-primary{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch"}, class: "pack_shipment_button"}
                           %i.fa.fa-camera
-                          Picture
+                          Fetch
+                        -#
+                          %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                            %i.fa.fa-camera
+                            Picture
                       = "Date Created: #{pack_shipment["DateCreated"].to_date.strftime('%m/%d/%y')}"
                       %br
                       = "Time Created: #{pack_shipment["DateCreated"].to_datetime.strftime('%I:%M %p')}"

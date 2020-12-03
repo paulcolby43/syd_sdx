@@ -233,6 +233,40 @@ class PackShipment
     end
   end
   
+  def self.shipments_by_booking_number(shipments, booking_number)
+    shipments_by_booking_number = []
+    shipments.each do |shipment|
+      shipments_by_booking_number << shipment if shipment['BookingNumber'] == booking_number
+    end
+    return shipments_by_booking_number
+  end
+  
+  def self.shipments_by_container_number(shipments, container_number)
+    shipments_by_container = []
+    shipments.each do |shipment|
+      shipments_by_container << shipment if shipment['ContainerNumber'] == container_number
+    end
+    return shipments_by_container
+  end
+  
+  def self.shipments_by_shipment_number(shipments, shipment_number)
+    shipments_by_shipment_number = []
+    shipments.each do |shipment|
+      shipments_by_shipment_number << shipment if shipment['ShipmentNumber'] == shipment_number
+    end
+    return shipments_by_shipment_number
+  end
+  
+  def self.shipments_search(shipments, query)
+    shipment_records = []
+    shipments.each do |shipment|
+      shipment_records << shipment if shipment['BookingNumber'] == query
+      shipment_records << shipment if shipment['ContainerNumber'] == query
+      shipment_records << shipment if shipment['ShipmentNumber'] == query
+    end
+    return shipment_records.uniq
+  end
+  
   # Get given number of closed shipments
   def self.number_of_closed(auth_token, yard_id, number)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record
