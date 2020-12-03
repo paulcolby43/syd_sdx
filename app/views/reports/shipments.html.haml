@@ -64,12 +64,12 @@
                 - shipments.each do |pack_shipment|
                   %tr
                     %td= pack_shipment['DateShipped'].to_datetime.strftime("%m/%d/%y")
-                    %td= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
+                    %td.highlightable= link_to pack_shipment['ShipmentNumber'], pack_shipment_path(pack_shipment['Id'])
                     %td= pack_shipment['ContractDescription']
-                    %td= pack_shipment['ContainerNumber']
+                    %td.highlightable= pack_shipment['ContainerNumber']
                     %td= shipment_type_string(pack_shipment['ShipmentType'])
                     %td= pack_shipment['OrderNumber']
-                    %td= pack_shipment['BookingNumber']
+                    %td.highlightable= pack_shipment['BookingNumber']
                     %td= pack_shipment['SealNumber']
                     %td= "#{number_with_delimiter(pack_shipment['GrossWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
                     %td= "#{number_with_delimiter(pack_shipment['TareWeight'].to_d.round(3))} #{pack_shipment['UnitOfMeasure']}"
@@ -92,3 +92,14 @@
       .row
         .col-xs-12
           %p.text-center.lead None found
+
+:javascript
+  $(document).ready(function() {
+    var txt = $("#q").val()
+    if (txt.length > 0) {
+      $(".highlightable").each(function (i, v) {
+        v.innerHTML = v.innerText.replace(txt, "<mark>" + txt + "</mark>");
+      });
+
+    }
+  });
