@@ -9,11 +9,11 @@ class Task
   #############################
   
   def self.containers(task)
-    unless task['ContainerXLinks'].blank? or task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation'].blank?
-      if task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation'].is_a? Hash # Only one result returned, so put it into an array
-        return [task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation']]
+    unless task['ContainerXLinks'].blank? or task['ContainerXLinks']['DispatchTaskContainerXLinkInformation'].blank?
+      if task['ContainerXLinks']['DispatchTaskContainerXLinkInformation'].is_a? Hash # Only one result returned, so put it into an array
+        return [task['ContainerXLinks']['DispatchTaskContainerXLinkInformation']]
       else
-        return task['ContainerXLinks']['MobileDispatchTaskContainerXLinkInformation']
+        return task['ContainerXLinks']['DispatchTaskContainerXLinkInformation']
       end
     else
       return [] # No containers in task
@@ -54,8 +54,8 @@ class Task
           "IsUpdateRequired" => "true",
           "MobileUpdateType" => "0", # Add container - mobileupdateType is enumerated {0,1,2} for add,update,delete
           "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
-          "latitude" => latitude.blank? ? 0 : latitude,
-          "longitude" => longitude.blank? ? 0 : longitude
+          "latitude" => latitude,
+          "longitude" => longitude
           }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info "Task.remove_container json encoded payload: #{json_encoded_payload}"
@@ -79,8 +79,8 @@ class Task
           "IsUpdateRequired" => "true",
           "MobileUpdateType" => "1", # Update container - mobileupdateType is enumerated {0,1,2} for add,update,delete
           "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
-          "latitude" => latitude.blank? ? 0 : latitude,
-          "longitude" => longitude.blank? ? 0 : longitude
+          "latitude" => latitude,
+          "longitude" => longitude
           }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info "Task.update_container json encoded payload: #{json_encoded_payload}"
