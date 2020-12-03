@@ -54,8 +54,8 @@ class Task
           "IsUpdateRequired" => "true",
           "MobileUpdateType" => "0", # Add container - mobileupdateType is enumerated {0,1,2} for add,update,delete
           "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
-          "latitude" => latitude,
-          "longitude" => longitude
+          "latitude" => latitude.blank? ? 0 : latitude,
+          "longitude" => longitude.blank? ? 0 : longitude
           }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info "Task.remove_container json encoded payload: #{json_encoded_payload}"
@@ -79,8 +79,8 @@ class Task
           "IsUpdateRequired" => "true",
           "MobileUpdateType" => "1", # Update container - mobileupdateType is enumerated {0,1,2} for add,update,delete
           "EntryDate" => Time.now.utc.iso8601, # Remove the UTC from the end
-          "latitude" => latitude,
-          "longitude" => longitude
+          "latitude" => latitude.blank? ? 0 : latitude,
+          "longitude" => longitude.blank? ? 0 : longitude
           }
     json_encoded_payload = JSON.generate(payload)
 #    Rails.logger.info "Task.update_container json encoded payload: #{json_encoded_payload}"
