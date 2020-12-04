@@ -5,10 +5,10 @@
   .container
     = form_tag pack_shipments_path, id: 'pack_shipments_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
       .btn-group{"aria-label" => "shipment_status", :role => "group"}
-        %a.btn.btn-default{:href => pack_shipments_path(status: 'held', container_number: @container_number), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'held', container_number: @container_number), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
           %i.fa.fa-folder-open-o.fa-lg
           Held
-        %a.btn.btn-default{:href => pack_shipments_path(status: 'closed', container_number: @container_number), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'closed', container_number: @container_number), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
           %i.fa.fa-folder.fa-lg
           Closed
       - if mobile_device?
@@ -16,9 +16,9 @@
         %br
       = hidden_field_tag :status, @status
       .input-group
-        = search_field_tag :q, @q, :placeholder => "Search", class: "form-control"
+        = search_field_tag :q, @q, :placeholder => "Search", class: "form-control input-lg"
         .input-group-btn
-          %button.btn.btn-primary{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+          %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
             %i.fa.fa-search
             Search
     - unless @pack_shipments.blank?
