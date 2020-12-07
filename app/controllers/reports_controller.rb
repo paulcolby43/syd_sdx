@@ -3,6 +3,9 @@ class ReportsController < ApplicationController
   #load_and_authorize_resource
   #before_action :set_report, only: [:show, :edit, :update]
   
+  include ActionController::Streaming
+  include Zipline
+  
   helper_method :shipment_sort_column, :sort_direction, :ticket_sort_column
 
   # GET /reports
@@ -144,6 +147,23 @@ class ReportsController < ApplicationController
       format.html {}
       format.csv { 
         send_data PackShipment.customer_summary_to_csv(@pack_shipments), filename: "shipments-report-#{@start_date}-#{@end_date}.csv" 
+      }
+      format.zip {
+        @images_array = []
+        @pack_shipments.each do |pack_shipment|
+          if current_user.customer? and not current_user.customer_guid.blank?
+            @images_array = @images_array + Shipment.api_find_all_by_shipment_number(pack_shipment["ShipmentNumber"], current_user.company, pack_shipment["YardId"]).reverse # Shipment images
+          else
+            @images_array = @images_array +  Shipment.api_find_all_by_shipment_number(pack_shipment["ShipmentNumber"], current_user.company, current_yard_id).reverse # Shipment images
+          end
+        end
+        require 'open-uri'
+        files = @images_array.map{ |image| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}/#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+        name = "shipments-images-report-#{@start_date}-#{@end_date}"
+        file_mappings = files
+        .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+        .map { |url, path| [open(url, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}), path] }
+        zipline(file_mappings, "#{name}.zip")
       }
     end
   end

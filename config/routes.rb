@@ -203,6 +203,7 @@ Rails.application.routes.draw do
     member do
       get :fetches
       get :show_pictures
+      get :images_zip
     end
   end
   

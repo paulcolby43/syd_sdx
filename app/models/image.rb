@@ -104,6 +104,10 @@ class Image < ActiveRecord::Base
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)
   end
   
+  def self.jpeg_image_url(company, capture_sequence_number, yard_id)
+    "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=images&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+  end
+  
   def self.proper_yardid(current_yard_id)
     where(yardid: current_yard_id)
   end

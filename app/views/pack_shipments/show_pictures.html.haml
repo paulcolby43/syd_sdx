@@ -31,6 +31,10 @@
         %br
         %div#shipment_images
         - unless @images_array.blank? and @inventory_tags_array.blank?
+          %p
+            %a.btn.btn-default{href: images_zip_pack_shipment_path(@pack_shipment['Id'])}
+              %i.fa.fa-file-zip-o
+              Zip
           - @images_array.each_slice(6) do |images|
             .row
               - images.each do |image|

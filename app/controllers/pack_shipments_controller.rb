@@ -1,5 +1,9 @@
 class PackShipmentsController < ApplicationController
   before_filter :login_required  
+  
+#  include ActionController::Live # required for streaming download
+  include ActionController::Streaming
+  include Zipline
 
   # GET /pack_shipments
   # GET /pack_shipments.json
@@ -148,6 +152,23 @@ class PackShipmentsController < ApplicationController
       format.json {render json: {"name" => @pack_shipment['ShipmentNumber']} } 
       format.js
     end
+  end
+  
+  def images_zip
+    @pack_shipment = PackShipment.find(current_user.token, current_yard_id, params[:id])
+    if current_user.customer? and not current_user.customer_guid.blank?
+      @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company, @pack_shipment["YardId"]).reverse # Shipment images
+    else
+      @images_array = Shipment.api_find_all_by_shipment_number(@pack_shipment["ShipmentNumber"], current_user.company, current_yard_id).reverse # Shipment images
+    end
+    
+    require 'open-uri'
+    files = @images_array.map.with_index{ |image,index| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}_#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+    name = "shipment_#{@pack_shipment['Id']}"
+    file_mappings = files
+    .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
+    .map { |url, path| [open(url, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}), path] }
+    zipline(file_mappings, "#{name}.zip")
   end
   
   private

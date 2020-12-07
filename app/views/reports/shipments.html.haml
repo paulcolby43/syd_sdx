@@ -33,6 +33,9 @@
             %a{href: shipments_reports_path(format: "csv", 'report[start_date]' => @start_date, 'report[end_date]' => @end_date, q: @q), class: 'btn btn-default', title: "CSV Download"}
               %i.fa.fa-download
               CSV
+            %a{href: shipments_reports_path(format: "zip", 'report[start_date]' => @start_date, 'report[end_date]' => @end_date, q: @q), class: 'btn btn-default', title: "Images Zip Download"}
+              %i.fa.fa-file-zip-o
+              Images
     %hr
     - unless @pack_shipments.blank?
       - @pack_shipments.group_by{ |ps| "#{ps['CustomerName']}"}.each_with_index do |(pack_shipment_group, pack_shipments), index|

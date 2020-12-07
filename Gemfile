@@ -128,7 +128,7 @@ gem "font-awesome-rails"
 gem 'simple_form'
 
 #gem 'zip_tricks'
-#gem 'zipline'
+gem 'zipline'
 #gem 'rubyzip'
 
 # Better downloading
