@@ -53,6 +53,8 @@
             - unless @tickets.blank? 
               %a{href: tickets_reports_path(format: "csv", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default', title: "CSV Download"}
                 %i.fa.fa-download
+              %a{href: tickets_reports_path(format: "zip", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[status]' => @status, 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default', title: "Images Zip Download"}
+                %i.fa.fa-file-zip-o
       - if @type == 'commodity_summary' and not @line_items.blank?
         %br
         .row.form-group
