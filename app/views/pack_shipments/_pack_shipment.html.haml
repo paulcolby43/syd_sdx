@@ -30,7 +30,7 @@
                 %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
                   %i.fa.fa-camera
                   Picture
-              = "Date Created: #{pack_shipment["DateCreated"].to_date.strftime('%m/%d/%y')}"
+              = "Date Created: #{pack_shipment["DateCreated"].to_date.in_time_zone(session[:time_zone]).strftime('%m/%d/%y')}"
               %br
-              = "Time Created: #{pack_shipment["DateCreated"].to_datetime.strftime('%I:%M %p')}"
+              = "Time Created: #{pack_shipment["DateCreated"].to_datetime.in_time_zone(session[:time_zone]).strftime('%I:%M %p')}"
               %br
