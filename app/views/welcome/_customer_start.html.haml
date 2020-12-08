@@ -27,14 +27,14 @@
       %div.row
         %p
           .col-xs-6
-            %a.btn.btn-default.btn-lg.btn-block{:href => tickets_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
+            %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => tickets_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
               %i.fa.fa-list-alt.fa-lg
               Reports
               %br
               %small.text-muted= "Material Sold to #{current_user.company.name}"
         %p
           .col-xs-6
-            %a.btn.btn-default.btn-lg.btn-block{:href => shipments_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
+            %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => shipments_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
               %i.fa.fa-list-alt.fa-lg
               Reports
               %br
@@ -42,14 +42,14 @@
       %div.row
         %p
           .col-xs-6
-            %a.btn.btn-default.btn-lg.btn-block{:href => customer_index_commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Price Lists"}} 
+            %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => customer_index_commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Price Lists"}} 
               %i.fa.fa-list.fa-lg
               Price Lists
               %br
               %small.text-muted= "Sell to #{current_user.company.name}"
         %p
           .col-xs-6
-            %a.btn.btn-default.btn-lg.btn-block{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Contracts"}} 
+            %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Contracts"}} 
               %i.fa.fa-list.fa-lg
               Contracts
               %br
@@ -57,7 +57,7 @@
       %div.row
         %p
           .col-sm-6.col-md-4.col-md-offset-4
-            %a.btn.btn-default.btn-lg.btn-block{:href => service_requests_customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Dispatch"}} 
+            %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => service_requests_customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Dispatch"}} 
               %i.fa.fa-truck.fa-lg
               Dispatch
               %br

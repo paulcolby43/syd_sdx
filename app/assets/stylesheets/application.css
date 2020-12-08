@@ -215,3 +215,9 @@ canvas.drawing, canvas.drawingBuffer {
   /*color: #B7410E;*/
   border-bottom: 3px solid #B7410E;
 }
+
+.btn-word-wrap {
+    white-space:normal !important; 
+    word-wrap: break-word; 
+    word-break: normal;
+}
