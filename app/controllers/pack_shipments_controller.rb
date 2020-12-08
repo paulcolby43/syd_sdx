@@ -163,7 +163,7 @@ class PackShipmentsController < ApplicationController
     end
     
     require 'open-uri'
-    files = @images_array.map.with_index{ |image,index| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}_#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+    files = @images_array.map.with_index{ |image,index| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}_booking_#{image['BOOKING_NBR']}_#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
     name = "shipment_#{@pack_shipment['Id']}"
     file_mappings = files
     .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
