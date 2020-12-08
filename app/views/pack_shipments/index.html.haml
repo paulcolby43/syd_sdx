@@ -71,6 +71,6 @@
             %i.fa.fa-refresh.fa-spin.fa-3x{:id => "more_pack_shipments_spinner", style: "display:none;"}
             %p= link_to 'Load more ...', pack_shipments_path(:status => @status, :page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
     - else
-      %p.text-center No pack shipments found
+      %p.text-center No shipments found
 
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}
