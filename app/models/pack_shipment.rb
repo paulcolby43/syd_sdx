@@ -321,7 +321,7 @@ class PackShipment
   
   def self.customer_summary_to_csv(pack_shipments_array)
     require 'csv'
-    headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'NetWeight']
+    headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'OrderNumber', 'BookingNumber', 'SealNumber', 'GrossWeight', 'TareWeight', 'NetWeight']
     
     CSV.generate(headers: true) do |csv|
       csv << headers
