@@ -253,7 +253,7 @@ class User < ActiveRecord::Base
   end
   
   def mobile_buy?
-    access_token.roles.include?("Mobile Buy")
+    access_token.roles.include?("Mobile Buy") or access_token.roles.include?("Mobile Buy")
   end
   
   def mobile_sell?
@@ -277,7 +277,7 @@ class User < ActiveRecord::Base
   end
   
   def mobile_buyer?
-    access_token.roles.include?("Mobile Buyer")
+    access_token.roles.include?("Mobile Buyer") or access_token.roles.include?("Mobile Buy")
   end
   
   def mobile_seller?
