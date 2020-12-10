@@ -1418,7 +1418,7 @@ class Ticket
   def self.commodity_summary_to_csv(line_items_array, tickets_array)
     require 'csv'
 #    headers = ['DateCreated', 'Description', 'Ticket', 'Job', 'BOL', 'PO', 'Customer', 'Customer Ref #', 'Customer Ship', 'PrintDescription', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
-    headers = ['DateCreated', 'Ticket', 'Customer', 'Status', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
+    headers = ['DateCreated', 'Commodity', 'Ticket', 'Customer', 'Status', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
     
     CSV.generate(headers: true) do |csv|
       csv << headers
@@ -1436,7 +1436,7 @@ class Ticket
         name = company_name.blank? ? customer_name : company_name
 #        customer_number = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerReferenceNumber"] rescue ''
 #        customer_ship_date = tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["CustomerShipDate"] rescue ''
-#        print_description = line_item['PrintDescription']
+        print_description = line_item['PrintDescription']
         status = ApplicationController.helpers.ticket_status_string(tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Status"]) rescue ''
         gross_weight = line_item['GrossWeight']
         tare_weight = line_item['TareWeight']
@@ -1455,7 +1455,7 @@ class Ticket
 #        csv << headers.map{ |attr| (attr == 'Ticket' ? ticket_number : (attr == 'Customer' ? (company_name.blank? ? customer_name : company_name) : line_item[attr]) ) }
 #          csv << [date_created, description, ticket_number, job_number, bol_number, purchase_order_number, name, customer_number, customer_ship_date, 
 #            print_description, gross_weight, tare_weight, net_weight, price, extended_amount]
-         csv << [date_created, ticket_number, name, status, gross_weight, tare_weight, net_weight, price, extended_amount]
+         csv << [date_created, print_description, ticket_number, name, status, gross_weight, tare_weight, net_weight, price, extended_amount]
       end
 #      csv << ['', '', '', '', '', '', '', '', '', '', '', '', net_total, '', extended_amount_total]
     end
