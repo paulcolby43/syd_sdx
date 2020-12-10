@@ -281,7 +281,7 @@ class Ability
       
       # Commodities
       ############
-      if user.mobile_buy?
+      if user.mobile_buy? or user.mobile_buyer?
         can :index, :commodities
         can :show, :commodities
       end

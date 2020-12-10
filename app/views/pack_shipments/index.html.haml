@@ -5,10 +5,10 @@
   .container
     = form_tag pack_shipments_path, id: 'pack_shipments_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
       .btn-group{"aria-label" => "shipment_status", :role => "group"}
-        %a.btn.btn-default{:href => pack_shipments_path(status: 'held', container_number: @container_number), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'held', container_number: @container_number), class: (params[:status].blank? or params[:status] == 'held') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
           %i.fa.fa-folder-open-o.fa-lg
           Held
-        %a.btn.btn-default{:href => pack_shipments_path(status: 'closed', container_number: @container_number), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+        %a.btn.btn-default.btn-lg{:href => pack_shipments_path(status: 'closed', container_number: @container_number), class: (params[:status] == 'closed') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
           %i.fa.fa-folder.fa-lg
           Closed
       - if mobile_device?
@@ -16,9 +16,9 @@
         %br
       = hidden_field_tag :status, @status
       .input-group
-        = search_field_tag :q, @q, :placeholder => "Search", class: "form-control"
+        = search_field_tag :q, @q, :placeholder => "Search", class: "form-control input-lg"
         .input-group-btn
-          %button.btn.btn-primary{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+          %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
             %i.fa.fa-search
             Search
     - unless @pack_shipments.blank?
@@ -30,15 +30,17 @@
               %h4.text-muted
                 %div.panel.panel-primary
                   %div.list_group
-                    %a{href: edit_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} - #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
-                      .pull-right
-                        &nbsp;
-                        %i.fa.fa-chevron-right.fa-lg
+                    %a{href: "#{pack_shipment['ShipmentType'] == '1' ? edit_pack_shipment_path(pack_shipment['Id']) : nil}", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} - #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
+                      - if pack_shipment['ShipmentType'] == '1'
+                        .pull-right
+                          &nbsp;
+                          %i.fa.fa-chevron-right.fa-lg
                       = "#{pack_shipment['ShipmentNumber']} - #{pack_shipment['CustomerName']} #{pack_shipment['ContractDescription'].blank? ? '' : ' - ' + pack_shipment['ContractDescription']}"
                       - unless pack_shipment['ContainerNumber'].blank? and pack_shipment['DeliveryVehicleIdNumber'].blank?
                         %br
                         = "Vehicle: #{pack_shipment['DeliveryVehicleIdNumber']}" unless pack_shipment['DeliveryVehicleIdNumber'].blank?
                         = "Container: #{pack_shipment['ContainerNumber']}" unless pack_shipment['ContainerNumber'].blank?
+                      %small.text-muted= shipment_type_string(pack_shipment['ShipmentType'])
                       =# pack_shipment
                     -#
                       %a{href: fetches_pack_shipment_path(pack_shipment['Id']), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch Pictures"}, class: "list-group-item pack_shipment_button"}
@@ -57,9 +59,9 @@
                           %a.btn.btn-primary{href: "#pack_shipment_#{pack_shipment['Id']}_upload_form", id: "pack_shipment_#{pack_shipment['Id']}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
                             %i.fa.fa-camera
                             Picture
-                      = "Date Created: #{pack_shipment["DateCreated"].to_date.strftime('%m/%d/%y')}"
+                      = "Date Created: #{pack_shipment["DateCreated"].to_date.in_time_zone(session[:time_zone]).strftime('%m/%d/%y')}"
                       %br
-                      = "Time Created: #{pack_shipment["DateCreated"].to_datetime.strftime('%I:%M %p')}"
+                      = "Time Created: #{pack_shipment["DateCreated"].to_datetime.in_time_zone(session[:time_zone]).strftime('%I:%M %p')}"
                       %br
                     
       .row
@@ -69,6 +71,6 @@
             %i.fa.fa-refresh.fa-spin.fa-3x{:id => "more_pack_shipments_spinner", style: "display:none;"}
             %p= link_to 'Load more ...', pack_shipments_path(:status => @status, :page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
     - else
-      %p.text-center No pack shipments found
+      %p.text-center No shipments found
 
 =# render partial: "shared/pack_contracts_footer_navbar", locals: {title: "Contracts"}

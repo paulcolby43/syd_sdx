@@ -13,36 +13,58 @@
 - else
   .jumbotron{style: 'background-color: white;'}
     .container
-      %p
-        =# image_tag('sd_portal_transparent_small.png', alt: 'sd_portal_transparent_small.png', class: 'img-responsive center-block')
-        .col-sm-6.col-md-4.col-md-offset-4
-          = image_tag('dragon_logo.png', alt: 'dragon_logo.png', class: 'img-responsive center-block')
       %div.row
-        -#
-          %p
-            .col-xs-4
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 1),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
-                %i.fa.fa-folder.fa-lg
-                Closed
-          %p
-            .col-xs-4
-              %a.btn.btn-default.btn-lg.btn-block{:href => tickets_path(status: 3),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
-                %i.fa.fa-dollar.fa-lg
-                Paid
-        -#
-          %div.text-center
-            %a.btn.btn-default.btn-lg{:href => reports_path('report[type]' => 'customer_summary'),  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Management Reports"}} 
-              Management Reports
-        -#
-          %p
-            .col-xs-4
-              %a.btn.btn-default.btn-lg.btn-block{:href => images_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
-                %i.fa.fa-image.fa-lg
-                Pictures
+        .col-sm-6.col-md-4.col-md-offset-4
+          - unless current_user.company.logo.file.nil?
+            = image_tag(current_user.company.logo.url, alt: 'company_logo', class: 'img-responsive center-block')
+          - else
+            = image_tag('dragon_logo_small.png', alt: 'dragon_logo.png', class: 'img-responsive center-block')
       -#
-        %div.text-center
+        %p
+          =# image_tag('sd_portal_transparent_small.png', alt: 'sd_portal_transparent_small.png', class: 'img-responsive center-block')
+          .col-sm-6.col-md-4.col-md-offset-4
+            = image_tag('dragon_logo.png', alt: 'dragon_logo.png', class: 'img-responsive center-block')
+      %div.row
+        - if current_user.tickets?
           %p
-            %a{href: images_path, class: 'btn btn-lg btn-primary welcome_button',  data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
-              Pictures
-            %a{href: tickets_path(status: 3), class: 'btn btn-lg btn-primary welcome_button',  data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Tickets"}}
-              Tickets
+            %div{class: "#{current_user.shipments? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
+              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => tickets_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
+                %i.fa.fa-list-alt.fa-lg
+                Reports
+                %br
+                %small.text-muted= "Material Sold to #{current_user.company.name}"
+        - if current_user.shipments?
+          %p
+            %div{class: "#{current_user.tickets? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
+              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => shipments_reports_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Reports"}} 
+                %i.fa.fa-list-alt.fa-lg
+                Reports
+                %br
+                %small.text-muted= "Material Purchased from #{current_user.company.name}"
+      %div.row
+        - if current_user.tickets?
+          %p
+            %div{class: "#{current_user.shipments? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
+              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => customer_index_commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Price Lists"}} 
+                %i.fa.fa-list.fa-lg
+                Price Lists
+                %br
+                %small.text-muted= "Sell to #{current_user.company.name}"
+        - if current_user.shipments?
+          %p
+            %div{class: "#{current_user.tickets? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
+              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Contracts"}} 
+                %i.fa.fa-list.fa-lg
+                Contracts
+                %br
+                %small.text-muted= "Material Purchased from #{current_user.company.name}"
+      - if current_user.dispatch?
+        %div.row
+          %p
+            .col-sm-6.col-md-4.col-md-offset-4
+              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => service_requests_customers_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Dispatch"}} 
+                %i.fa.fa-truck.fa-lg
+                Dispatch
+                %br
+                %small.text-muted= "Service Requests"
+        

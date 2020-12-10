@@ -303,6 +303,10 @@ GEM
     wicked_pdf (0.11.0)
       rails
     wkhtmltopdf-binary (0.9.9.3)
+    zip_tricks (5.5.0)
+    zipline (1.2.1)
+      rails (>= 3.2.1, < 6.1)
+      zip_tricks (>= 4.2.1, < 6.0)
 
 PLATFORMS
   ruby
@@ -355,6 +359,7 @@ DEPENDENCIES
   whenever
   wicked_pdf
   wkhtmltopdf-binary
+  zipline
 
 RUBY VERSION
    ruby 2.1.2p95

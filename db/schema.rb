@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200930140626) do
+ActiveRecord::Schema.define(version: 20201209141818) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string"
@@ -191,6 +191,7 @@ ActiveRecord::Schema.define(version: 20200930140626) do
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "zip_file"
   end
 
   create_table "user_settings", force: true do |t|
@@ -240,6 +241,9 @@ ActiveRecord::Schema.define(version: 20200930140626) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.text     "coordinates"
+    t.boolean  "tickets",                default: true
+    t.boolean  "shipments",              default: true
+    t.boolean  "dispatch",               default: true
   end
 
 end

@@ -260,9 +260,9 @@ class PackShipment
   def self.shipments_search(shipments, query)
     shipment_records = []
     shipments.each do |shipment|
-      shipment_records << shipment if shipment['BookingNumber'] == query
-      shipment_records << shipment if shipment['ContainerNumber'] == query
-      shipment_records << shipment if shipment['ShipmentNumber'] == query
+      shipment_records << shipment if shipment['BookingNumber'].present? and shipment['BookingNumber'].downcase.include?(query.downcase)
+      shipment_records << shipment if shipment['ContainerNumber'].present? and shipment['ContainerNumber'].downcase.include?(query.downcase)
+      shipment_records << shipment if shipment['ShipmentNumber'].present? and shipment['ShipmentNumber'].downcase.include?(query.downcase)
     end
     return shipment_records.uniq
   end
@@ -321,7 +321,7 @@ class PackShipment
   
   def self.customer_summary_to_csv(pack_shipments_array)
     require 'csv'
-    headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'NetWeight']
+    headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'ContainerNumber', 'OrderNumber', 'BookingNumber', 'SealNumber', 'GrossWeight', 'TareWeight', 'NetWeight']
     
     CSV.generate(headers: true) do |csv|
       csv << headers

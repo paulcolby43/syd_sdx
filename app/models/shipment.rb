@@ -99,6 +99,10 @@ class Shipment < ActiveRecord::Base
     url = "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
     return open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)
   end
+  
+  def self.jpeg_image_url(company, capture_sequence_number, yard_id)
+    "https://#{company.jpegger_service_ip}:#{company.jpegger_service_port}/sdcgi?image=y&table=shipments&capture_seq_nbr=#{capture_sequence_number}&yardid=#{yard_id}"
+  end
 
   def self.api_find_all_by_shipment_number(shipment_number, company, yard_id)
     require 'socket'
