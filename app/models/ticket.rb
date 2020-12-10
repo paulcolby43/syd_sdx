@@ -1442,7 +1442,7 @@ class Ticket
         tare_weight = line_item['TareWeight']
         gross_weight = line_item['GrossWeight']
         net_weight = line_item['NetWeight']
-        price = line_item['Price']
+        price = "#{line_item['Price']} #{line_item['UnitOfMeasure']}"
         extended_amount = line_item['ExtendedAmount']
         
 #        net_total = net_total + line_item['NetWeight'].to_d
