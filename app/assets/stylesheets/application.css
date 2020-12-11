@@ -221,3 +221,9 @@ canvas.drawing, canvas.drawingBuffer {
     word-wrap: break-word; 
     word-break: normal;
 }
+
+.word-wrap {
+    white-space:normal !important; 
+    word-wrap: break-word; 
+    word-break: normal;
+}
