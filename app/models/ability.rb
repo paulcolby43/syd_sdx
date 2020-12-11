@@ -315,7 +315,7 @@ class Ability
       
       # Reports
       ############
-      if user.mobile_reports? or user.mobile_buyer?
+      if user.mobile_reports? or user.mobile_buy?
         can :index, :reports
       end
       
