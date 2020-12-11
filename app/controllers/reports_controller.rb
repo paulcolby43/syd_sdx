@@ -183,8 +183,6 @@ class ReportsController < ApplicationController
     @end_date = report_params[:end_date].blank? ? Date.today.to_s : report_params[:end_date]# Default to today
     @customer_user = User.where(customer_guid: params[:customer_id], yard_id: current_yard_id).last # Look for customer user if admin is viewing through iframe on customer show page
     @user = @customer_user.blank? ? current_user : @customer_user
-    @pack_shipments = PackShipment.all_by_date_and_customers(current_user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) if (current_user.customer? or @customer_user.present?)
-    @pack_shipments = PackShipment.all_by_date(current_user.token, current_yard_id, @start_date, @end_date) unless (current_user.customer? or @customer_user.present?)
     
     if current_user.customer? or @customer_user.present?
       tickets = Ticket.all_by_date_and_customers(@status.split(',').map(&:to_i), @user.token, current_yard_id, @start_date, @end_date, @user.portal_customer_ids) 
