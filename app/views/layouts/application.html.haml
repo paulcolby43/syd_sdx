@@ -45,9 +45,9 @@
             = render partial: "shared/navbars/mobile_greeter_navbar", locals: {title: "Home"}
           - elsif current_user.mobile_inspector?
             = render partial: "shared/navbars/mobile_inspector_navbar", locals: {title: "Home"}
-          - elsif current_user.mobile_buyer?
+          - elsif current_user.mobile_buy?
             = render partial: "shared/navbars/mobile_buyer_navbar", locals: {title: "Home"}
-          - elsif current_user.mobile_seller?
+          - elsif current_user.mobile_sell?
             = render partial: "shared/navbars/mobile_seller_navbar", locals: {title: "Home"}
           - elsif current_user.mobile_dispatch?
             = render partial: "shared/navbars/mobile_dispatch_navbar", locals: {title: "Home"}

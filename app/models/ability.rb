@@ -263,25 +263,23 @@ class Ability
         can :edit, :tickets
         can :void, :tickets
       end
-      if user.mobile_greeter? or user.mobile_inspector? or user.mobile_buyer?
+      if user.mobile_greeter? or user.mobile_inspector? or user.mobile_buy?
         can :index, :tickets
         can :edit, :tickets
       end
         
       # Customers
       ############
-      if user.mobile_buy? or user.mobile_greeter? or user.mobile_buyer?
+      if user.mobile_buy? or user.mobile_greeter?
         can :index, :customers
         can :show, :customers
-      end
-      if user.mobile_greeter? or user.mobile_buyer?
         can :create, :customers
         can :edit, :customers
       end
       
       # Commodities
       ############
-      if user.mobile_buy? or user.mobile_buyer?
+      if user.mobile_buy?
         can :index, :commodities
         can :show, :commodities
       end
@@ -290,7 +288,7 @@ class Ability
         can :show, :commodities
       end
       
-      if user.mobile_sell? or user.mobile_seller?
+      if user.mobile_sell?
         # Mobile Sell or Admin Dragon Role
         # PackShipments
         ############
