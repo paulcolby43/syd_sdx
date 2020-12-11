@@ -276,13 +276,13 @@ class User < ActiveRecord::Base
     access_token.roles.include?("Mobile Inspector")
   end
   
-  def mobile_buyer?
-    access_token.roles.include?("Mobile Buyer")
-  end
-  
-  def mobile_seller?
-    access_token.roles.include?("Mobile Seller")
-  end
+#  def mobile_buyer?
+#    access_token.roles.include?("Mobile Buyer")
+#  end
+#  
+#  def mobile_seller?
+#    access_token.roles.include?("Mobile Seller")
+#  end
   
   def portal_customer_ids
     ids = []

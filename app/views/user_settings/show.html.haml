@@ -10,9 +10,12 @@
               .text-center
                 %strong User View
                 %br
-                = "Admin" if current_user.mobile_admin?
-                = "Buyer" if current_user.mobile_buyer?
-                = "Inspector" if current_user.mobile_inspector?
+                - if current_user.mobile_admin?
+                  = "Admin"
+                - elsif current_user.mobile_buy?
+                  = "Buyer"
+                elsif current_user.mobile_inspector?
+                  = "Inspector"
       %br
               
     .row

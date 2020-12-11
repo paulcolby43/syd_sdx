@@ -57,7 +57,7 @@ class SessionsController < ApplicationController
               redirect_to trips_path
             elsif user.mobile_greeter?
               redirect_to customers_path
-            elsif user.mobile_buyer?
+            elsif user.mobile_buy?
               redirect_to customers_path
             else
               redirect_to root_path
