@@ -11,9 +11,14 @@ class TripsController < ApplicationController
     unless current_user.mobile_admin?
       @trips_list_by_driver = Trip.all_by_user(@dispatch_information)
       @driver_id = @trips_list_by_driver.first['DriverId'] unless @trips_list_by_driver.blank?
+      unless @driver_id.blank?
+        @trips = Trip.search(current_user.token, nil, @driver_id, nil)
+      else
+        @trips = []
+      end
+    else
+      @trips = Trip.search(current_user.token, nil, nil, nil)
     end
-#    @trips = Trip.search(current_user.token, nil, nil, nil)
-    @trips = Trip.search(current_user.token, nil, @driver_id.blank? ? nil : @driver_id, nil)
 #    @trucks = Trip.all_trucks(@dispatch_information)
     @containers = Container.all_by_dispatch_information(@dispatch_information)
     @task_functions = Trip.task_functions(@dispatch_information)

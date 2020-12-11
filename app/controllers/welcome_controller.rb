@@ -2,7 +2,9 @@ class WelcomeController < ApplicationController
   before_filter :login_required, only: [:kpi_dashboard]
   
   def index
-    if current_user and (current_user.mobile_greeter? or current_user.mobile_buy?)
+    if current_user and current_user.admin?
+      @admin = true
+    elsif current_user and (current_user.mobile_greeter? or current_user.mobile_buy?)
       redirect_to customers_path
     elsif current_user and current_user.mobile_inspector?
       redirect_to tickets_path
