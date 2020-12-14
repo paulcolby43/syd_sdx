@@ -1,0 +1,17 @@
+%div{:id => "item_#{id}_notes_modal", :class => "modal fade notes", :tabindex => "-1", :style => "display:none;"}
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        %strong 
+          %i.fa.fa-list-alt
+          Notes
+        = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+      .modal-body
+        = text_area_tag "ticket[line_items][][notes]", line_item.blank? ? '' : line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg", autofocus: true
+      .modal-footer
+        %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
+
+:javascript
+  $('.modal').on('shown.bs.modal', function() {
+    $(this).find('[autofocus]').first().focus();
+  });

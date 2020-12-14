@@ -316,12 +316,12 @@ class TicketsController < ApplicationController
     @ticket_id = params[:ticket_id]
     @ticket_session_id = params[:session_id]
     
-#    @combolists = Vehicle.combolists(current_user.token)
+    @combolists = Vehicle.combolists(current_user.token)
 #    @combolists = params[:combolists]
-#    @vehicle_makes = (@combolists.blank? or @combolists["VehicleMakes"].blank?) ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
-#    @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
-#    @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
-#    @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
+    @vehicle_makes = (@combolists.blank? or @combolists["VehicleMakes"].blank?) ? [] : @combolists["VehicleMakes"]["VehicleMakeInformation"]
+    @vehicle_models = (@combolists.blank? or @combolists["VehicleModels"].blank?) ? [] : @combolists["VehicleModels"]["VehicleModelInformation"]
+    @body_styles = (@combolists.blank? or @combolists["VehicleBodyStyles"].blank?) ? [] : @combolists["VehicleBodyStyles"]["UserDefinedListValueQuickInformation"]
+    @vehicle_colors = (@combolists.blank? or @combolists["VehicleColors"].blank?) ? [] : @combolists["VehicleColors"]["UserDefinedListValueQuickInformation"]
     @deductions = Ticket.deductions(current_user.token)
     @deductions_grouped_for_select = Ticket.deductions_grouped_for_select(@deductions)
     @vehicle_makes = []

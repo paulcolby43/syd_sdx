@@ -40,34 +40,36 @@
         = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
         = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
         %br
-        %p
-          %small
-            %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
-              More
-          %div.collapse{id: "more_#{id}"}
-            %p
-              = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-              %br
-              = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-            %ul{class: 'list-inline'}
-              %li
-                %a.btn.btn-default{href: "#item_#{id}_deductions_modal", id: "#item_#{id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
-                  %i.fa.fa-minus-square-o.fa-lg
-                  Deductions
-                = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{id}"}
-              -# unless @combolists.blank? # Car vehicle information lists
-              %li
-                %a.btn.btn-default{href: "#item_#{id}_vin_search_modal", id: 'item_#{id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
-                  %i.fa.fa-car.fa-lg
-                  Car
-                = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
-            -#
-              - unless @combolists.blank? # Car vehicle information lists
-                %p
-                  %a.btn.btn-default{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+        = render partial: 'more_line_item_options', locals: {line_item: nil, id: id}
+        -#
+          %p
+            %small
+              %a{id: "more_#{id}_link", "aria-controls" => "more_#{id}", "aria-expanded" => "false", "data-target" => "#more_#{id}", "data-toggle" => "collapse", style: 'display: none;'}
+                More
+            %div.collapse{id: "more_#{id}"}
+              %p
+                = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
+                %br
+                = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
+              %ul{class: 'list-inline'}
+                %li
+                  %a.btn.btn-default{href: "#item_#{id}_deductions_modal", id: "#item_#{id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
+                    %i.fa.fa-minus-square-o.fa-lg
+                    Deductions
+                  = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{id}"}
+                -# unless @combolists.blank? # Car vehicle information lists
+                %li
+                  %a.btn.btn-default{href: "#item_#{id}_vin_search_modal", id: 'item_#{id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
                     %i.fa.fa-car.fa-lg
                     Car
                   = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
+              -#
+                - unless @combolists.blank? # Car vehicle information lists
+                  %p
+                    %a.btn.btn-default{href: "#item_#{id}_vin_search_modal", id: "item_#{id}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
+                      %i.fa.fa-car.fa-lg
+                      Car
+                    = render partial: 'car_details_modal', locals: {id: "#{id}", perform_initial_vin_search: false}
   %div.panel-footer{style: "#{current_user.mobile_greeter? ? 'display:none;' : 'padding-top: 0px; font-size: 16px;'}"}
     .calculation_details
     .deduction_details

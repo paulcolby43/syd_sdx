@@ -194,27 +194,12 @@
                       = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                       = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                     %br
-                    %p
+                    = render partial: 'more_line_item_options', locals: {line_item: line_item, id: "#{line_item['Id']}"}
+                    -#
                       %small
                         %a{"aria-controls" => "more_#{line_item['Id']}", "aria-expanded" => "false", "data-target" => "#more_#{line_item['Id']}", "data-toggle" => "collapse"}
                           More
                       %div.collapse{id: "more_#{line_item['Id']}"}
-                        %p
-                          = text_field_tag "ticket[line_items][][serial_number]", line_item['SerialNumber'], :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-                          %br
-                          = text_area_tag "ticket[line_items][][notes]", line_item['Notes'], :placeholder => "Notes", class: "form-control input-lg"
-                        %ul{class: 'list-inline'}
-                          %li
-                            %a.btn.btn-default{href: "#item_#{line_item['Id']}_deductions_modal", id: "#item_#{line_item['Id']}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
-                              %i.fa.fa-minus-square-o.fa-lg
-                              Deductions
-                            = render partial: 'deductions_modal', locals: {line_item: line_item, id: "#{line_item['Id']}"}
-                          - unless @combolists.blank? # Car vehicle information lists
-                            %li
-                              %a.btn.btn-default{href: "#item_#{line_item['Id']}_vin_search_modal", id: "#item_#{line_item['Id']}_vin_search_modal_link", "data-toggle" => "modal", title: "VIN Search"}
-                                %i.fa.fa-car.fa-lg
-                                Car
-                              = render partial: 'car_details_modal', locals: {id: "#{line_item['Id']}", perform_initial_vin_search: true}
                         
                 .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                   .calculation_details
@@ -373,27 +358,29 @@
                   = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                   %br
-                  %p
-                    %small
-                      %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
-                        More
-                    %div.collapse{id: "more_#{new_item_id}"}
-                      %p
-                        = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-                        %br
-                        = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-                      %ul{class: 'list-inline'}
-                        %li
-                          %a.btn.btn-default{href: "#item_#{new_item_id}_deductions_modal", id: "#item_#{new_item_id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
-                            %i.fa.fa-minus-square-o.fa-lg
-                            Deductions
-                          = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{new_item_id}"}
-                        - unless @combolists.blank? # Car vehicle information lists
+                  = render partial: 'more_line_item_options', locals: {line_item: line_item, id: "#{line_item['Id']}"}
+                  -#
+                    %p
+                      %small
+                        %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
+                          More
+                      %div.collapse{id: "more_#{new_item_id}"}
+                        %p
+                          = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
+                          %br
+                          = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
+                        %ul{class: 'list-inline'}
                           %li
-                            %a.btn.btn-default{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
-                              %i.fa.fa-car.fa-lg
-                              Car
-                            = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
+                            %a.btn.btn-default{href: "#item_#{new_item_id}_deductions_modal", id: "#item_#{new_item_id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
+                              %i.fa.fa-minus-square-o.fa-lg
+                              Deductions
+                            = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{new_item_id}"}
+                          - unless @combolists.blank? # Car vehicle information lists
+                            %li
+                              %a.btn.btn-default{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
+                                %i.fa.fa-car.fa-lg
+                                Car
+                              = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
               %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                 .calculation_details
                 .deduction_details
