@@ -50,14 +50,15 @@
                 Price Lists
                 %br
                 %small.text-muted= "Sell to #{current_user.company.name}"
-        - if current_user.shipments?
-          %p
-            %div{class: "#{current_user.tickets? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
-              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Contracts"}} 
-                %i.fa.fa-list.fa-lg
-                Contracts
-                %br
-                %small.text-muted= "Material Purchased from #{current_user.company.name}"
+        -#
+          - if current_user.shipments?
+            %p
+              %div{class: "#{current_user.tickets? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
+                %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => '#',  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Contracts"}} 
+                  %i.fa.fa-list.fa-lg
+                  Contracts
+                  %br
+                  %small.text-muted= "Material Purchased from #{current_user.company.name}"
       - if current_user.dispatch?
         %div.row
           %p
