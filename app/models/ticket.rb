@@ -116,7 +116,7 @@ class Ticket
       "CustomerIds" => [],
       "StartDate" => start_date,
       "EndDate" => end_date,
-      "Take" => 200, 
+      "Take" => 1000, 
       "PaymentType" => [status],
       "ShowAllYards" => true # Pass back tickets from all yards
       }
@@ -140,7 +140,7 @@ class Ticket
       "CustomerIds" => [],
       "StartDate" => start_date,
       "EndDate" => end_date,
-      "Take" => 200, 
+      "Take" => 1000, 
       "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
       "ShowAllYards" => false # Only tickets from this yard
       }
@@ -149,6 +149,7 @@ class Ticket
     xml_content = RestClient::Request.execute(method: :post, url: api_url, verify_ssl: false, headers: {:Authorization => "Bearer #{auth_token}", 
         :content_type => 'application/json', :Accept => "application/xml"}, payload: json_encoded_payload)
     data= Hash.from_xml(xml_content)
+    Rails.logger.debug "****************************data: #{data}"
     if data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"].is_a? Hash # Only one result returned, so put it into an array
       return [data["ApiPaginatedResponseOfApiTicketHead0UdNujZ0"]["Items"]["ApiTicketHead"]]
     else # Array of results returned
@@ -165,7 +166,7 @@ class Ticket
       "CustomerIds" => [],
       "StartDate" => start_date,
       "EndDate" => end_date,
-      "Take" => 200, 
+      "Take" => 1000, 
       "TicketStatuses" => [1,2,3], # All statuses
       "ShowAllYards" => false # Only tickets from this yard
       }
@@ -190,7 +191,7 @@ class Ticket
       "StartDate" => start_date,
       "EndDate" => end_date,
 #        "SearchTerms" => "",
-      "Take" => 200, 
+      "Take" => 1000, 
       "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
       "ShowAllYards" => true # Pass back tickets from all yards
       }
