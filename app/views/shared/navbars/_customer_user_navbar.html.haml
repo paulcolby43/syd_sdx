@@ -14,10 +14,11 @@
         =# image_tag('syd_logo_20x37.png')
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
-        - if current_user.tickets?
-          %li
-            %a{href: customer_index_commodities_path}
-              COMMODITIES
+        -#
+          - if current_user.tickets?
+            %li
+              %a{href: customer_index_commodities_path}
+                COMMODITIES
         %li.dropdown{:class => "#{(params[:controller] == 'reports') ? 'active' : ''}"}
           %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
             REPORTS
