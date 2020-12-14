@@ -116,7 +116,7 @@ class Ticket
       "CustomerIds" => [],
       "StartDate" => start_date,
       "EndDate" => end_date,
-      "Take" => 200, 
+      "Take" => 1000, 
       "PaymentType" => [status],
       "ShowAllYards" => true # Pass back tickets from all yards
       }
@@ -140,7 +140,7 @@ class Ticket
       "CustomerIds" => [],
       "StartDate" => start_date,
       "EndDate" => end_date,
-      "Take" => 200, 
+      "Take" => 1000, 
       "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
       "ShowAllYards" => false # Only tickets from this yard
       }
@@ -165,7 +165,7 @@ class Ticket
       "CustomerIds" => [],
       "StartDate" => start_date,
       "EndDate" => end_date,
-      "Take" => 200, 
+      "Take" => 1000, 
       "TicketStatuses" => [1,2,3], # All statuses
       "ShowAllYards" => false # Only tickets from this yard
       }
@@ -190,7 +190,7 @@ class Ticket
       "StartDate" => start_date,
       "EndDate" => end_date,
 #        "SearchTerms" => "",
-      "Take" => 200, 
+      "Take" => 1000, 
       "TicketStatuses" => [status].flatten, # Need to flatten in case we're getting an array of statuses passed, since we don't want to pass Dragon an array of an array
       "ShowAllYards" => true # Pass back tickets from all yards
       }
