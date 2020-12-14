@@ -42,14 +42,15 @@
                 %br
                 %small.text-muted= "Material Purchased from #{current_user.company.name}"
       %div.row
-        - if current_user.tickets?
-          %p
-            %div{class: "#{current_user.shipments? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
-              %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => customer_index_commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Price Lists"}} 
-                %i.fa.fa-list.fa-lg
-                Price Lists
-                %br
-                %small.text-muted= "Sell to #{current_user.company.name}"
+        -#
+          - if current_user.tickets?
+            %p
+              %div{class: "#{current_user.shipments? ? 'col-xs-6' : '.col-sm-6 col-md-4 col-md-offset-4'}"}
+                %a.btn.btn-default.btn-lg.btn-block.btn-word-wrap{:href => customer_index_commodities_path,  class: 'welcome_button', :role => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Price Lists"}} 
+                  %i.fa.fa-list.fa-lg
+                  Price Lists
+                  %br
+                  %small.text-muted= "Sell to #{current_user.company.name}"
         -#
           - if current_user.shipments?
             %p

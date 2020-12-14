@@ -163,7 +163,7 @@ class Ticket
     api_url = "https://#{user.company.dragon_api}/api/yard/#{yard_id}/tickets/bydate"
     payload = {
       "CustomerIds" => [],
-      "StartDate" => start_dat,
+      "StartDate" => start_date,
       "EndDate" => end_date,
       "Take" => 200, 
       "TicketStatuses" => [1,2,3], # All statuses
