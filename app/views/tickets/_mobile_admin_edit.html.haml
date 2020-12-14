@@ -358,7 +358,7 @@
                   = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                   %br
-                  = render partial: 'more_line_item_options', locals: {line_item: nil, id: "#{line_item['Id']}"}
+                  = render partial: 'more_line_item_options', locals: {line_item: nil, id: "#{new_item_id}"}
                   -#
                     %p
                       %small
