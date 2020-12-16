@@ -51,13 +51,27 @@
             %div.panel.panel-default
               %div.panel-heading
                 %h5.panel-title 
-                  Event codes
-                  .pull-right= link_to 'New', new_event_code_path
+                  = link_to 'Event Codes', event_codes_path
+                  %span.text-muted (drag to sort)
+                  .pull-right
+                    = link_to 'New', new_event_code_path
               %ul.list-group
                 - unless @event_codes.blank?
-                  - @event_codes.each do |event_code|
-                    %li.list-group-item
-                      = link_to event_code.name, edit_event_code_path(event_code)
+                  #user_settings_event_codes{"data-url" => sort_event_codes_path}
+                    - @event_codes.each do |event_code|
+                      %li.list-group-item{id: dom_id(event_code)}
+                        = link_to event_code.name, edit_event_code_path(event_code)
+                        .pull-right
+                          %i.fa.fa-arrows-v
+                        %br/
+                        %small
+                          - unless event_code.camera_class.blank? and event_code.camera_position.blank?
+                            = camera_class_string(event_code.camera_class) unless event_code.camera_class.blank?
+                            = camera_position_string(event_code.camera_position) unless event_code.camera_position.blank?
+                            %br
+                          = "Fetches" if event_code.include_in_fetch_lists?
+                          = "Shipments" if event_code.include_in_shipments?
+                          = "Tickets" if event_code.include_in_images?
                 - else
                   %li.list-group-item None
       - if current_user.admin?         

@@ -8,7 +8,8 @@ class Company < ActiveRecord::Base
   
   has_many :users
   has_many :inventories, through: :users
-  has_many :event_codes
+#  has_many :event_codes
+  has_many :event_codes, -> { order(position: :asc) }
   
   mount_uploader :logo, LogoUploader
   

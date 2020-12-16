@@ -55,12 +55,21 @@
                 %h5.panel-title
                   %a{"aria-controls" => "event_codes", "aria-expanded" => "false", "data-parent" => "#event_codes_accordion", "data-toggle" => "collapse", :href => "#event_codes", :role => "button"}
                     Event Codes
-                  .pull-right= link_to 'New', new_event_code_path
+                  -# .pull-right= link_to 'New', new_event_code_path
               #event_codes.panel-collapse.collapse.in{"aria-labelledby" => "headingOne", :role => "tabpanel"}
                 %ul.list-group
                   - @event_codes.each do |event_code|
                     %li.list-group-item
                       = event_code.name
+                      %br/
+                      %small
+                        - unless event_code.camera_class.blank? and event_code.camera_position.blank?
+                          = camera_class_string(event_code.camera_class) unless event_code.camera_class.blank?
+                          = camera_position_string(event_code.camera_position) unless event_code.camera_position.blank?
+                          %br
+                        = "Fetches" if event_code.include_in_fetch_lists?
+                        = "Shipments" if event_code.include_in_shipments?
+                        = "Tickets" if event_code.include_in_images?
                   -#
                     - unless current_user.device_group.blank?
                       - unless current_user.device_group.CustomerCamera.blank?

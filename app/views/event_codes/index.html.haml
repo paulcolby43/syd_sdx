@@ -3,22 +3,25 @@
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container  
     - unless @event_codes.blank?
-      - @event_codes.each do |event_code|
-        %div.row
-          .col-xs-12.col-sm-12.col-md-12
-            %div.panel.panel-primary
-              %div.list_group
-                %a{href: event_code_path(event_code), class: "list-group-item event_code_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{event_code.name}"}}
-                  = event_code.name
-                  .pull-right
-                    %i.fa.fa-chevron-right
-                  %br/
-                  - unless event_code.camera_class.blank? and event_code.camera_position.blank?
+      #event_codes{"data-url" => sort_event_codes_path}
+        - @event_codes.each do |event_code|
+          %div.row{id: dom_id(event_code)}
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel.panel-primary
+                %div.list_group
+                  %a{href: event_code_path(event_code), class: "list-group-item event_code_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{event_code.name}"}}
+                    = event_code.name
+                    .pull-right
+                      %i.fa.fa-chevron-right
+                    %br/
                     %small
-                      = camera_class_string(event_code.camera_class) unless event_code.camera_class.blank?
-                      - unless event_code.camera_position.blank?
+                      - unless event_code.camera_class.blank? and event_code.camera_position.blank?
+                        = camera_class_string(event_code.camera_class) unless event_code.camera_class.blank?
+                        = camera_position_string(event_code.camera_position) unless event_code.camera_position.blank?
                         %br
-                        = camera_position_string(event_code.camera_position) 
+                      = "Fetches" if event_code.include_in_fetch_lists?
+                      = "Shipments" if event_code.include_in_shipments?
+                      = "Tickets" if event_code.include_in_images?
     - else
       %p.lead No Event Codes
     

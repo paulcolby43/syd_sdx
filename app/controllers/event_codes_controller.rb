@@ -7,7 +7,8 @@ class EventCodesController < InheritedResources::Base
   # GET /event_codes.json
   def index
 #    @event_codes = EventCode.all
-    @event_codes = current_user.company.event_codes.order(:name)
+#    @event_codes = current_user.company.event_codes.order(:name)
+    @event_codes = current_user.company.event_codes
   end
 
   # GET /event_codes/1
@@ -33,7 +34,8 @@ class EventCodesController < InheritedResources::Base
       if @event_code.save
         format.html { 
           flash[:success] = 'Event code was successfully created.'
-          redirect_to @event_code
+#          redirect_to @event_code
+          redirect_to edit_user_setting_path(current_user.user_setting)
           }
         format.json { render :show, status: :created, location: @event_code }
       else
@@ -74,6 +76,15 @@ class EventCodesController < InheritedResources::Base
       format.html { redirect_to event_codes_url, notice: 'Event code was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+  
+  # PATCH /event_codes/sort
+  def sort
+    params[:event_code].each.with_index(1) do |id, index|
+      EventCode.where(id: id).update_all(position: index)
+    end
+    
+    head :ok
   end
 
   private
