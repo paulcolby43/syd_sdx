@@ -17,6 +17,7 @@ class YardsController < ApplicationController
     @currencies = Ticket.currencies(current_user.token)
     cookies[:current_currency_id] = params[:currency_id] unless params[:currency_id].blank?
     if current_user.mobile_admin?
+      flash[:info] = "You can now customize the order of Event Codes! Go <strong><a href=#{edit_user_setting_path(current_user.user_setting.id)}>here</a></strong> to try it out.".html_safe
       redirect_to root_path
     elsif current_user.mobile_dispatch?
       redirect_to trips_path

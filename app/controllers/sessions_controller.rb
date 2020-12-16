@@ -50,6 +50,7 @@ class SessionsController < ApplicationController
         
         unless (user.admin? and user.user_setting.currency_id.blank?) or (user.customer? and params[:customer_needs_to_change_password] == 'true')
           flash[:success] = "You have been logged in."
+          
           unless user.customer?
             if user.admin?
               redirect_to root_path
