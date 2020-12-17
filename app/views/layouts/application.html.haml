@@ -57,7 +57,7 @@
       - flash.each do |message_type, message|
         %br
         = content_tag(:div, message, class: "alert alert-#{message_type}") do 
-          = message
+          = raw(message)
           = content_tag(:button, 'x', class: "close", data: { dismiss: 'alert' })
     - else
       - if not current_page? root_path

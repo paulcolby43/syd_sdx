@@ -6,12 +6,7 @@ jQuery ->
 
   ### Re-enable disabled_with buttons for back button ###
   $(document).on 'page:change', ->
-    $('.event_code_button').each ->
-      $.rails.enableElement $(this)
-      return
-
-
-    $('#event_codes').sortable update: (e, ui) ->
+    $('#user_settings_event_codes').sortable update: (e, ui) ->
       #console.log $(this).sortable('serialize')
       $.ajax
         url: $(this).data('url')

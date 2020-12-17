@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201209141818) do
+ActiveRecord::Schema.define(version: 20201215215335) do
 
   create_table "access_tokens", force: true do |t|
     t.string   "token_string"
@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(version: 20201209141818) do
     t.boolean  "include_in_images",      default: true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position"
   end
 
   create_table "image_files", force: true do |t|

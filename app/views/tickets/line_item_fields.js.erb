@@ -12,7 +12,7 @@ vehicle_model_options = $(".ticket_item_model:last > option").clone();
 vehicle_body_options = $(".ticket_item_body:last > option").clone();
 vehicle_color_options = $(".ticket_item_color:last > option").clone();
 
-$('#items_accordion').append("<%= j render(:partial => 'line_item_fields', locals: {id: SecureRandom.uuid}) %>");
+$('#items_accordion').append("<%= j render(:partial => 'line_item_fields', locals: {id: SecureRandom.uuid, combolists: @combolists}) %>");
 $('.category_select:last').append(category_options).find("option:first").attr('selected','selected');
 if (category_options.size() == 0) {$('.category_select:last').hide();}
 $('.category_select:last').val(selected_category);

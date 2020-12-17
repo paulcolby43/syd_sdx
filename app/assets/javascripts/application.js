@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui/widget
+//= require jquery-ui/sortable
 //= require twbs/bootstrap
 //= require bootstrap-editable.min.js
 //= require bootstrap-datepicker/core

@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
   belongs_to :company
   has_many :portal_customers # Allow customer user to view other customer tickets via their portal
   has_many :inventories
-  has_many :event_codes
+#  has_many :event_codes
+  has_many :event_codes, -> { order(position: :asc) }
   
   serialize :coordinates, Array # Treat coordinates column as an array
   

@@ -29,6 +29,8 @@ gem 'turbolinks'
 # jQuery plugin for drop-in fix binded events problem caused by Turbolinks
 gem 'jquery-turbolinks'
 
+gem 'jquery-ui-rails'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
@@ -137,6 +139,9 @@ gem 'zipline'
 
 # Better downloading
 #gem 'down'
+
+# sorting and reordering a number of objects in a list
+gem 'acts_as_list'
 
 
 # https://github.com/cyu/rack-cors

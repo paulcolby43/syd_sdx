@@ -2,7 +2,9 @@
   .modal-dialog.modal-sm
     .modal-content
       .modal-header
-        %strong Car Details
+        %strong 
+          %i.fa.fa-car
+          VIN
         = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
       .modal-body 
         -# %div{:id => "vin_barcode_scanner_#{id}", class: "vin_barcode_scanner"}
@@ -63,7 +65,8 @@
           .tab-pane{:id => "existing_cars_#{id}"}
             %br
             #existing_car_details
-              - if perform_initial_vin_search == true
+              -# if perform_initial_vin_search == true
+              - unless @line_items.blank?
                 - TicketItem.vins(current_user.token, current_yard_id, id).each do |vin|
                   .well
                     = vin['VehicleIdNumber']

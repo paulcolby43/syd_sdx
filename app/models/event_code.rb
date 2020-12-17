@@ -5,6 +5,8 @@ class EventCode < ActiveRecord::Base
   has_many :image_files
   has_many :shipment_files
   
+  acts_as_list scope: :company
+  
   
   validates :name, presence: true
   validates_uniqueness_of :name, case_sensitive: false, scope: :company_id

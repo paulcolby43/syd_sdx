@@ -34,7 +34,11 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :event_codes
+  resources :event_codes do
+    collection do
+      patch 'sort'
+    end
+  end
   
   resources :password_resets
 
