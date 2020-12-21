@@ -10,15 +10,15 @@
         %br
         = "#{pluralize(@tickets.count, "ticket")} found"
   -#
-    .col-xs-12.col-sm-8
-      - unless @line_items.blank?
-        .text-center
-          .col-xs-6
-            = "Commodity by Weight"
-            = content_tag :div, "", id: "ticket-commodity-weight-summary-donut", data: {items: ticket_commodity_weight_donut_data(@line_items)}
-          .col-xs-6
-            = "Commodity by Amount ($)"
-            = content_tag :div, "", id: "ticket-commodity-amount-summary-donut", data: {items: ticket_commodity_amount_donut_data(@line_items)}
+  .col-xs-12.col-sm-8
+    - unless @line_items.blank?
+      .text-center
+        .col-xs-6
+          = "Commodity by Weight"
+          = content_tag :div, "", id: "ticket-commodity-weight-summary-donut", data: {items: ticket_commodity_weight_donut_data(@line_items)}
+        .col-xs-6
+          = "Commodity by Amount ($)"
+          = content_tag :div, "", id: "ticket-commodity-amount-summary-donut", data: {items: ticket_commodity_amount_donut_data(@line_items)}
     
     .col-xs-12.col-sm-4
       %p
