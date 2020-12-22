@@ -27,9 +27,10 @@
           = render partial: "shipment_files/upload_modal", locals: {pack_shipment: pack_shipment}
           %div.row
             .col-xs-12.col-sm-12.col-md-12
-              %h4.text-muted
+              -# %h4.text-muted
+              %p
                 %div.panel.panel-primary
-                  %div.list_group
+                  %div.list_group{style: 'font-size: large;'}
                     %a{href: "#{pack_shipment['ShipmentType'] == '1' ? edit_pack_shipment_path(pack_shipment['Id']) : nil}", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment['ShipmentNumber']} - #{pack_shipment['CustomerName']}"}, class: "list-group-item pack_shipment_button"}
                       - if pack_shipment['ShipmentType'] == '1'
                         .pull-right
