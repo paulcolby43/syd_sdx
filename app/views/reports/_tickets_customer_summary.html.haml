@@ -10,16 +10,18 @@
         %br
         = "#{pluralize(@tickets.count, "ticket")} found"
   -#
-    .col-xs-12.col-sm-8
-      - unless @tickets.blank?
-        .text-center
-          .col-xs-6
-            = "Customer Tickets"
-            = content_tag :div, "", id: "ticket-customer-number-summary-donut", data: {tickets: ticket_customer_number_donut_data(@tickets)}
-          .col-xs-6
-            = "Customer by Amount ($)"
-            = content_tag :div, "", id: "ticket-customer-amount-summary-donut", data: {tickets: ticket_customer_amount_donut_data(@tickets)}
-
+  %br
+  -# .col-xs-12.col-sm-7
+  .col-sm-6.col-md-offset-3
+    - unless @tickets.blank?
+      .text-center
+        .col-xs-6
+          = "Customer Tickets"
+          = content_tag :div, "", id: "ticket-customer-number-summary-donut", data: {tickets: ticket_customer_number_donut_data(@tickets)}
+        .col-xs-6
+          = "Customer by Amount ($)"
+          = content_tag :div, "", id: "ticket-customer-amount-summary-donut", data: {tickets: ticket_customer_amount_donut_data(@tickets)}
+  -#
     .col-xs-12.col-sm-4
       %p
         Cash

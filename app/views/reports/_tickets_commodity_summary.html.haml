@@ -10,7 +10,9 @@
         %br
         = "#{pluralize(@tickets.count, "ticket")} found"
   -#
-  .col-xs-12.col-sm-8
+  %br
+  -#.col-xs-12.col-sm-7
+  .col-sm-6.col-md-offset-3
     - unless @line_items.blank?
       .text-center
         .col-xs-6
@@ -19,20 +21,22 @@
         .col-xs-6
           = "Commodity by Amount ($)"
           = content_tag :div, "", id: "ticket-commodity-amount-summary-donut", data: {items: ticket_commodity_amount_donut_data(@line_items)}
-    
-    .col-xs-12.col-sm-4
-      %p
-        Cash
-        = number_to_currency(@cash_total)
-        %br
-        Check
-        = number_to_currency(@check_total)
-        %br
-        EZcash
-        = number_to_currency(@ezcash_total)
-        %br
-        %strong Total
-        = number_to_currency(@line_items_total)
+  -# 
+    .col-xs-12.col-sm-5
+      - if @commodity.blank?
+        .pull-right
+          %p
+            Cash
+            = number_to_currency(@cash_total)
+            %br
+            Check
+            = number_to_currency(@check_total)
+            %br
+            EZcash
+            = number_to_currency(@ezcash_total)
+            %br
+            %strong Total
+            = number_to_currency(@line_items_total)
 - unless @line_items.blank?
   - @line_items.group_by{ |i| i['PrintDescription'] }.each_with_index do |(line_item_group, line_items), index|
     - if @commodity.blank? or @commodity == line_item_group
