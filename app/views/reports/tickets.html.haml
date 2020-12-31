@@ -55,16 +55,25 @@
                 %i.fa.fa-download
               %a{href: tickets_reports_path(format: "zip", :customer_id => params[:customer_id], 'report[type]' => @type, 'report[closed]' => params['report'].blank? ? nil : params['report']['closed'], 'report[paid]' => params['report'].blank? ? nil : params['report']['paid'], 'report[held]' => params['report'].blank? ? nil : params['report']['held'], 'report[start_date]' => @start_date, 'report[end_date]' => @end_date), class: 'btn btn-default', title: "Images Zip Download"}
                 %i.fa.fa-file-zip-o
-      - if @type == 'commodity_summary' and not @line_items.blank?
-        %br
-        .row.form-group
-          %div{:class => "#{mobile_device? ? 'col-xs-6' : ''}"}
-            = select_tag 'report[commodity]', options_for_select(@line_items.map{ |item| [item["PrintDescription"]] }.uniq, @commodity), prompt: "All", class: "form-control", onchange: "this.form.submit();"
-      - if @type == 'customer_summary' and not @tickets.blank?
-        %br
-        .row.form-group
-          %div{:class => "#{mobile_device? ? 'col-xs-6' : ''}"}
-            = select_tag 'report[customer]', options_for_select(@tickets.map{ |ticket| ["#{ticket['FirstName']} #{ticket['LastName']}"] }.uniq, @customer), prompt: "All", class: "form-control", onchange: "this.form.submit();"
+      %br
+      .row.form-group
+        .col-xs-12
+          -# %div{:class => "#{mobile_device? ? 'col-xs-6' : 'col-xs-6'}"}
+          %div.col-xs-6
+            - if @type == 'commodity_summary' and not @line_items.blank?
+              = select_tag 'report[commodity]', options_for_select(@line_items.map{ |item| [item["PrintDescription"]] }.uniq, @commodity), prompt: "All", class: "form-control", onchange: "this.form.submit();"
+            - if @type == 'customer_summary' and not @tickets.blank?
+              = select_tag 'report[customer]', options_for_select(@tickets.map{ |ticket| ["#{ticket['FirstName']} #{ticket['LastName']}"] }.uniq, @customer), prompt: "All", class: "form-control", onchange: "this.form.submit();"
+          - unless @line_items.blank?
+            -# %div{:class => "#{mobile_device? ? 'col-xs-6' : 'col-xs-6'}"}
+            %div.col-xs-6
+              %span.inline.pull-right
+                %a.btn.btn-default.btn-sm{id: 'show_charts', href: nil, onclick: "$(this).hide(); $('#hide_charts').show(); $('#charts').show();"} 
+                  %i.fa.fa-caret-down
+                  Charts
+                %a.btn.btn-default.btn-sm{style: 'display: none;', id: 'hide_charts', href: nil, onclick: "$(this).hide(); $('#charts').hide(); $('#show_charts').show();"} 
+                  %i.fa.fa-caret-up
+                  Charts
                 
     - unless @tickets.blank?
       - unless @type == 'commodity_summary'
