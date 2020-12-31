@@ -269,7 +269,7 @@
                         %i.fa.fa-balance-scale.fa-lg
                       = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][price]", 0, class: "amount-calculation-field", required: true
-                  = hidden_field_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "amount-calculation-field", required: true
+                  = hidden_field_tag "ticket[line_items][][unit_of_measure]", 'EA', class: "amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
