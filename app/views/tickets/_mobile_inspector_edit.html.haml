@@ -75,7 +75,7 @@
                                 %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         %span.input-group-addon
                           %i.fa.fa-plus{style: "font-size:0.7em;"}
-                        = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field"
+                        = phone_field_tag "ticket[line_items][][gross]", number_with_precision(line_item['GrossWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", readonly: true
                         %span.input-group-addon
                           %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross",  'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => line_item['GrossWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
@@ -93,20 +93,22 @@
                                 %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                         %span.input-group-addon
                           %i.fa.fa-minus{style: "font-size:0.7em;"}
-                        = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare"
+                        = phone_field_tag "ticket[line_items][][tare]", number_with_precision(line_item['TareWeight'], precision: 2, strip_insignificant_zeros: true), :placeholder => "Tare", class: "form-control input-lg amount-calculation-field tare", readonly: true
                         %span.input-group-addon
                           %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => line_item['TareWeight'], 'data-item-name' => line_item["PrintDescription"], 'data-item-id' => line_item["Id"]}
                             %i.fa.fa-upload.fa-2x
                       %br
                       = hidden_field_tag "ticket[line_items][][net]", line_item['NetWeight'], :placeholder => "Net", class: "form-control input-lg amount-calculation-field", readonly: true
-                    .input-group
-                      %span.input-group-addon
-                        %i.fa.fa-dollar.fa-lg
-                      = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                      =# hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], :placeholder => "Unit of Measure", class: "form-control input-lg  amount-calculation-field", required: true
-                      %span.input-group-addon
-                        %i.fa.fa-balance-scale.fa-lg
-                      = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations, line_item['UnitOfMeasure']), class: "form-control input-lg amount-calculation-field", required: true
+                    -#
+                      .input-group
+                        %span.input-group-addon
+                          %i.fa.fa-dollar.fa-lg
+                        = text_field_tag "ticket[line_items][][price]", line_item['Price'], :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                        %span.input-group-addon
+                          %i.fa.fa-balance-scale.fa-lg
+                        = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations, line_item['UnitOfMeasure']), class: "form-control input-lg amount-calculation-field", required: true
+                    = hidden_field_tag "ticket[line_items][][price]", line_item['Price'], class: "amount-calculation-field", required: true
+                    = hidden_field_tag "ticket[line_items][][unit_of_measure]", line_item['UnitOfMeasure'], class: "amount-calculation-field", required: true
                     = hidden_field_tag "ticket[line_items][][amount]", line_item['ExtendedAmount'], :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                     - unless line_item['TaxCollection'].blank?
                       - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
@@ -130,62 +132,62 @@
                       = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                     %br
                     = render partial: 'more_line_item_options', locals: {line_item: line_item, id: "#{line_item['Id']}"}
-                    
-                .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
-                  .calculation_details
-                    - if line_item['UnitOfMeasure'] == 'EA'
-                      %strong Quantity:
-                      = "#{number_with_precision(line_item['Quantity'], :precision => 1, strip_insignificant_zeros: true)}"
-                    - else
-                      %strong Gross:
-                      = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
-                      &nbsp;
-                      %strong Tare:
-                      = "#{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
-                      &nbsp;
-                      %strong Net:
-                      = "#{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)} LB"
-                    &nbsp;
-                    = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
-                    &nbsp;
-                    %strong= "$#{line_item['ExtendedAmount']}"
-                  / Deduction weights
-                  .weight_deduction_details
-                    - unless line_item["DeductionCollection"].blank?
-                      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
-                        - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
-                        - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
-                          %strong Less:
-                          = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                -#    
+                  .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
+                    .calculation_details
+                      - if line_item['UnitOfMeasure'] == 'EA'
+                        %strong Quantity:
+                        = "#{number_with_precision(line_item['Quantity'], :precision => 1, strip_insignificant_zeros: true)}"
                       - else
-                        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                        %strong Gross:
+                        = "#{number_with_precision(line_item['GrossWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                        &nbsp;
+                        %strong Tare:
+                        = "#{number_with_precision(line_item['TareWeight'], :precision => 2, strip_insignificant_zeros: true)}"
+                        &nbsp;
+                        %strong Net:
+                        = "#{number_with_precision(line_item['NetWeight'], :precision => 2, strip_insignificant_zeros: true)} LB"
+                      &nbsp;
+                      = "$#{number_with_precision(line_item['Price'], :precision => 3, strip_insignificant_zeros: true)}/#{line_item['UnitOfMeasure']}"
+                      &nbsp;
+                      %strong= "$#{line_item['ExtendedAmount']}"
+                    / Deduction weights
+                    .weight_deduction_details
+                      - unless line_item["DeductionCollection"].blank?
+                        - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                          - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
                           - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
                             %strong Less:
                             = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
-                  / Deduction dollar amounts
-                  .dollar_amount_deduction_details
-                    - unless line_item["DeductionCollection"].blank?
-                      - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
-                        - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
-                        - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
-                          %strong Less:
-                          = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
-                      - else
-                        - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                        - else
+                          - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                            - unless (line_item_deduction["DeductWeight"].blank? or line_item_deduction["DeductWeight"].to_i.zero?)
+                              %strong Less:
+                              = "#{number_with_precision(line_item_deduction["DeductWeight"], :precision => 3, strip_insignificant_zeros: true)} LB"
+                    / Deduction dollar amounts
+                    .dollar_amount_deduction_details
+                      - unless line_item["DeductionCollection"].blank?
+                        - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
+                          - line_item_deduction = line_item["DeductionCollection"]["ApiTicketItemDeduction"]
                           - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
                             %strong Less:
                             = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
-                  - unless line_item['TaxCollection'].blank?
-                    / Taxes
-                    .tax_details
-                      %strong Taxes
-                      - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
-                        - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
-                          = "$#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
-                      - else # Multiple line item tax results returned
-                        - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
-                          - unless tax['TaxAmount'] == '0.00'
-                            = "$#{tax['TaxAmount']}"
+                        - else
+                          - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
+                            - unless (line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?)
+                              %strong Less:
+                              = "$#{number_with_precision(line_item_deduction["DeductDollarAmount"], :precision => 2, strip_insignificant_zeros: true)}"
+                    - unless line_item['TaxCollection'].blank?
+                      / Taxes
+                      .tax_details
+                        %strong Taxes
+                        - if line_item['TaxCollection']['ApiTicketItemTax'].is_a? Hash # Only one line item tax result returned
+                          - unless line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount'] == '0.00'
+                            = "$#{line_item['TaxCollection']['ApiTicketItemTax']['TaxAmount']}"
+                        - else # Multiple line item tax results returned
+                          - line_item['TaxCollection']['ApiTicketItemTax'].each do |tax|
+                            - unless tax['TaxAmount'] == '0.00'
+                              = "$#{tax['TaxAmount']}"
       - else
         / New item
         %div.ticket_input_fields_wrap.new_item
@@ -234,7 +236,7 @@
                               %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                       %span.input-group-addon
                         %i.fa.fa-plus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true
+                      = phone_field_tag "ticket[line_items][][gross]", 0, :placeholder => "Gross", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
                       %span.input-group-addon
                         %a{href: '#', id: 'gross_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Gross", 'data-event-code-id' => current_user.company.gross_event_code_id, 'data-weight' => 0}
                           %i.fa.fa-upload.fa-2x
@@ -252,20 +254,22 @@
                               %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
                       %span.input-group-addon
                         %i.fa.fa-minus{style: "font-size:0.7em;"}
-                      = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true
+                      = phone_field_tag "ticket[line_items][][tare]", 0, :placeholder => "Subtract", class: "form-control input-lg amount-calculation-field tare", required: true, readonly: true
                       %span.input-group-addon
                         %a{href: '#', id: 'tare_picture_button', class: 'gross_or_tare_picture_button', 'data-event-code' => "Tare", 'data-event-code-id' => current_user.company.tare_event_code_id, 'data-weight' => 0}
                           %i.fa.fa-upload.fa-2x
                     %br
                     = hidden_field_tag "ticket[line_items][][net]", 0, :placeholder => "Net", class: "form-control input-lg amount-calculation-field", required: true, readonly: true
-                  .input-group
-                    %span.input-group-addon
-                      %i.fa.fa-dollar.fa-lg
-                    = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                    =# hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
-                    %span.input-group-addon
-                      %i.fa.fa-balance-scale.fa-lg
-                    = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
+                  -#
+                    .input-group
+                      %span.input-group-addon
+                        %i.fa.fa-dollar.fa-lg
+                      = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
+                      %span.input-group-addon
+                        %i.fa.fa-balance-scale.fa-lg
+                      = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
+                  = hidden_field_tag "ticket[line_items][][price]", 0, class: "amount-calculation-field", required: true
+                  = hidden_field_tag "ticket[line_items][][unit_of_measure]", 'EA', class: "amount-calculation-field", required: true
                   = hidden_field_tag "ticket[line_items][][amount]", 0, :placeholder => "Amount", class: "form-control input-lg amount", required: true, readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_1]", '0.00', :placeholder => "Tax Amount 1", class: "form-control input-lg amount-calculation-field tax", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_amount_2]", '0.00', :placeholder => "Tax Amount 2", class: "form-control input-lg amount-calculation-field tax", readonly: true
@@ -274,23 +278,19 @@
                   = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                   %br
-                  = render partial: 'more_line_item_options', locals: {line_item: line_item, id: "#{line_item['Id']}"}
-                  
-              %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
-                .calculation_details
-                .deduction_details
-                -# %ul{class: 'list-inline'}
-                / Deduction weights
-                .weight_deduction_details
-                / Deduction dollar amounts
-                .dollar_amount_deduction_details
-                / Taxes
-                .tax_details
-                -#
-                  - unless mobile_device?
-                    .pull-right
-                      %a.text-muted{"aria-controls" => "collapse#{new_item_id}", "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", class: 'pull-right ticket_collapse_link' }
-                        %i.fa.fa-check-square.fa-2x.collapse_icon
+                  =# render partial: 'more_line_item_options', locals: {line_item: line_item, id: "#{line_item['Id']}"}
+                  = render partial: 'more_line_item_options', locals: {line_item: nil, id: "#{new_item_id}"}
+              -#    
+                %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
+                  .calculation_details
+                  .deduction_details
+                  -# %ul{class: 'list-inline'}
+                  / Deduction weights
+                  .weight_deduction_details
+                  / Deduction dollar amounts
+                  .dollar_amount_deduction_details
+                  / Taxes
+                  .tax_details
       .row.form-group{id: 'calculating', style: 'display:none;'}
         %div.col-xs-12
           %h5.text-center
