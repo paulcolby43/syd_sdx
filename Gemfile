@@ -139,6 +139,9 @@ gem 'zipline'
 # sorting and reordering a number of objects in a list
 gem 'acts_as_list'
 
+# GraphQL Client
+gem 'graphql-client'
+
 
 # https://github.com/cyu/rack-cors
 #gem 'rack-cors'
