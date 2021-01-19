@@ -1,8 +1,53 @@
 class Customer
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($customer_filter_input: CustomerFilterInput) {
+        customers(where: $customer_filter_input)
+          {
+          nodes{
+            id
+            customerNumber
+            firstName
+            lastName
+            company
+            phone
+            address1
+            address2
+            city
+            state
+            zip
+            idNumber
+            idState
+            idExpires
+            customerSalesTaxes{
+              salesTaxType{
+                salesTaxes{
+                  taxName
+                  taxPercent
+                }
+              }
+            }
+          }
+        }
+      }
+    GRAPHQL
+  
+  def self.v2_find_all(filter)
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllQuery, variables: {customer_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.customers.blank? or response.data.customers.nodes.blank?
+      response.data.customers.nodes 
+    else
+      nil
+    end
+  end
   
   
   #############################

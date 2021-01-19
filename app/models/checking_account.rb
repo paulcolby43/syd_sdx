@@ -1,8 +1,29 @@
 class CheckingAccount
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query {
+        checkAccounts
+          {
+          nodes{
+            id
+            name
+          }
+        }
+      }
+    GRAPHQL
+  
+  def self.v2_find_all
+    response = DRAGONQLAPI::Client.query(FindAllQuery)
+    unless response.blank? or response.data.blank? or response.data.check_accounts.blank? or response.data.check_accounts.nodes.blank?
+      response.data.check_accounts.nodes 
+    else
+      nil
+    end
+  end
   
   #############################
   #     Class Methods         #

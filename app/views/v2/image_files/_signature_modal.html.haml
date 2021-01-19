@@ -1,0 +1,36 @@
+%div{:id => "signature_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_for ImageFile.new, remote: true do |f|
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-header
+          %p= link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+        .modal-body
+          = f.hidden_field :user_id, value: current_user.id
+          = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :ticket_number, value: @ticket.ticket_number
+          = f.hidden_field :event_code_id, value: current_user.company.signature_event_code_id
+          = f.hidden_field :customer_number, value: @ticket.customer.id
+          = f.hidden_field :customer_name, value: "#{@ticket.customer.first_name} #{@ticket.customer.last_name}"
+          = f.hidden_field :contract_verbiage, value: @contract.verbiage unless @contract.blank?
+          %h3
+            - unless current_user.company.signature_verbiage.blank?
+              = current_user.company.signature_verbiage.html_safe
+          .form-group
+            .sigPad
+              %div.sigNav
+                .clearButton
+                  %a{href: "#clear", class: 'pull-right'} Clear signature
+              .sig.sigWrapper
+                .typed
+                %canvas.pad{height: "105", width: "698"}
+                %input.output{name: "output", type: "hidden"}/
+          %hr
+          %p
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg', id: "new_image_file_submit", data: { disable_with: "Please wait..." }) do
+              I accept the terms of this agreement
+
+:javascript
+
+  $(document).ready(function() {
+    $('.sigPad').signaturePad({drawOnly:true, lineWidth: 0});
+  });

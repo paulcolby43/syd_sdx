@@ -1,0 +1,11 @@
+$('#customers').append('<%= j render "customer" %>');
+$('#more_customers_spinner').hide();
+
+<% if @customers.next_page %>
+  $('a.load-more-customers').show();
+  $('a.load-more-customers').attr('href', '<%= v2_customers_path page: @customers.next_page, q: params[:q], yard_filter: params[:yard_filter] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-customers').attr('href', '#');
+  $('a.reload-customers').show();
+<% end %>

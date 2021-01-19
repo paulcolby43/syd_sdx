@@ -1,0 +1,99 @@
+- @tickets.each do |ticket|
+  =# render partial: "image_files/upload_modal", locals: {ticket: ticket}
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %h4.text-muted
+        %div.panel.panel-primary
+          %div.list_group
+            - unless current_user.customer? or ticket.ticket_status == 'PAID'
+              %a{href: edit_v2_ticket_path(ticket.id, status: ticket.ticket_status), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket.ticket_number}"}}
+                .pull-right
+                  = number_to_currency(Ticket.v2_line_items_total(ticket.ticket_items)) unless ticket.ticket_items.blank?
+                  %i.fa.fa-chevron-right.fa-lg
+                %strong= ticket.ticket_number
+                - unless ticket.customer.first_name.blank? and ticket.customer.last_name.blank?
+                  = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
+                  %br
+                = ticket.customer.company
+            - else
+              %a{href: v2_ticket_path(ticket.id, status: ticket.ticket_status), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket.ticket_number}"}}
+                .pull-right
+                  = number_to_currency(Ticket.v2_line_items_total(ticket.ticket_items)) unless ticket.ticket_items.blank?
+                  %i.fa.fa-chevron-right.fa-lg
+                %strong= ticket.ticket_number
+                - unless ticket.customer.first_name.blank? and ticket.customer.last_name.blank?
+                  = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
+                  %br
+                = ticket.customer.company
+            %div.list-group-item
+              - if @status == 'CLOSED' or @status == 'PAID'
+                = ticket.date_created.to_date.strftime("%m/%d/%y")
+                .pull-right
+                  -#
+                    %a.btn.btn-default{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                      More
+                      %b.caret
+                  %a.btn.btn-default{href: '#', :role => "button", :tabindex => "0", title: "More Options"}
+                    More
+                    %b.caret
+                %br
+              - else
+                = ticket.date_created.to_date.strftime("%m/%d/%y")
+                .pull-right
+                  %a.btn.btn-primary{href: "#ticket_#{ticket.id}_upload_form", id: "ticket_#{ticket.id}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                    %i.fa.fa-camera
+                    = "Picture" unless mobile_device?
+                  %a.btn.btn-default{href: "#ticket_#{ticket.id}_email_modal", id: "ticket_#{ticket.id}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
+                    %i.fa.fa-envelope
+                    = "Email" unless mobile_device?
+                  =# render partial: "send_email_modal", locals: {ticket: ticket}
+                  %a.btn.btn-default{href: ticket_path(ticket.id, status: ticket.ticket_status, now: DateTime.now, format: 'pdf'), target: '_blank'}
+                    %i.fa.fa-file-pdf-o
+                    = "PDF" unless mobile_device?
+                %br
+              - unless ticket.description.blank?
+                %small= ticket.description
+              - else
+                %br
+
+:javascript
+  $('[data-toggle="popover"]').popover();
+
+  //File upload for dynamically added tickets
+  $(".image_file_upload_form").fileupload({
+    dataType: "script",
+    disableImageResize: false,
+    imageMaxWidth: 1024,
+    imageMaxHeight: 768,
+    imageMinWidth: 800,
+    imageMinHeight: 600,
+    imageCrop: false,
+    add: function(e, data) {
+      var current_data, file, form, types;
+      file = void 0;
+      types = void 0;
+      types = /(\.|\/)(gif|jpe?g|png|pdf)$/i;
+      file = data.files[0];
+      if (types.test(file.type) || types.test(file.name)) {
+        data.context = $(tmpl("template-upload", file));
+        current_data = $(this);
+        data.process(function() {
+          return current_data.fileupload('process', data);
+        }).done(function() {
+          return data.submit();
+        });
+        form = $(this).closest("form");
+        form.find('#pictures').prepend('<div class="row"><div class="col-xs-12 col-sm-4 col-md-4 col-lg-4"><div class="thumbnail img-responsive"><img src="' + URL.createObjectURL(data.files[0]) + '"/></div></div></div>');
+        return $(".picture_loading_spinner").show();
+      } else {
+        return alert("" + file.name + " is not a gif, jpeg, or png picture file");
+      }
+    },
+    progress: function(e, data) {
+      var progress;
+      if (data.context) {
+        progress = parseInt(data.loaded / data.total * 100, 10);
+        return data.context.find('.progress-bar').css('width', progress + '%');
+      }
+    }
+  });

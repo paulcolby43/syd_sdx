@@ -1,0 +1,48 @@
+%div{:id => "payment_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        Pay Ticket
+        = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+      .modal-body
+        .input-group
+          .input-group-addon
+            %i.fa.fa-dollar
+          = text_field_tag :payment_amount, nil, :placeholder => "Amount", class: "form-control input-lg", readonly: true
+        %br
+        - unless @drawers.blank?
+          = select_tag :drawer_id, options_for_select(@drawers.map{ |drawer| [drawer.drawer_name, drawer.id] }.unshift(['No Drawer', empty_guid])), class: "form-control input-lg" 
+          %br
+        - else
+          = hidden_field_tag :drawer_id, empty_guid
+        .btn-group-vertical.btn-block{"data-toggle" => "buttons"}
+          %label.btn.btn-lg.btn-default{class: 'active cash_account'}
+            = radio_button_tag :payment_type, 'cash', checked: true
+            %i.fa.fa-dollar
+            Cash
+          - unless @checking_accounts.blank?
+            - @checking_accounts.each do |checking_account|
+              %label.btn.btn-lg.btn-default{class: "checking_account", "data-checking-account-id" => checking_account.id, "data-checking-account-name" => checking_account.name}
+                = radio_button_tag :payment_type, 'check'
+                %i.fa.fa-pencil
+                = truncate(checking_account.name, length: 20)
+        %br
+        - unless @checking_accounts.blank?
+          #check_number_field{style: 'display:none;'}
+            %br
+            .input-group.col-xs-12.col-sm-12.col-md-12
+              .input-group-addon
+                %i.fa.fa-spinner.fa-lg.fa-spin{id: 'finding_check_number_spinner', style: 'display:none;'}
+                %i.fa.fa-hashtag
+              = text_field_tag "checking_account_payment[check_number]", nil, :placeholder => "Check", class: "form-control input-lg"
+          = hidden_field_tag "checking_account_payment[id]", nil
+          = hidden_field_tag "checking_account_payment[name]", nil
+              
+        
+      .modal-footer
+        - if @ticket.ticket_status == 'HOLD'
+          = button_tag(name: 'close_and_pay_ticket', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
+            Pay
+        - elsif @ticket.ticket_status == 'CLOSED'
+          = button_tag(name: 'pay_ticket', :type => 'submit', :class => 'btn btn-primary btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pay"}, autocomplete: "off", onclick: "$(this).closest('.form-group').find('#save_button').removeAttr('data-disable-with'); ") do
+            Pay

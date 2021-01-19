@@ -232,6 +232,11 @@ Rails.application.routes.draw do
   
   namespace :v2 do
     resources :tickets
+    resources :customers do
+      member do
+        get 'create_ticket'
+      end
+    end
   end
   
   # The priority is based upon order of creation: first created -> highest priority.

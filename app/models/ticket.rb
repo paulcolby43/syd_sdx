@@ -1,8 +1,129 @@
 class Ticket
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($ticket_head_filter_input: TicketHeadFilterInput) {
+        ticketHeads(order: {dateCreated: DESC}
+        where: $ticket_head_filter_input)
+          {
+          nodes {
+            id,
+            ticketNumber,
+            ticketStatus,
+            description,
+            dateCreated,
+            customer{
+              ...CustomerModel
+            },
+            ticketItems {
+              extendedAmount,
+              ticketItemStatus,
+              ticketItemTaxes{
+                taxAmount
+              }
+            }
+          }
+        }
+      }
+      fragment CustomerModel on Customer {
+        id
+        firstName
+        lastName
+        company
+      }
+    GRAPHQL
+    
+  def self.v2_all_by_filter(filter)
+    response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank? or response.data.ticket_heads.nodes.blank?
+      return response.data.ticket_heads.nodes
+    else
+      return nil
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query ($id : Uuid!) {
+        ticketHeadById(id : $id){
+            ...TicketHeadModel
+          }
+        }
+      fragment TicketHeadModel on TicketHead{
+        id,
+        ticketNumber,
+        ticketStatus,
+        description,
+        dateCreated,
+        customerId
+        yardId
+        customer{
+          ...CustomerModel
+        }
+        ticketItems {
+          id,
+          commodityId,
+          printDescription,
+          quantity,
+          grossWeight,
+          tareWeight,
+          netWeight,
+          price,
+          unitOfMeasure,
+          extendedAmount,
+          ticketItemStatus,
+          serialNumber,
+          notes,
+          ticketItemTaxes{
+            taxAmount
+            taxPercent
+          }
+          ticketItemDeductions {
+            id,
+            deductWeight,
+            deductWeightDescription,
+            deductDollarAmount,
+            deductDollarAmountDescription
+          }
+        }
+        accountPayableLineItems  {
+          amountDue
+          amountDueInAssignedCurrency
+          paidAmount
+          paymentMethod
+        }
+      }
+      fragment CustomerModel on Customer {
+        id
+        firstName
+        lastName
+        company
+      }
+    GRAPHQL
+    
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.ticket_head_by_id.blank?
+      return response.data.ticket_head_by_id 
+    else
+      return nil
+    end
+  end
+  
+  def self.v2_line_items_total(ticket_items)
+    total = 0
+    ticket_items.each do |ticket_item|
+      total = total + ticket_item.extended_amount.to_d
+      # Add in any taxes
+      ticket_item.ticket_item_taxes.each do |ticket_item_tax|
+        total = total + ticket_item_tax.tax_amount.to_d
+      end
+    end
+    return total
+  end
+  
   
   #############################
   #     Class Methods         #

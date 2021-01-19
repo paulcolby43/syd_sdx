@@ -1,0 +1,18 @@
+.navbar.navbar-default.navbar-fixed-bottom{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+        .col-xs-4.col-sm-4
+          - unless current_user.customer?
+            %a{href: "#ticket_#{@ticket.id}_upload_form", id: "ticket_#{@ticket.id}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+              %i.fa.fa-camera.fa-lg
+              = "Picture" unless mobile_device?
+        .col-xs-4.col-sm-4
+          %a{href: v2_ticket_path(@ticket.id, status: @ticket.ticket_status, now: DateTime.now, format: 'pdf'), target: '_blank'}
+            %i.fa.fa-file-pdf-o.fa-lg
+            = "Print" unless mobile_device?
+
+- unless current_user.customer?
+  -#
+    %div#individual_ticket_upload= render partial: "image_files/upload_modal", locals: {ticket: @ticket}

@@ -45,7 +45,7 @@ module ApplicationHelper
   end
   
   def ticket_status_string(status_number)
-    status_hash = {"1" => "Closed", "2" => "Held", "3" => "Paid", "5" => "Void", "7" => "Awaiting Approval"}
+    status_hash = {"1" => "Closed", "2" => "Hold", "3" => "Paid", "5" => "Void", "7" => "Awaiting Approval"}
     status_hash[status_number]
   end
   

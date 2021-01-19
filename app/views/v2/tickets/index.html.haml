@@ -1,0 +1,6 @@
+- if current_user.mobile_admin?
+  = render partial: "mobile_admin_index"
+- elsif current_user.mobile_inspector?
+  = render partial: "mobile_inspector_index"
+- else
+  = render partial: "mobile_admin_index"

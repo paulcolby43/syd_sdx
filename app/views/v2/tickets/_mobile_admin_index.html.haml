@@ -1,0 +1,145 @@
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless current_user.customer?
+      .btn-group
+        - if @status == 'HOLD'
+          %button{class: 'btn btn-default btn-lg active'}
+            %i.fa.fa-folder-open-o.fa-lg
+            = "Hold" unless mobile_device?
+          %a{href: v2_tickets_path(status: 'CLOSED'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Closed'}"}}
+            %i.fa.fa-folder.fa-lg
+            = "Closed" unless mobile_device?
+          %a{href: v2_tickets_path(status: 'PAID'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
+            %i.fa.fa-dollar
+            = "Paid" unless mobile_device?
+        - elsif @status == 'CLOSED'
+          %a{href: v2_tickets_path(status: 'HOLD'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Hold'}"}}
+            %i.fa.fa-folder-open-o.fa-lg
+            = "Hold" unless mobile_device?
+          %button{class: 'btn btn-default btn-lg active'}
+            %i.fa.fa-folder.fa-lg
+            = "Closed" unless mobile_device?
+          %a{href: v2_tickets_path(status: 'PAID'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Paid'}"}}
+            %i.fa.fa-dollar
+            = "Paid" unless mobile_device?
+        - elsif @status == 'PAID'
+          %a{href: v2_tickets_path(status: 'HOLD'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Hold'}"}}
+            %i.fa.fa-folder-open-o.fa-lg
+            = "Hold" unless mobile_device?
+          %a{href: v2_tickets_path(status: 'CLOSED'), :class => "btn btn-default btn-lg ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>#{mobile_device? ? '' : ' Closed'}"}}
+            %i.fa.fa-folder.fa-lg
+            = "Closed" unless mobile_device?
+          %button{class: 'btn btn-default btn-lg active'}
+            %i.fa.fa-dollar.fa-lg
+            = "Paid" unless mobile_device?
+      %span.pull-right
+        %a.btn.btn-sm.btn-primary{:href => create_ticket_customer_path(empty_guid),  class: 'ticket_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> New Ticket"}} 
+          %i.fa.fa-ticket.fa-lg
+          New Ticket
+
+      - unless mobile_device?
+        = form_tag v2_tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+          = hidden_field_tag :status, @status
+          %p
+            .form-group
+              = text_field_tag :start_date, nil, :placeholder => "Start Date", value: "#{(@start_date.blank? or params[:q].present?) ? nil : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            To
+            .form-group
+              = text_field_tag :end_date, nil, :placeholder => "End Date", value: "#{(@end_date.blank? or params[:q].present?) ? nil : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+          %p
+            = search_field_tag :q, params[:q], :placeholder => "Ticket Number", class: "form-control input-lg"
+            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+              %i.fa.fa-search
+              Search
+      - else
+        %p
+          = form_tag v2_tickets_path, id: 'ticket_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+            = hidden_field_tag :status, @status
+            .row
+              %p
+                .col-xs-6
+                  = label_tag "Start", nil, :class => 'control-label'
+                  = text_field_tag :start_date, nil, :placeholder => "Start Date", value: "#{(@start_date.blank? or params[:q].present?) ? nil : @start_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+                .col-xs-6
+                  = label_tag "End", nil, :class => 'control-label'
+                  = text_field_tag :end_date, nil, :placeholder => "End Date", value: "#{(@end_date.blank? or params[:q].present?) ? nil : @end_date}", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+            .row
+              %p
+                - unless @status == 'shipments'
+                  .col-xs-6
+                    = search_field_tag :q, params[:q], :placeholder => "Search tickets", class: "form-control input-lg"
+                .col-xs-6
+                  = button_tag(:type => 'submit', :class => 'btn btn-default btn-lg', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+                    %i.fa.fa-search
+                    Search
+    - unless @tickets.blank?
+      %div{id: "tickets"}
+        - @tickets.each do |ticket|
+          = render partial: "v2/image_files/upload_modal", locals: {ticket: ticket}
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %h4.text-muted
+                %div.panel.panel-primary
+                  %div.list_group
+                    - unless current_user.customer? or ticket.ticket_status == 'PAID'
+                      %a{href: edit_v2_ticket_path(ticket.id), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket.ticket_number}"}}
+                        .pull-right
+                          = number_to_currency(Ticket.v2_line_items_total(ticket.ticket_items)) unless ticket.ticket_items.blank?
+                          %i.fa.fa-chevron-right.fa-lg
+                        %strong= ticket.ticket_number
+                        - unless ticket.customer.first_name.blank? and ticket.customer.last_name.blank?
+                          = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
+                          %br
+                        = ticket.customer.company
+                    - else
+                      %a{href: v2_ticket_path(ticket.id), class: "list-group-item ticket_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{ticket.ticket_number}"}}
+                        .pull-right
+                          = number_to_currency(Ticket.v2_line_items_total(ticket.ticket_items)) unless ticket.ticket_items.blank?
+                          %i.fa.fa-chevron-right.fa-lg
+                        %strong= ticket.ticket_number
+                        - unless ticket.customer.first_name.blank? and ticket.customer.last_name.blank?
+                          = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
+                          %br
+                        = ticket.customer.company
+                    %div.list-group-item
+                      - if @status == 'CLOSED' or @status == 'PAID'
+                        = ticket.date_created.to_date.strftime("%m/%d/%y")
+                        .pull-right
+                          -#
+                          %a.btn.btn-default{"data-content" => "#{render partial: 'more_ticket_options', locals: {ticket: ticket}}", "data-placement" => 'left', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "More Options"}
+                            More
+                            %b.caret
+                          -#
+                            %a.btn.btn-default{href: '#', :role => "button", :tabindex => "0", title: "More Options"}
+                              More
+                              %b.caret
+                        %br
+                      - else
+                        = ticket.date_created.to_date.strftime("%m/%d/%y")
+                        .pull-right
+                          %a.btn.btn-primary{href: "#ticket_#{ticket.id}_upload_form", id: "ticket_#{ticket.id}_picture_upload_modal_link", "data-toggle" => "modal", :alt => "new_image_file_form"}
+                            %i.fa.fa-camera
+                            = "Picture" unless mobile_device?
+                          %a.btn.btn-default{href: "#ticket_#{ticket.id}_email_modal", id: "ticket_#{ticket.id}_email_modal_link", "data-toggle" => "modal", :alt => "ticket_email_modal"}
+                            %i.fa.fa-envelope
+                            = "Email" unless mobile_device?
+                          =# render partial: "send_email_modal", locals: {ticket: ticket}
+                          %a.btn.btn-default{href: v2_ticket_path(ticket.id, status: ticket.ticket_status, now: DateTime.now, format: 'pdf'), target: '_blank'}
+                            %i.fa.fa-file-pdf-o
+                            = "PDF" unless mobile_device?
+                        %br
+                      - unless ticket.description.blank?
+                        %small= ticket.description
+                      - else
+                        %br
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %i.fa.fa-refresh.fa-spin.fa-2x{:id => "more_tickets_spinner", style: "display:none;"}
+            %p
+              =# link_to 'Load more ...', v2_tickets_path(page: @tickets.next_page, q: params[:q], status: @status, start_date: @start_date, end_date: @end_date, sort_column: @sort_column, sort_direction: @sort_direction), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
+              = link_to 'Load more ...', v2_tickets_path(page: @tickets.next_page, q: params[:q], status: @status, start_date: @start_date, end_date: @end_date), :class => 'load-more-tickets btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_tickets_spinner').show();" if @tickets.next_page
+    - else
+      %p.text-center No tickets found            
+    
+=# render partial: "shared/tickets_footer_navbar", locals: {title: "Tickets"}

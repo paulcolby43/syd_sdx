@@ -1,0 +1,93 @@
+=# render partial: "shared/navbars/customers_navbar", locals: {title: "Customers"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - if params[:q].blank? or not @search.blank?
+      .pull-right
+        %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+          %i.fa.fa-user-plus.fa-lg
+          Customer
+      %br
+    %p
+      = form_tag v2_customers_path, id: 'customer_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        - unless current_user.mobile_greeter?
+          = select_tag :yard_filter, options_for_select([['All Yards', 'all_yards'], ['My Yard', '1\my_yard']], @yard_filter), class: "form-control input-lg"
+        - else
+          = hidden_field_tag :yard_filter, '1\my_yard'
+        - if mobile_device?
+          %br
+        .input-group
+          = search_field_tag :q, params[:q], :placeholder => "Search customers", class: "form-control input-lg"
+          = hidden_field_tag :first_name, params[:first_name]
+          = hidden_field_tag :last_name, params[:last_name]
+          = hidden_field_tag :license_number, params[:license_number]
+          = hidden_field_tag :dob, params[:dob]
+          = hidden_field_tag :sex, params[:sex]
+          = hidden_field_tag :issue_date, params[:issue_date]
+          = hidden_field_tag :expiration_date, params[:expiration_date]
+          = hidden_field_tag :streetaddress, params[:streetaddress]
+          = hidden_field_tag :city, params[:city]
+          = hidden_field_tag :state, params[:state]
+          = hidden_field_tag :zip, params[:zip]
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{id: 'customer_search_button', :type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+            - current_user.license_reader_devices.each do |license_reader_device|
+              %a{href: '#', 'data-device-id' => license_reader_device.id, onclick: "$(this).find('.data_scan_spinner:first').show();", class: 'drivers_license_scan_and_search btn btn-lg btn-default'}
+                %i.fa.fa-list-alt
+                = "#{license_reader_device.DeviceName}"
+                = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
+    - unless @search.blank?    
+      %p
+        %small.text-muted= "#{pluralize(@search.count, 'customer')} found"
+    - unless @customers.blank?
+      %div{id: "customers"}
+        - @customers.each do |customer|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %h4.text-muted
+                %div.panel.panel-primary
+                  %div.list_group
+                    %div.list-group-item
+                      .pull-right
+                        %a{href: create_ticket_v2_customer_path(customer.id), class: "btn btn-primary btn-lg customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                          %i.fa.fa-ticket
+                          Ticket
+                      = image_tag('avatar_thumbnail', class: 'thumbnail img-responsive', style: 'display:inline')
+                      = customer.customer_number
+                      - unless customer.first_name.blank? and customer.last_name.blank?
+                        = "#{customer.first_name} #{customer.last_name}"
+                      - else
+                        = "#{customer.company}"
+                    %a{href: v2_customer_path(customer.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{customer.company}"}, class: "list-group-item customer_button"}
+                      - unless customer.first_name.blank? and customer.last_name.blank?
+                        - if customer.company.blank?
+                          No company name
+                        - else
+                          = "#{customer.company}"
+                      %br
+                      = "#{customer.address1}"
+                      - unless customer.address2.blank?
+                        %br
+                        = "#{customer.address2}"
+                      %br
+                      = "#{customer.city}, #{customer.state} #{customer.zip}" unless customer.city.blank? and customer.state.blank? and customer.zip.blank?
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %i.fa.fa-refresh.fa-spin.fa-2x{:id => "more_customers_spinner", style: "display:none;"}
+            %p= link_to 'Load more ...', v2_customers_path(:page => @customers.next_page, :q => params[:q], :yard_filter => params[:yard_filter]), :class => 'load-more-customers btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_customers_spinner').show();" if @customers.next_page
+    - else
+      - unless params[:q].blank?
+        .row
+          .col-xs-12
+            %p.text-center No customers found  
+          .col-xs-12
+            %p.text-center
+              %a.btn.btn-primary.btn-lg{href: new_v2_customer_path(first_name: params[:first_name], last_name: params[:last_name], license_number: params[:license_number], dob: params[:dob], sex: params[:sex], issue_date: params[:issue_date], expiration_date: params[:expiration_date], streetaddress: params[:streetaddress], city: params[:city], state: params[:state], zip: params[:zip]), class: "#{mobile_device? ? 'btn-block' : ''} customer_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+                %i.fa.fa-user-plus.fa-lg
+                Create New Customer
+    
+= render partial: "v2/shared/customers_footer_navbar", locals: {title: "Customers"}

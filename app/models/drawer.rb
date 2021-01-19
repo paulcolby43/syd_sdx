@@ -1,8 +1,29 @@
 class Drawer
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query {
+        drawers
+          {
+          nodes{
+            id
+            drawerName
+          }
+        }
+      }
+    GRAPHQL
+  
+  def self.v2_find_all
+    response = DRAGONQLAPI::Client.query(FindAllQuery)
+    unless response.blank? or response.data.blank? or response.data.drawers.blank? or response.data.drawers.nodes.blank?
+      response.data.drawers.nodes 
+    else
+      nil
+    end
+  end
   
   #############################
   #     Class Methods         #

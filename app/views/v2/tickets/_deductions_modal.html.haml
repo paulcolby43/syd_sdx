@@ -1,0 +1,85 @@
+%div{:id => "item_#{id}_deductions_modal", :class => "modal fade deductions", :tabindex => "-1", :style => "display:none;"}
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        %strong 
+          %i.fa.fa-minus-circle
+          Deductions
+        = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+      .modal-body
+        %ul.nav.nav-tabs
+          %li.active
+            %a{:href => "#weight_#{id}", :data => {:toggle => "tab"}}
+              %i.fa.fa-balance-scale
+              = "Weight"
+          %li
+            %a{:href => "#dollar_amount_#{id}", :data => {:toggle => "tab"}}
+              %i.fa.fa-dollar
+              = "Dollar Amount"
+        .tab-content
+          .tab-pane.active{:id => "weight_#{id}"}
+            %br
+            %div.weight_deductions
+              - unless ticket_item.blank? or ticket_item.ticket_item_deductions.blank?
+                - ticket_item.ticket_item_deductions.each do |ticket_item_deduction|
+                  - unless ticket_item_deduction.deduct_weight_description.blank? and (ticket_item_deduction.deduct_weight.blank? or ticket_item_deduction.deduct_weight.to_i.zero?)
+                    = hidden_field_tag "ticket[line_items][][deductions][][id]", ticket_item_deduction.id
+                    .row.form-group
+                      %div{:class => "col-xs-12"}
+                        = select_tag "ticket[line_items][][deductions][][deduct_weight_description]", options_for_select(@deductions_grouped_for_select, ticket_item_deduction.deduct_weight_description), prompt: '-- Reason --', class: "form-control input-lg"
+                    .row.form-group
+                      %div{:class => "col-xs-12"}
+                        = phone_field_tag "ticket[line_items][][deductions][][deduct_weight]", ticket_item_deduction.deduct_weight, :placeholder => "Weight", class: "form-control input-lg amount-calculation-field deduction_weight"
+                    %hr
+              %div.weight_deduction_field{style: 'display:none;'}
+                .row.form-group
+                  %div{:class => "col-xs-12"}
+                    = select_tag "ticket[line_items][][deductions][][deduct_weight_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
+                .row.form-group
+                  %div{:class => "col-xs-12"}
+                    = text_field_tag "ticket[line_items][][deductions][][deduct_weight]", nil, :placeholder => "Weight", class: "form-control input-lg amount-calculation-field deduction_weight"
+                %hr
+            %a{href: nil, class: 'btn btn-warning add_weight_deduction'}
+              %i.fa.fa-plus
+              Add Weight Deduction
+            
+          .tab-pane{:id => "dollar_amount_#{id}"}
+            %br
+            %div.dollar_amount_deductions
+              - unless ticket_item.blank? or ticket_item.ticket_item_deductions.blank?
+                - ticket_item.ticket_item_deductions.each do |ticket_item_deduction|
+                  - unless ticket_item_deduction.deduct_dollar_amount_description.blank? and (ticket_item_deduction.deduct_dollar_amount.blank? or ticket_item_deduction.deduct_dollar_amount.to_i.zero?)
+                    = hidden_field_tag "ticket[line_items][][deductions][][id]", ticket_item_deduction.id
+                    .row.form-group
+                      %div{:class => "col-xs-12"}
+                        = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, ticket_item_deduction.deduct_dollar_amount_description), prompt: '-- Reason --', class: "form-control input-lg"
+                    .row.form-group
+                      %div{:class => "col-xs-12"}
+                        .input-group
+                          %span.input-group-addon
+                            %i.fa.fa-dollar.fa-lg
+                          = phone_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", ticket_item_deduction.deduct_dollar_amount, :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                    %hr
+              %div.dollar_amount_deduction_field{style: 'display:none;'}
+                .row.form-group
+                  %div{:class => "col-xs-12"}
+                    = select_tag "ticket[line_items][][deductions][][deduct_dollar_amount_description]", options_for_select(@deductions_grouped_for_select, nil), prompt: '-- Reason --', class: "form-control input-lg"
+                .row.form-group
+                  %div{:class => "col-xs-12"}
+                    .input-group
+                      %span.input-group-addon
+                        %i.fa.fa-dollar.fa-lg
+                      = text_field_tag "ticket[line_items][][deductions][][deduct_dollar_amount]", nil, :placeholder => "Amount", class: "form-control input-lg amount-calculation-field deduction_dollar_amount"
+                %hr
+
+            %a{href: nil, class: 'btn btn-warning add_dollar_amount_deduction'}
+              %i.fa.fa-plus
+              Add Dollar Amount Deduction
+            
+      .modal-footer
+        %button.btn.btn-default.btn-lg{"data-dismiss" => "modal", :type => "button"} Done
+
+:javascript
+  $('.modal').on('shown.bs.modal', function() {
+    $(this).find('[autofocus]').first().focus();
+  });

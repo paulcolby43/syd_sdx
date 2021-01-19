@@ -1,0 +1,21 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to 'javascript:history.back()' do
+              %i.fa.fa-chevron-left
+              Back
+        .col-xs-4.col-sm-4
+          - unless mobile_device?
+            - if @ticket.ticket_status == 'HOLD' or @ticket.ticket_status.blank?
+              %i.fa.fa-folder-open-o.fa-lg
+            - elsif @ticket.ticket_status == 'CLOSED'
+              %i.fa.fa-folder.fa-lg
+            - elsif @ticket.ticket_status == 'PAID'
+          = title
+        .col-xs-4.col-sm-4
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            - unless total.blank? or current_user.mobile_inspector?
+              #total= total

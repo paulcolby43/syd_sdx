@@ -1,0 +1,89 @@
+= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket.ticket_number, total: nil, paid_amount: nil}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - unless @ticket.description.blank?
+      %p.text-center= @ticket.description
+    - unless @accounts_payable_items.blank? or @ticket.status != 'PAID'
+      %p
+        = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}"
+        - if @apcashier and @apcashier['PaymentMethod'] == '1'
+          = "##{@apcashier['CheckNumber']}"
+    .panel.panel-default
+      %div.panel-heading{:role => "tab", id: "vendor_heading"}
+        %h4.panel-title
+          %div.text-primary= "#{@ticket.customer.company.blank? ? 'No company name' : @ticket.customer.company}"
+    - if @ticket.ticket_items.blank?
+      .panel.panel-default.line-item
+        %div.panel-heading
+          %h4.panel-title No ticket items
+    - else
+      #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+        - @ticket.ticket_items.each do |ticket_item|
+          .panel.panel-default.line-item
+            %div.panel-heading{:role => "tab", id: "heading#{ticket_item.id}"}
+              %h4.panel-title
+                .line_item_name
+                  %div.text-primary= ticket_item.print_description
+            .panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
+              .calculation_details
+                %strong Gross:
+                = "#{number_with_precision(ticket_item.gross_weight, :precision => 2, strip_insignificant_zeros: true)}"
+                &nbsp;
+                %strong Tare:
+                = "#{number_with_precision(ticket_item.tare_weight, :precision => 2, strip_insignificant_zeros: true)}"
+                &nbsp;
+                %strong Net:
+                = "#{number_with_precision(ticket_item.net_weight, :precision => 2, strip_insignificant_zeros: true)} LB"
+                &nbsp;
+                = "$#{number_with_precision(ticket_item.price, :precision => 3, strip_insignificant_zeros: true)}/#{ticket_item.unit_of_measure}"
+                &nbsp;
+                %strong= "$#{ticket_item.extended_amount}"
+              / Deduction weights
+              .weight_deduction_details
+                - unless ticket_item.ticket_item_deductions.blank?
+                  - ticket_item.ticket_item_deductions.each do |ticket_item_deduction|
+                    - unless (ticket_item_deduction.deduct_weight.blank? or ticket_item_deduction.deduct_weight.to_i.zero?)
+                      %strong Less:
+                      = "#{number_with_precision(ticket_item_deduction.deduct_weight, :precision => 3, strip_insignificant_zeros: true)} LB"
+                      = "(#{ticket_item_deduction.deduct_weight_description})"
+              / Deduction dollar amounts
+              .dollar_amount_deduction_details
+                - unless ticket_item.ticket_item_deductions.blank?
+                  - ticket_item.ticket_item_deductions.each do |ticket_item_deduction|
+                    - unless (ticket_item_deduction.deduct_dollar_amount.blank? or ticket_item_deduction.deduct_dollar_amount.to_i.zero?)
+                      %strong Less:
+                      = "#{number_with_precision(ticket_item_deduction.deduct_dollar_amount, :precision => 3, strip_insignificant_zeros: true)} LB"
+                      = "(#{ticket_item_deduction.deduct_dollar_amount_description})"
+              - unless ticket_item.ticket_item_taxes.blank?
+                / Taxes
+                .tax_details
+                  %strong Taxes
+                  - ticket_item.ticket_item_taxes.each do |ticket_item_tax|
+                    - unless (ticket_item_tax.tax_amount.blank? or ticket_item_tax.tax_amount.to_i.zero?)
+                      = "$#{ticket_item_tax.tax_amount}"
+
+    - unless @ticket.ticket_status == 'PAID' or @ticket.ticket_status == 'HOLD'
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          %p
+            = "Balance Due:"
+            - @ticket.account_payable_line_items.each do |account_payable_line_item|
+              = number_to_currency(account_payable_line_item.amount_due_in_assigned_currency)
+    %a{href: v2_ticket_path(@ticket.id, yard_id: @ticket.yard_id, status: @ticket.ticket_status, now: DateTime.now, format: 'pdf'), class: "btn btn-default btn-lg", target: '_blank'}
+      %i.fa.fa-file-pdf-o.fa-lg
+      Print
+    %hr
+    %div#images
+    - @images_array.each_slice(6) do |images|
+      .row
+        - images.each do |image|
+          - unless image['HIDDEN'] == '1' or not current_user.view_images?
+            .col-xs-12.col-sm-2.col-md-2
+              .thumbnail
+                %a{href: image_path(image['CAPTURE_SEQ_NBR'], yard_id: @ticket.yard_id), class: 'thumbnail'}
+                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR'], yard_id: @ticket.yard_id), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                .text-center
+                  %small.text-muted= image['EVENT_CODE']
+    
+= render partial: "v2/shared/show_ticket_footer_navbar", locals: {title: "Ticket"}
