@@ -37,11 +37,15 @@ class Ticket
     GRAPHQL
     
   def self.v2_all_by_filter(filter)
-    response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
+    end
     unless response.blank? or response.data.blank? or response.data.ticket_heads.blank? or response.data.ticket_heads.nodes.blank?
       return response.data.ticket_heads.nodes
     else
-      return nil
+      return []
     end
   end
   
@@ -122,6 +126,26 @@ class Ticket
       end
     end
     return total
+  end
+  
+  def self.v2_all_paid_by_customer_id(customer_id)
+    filter = ' {"ticketStatus": {"eq": "PAID"}, "customerId": {"eq": "' + customer_id + '"}} '
+    response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank? or response.data.ticket_heads.nodes.blank?
+      return response.data.ticket_heads.nodes
+    else
+      return nil
+    end
+  end
+  
+  def self.v2_all_closed_by_customer_id(customer_id)
+    filter = ' {"ticketStatus": {"eq": "CLOSED"}, "customerId": {"eq": "' + customer_id + '"}} '
+    response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank? or response.data.ticket_heads.nodes.blank?
+      return response.data.ticket_heads.nodes
+    else
+      return nil
+    end
   end
   
   

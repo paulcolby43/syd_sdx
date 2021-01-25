@@ -4,15 +4,12 @@
       %div{class: 'navbar-brand navbar-center'}
         .col-xs-4.col-sm-4
           %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
-            %a{href: 'javascript:history.back()'}
+            = link_to 'javascript:history.back()' do
               %i.fa.fa-chevron-left
-              Back
+              Cancel
         .col-xs-4.col-sm-4
           - unless mobile_device?
             = title
           - else
             = truncate(title, length: 8)
         .col-xs-4.col-sm-4
-          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
-            %a{href: edit_v2_customer_path(@customer.id), data: {disable_with: "<i class='fa fa-spinner fa-lg fa-spin'></i> Edit"}, class: 'customer_button'}
-              = "Edit"

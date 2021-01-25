@@ -1,0 +1,11 @@
+$('#commodities').append('<%= j render "customer_commodity" %>');
+$('#more_commodities_spinner').hide();
+
+<% if @commodities.next_page %>
+  $('a.load-more-commodities').show();
+  $('a.load-more-commodities').attr('href', '<%= customer_index_v2_commodities_path page: @commodities.next_page, q: params[:q] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-commodities').attr('href', '#');
+  $('a.reload-commodities').show();
+<% end %>

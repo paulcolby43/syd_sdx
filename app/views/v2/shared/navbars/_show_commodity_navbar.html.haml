@@ -1,0 +1,16 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %a{href: v2_commodities_path}
+            Commodities
+        .col-xs-4.col-sm-4
+          - unless mobile_device?
+            = title
+          - else
+            = truncate(title, length: 8)
+        .col-xs-4.col-sm-4
+          - if current_user.admin?
+            %a{href: edit_v2_commodity_path(@commodity.id), class: 'commodity_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i>"}}
+              = "Edit"

@@ -1,0 +1,11 @@
+- @commodities.each do |commodity|
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %div.panel.panel-primary
+        %div.list_group
+          %a{href: customer_show_v2_commodity_path(commodity.id, yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity.print_description} (#{commodity.scale_uom.blank? ? '' : commodity.scale_uom.description})"}}
+            = "#{commodity.print_description} (#{commodity.scale_uom.blank? ? '' : commodity.scale_uom.description})"
+            .pull-right
+              %i.fa.fa-chevron-right.fa-lg
+          %div.list-group-item
+            %small= commodity.commodity_type_udlv.report_description

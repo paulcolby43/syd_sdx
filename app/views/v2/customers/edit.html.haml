@@ -1,0 +1,91 @@
+= render partial: "v2/shared/navbars/new_and_edit_customer_navbar", locals: {title: "#{@customer.first_name} #{@customer.last_name}"}
+- @title="Edit customer"
+
+.container
+  %br
+  %br
+  %ul{class: 'list-inline'}
+    - current_user.license_reader_devices.each do |license_reader_device|
+      %li
+        %a{href: '#', id: 'drivers_license_scan', 'data-device-id' => license_reader_device.id, onclick: "$(this).find('.data_scan_spinner:first').show();", class: 'drivers_license_scan btn btn-lg btn-default'}
+          %i.fa.fa-list-alt
+          = "#{license_reader_device.DeviceName}"
+          = image_tag("ajax-loader.gif", :id => "data_scan_spinner", :class => "data_scan_spinner", :alt => "Loading ...", style: "display:none;")
+    - current_user.license_imager_devices.each do |license_imager_device|
+      %li
+        %a{href: '#', class: 'save_license_scan_to_jpegger btn btn-lg btn-default', 'data-device-id' => license_imager_device.id, 'data-customer-id' => @customer.id, 'data-yard-id' => current_yard_id, 'data-camera-name' => license_imager_device.DeviceName}
+          %i.fa.fa-user
+          %i.fa.fa-spinner.fa-lg.fa-spin{style: 'display:none;'}
+          = "#{license_imager_device.DeviceName}"
+
+  - if current_user.admin?
+    .alert.alert-warning
+      %p.lead
+        %i.fa.fa-compress
+        = "Customer Portal"
+      - @customer_users.each do |customer_user|
+        %p= link_to customer_user.name, edit_user_path(@customer_user), class: 'btn btn-default'
+      - if current_user.company.include_external_users?
+        %p= link_to "Create new customer login", "#new_user_form", "data-toggle" => "modal", class: 'btn btn-primary'
+        = render partial: 'v2/users/new_modal'
+      - else
+        %p= link_to "Create new customer login", "#", "data-toggle" => "modal", class: 'btn btn-primary disabled'
+        
+  .well.col-sm-12.col-md-12{id: 'customer_info'}
+    = form_tag v2_customer_path(@customer.id), method: 'put', :class => "form-horizontal", id: 'customer_form' do
+      = hidden_field_tag "customer[id]", @customer.id
+      = hidden_field_tag "customer[tax_collection]", @customer.customer_sales_taxes
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "First Name", nil, :class => 'control-label'
+          = text_field_tag "customer[first_name]", @customer.first_name, :placeholder => "First Name", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Last Name", nil, :class => 'control-label'
+          = text_field_tag "customer[last_name]", @customer.last_name, :placeholder => "Last Name", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Company", nil, :class => 'control-label'
+          = text_field_tag "customer[company]", @customer.company, :placeholder => "Company", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Phone", nil, :class => 'control-label'
+          = text_field_tag "customer[phone]", @customer.phone, :placeholder => "Phone", class: "form-control input-lg"
+      %hr
+      .row.form-group
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Address 1", nil, :class => 'control-label'
+          = text_field_tag "customer[address_1]", @customer.address1, :placeholder => "Address 1", class: "form-control input-lg"
+        %div{:class => "col-sm-6 col-md-6"}
+          = label_tag "Address 2", nil, :class => 'control-label'
+          = text_field_tag "customer[address_2]", @customer.address2, :placeholder => "Address 2", class: "form-control input-lg"
+      .row.form-group
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "City", nil, :class => 'control-label'
+          = text_field_tag "customer[city]", @customer.city, :placeholder => "City", class: "form-control input-lg"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "State", nil, :class => 'control-label'
+          = select_tag "customer[state]", options_for_select(us_states_and_ca_provinces, @customer.state), :class => "form-control input-lg"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "Zip", nil, :class => 'control-label'
+          = text_field_tag "customer[zip]", @customer.zip, :placeholder => "Zip", class: "form-control input-lg"
+      %hr
+      .row.form-group
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "ID Number", nil, :class => 'control-label'
+          = text_field_tag "customer[id_number]", @customer.id_number, :placeholder => "ID Number", class: "form-control input-lg"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "ID State", nil, :class => 'control-label'
+          = text_field_tag "customer[id_state]", @customer.id_state, :placeholder => "ID State", class: "form-control input-lg"
+        %div{:class => "col-sm-4 col-md-4"}
+          = label_tag "ID Expiration", nil, :class => 'control-label'
+          =# date_field_tag "customer[id_expiration]", @customer.id_expires, :placeholder => "ID Expiration", class: "form-control input-lg"
+          - unless @customer.id_expires.blank?
+            = text_field_tag "customer[id_expiration]", @customer.id_expires.to_date, :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true
+          - else
+            = text_field_tag "customer[id_expiration]", '', :placeholder => "ID Expiration", class: "form-control input-lg", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true
+      
+      .row.form-group
+        %div{:class => "col-sm-12 col-md-12"}
+          = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+            Save
+
+= render partial: "v2/shared/edit_customer_footer_navbar", locals: {title: "Customer"}

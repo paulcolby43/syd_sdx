@@ -237,6 +237,15 @@ Rails.application.routes.draw do
         get 'create_ticket'
       end
     end
+    resources :workorders
+    resources :commodities do
+      member do
+        get :customer_show
+      end
+      collection do
+        get :customer_index
+      end
+    end
   end
   
   # The priority is based upon order of creation: first created -> highest priority.

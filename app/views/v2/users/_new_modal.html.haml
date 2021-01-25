@@ -1,0 +1,67 @@
+%div{:id => "new_user_form", :class => "modal fade", :tabindex => "-1", :style => "display:none;"}
+  = form_for @new_user do |f|
+    .modal-dialog
+      .modal-content
+        .modal-header
+          Create customer user login
+          = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+          %br
+        .modal-body
+          - @new_user.errors.each do |attr, msg|
+            .alert.alert-danger
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              = "#{attr} #{msg}" if @new_user.errors[attr].first == msg
+          = f.hidden_field :role, value: 'customer'
+          = f.hidden_field :password, value: @customer.id
+          = f.hidden_field :customer_guid, value: @customer.id
+          = f.hidden_field :yard_id, value: current_yard_id
+          = f.hidden_field :company_id, value: current_user.company_id
+          = f.hidden_field :dragon_account_number, value: "#{current_user.blank? ? '' : current_user.dragon_account_number}"
+          .row.form-group.required
+            %div{:class => "col-sm-6"}
+              = f.label :first_name, :class => "control-label"
+              %br/
+              = f.text_field :first_name, value: @customer.first_name, :class => "form-control input-lg", placeholder: "First Name", :autofocus => true, required: true
+            %div{:class => "col-sm-6"}
+              = f.label :last_name, :class => "control-label"
+              %br/
+              = f.text_field :last_name, value: @customer.last_name, :class => "form-control input-lg", placeholder: "Last Name", required: true
+          .row.form-group.required
+            %div{:class => "col-sm-6"}
+              = f.label :company_name, :class => "control-label required"
+              %br/
+              = f.text_field :company_name, value: @customer.company, :class => "form-control input-lg", placeholder: "Company Name", required: true
+            %div{:class => "col-sm-6"}
+              = f.label 'Mobile Phone', :class => "control-label"
+              %br/
+              = f.text_field :phone, value: @customer.phone, :class => "form-control input-lg", placeholder: "Mobile Phone", required: true
+          .row.form-group.required
+            %div{:class => "col-sm-6"}
+              = f.label :username, :class => "control-label"
+              %br/
+              = f.text_field :username, value: "#{@customer.first_name}#{@customer.last_name}".downcase.gsub(/\s+/, ""), :class => "form-control input-lg", placeholder: "Username", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :email, :class => "control-label"
+              %br/
+              = f.text_field :email, :class => "form-control input-lg", placeholder: "Email", required: true
+          .row.form-group
+            %div{:class => "col-sm-6"}
+              = f.label :address1, :class => "control-label required"
+              = f.text_field :address1, value: @customer.address1, :class => "form-control input-lg", placeholder: "Address 1", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :address2, :class => "control-label"
+              = f.text_field :address2, value: @customer.address2, :class => "form-control input-lg", placeholder: "Address 2"
+          .row.form-group.required
+            %div{:class => "col-sm-6"}
+              = f.label :city, :class => "control-label"
+              = f.text_field :city, value: @customer.city, :class => "form-control input-lg", placeholder: "City", required: true
+            %div{:class => "col-sm-6"}
+              = f.label :state, :class => "control-label"
+              = f.text_field :state, value: @customer.state, :class => "form-control input-lg", placeholder: "State", required: true
+          .row.form-group
+            %div{:class => "col-sm-6"}
+            %div{:class => "col-sm-6"}
+              = f.label "View Images", :class => "control-label"
+              = f.text_field :view_images, :value => "#{@new_user.view_images? ? '1' : '0'}", "data-icon-checked" => "<i class='fa fa-check'></i>", "data-toggle" => "checkbox-x", "data-three-state" => "false", "data-size" => "xl"
+        .modal-footer
+          = f.submit "Create", :class => "btn btn-lg btn-primary btn-block", data: { disable_with: "Please wait ..." }

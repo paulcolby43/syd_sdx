@@ -1,0 +1,32 @@
+= render partial: "v2/shared/navbars/commodities_customer_index_navbar", locals: {title: "Commodities"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %p
+      = form_tag customer_index_v2_commodities_path, id: 'customer_commodity_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        .input-group
+          = search_field_tag :q, params[:q], :placeholder => "Search commodities", class: "form-control input-lg"
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+
+    - unless @commodities.blank?
+      %div{id: "commodities"}
+        - @commodities.each do |commodity|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %div.panel{class: "#{(commodity.is_disabled?) ? 'panel-danger' : 'panel-primary'}"}
+                %div.list_group
+                  %a{href: customer_show_v2_commodity_path(commodity.id, yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity.print_description} (#{commodity.scale_uom.description})"}}
+                    = "#{commodity.print_description} (#{commodity.scale_uom.description})"
+                    .pull-right
+                      %i.fa.fa-chevron-right.fa-lg
+                  %div.list-group-item
+                    %small= commodity.commodity_type_udlv.report_description
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %p= image_tag("ajax-loader.gif", :id => "more_commodities_spinner", :alt => "Loading ...", style: "display:none;")
+            %p= link_to 'Load more ...', customer_index_v2_commodities_path(:page => @commodities.next_page, :q => params[:q]), :class => 'load-more-commodities btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_commodities_spinner').show();" if @commodities.next_page
+    - else
+      %p No commodities found

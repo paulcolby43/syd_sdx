@@ -1,0 +1,16 @@
+- @commodities.each do |commodity|
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %div.panel{class: "#{(commodity.is_disabled == 'true') ? 'panel-danger' : 'panel-primary'}"}
+        %div.list_group
+          %a{href: edit_v2_commodity_path(commodity.id, yard_id: current_yard_id), class: "list-group-item commodity_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{commodity.print_description} (#{commodity.scale_uom.description})"}}
+            = "#{commodity.print_description} (#{commodity.scale_uom.description})"
+            .pull-right
+              %i.fa.fa-chevron-right.fa-lg
+          %div.list-group-item
+            %small= commodity.commodity_type_udlv.report_description
+            .pull-right
+              - if current_user.admin?
+                %a{href: nil, class: 'price', "data-commodity" => 'hey there', "data-commodity-name" =>  commodity.print_description, "data-pk" => commodity.id, "data-url" => "v2/commodities/#{commodity.id}/update_price"}= number_with_precision(commodity.scale_price, precision: 3)
+              - else
+                = number_with_precision(commodity.scale_price, precision: 3)

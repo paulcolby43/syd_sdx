@@ -1,0 +1,44 @@
+= render partial: "v2/shared/navbars/workorders_navbar", locals: {title: "Request"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .col-xs-12.col-sm-6
+      %div.panel.panel-primary
+        %div.list_group
+          %div.list-group-item
+            %strong= "Service Request:"
+            .pull-right
+              = "#{@workorder.work_order_number}"
+          %div.list-group-item
+            %strong= "Customer"
+            .pull-right
+              = "#{@workorder.customer.first_name} #{@workorder.customer.last_name}" unless @workorder.customer.blank? or (@workorder.customer.first_name.blank? and @workorder.customer.last_name.blank?)
+          %div.list-group-item
+            %strong= "Driver"
+            .pull-right
+              = "#{@workorder.trip.driver.first_name} #{@workorder.trip.driver.last_name}" unless @workorder.trip.blank? or @workorder.trip.driver.blank? or (@workorder.trip.driver.first_name.blank? and @workorder.trip.driver.last_name.blank?)
+          %div.list-group-item
+            %strong= "Truck"
+            .pull-right
+              = "#{@workorder.trip.truck.truck_number}" unless @workorder.trip.blank? or @workorder.trip.truck.blank?
+          %div.list-group-item
+            %strong= "Date"
+            .pull-right
+              = "#{@workorder.work_order_date.to_date.strftime('%m/%d/%y')}"
+          %div.list-group-item
+            %strong= "Status"
+            .pull-right
+              = "#{Workorder.status(@workorder.work_order_status)}"
+    .col-xs-12.col-sm-6
+      - @images_array.each_slice(3) do |images|
+        .row
+          - images.each do |image|
+            - unless image['HIDDEN'] == '1' or not current_user.view_images?
+              .col-xs-12.col-sm-4.col-md-4
+                .thumbnail
+                  %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                    = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  .text-center
+                    %small.text-muted= image['EVENT_CODE']
+
+=# render partial: "shared/commodities_footer_navbar", locals: {title: "Commodities"}

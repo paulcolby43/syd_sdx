@@ -1,0 +1,14 @@
+- @workorders.each do |workorder|
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %div.panel.panel-primary
+        %div.list_group
+          %a{href: v2_workorder_path(workorder.id, workorder: workorder), class: "list-group-item workorder_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{workorder.work_order_number}"}}
+            %ul.list-inline
+              %li= workorder.work_order_number
+              %li= "<b>Driver</b> #{workorder.trip.driver.first_name} #{workorder.trip.driver.last_name}".html_safe unless workorder.trip.blank? or workorder.trip.driver.blank? or (workorder.trip.driver.first_name.blank? and workorder.trip.driver.last_name.blank?)
+              %li= "<b>Truck</b> #{workorder.trip.truck.truck_number}".html_safe unless workorder.trip.blank? or workorder.trip.truck.blank? or workorder.trip.truck.truck_number.blank?
+              %li= workorder.work_order_date.to_date.strftime("%m/%d/%y")
+              %li= Workorder.status(workorder.work_order_status)
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg

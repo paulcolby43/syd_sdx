@@ -4,7 +4,7 @@ class Customer
   # V2 - GraphQL Class Methods#
   #############################
   
-  FindAllQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
       query($customer_filter_input: CustomerFilterInput) {
         customers(where: $customer_filter_input)
           {
@@ -36,16 +36,58 @@ class Customer
       }
     GRAPHQL
   
-  def self.v2_find_all(filter)
+  def self.v2_all_by_filter(filter)
     unless filter.blank?
-      response = DRAGONQLAPI::Client.query(FindAllQuery, variables: {customer_filter_input: JSON[filter]})
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {customer_filter_input: JSON[filter]})
     else
-      response = DRAGONQLAPI::Client.query(FindAllQuery)
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
     end
     unless response.blank? or response.data.blank? or response.data.customers.blank? or response.data.customers.nodes.blank?
       response.data.customers.nodes 
     else
-      nil
+      []
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($id : Uuid!) {
+        customerById(id : $id){
+          ...CustomerModel
+        }
+      }
+
+      fragment CustomerModel on Customer {
+        id
+        customerNumber
+        firstName
+        lastName
+        company
+        phone
+        address1
+        address2
+        city
+        state
+        zip
+        idNumber
+        idState
+        idExpires
+        customerSalesTaxes{
+          salesTaxType{
+            salesTaxes{
+              taxName
+              taxPercent
+            }
+          }
+        }
+      }
+    GRAPHQL
+    
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.customer_by_id.blank?
+      return response.data.customer_by_id 
+    else
+      return nil
     end
   end
   

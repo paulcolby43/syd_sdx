@@ -1,0 +1,22 @@
+= render partial: "v2/shared/navbars/customer_show_commodity_navbar", locals: {title: "#{@commodity.print_description}"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %div.panel.panel-primary
+      %div.list_group
+        %div.list-group-item
+          %strong= "Print Description:"
+          .pull-right
+            = "#{@commodity.print_description}"
+        %div.list-group-item
+          %strong= "Unit of Measure:"
+          .pull-right
+            = @commodity.scale_uom.description
+        %div.list-group-item
+          %strong= "Type:"
+          .pull-right
+            = @commodity.commodity_type_udlv.report_description
+        %div.list-group-item
+          %strong= "Customer Price:"
+          .pull-right
+            = "#{number_to_currency(@customer_price)}"

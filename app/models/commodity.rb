@@ -1,8 +1,101 @@
 class Commodity
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($commodity_filter_input: CommodityFilterInput) {
+        commodities(where: $commodity_filter_input)
+          {
+          nodes{
+            id
+            printDescription
+            isDisabled
+            commodityTypeUdlv{
+              codeValue
+              reportDescription
+            }
+            scalePrice
+            code
+            menuText
+            multiYardParentItemXlinks{
+              parentId
+              yard{
+                yardName
+              }
+              item{
+                printDescription
+              }
+            }
+            scaleUom{
+              description
+              code
+            }
+            commodityTypeUdlvId
+            commodityTypeUdlv{
+              codeValue
+              reportDescription
+            }
+          }
+        }
+      }
+    GRAPHQL
+  
+  def self.v2_all_by_filter(filter)
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {commodity_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.commodities.blank? or response.data.commodities.nodes.blank?
+      return response.data.commodities.nodes
+    else
+      return []
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($id : Uuid!) {
+        commodityById(id : $id){
+          ...CommodityModel
+        }
+      }
+
+      fragment CommodityModel on Commodity {
+        id
+        printDescription
+        menuText
+        isDisabled
+        scalePrice
+        code
+        menuText
+        multiYardParentItemXlinks{
+          parentId
+          yard{
+            yardName
+          }
+        }
+        scaleUom{
+          description
+          code
+        }
+        commodityTypeUdlvId
+        commodityTypeUdlv{
+          codeValue
+          reportDescription
+        }
+      }
+    GRAPHQL
+    
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.commodity_by_id.blank?
+      return response.data.commodity_by_id
+    else
+      return nil
+    end
+  end
   
   #############################
   #     Class Methods         #

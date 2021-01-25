@@ -1,0 +1,11 @@
+$('#workorders_list').append('<%= j render "v2/workorders/workorder" %>');
+$('#more_workorders_spinner').hide();
+
+<% if @workorders.next_page %>
+  $('a.load-more-workorders').show();
+  $('a.load-more-workorders').attr('href', '<%= v2_customer_path id: @customer.id, page: @workorders.next_page %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-workorders').attr('href', '#');
+  $('a.reload-workorders').show();
+<% end %>
