@@ -36,7 +36,7 @@
               = hidden_field_tag "ticket[description]", "#{@ticket.description.blank? ? "" : @ticket.description}"
       - unless @ticket.ticket_items.blank?
         / Line items
-        %div.ticket_input_fields_wrap
+        %div.v2_ticket_input_fields_wrap
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             - @ticket.ticket_items.each do |ticket_item|
               .panel.panel-default.line-item
@@ -54,7 +54,7 @@
                   .panel-body
                     = hidden_field_tag "ticket[line_items][][id]", ticket_item.id
                     = hidden_field_tag "ticket[line_items][][status]", ticket_item.ticket_item_status
-                    = select_tag "ticket[line_items][][commodity]", options_for_select([ ["#{ticket_item.print_description}", ticket_item.commodity_id] ], ticket_item.commodity_id), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true
+                    = select_tag "ticket[line_items][][commodity]", options_for_select([ ["#{ticket_item.print_description}", ticket_item.commodity_id] ], ticket_item.commodity_id), prompt: '-- Choose an item --', class: "form-control input-lg v2_item_select", style: "width: 100%;", required: true
                     %br
                     #quantity_form_field{style: "#{ticket_item.unit_of_measure == 'EA' ? 'display:block' : 'display:none'}"}
                       %div.input-group.quantity_input_group
@@ -175,7 +175,7 @@
                           = "$#{tax.tax_amount}"
       - else
         / New item
-        %div.ticket_input_fields_wrap.new_item
+        %div.v2_ticket_input_fields_wrap.new_item
           #items_accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
             .panel.panel-default.line-item  
               - new_item_id = SecureRandom.uuid
@@ -186,16 +186,14 @@
                       %a.line_item_name.text-primary{"aria-controls" => "collapse#{new_item_id}", "aria-expanded" => true, "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", :role => "button", class: "ticket_collapse_link" }
                         Choose an item*
                     %li.pull-right
-                      %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0, "data-session-id" => @ticket_session_id}
+                      %a{href: '#', class: 'remove_field', "data-ticket-id" => @ticket.id, "data-item-id" => new_item_id, "data-commodity-id" => params[:commodity_id], "data-gross" => 0, "data-tare" => 0, "data-net" => 0, "data-price" => 0, "data-amount" => 0, "data-session-id" => @ticket_session_id}
                         %i.fa.fa-trash.fa-lg.text-danger
                         %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
               %div{id: "collapse_#{new_item_id}", "aria-labelledby" => "heading#{new_item_id}", :role => "tabpanel", class: "panel-collapse collapse in", "aria-expanded" => true }
                 .panel-body
                   = hidden_field_tag "ticket[line_items][][id]", new_item_id
                   = hidden_field_tag "ticket[line_items][][status]", nil
-                  =# select_tag "ticket[line_items][][commodity]", options_for_select(@commodities.map{ |commodity| [commodity['PrintDescription'], commodity['Id']] }, params[:commodity_id]), prompt: 'Choose an item', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
-                  =# select_tag "ticket[line_items][][commodity]", grouped_options_for_select(@commodities_grouped_by_type_for_select, params[:commodity_id]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id
-                  = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket['Id'], "data-item-id" => new_item_id, "data-session-id" => @ticket_session_id
+                  = select_tag "ticket[line_items][][commodity]", options_for_select([]), prompt: '-- Choose an item --', class: "form-control input-lg v2_item_select", style: "width: 100%;", required: true, "data-ticket-id" => @ticket.id, "data-item-id" => new_item_id, "data-session-id" => @ticket_session_id
                   %br
                   #quantity_form_field{style: 'display:none'}
                     %div.input-group.quantity_input_group
@@ -248,7 +246,6 @@
                     %span.input-group-addon
                       %i.fa.fa-dollar.fa-lg
                     = text_field_tag "ticket[line_items][][price]", 0, :placeholder => "Price", class: "form-control input-lg amount-calculation-field", required: true
-                    =# hidden_field_tag "ticket[line_items][][unit_of_measure]", 'LB', :placeholder => "Unit of Measure", class: "form-control input-lg", required: true
                     %span.input-group-addon
                       %i.fa.fa-balance-scale.fa-lg
                     = select_tag "ticket[line_items][][unit_of_measure]", options_for_select(units_of_measure_abbreviations), class: "form-control input-lg amount-calculation-field", required: true
@@ -260,44 +257,16 @@
                   = hidden_field_tag "ticket[line_items][][tax_percent_2]", '0.00', :placeholder => "Tax Percent 2", class: "form-control input-lg", readonly: true
                   = hidden_field_tag "ticket[line_items][][tax_percent_3]", '0.00', :placeholder => "Tax Percent 3", class: "form-control input-lg", readonly: true
                   %br
-                  = render partial: 'more_line_item_options', locals: {line_item: nil, id: "#{new_item_id}"}
-                  -#
-                    %p
-                      %small
-                        %a{id: "more_#{new_item_id}_link", "aria-controls" => "more_#{new_item_id}", "aria-expanded" => "false", "data-target" => "#more_#{new_item_id}", "data-toggle" => "collapse", style: 'display: none;'}
-                          More
-                      %div.collapse{id: "more_#{new_item_id}"}
-                        %p
-                          = text_field_tag "ticket[line_items][][serial_number]", "", :placeholder => "Serial Number", class: "form-control input-lg serial_number_field"
-                          %br
-                          = text_area_tag "ticket[line_items][][notes]", "", :placeholder => "Notes", class: "form-control input-lg"
-                        %ul{class: 'list-inline'}
-                          %li
-                            %a.btn.btn-default{href: "#item_#{new_item_id}_deductions_modal", id: "#item_#{new_item_id}_deductions_modal_link", "data-toggle" => "modal", title: "Deductions"}
-                              %i.fa.fa-minus-square-o.fa-lg
-                              Deductions
-                            = render partial: 'deductions_modal', locals: {line_item: nil, id: "#{new_item_id}"}
-                          - unless @combolists.blank? # Car vehicle information lists
-                            %li
-                              %a.btn.btn-default{href: "#item_#{new_item_id}_vin_search_modal", id: 'item_#{new_item_id}_vin_search_modal_link', "data-toggle" => "modal", title: "VIN Search"}
-                                %i.fa.fa-car.fa-lg
-                                Car
-                              = render partial: 'car_details_modal', locals: {id: new_item_id, perform_initial_vin_search: false}
+                  = render partial: 'more_line_item_options', locals: {ticket_item: nil, id: "#{new_item_id}"}
               %div.panel-footer{style: 'padding-top: 0px; font-size: 16px;'}
                 .calculation_details
                 .deduction_details
-                -# %ul{class: 'list-inline'}
                 / Deduction weights
                 .weight_deduction_details
                 / Deduction dollar amounts
                 .dollar_amount_deduction_details
                 / Taxes
                 .tax_details
-                -#
-                  - unless mobile_device?
-                    .pull-right
-                      %a.text-muted{"aria-controls" => "collapse#{new_item_id}", "data-toggle" => "collapse", :href => "#collapse_#{new_item_id}", class: 'pull-right ticket_collapse_link' }
-                        %i.fa.fa-check-square.fa-2x.collapse_icon
       .row.form-group{id: 'calculating', style: 'display:none;'}
         %div.col-xs-12
           %h5.text-center
@@ -383,7 +352,7 @@
             .col-xs-12.col-sm-2.col-md-2
               .thumbnail
                 %a{href: image_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
-                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+                  = image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive', loading: 'lazy')
                 .text-center
                   %small.text-muted= image['EVENT_CODE']
     

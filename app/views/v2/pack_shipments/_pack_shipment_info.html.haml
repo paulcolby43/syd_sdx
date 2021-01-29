@@ -1,0 +1,13 @@
+= "Shipment: #{@pack_shipment.shipment_number}"
+%br
+Status:
+= @pack_shipment.shipment_status
+%br
+= "Pack List: #{@pack_list.pack_list_number}" unless @pack_list.blank?
+%br
+= @contract.contract_description unless @contract.blank?
+= @pack_shipment.date_created.to_date.strftime('%-m/%-d/%Y')
+%br
+= "Container Number: #{@pack_shipment.container_number}"
+%br
+= "Vehicle Number: #{@work_order.delivery_vehicle_id_number}" unless @work_order.blank?

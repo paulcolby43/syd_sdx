@@ -236,6 +236,104 @@ jQuery ->
     return
   ### End line item changed ###
 
+  ### V2 Line item changed ###
+  $('.v2_ticket_input_fields_wrap').on 'change', '.v2_item_select', ->
+    console.log '.item_select changed', 'yes'
+    ticket_id = $(this).data( "ticket-id" )
+    session_id = $(this).data( "session-id" )
+    item_id = $(this).data( "item-id" )
+    commodity_id = $(this).val()
+    commodity_name = $(this).find('option:selected').text()
+    input_select = $(this)
+    current_customer_id = $('#ticket_customer_id').val()
+    ticket_item_status = input_select.closest('.panel').find('#ticket_line_items__status:first').val()
+    session_id = $(this).data( "session-id" )
+    # Get commodity price, unit of measure, and taxes, then update.
+    get_commodity_info_ajax = ->
+      $.ajax
+        url: "/v2/commodities/" + commodity_id + "/price"
+        dataType: 'json'
+        data:
+          customer_id: current_customer_id
+        success: (data) ->
+          name = data.name
+          price = parseFloat(data.price).toFixed(3)
+          unit_of_measure = data.unit_of_measure
+          # console.log 'price', price
+          tax_percent_1 = parseFloat(data.tax_percent_1).toFixed(2)
+          tax_percent_2 = parseFloat(data.tax_percent_2).toFixed(2)
+          tax_percent_3 = parseFloat(data.tax_percent_3).toFixed(2)
+          # console.log 'tax percent 1:', tax_percent_1
+          # console.log 'tax percent 2:', tax_percent_2
+          # console.log 'tax percent 3:', tax_percent_3
+          #console.log 'unit of measure:', unit_of_measure
+          net = input_select.closest('.panel').find('#ticket_line_items__net:first').val()
+          input_select.closest('.panel').find('.calculation_details').text ''
+          input_select.closest('.panel').find('.line_item_name').text name
+
+          input_select.closest('.panel').find('#ticket_line_items__price:first').val price
+          input_select.closest('.panel').find('#ticket_line_items__unit_of_measure:first').val unit_of_measure
+          amount = (parseFloat(price) * parseFloat(net))
+          input_select.closest('.panel').find('#ticket_line_items__tax_percent_1:first').val parseFloat(tax_percent_1).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_percent_2:first').val parseFloat(tax_percent_2).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_percent_3:first').val parseFloat(tax_percent_3).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_amount_1:first').val parseFloat(tax_percent_1 * amount).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_amount_2:first').val parseFloat(tax_percent_2 * amount).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__tax_amount_3:first').val parseFloat(tax_percent_3 * amount).toFixed(2)
+          input_select.closest('.panel').find('#ticket_line_items__amount:first').val amount
+          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-name', name 
+          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-name', name
+          input_select.closest('.panel').find('#gross_picture_button:first').attr 'data-item-id', commodity_id 
+          input_select.closest('.panel').find('#tare_picture_button:first').attr 'data-item-id', commodity_id
+          input_select.closest('.panel').find('#gross_scale_button:first').attr 'data-item-name', name 
+          input_select.closest('.panel').find('#tare_scale_button:first').attr 'data-item-name', name
+          #input_select.closest('.panel').find('.amount-calculation-field:first').keyup() # Invoke 'keyup' so go through calculations again
+          input_select.closest('.panel').find('.amount-calculation-field:first').change() # Invoke 'change' so go through calculations again
+
+          if ticket_item_status != '0' # New ticket item that needs to be added/saved to ticket
+            ticket_item_add_ajax()
+          
+          return
+        error: ->
+          alert 'Error getting commodity price.'
+          # console.log 'Error getting commodity price.'
+          return
+    ticket_item_add_ajax = ->
+      price = input_select.closest('.panel').find('#ticket_line_items__price:first').val()
+      $.ajax
+        url: "/v2/ticket_items/" + item_id + "/quick_add"
+        dataType: 'json'
+        method: 'POST'
+        data:
+          ticket_id: ticket_id
+          commodity_id: commodity_id
+          commodity_name: commodity_name
+          price: price
+          session_id: session_id
+        success: (data) ->
+          success = data.success
+          failure_information = data.failure_information
+          if success == 'true' 
+            # console.log 'ticket item quick add successful'
+            input_select.closest('.panel').find('#ticket_line_items__status:first').val '0' # Set newly added item status to 0 so don't try to add again
+            input_select.closest('.panel').find('.remove_field:first').addClass( 'void_item' )
+            #input_select.closest('.panel').find('.remove_field:first').data 'commodity-id', commodity_id
+            input_select.closest('.panel').find('.remove_field:first').attr 'data-commodity-id', commodity_id
+            $("#more_" + item_id + "_link").show()
+          else
+            alert 'Error saving ticket line item. ' + failure_information
+            # console.log 'Error saving ticket line item. ' + failure_information
+          return
+        error: ->
+          alert 'Error saving ticket line item.'
+          # console.log 'Error saving ticket line item.'
+          return
+    if commodity_id != ''
+      # Only get commodity info if there is a commodity item
+      get_commodity_info_ajax()
+    return
+  ### End V2 line item changed ###
+
   ### Line item calculation field value changed ###
   # $('.ticket_input_fields_wrap').on 'keyup', '.amount-calculation-field', ->
   $('.ticket_input_fields_wrap').on 'change', '.amount-calculation-field', ->
@@ -368,6 +466,131 @@ jQuery ->
 
     return
   ### End line item calculation field value changed ###
+
+  ### V2 Line item calculation field value changed ###
+  $('.v2_ticket_input_fields_wrap').on 'change', '.amount-calculation-field', ->
+    # console.log '.amount-calculation-field changed', 'yes'
+    $('#hold_close_pay_buttons').hide();
+    $('#calculating').show();
+    changed_field = $(this)
+    quantity = $(this).closest('.panel').find('#ticket_line_items__quantity').val()
+    gross = $(this).closest('.panel').find('#ticket_line_items__gross').val()
+    tare = $(this).closest('.panel').find('#ticket_line_items__tare').val()
+    line_item_dollar_amount_deductions_total = 0
+    $(this).closest('.panel').find('.deduction_dollar_amount').each ->
+      line_item_dollar_amount_deductions_total += Number($(this).val())
+      return
+    line_item_weight_deductions_total = 0
+    $(this).closest('.panel').find('.deduction_weight').each ->
+      line_item_weight_deductions_total += Number($(this).val())
+      return
+    if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').length
+      tax_percent_1 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_1').val()
+    else 
+      tax_percent_1 = '0.00'
+    if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_2').length
+      tax_percent_2 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_2').val()
+    else 
+      tax_percent_2 = '0.00'
+    if changed_field.closest('.panel').find('#ticket_line_items__tax_percent_3').length
+      tax_percent_3 = changed_field.closest('.panel').find('#ticket_line_items__tax_percent_3').val()
+    else 
+      tax_percent_3 = '0.00'
+    net = (parseFloat(gross) - parseFloat(tare) - parseFloat(line_item_weight_deductions_total)).toFixed(2)
+    changed_field.closest('.panel').find('#ticket_line_items__net').val net
+    changed_field.closest('.panel').find('#gross_picture_button:first').attr 'data-weight', gross
+    changed_field.closest('.panel').find('#tare_picture_button:first').attr 'data-weight', tare
+
+    #description = $(this).closest('.panel').find('#item_description').val()
+    price = changed_field.closest('.panel').find('#ticket_line_items__price').val()
+    unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
+    # console.log 'unit of measure', unit_of_measure
+    if unit_of_measure == 'EA'
+      changed_field.closest('.panel').find('#quantity_form_field').show()
+      changed_field.closest('.panel').find('#gross_and_tare_form_field').hide()
+    else
+      changed_field.closest('.panel').find('#quantity_form_field').hide()
+      changed_field.closest('.panel').find('#gross_and_tare_form_field').show()
+      
+    # Get unit of measure weight conversion for commodity item
+    item_id = changed_field.closest('.panel').find('#ticket_line_items__commodity').val()
+    line_item_unit_of_measure = changed_field.closest('.panel').find('#ticket_line_items__unit_of_measure').val()
+    get_commodity_unit_of_measure_weight_conversion_ajax = ->
+      $.ajax
+        url: "/v2/commodities/unit_of_measure_lb_conversion"
+        dataType: 'json'
+        #delay: 500 # Wait so that net can be re-calculated
+        data:
+          net: net
+          unit_of_measure: line_item_unit_of_measure
+        success: (data) ->
+          new_weight = data.new_weight
+          # console.log 'new_weight', data
+          if line_item_unit_of_measure != 'LD'
+            if line_item_unit_of_measure == 'EA'
+              amount = (parseFloat(price) * parseFloat(quantity) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+            else
+              amount = (parseFloat(price) * parseFloat(new_weight) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+          else 
+            amount = (parseFloat(price) - parseFloat(line_item_dollar_amount_deductions_total)).toFixed(2)
+          # console.log 'amount:', amount
+          changed_field.closest('.panel').find('#ticket_line_items__amount').val amount
+
+          # Update tax amount to account for possibility that unit of measure is different than price measurement, making a 'new weight'
+          tax_amount_1 = (parseFloat(tax_percent_1) * (parseFloat(price) * parseFloat(new_weight))).toFixed(2)
+          tax_amount_2 = (parseFloat(tax_percent_2) * (parseFloat(price) * parseFloat(new_weight))).toFixed(2)
+          tax_amount_3 = (parseFloat(tax_percent_3) * (parseFloat(price) * parseFloat(new_weight))).toFixed(2)
+          total_tax_amount = (parseFloat(tax_amount_1) + parseFloat(tax_amount_2) + parseFloat(tax_amount_3)).toFixed(2)
+          changed_field.closest('.panel').find('#ticket_line_items__tax_amount_1').val tax_amount_1
+          changed_field.closest('.panel').find('#ticket_line_items__tax_amount_2').val tax_amount_2
+          changed_field.closest('.panel').find('#ticket_line_items__tax_amount_3').val tax_amount_3
+          
+          # Update calculation details in panel footer
+          if line_item_unit_of_measure == 'EA'
+            changed_field.closest('.panel').find('.calculation_details').html '<strong>Quantity:</strong> ' + quantity + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
+          else
+            changed_field.closest('.panel').find('.calculation_details').html '<strong>Gross:</strong> ' + gross + ' &nbsp;<strong>Tare:</strong> ' + tare + ' &nbsp;<strong>Net:</strong> ' + net + ' LB' + ' &nbsp;$' + price + '/' + unit_of_measure + '  ' + ' &nbsp;<strong>$' + (parseFloat(amount)).toFixed(2) + '</strong>'
+          if line_item_dollar_amount_deductions_total > 0
+            changed_field.closest('.panel').find('.dollar_amount_deduction_details').html '<strong>Deduction:</strong> $' + line_item_dollar_amount_deductions_total
+          if line_item_weight_deductions_total > 0
+            changed_field.closest('.panel').find('.weight_deduction_details').html '<strong>Deduction:</strong> ' + line_item_weight_deductions_total + ' LB'
+          if total_tax_amount > 0
+            changed_field.closest('.panel').find('.tax_details').html '<strong>Taxes:</strong> $' + total_tax_amount
+              
+          sum = 0;
+          # Add up amounts
+          $('.amount').each ->
+            sum += Number($(this).val())
+            return
+          # Add up taxes
+          $('.tax').each ->
+            sum += Number($(this).val())
+            return
+          
+          # Add up deduction dollar amounts
+          #deduction_dollar_amount = 0
+          #$('.deduction_dollar_amount').each ->
+          #  deduction_dollar_amount += Number($(this).val())
+          #  return
+          $('#total').text '$' + (parseFloat(sum)).toFixed(2)
+          $('#ticket_total').val (parseFloat(sum)).toFixed(2)
+          $('#payment_amount').val (parseFloat(sum)).toFixed(2)
+          $('#hold_close_pay_buttons').show();
+          $('#calculating').hide();
+          return
+        error: ->
+          alert 'Error getting commodity unit of measure conversion.'
+          # console.log 'Error getting commodity unit of measure conversion.'
+          $('#hold_close_pay_buttons').show();
+          $('#calculating').hide();
+          return
+    if item_id != ''
+      get_commodity_unit_of_measure_weight_conversion_ajax()
+
+    #amount = (parseFloat(price) * parseFloat(net)).toFixed(2)
+
+    return
+  ### End V2 line item calculation field value changed ###
 
   ### Panel Collapse Links ###
   $(document).on 'click', '.ticket_collapse_link', (e) ->
@@ -913,6 +1136,15 @@ jQuery ->
     minimumInputLength: 2
     ajax:
       url: '/commodities'
+      dataType: 'json'
+      delay: 250
+
+  # V2 Dropdown select for ticket commodities
+  $('.v2_item_select').select2
+    theme: 'bootstrap'
+    minimumInputLength: 2
+    ajax:
+      url: '/v2/commodities'
       dataType: 'json'
       delay: 250
 

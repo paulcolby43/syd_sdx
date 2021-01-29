@@ -241,9 +241,37 @@ Rails.application.routes.draw do
     resources :commodities do
       member do
         get :customer_show
+        get :price
       end
       collection do
         get :customer_index
+      end
+    end
+    resources :pack_shipments do
+      member do
+        get :fetches
+        get :show_pictures
+        get :images_zip
+      end
+    end
+    resources :packs do
+      collection do
+        get :search_by_tag_number
+        get :show_information
+      end
+    end
+    resources :pack_lists do
+      member do
+        get :add_pack
+        get :remove_pack
+        get :add_pack_to_contract_item
+      end
+    end
+    resources :ticket_items do
+      member do
+        post 'save_vin'
+        post 'add'
+        post 'quick_add'
       end
     end
   end

@@ -8,20 +8,12 @@ class V2::TicketsController < ApplicationController
     @start_date = params[:start_date].blank? ? Date.today.last_week.to_s : params[:start_date]
     @end_date = params[:end_date].blank? ? Date.today.to_s : params[:end_date]
     @ticket_number_query = params[:q]
-#    @sort_column = params[:sort_column] ||= 'DateCreated'
-#    @sort_direction = params[:sort_direction] ||= @status == 'PAID' ? 'Descending' : 'Ascending'
-#    response = DRAGONQLAPI::Client.query(IndexQuery, variables: {ticketStatus: @status, startDate: @start_date, endDate: @end_date})
     if @ticket_number_query.blank?
       filter = ' {"ticketStatus": {"eq": "' + @status + '"}, "and": [{"dateCreated": {"gte": "' +  @start_date + '" }}, {"dateCreated": {"lte": "' + @end_date + '" }} ]} '
     else
       filter = ' {"ticketStatus": {"eq": "' + @status + '"}, "ticketNumber": {"eq": ' + @ticket_number_query + '}} '
     end
-#    response = DRAGONQLAPI::Client.query(IndexQuery, variables: {ticket_head_filter_input: JSON[filter]})
-#    response = Ticket.v2_all_by_filter(filter)
-#    ticket_results = response.data.ticket_heads.nodes unless response.blank? or response.data.blank? or response.data.ticket_heads.blank?
     ticket_results = Ticket.v2_all_by_filter(filter)
-#    @errors = response.data.errors unless response.blank? or response.data.blank? or response.data.errors.blank?
-#    @currencies = Ticket.currencies(current_user.token)
     @tickets = Kaminari.paginate_array(ticket_results).page(params[:page]).per(10) unless ticket_results.blank?
     respond_to do |format|
       format.html { 

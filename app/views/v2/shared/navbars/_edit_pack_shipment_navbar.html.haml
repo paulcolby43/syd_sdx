@@ -1,0 +1,17 @@
+.navbar.navbar-default.navbar-fixed-top{ role: 'navigation'}
+  .container-fluid
+    .navbar-header
+      %div{class: 'navbar-brand navbar-center'}
+        .col-xs-4.col-sm-4
+          %div{class: "#{mobile_device? ? 'pull-left' : ''}"}
+            = link_to v2_pack_shipments_path(status: @status) do
+              %i.fa.fa-chevron-left
+              Done
+        .col-xs-4.col-sm-4
+          = title
+        .col-xs-4.col-sm-4
+          %div{class: "#{mobile_device? ? 'pull-right' : ''}"}
+            - unless total.blank?
+              #net_total{style: "display: inline;"}
+                = total
+              #pack_list_unit_of_measure{style: "display: inline;"}= @pack_shipment.unit_of_measure

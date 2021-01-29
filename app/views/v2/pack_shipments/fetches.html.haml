@@ -1,0 +1,14 @@
+= render partial: "v2/shared/navbars/show_shipment_fetches_navbar", locals: {title: @pack_shipment.shipment_number}
+- @title="Fetches: Shipment: #{@pack_shipment.shipment_number}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .col-sm-6.col-md-4.col-md-offset-4
+      - @fetch_event_codes.each do |event_code|
+        = render partial: "v2/shipment_files/fetch_upload", :locals => { :event_code => event_code }
+        - @images_array.find_all {|image| image["EVENT_CODE"] == event_code.name}.each do |image|
+          .row
+            .col-xs-12
+              %a{href: shipment_path(image['CAPTURE_SEQ_NBR']), class: 'thumbnail'}
+                = image_tag(show_preview_image_shipment_path(image['CAPTURE_SEQ_NBR']), alt: image['CAPTURE_SEQ_NBR'], class: 'img-responsive')
+        %hr

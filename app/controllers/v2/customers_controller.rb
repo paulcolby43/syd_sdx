@@ -2,8 +2,8 @@ class V2::CustomersController < ApplicationController
   before_filter :login_required
 #  before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
-  # GET /customers
-  # GET /customers.json
+  # GET v2/customers
+  # GET v2/customers.json
   def index
     authorize! :index, :customers
     unless current_user.mobile_greeter?
@@ -13,10 +13,10 @@ class V2::CustomersController < ApplicationController
     end
     unless params[:q].blank?
       if @yard_filter == 'all_yards'
-        filter = ' {"or": [{"firstName": {"eq": "' +  params[:q] + '" }}, {"lastName": {"eq": "' +  params[:q] + '" }}, {"company": {"eq": "' +  params[:q] + '" }} ]} '
+        filter = ' {"or": [{"firstName": {"contains": "' +  params[:q] + '" }}, {"lastName": {"contains": "' +  params[:q] + '" }}, {"company": {"contains": "' +  params[:q] + '" }} ]} '
         @search = Customer.v2_all_by_filter(filter)
       else
-        filter = ' {"homeYardId": {"eq": "' +  current_yard_id + '"}, "or": [{"firstName": {"eq": "' +  params[:q] + '" }}, {"lastName": {"eq": "' +  params[:q] + '" }}, {"company": {"eq": "' +  params[:q] + '" }} ]} '
+        filter = ' {"homeYardId": {"eq": "' +  current_yard_id + '"}, "or": [{"firstName": {"contains": "' +  params[:q] + '" }}, {"lastName": {"contains": "' +  params[:q] + '" }}, {"company": {"contains": "' +  params[:q] + '" }} ]} '
         @search = Customer.v2_all_by_filter(filter)
       end
     end
@@ -48,8 +48,8 @@ class V2::CustomersController < ApplicationController
     end
   end
 
-  # GET /customers/1
-  # GET /customers/1.json
+  # GET v2/customers/1
+  # GET v2/customers/1.json
   def show
     authorize! :show, :customers
     @customer = Customer.v2_find_by_id(params[:id])
@@ -62,13 +62,13 @@ class V2::CustomersController < ApplicationController
     @workorders = Kaminari.paginate_array(workorders).page(params[:page]).per(5) unless workorders.blank?
   end
 
-  # GET /customers/new
+  # GET v2/customers/new
   def new
     authorize! :create, :customers
     @customer = Customer.new
   end
 
-  # GET /customers/1/edit
+  # GET v2/customers/1/edit
   def edit
     authorize! :edit, :customers
 #    @customer = Customer.find_by_id(current_user.token, current_yard_id, params[:id])
@@ -78,8 +78,8 @@ class V2::CustomersController < ApplicationController
     @new_user = User.new
   end
 
-  # POST /customers
-  # POST /customers.json
+  # POST v2/customers
+  # POST v2/customers.json
   def create
 #    @customer = Customer.new(customer_params)
     create_customer_response = Customer.create(current_user.token, current_yard_id, customer_params)
@@ -97,8 +97,8 @@ class V2::CustomersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /customers/1
-  # PATCH/PUT /customers/1.json
+  # PATCH/PUT v2/customers/1
+  # PATCH/PUT v2/customers/1.json
   def update
     create_customer_response = Customer.update(current_user.token, current_yard_id, customer_params)
     respond_to do |format|
@@ -113,8 +113,8 @@ class V2::CustomersController < ApplicationController
     end
   end
 
-  # DELETE /customers/1
-  # DELETE /customers/1.json
+  # DELETE v2/customers/1
+  # DELETE v2/customers/1.json
   def destroy
     @customer.destroy
     respond_to do |format|
@@ -136,7 +136,7 @@ class V2::CustomersController < ApplicationController
     end
   end
   
-  # GET /customers/service_requests
+  # GET v2/customers/service_requests
   def service_requests
     if current_user.customer? and not current_user.customer_guid.blank?
       workorders = Workorder.all_by_customer(current_user.token, current_yard_id, current_user.customer_guid)

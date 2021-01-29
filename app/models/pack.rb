@@ -1,8 +1,67 @@
 class Pack
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($pack_filter_input: PackFilterInput) {
+        packs(where: $pack_filter_input)
+          {
+          nodes{
+            id
+            internalPackNumber
+            packStatus
+            printDescription
+            tagNumber
+            grossWeight
+            tareWeight
+            netWeight
+            }
+          }
+        }
+    GRAPHQL
+  
+  def self.v2_all_by_filter(filter)
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {pack_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.packs.blank? or response.data.packs.nodes.blank?
+      return response.data.packs.nodes
+    else
+      return []
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($id : Uuid!) {
+        packById(id : $id){
+          ...PackModel
+        }
+      }
+
+      fragment PackModel on Pack {
+        id
+        internalPackNumber
+        packStatus
+        printDescription
+        tagNumber
+        grossWeight
+        tareWeight
+        netWeight
+        }
+    GRAPHQL
+    
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.pack_by_id.blank?
+      return response.data.pack_by_id
+    else
+      return nil
+    end
+  end
   
   #############################
   #     Class Methods         #

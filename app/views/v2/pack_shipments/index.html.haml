@@ -1,0 +1,62 @@
+
+- @title="Shipments"
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    = form_tag v2_pack_shipments_path, id: 'pack_shipments_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+      .btn-group{"aria-label" => "shipment_status", :role => "group"}
+        %a.btn.btn-default.btn-lg{:href => v2_pack_shipments_path(status: 'HELD', container_number: @container_number), class: (params[:status].blank? or params[:status] == 'HELD') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Held"}} 
+          %i.fa.fa-folder-open-o.fa-lg
+          Held
+        %a.btn.btn-default.btn-lg{:href => v2_pack_shipments_path(status: 'CLOSED', container_number: @container_number), class: (params[:status] == 'CLOSED') ? 'active' : '', :type => "button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Closed"}} 
+          %i.fa.fa-folder.fa-lg
+          Closed
+      - if mobile_device?
+        %br
+        %br
+      = hidden_field_tag :status, @status
+      .input-group
+        = search_field_tag :q, @q, :placeholder => "Search", class: "form-control input-lg"
+        .input-group-btn
+          %button.btn.btn-primary.btn-lg{:type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}} 
+            %i.fa.fa-search
+            Search
+    - unless @pack_shipments.blank?
+      %div{id: "pack_shipments"}
+        - @pack_shipments.each do |pack_shipment|
+          = render partial: "v2/shipment_files/upload_modal", locals: {pack_shipment: pack_shipment}
+          - work_order = pack_shipment.related_work_order
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %p
+                %div.panel.panel-primary
+                  %div.list_group{style: 'font-size: large;'}
+                    %a{href: "#{pack_shipment.shipment_type == 'PACKED' ? edit_v2_pack_shipment_path(pack_shipment.id) : nil}", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment.shipment_number}"}, class: "list-group-item pack_shipment_button"}
+                      - if pack_shipment.shipment_type == 'PACKED'
+                        .pull-right
+                          &nbsp;
+                          %i.fa.fa-chevron-right.fa-lg
+                      = pack_shipment.shipment_number
+                      = "- #{work_order.customer.first_name} #{work_order.customer.last_name}" unless work_order.blank? or work_order.customer.blank?
+                      = "- #{pack_shipment.contract_head.contract_description}" unless pack_shipment.contract_head.blank?
+                      - unless pack_shipment.container_number.blank? and pack_shipment.delivery_vehicle_id_number.blank?
+                        %br
+                        = "Vehicle: #{pack_shipment.delivery_vehicle_id_number}" unless pack_shipment.delivery_vehicle_id_number.blank?
+                        = "Container: #{pack_shipment.container_number}" unless pack_shipment.container_number.blank?
+                      %small.text-muted= pack_shipment.shipment_type
+                    %div.list-group-item
+                      .pull-right
+                        %a.btn.btn-primary{href: fetches_v2_pack_shipment_path(pack_shipment.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch"}, class: "pack_shipment_button"}
+                          %i.fa.fa-camera
+                          Fetch
+                      = "Date Created: #{pack_shipment.date_created.to_date.in_time_zone(session[:time_zone]).strftime('%m/%d/%y')}"
+                      %br
+                      = "Time Created: #{pack_shipment.date_created.to_datetime.in_time_zone(session[:time_zone]).strftime('%I:%M %p')}"
+                      %br
+                    
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %i.fa.fa-refresh.fa-spin.fa-2x{:id => "more_pack_shipments_spinner", style: "display:none;"}
+            %p= link_to 'Load more ...', v2_pack_shipments_path(:status => @status, :page => @pack_shipments.next_page), :class => 'load-more-pack-shipments btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_pack_shipments_spinner').show();" if @pack_shipments.next_page
+    - else
+      %p.text-center No shipments found

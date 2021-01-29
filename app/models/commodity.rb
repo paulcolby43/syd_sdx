@@ -12,10 +12,6 @@ class Commodity
             id
             printDescription
             isDisabled
-            commodityTypeUdlv{
-              codeValue
-              reportDescription
-            }
             scalePrice
             code
             menuText
@@ -92,6 +88,28 @@ class Commodity
     response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
     unless response.blank? or response.data.blank? or response.data.commodity_by_id.blank?
       return response.data.commodity_by_id
+    else
+      return nil
+    end
+  end
+  
+  PriceByCustomerQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($customer_id: Uuid!, $commodity_id: Uuid!, $commodity_net_weight: Decimal){
+        customerCommodityPricing(input: {
+          customerId: $customer_id,
+          commodityId: $commodity_id,
+          commodityNetWeight: $commodity_net_weight
+        })
+        {
+          price
+        }
+      }
+    GRAPHQL
+  
+  def self.v2_price_by_customer(customer_id, commodity_id, commodity_net_weight)
+    response = DRAGONQLAPI::Client.query(PriceByCustomerQuery, variables: {customer_id: customer_id, commodity_id: commodity_id, commodity_net_weight: commodity_net_weight})
+    unless response.blank? or response.data.blank? or response.data.customer_commodity_pricing.blank? or response.data.customer_commodity_pricing.price.blank?
+      return response.data.customer_commodity_pricing.price
     else
       return nil
     end

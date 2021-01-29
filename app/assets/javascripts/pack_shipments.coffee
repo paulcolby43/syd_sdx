@@ -76,6 +76,15 @@ jQuery ->
       dataType: 'json'
   #    delay: 250
 
+  # Dropdown select for shipment's pack list packs
+  $('.v2_shipment_pack_select').select2
+    theme: 'bootstrap'
+    minimumInputLength: 3
+    placeholder: "Tag Number"
+    ajax:
+      url: '/v2/packs?status=CLOSED'
+      dataType: 'json'
+
   #$('.shipment_pack_select').select2 
   #  theme: 'bootstrap'
   #  placeholder: "Tag Number"
@@ -189,6 +198,114 @@ jQuery ->
       
     return
   ### End pack selected ###
+
+  ### V2 pack selected ###
+  $('#pack_details').on 'change', '.v2_shipment_pack_select', ->
+    pack_id = $(this).val()
+    pack_list_id = $(this).data( "pack-list-id" )
+    pack_shipment_id = $(this).data( "pack-shipment-id" )
+    pack_select = $(this)
+    adding_pack_spinner_icon = pack_select.closest('#pack_details').find('.adding_pack_spinner:first')
+    adding_pack_spinner_icon.show()
+    get_pack_info_ajax = ->
+      $.ajax
+        url: "/v2/packs/" + pack_id
+        dataType: 'json'
+        success: (data) ->
+          name = data.name
+          internal_pack_number = data.internal_pack_number
+          tag_number = data.tag_number
+          net_weight = data.net
+
+          pack_select.closest('#pack_details').find('#internal_pack_number:first').val internal_pack_number
+          pack_select.closest('#pack_details').find('#tag_number:first').val tag_number
+          pack_select.closest('#pack_details').find('#pack_description:first').val name
+          pack_select.closest('#pack_details').find('#pack_net_weight:first').val net_weight
+
+          console.log 'Name', name
+          console.log 'Internal Pack Number', internal_pack_number
+          add_pack_to_pack_list_ajax()
+          return
+        error: ->
+          adding_pack_spinner_icon.hide()
+          #alert 'Error getting pack information.'
+          console.log 'Error getting pack information.'
+          return
+    add_pack_to_pack_list_ajax = ->
+      pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
+      pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
+      $.ajax
+        url: "/v2/pack_lists/" + pack_list_id + "/add_pack"
+        dataType: 'json'
+        data:
+          pack_id: pack_id
+        success: (data) ->
+          message = data.message
+          console.log 'Message', message
+          if message == "More than one contract item."
+            ## User must choose which contract item to associate pack with ##
+            adding_pack_spinner_icon.hide()
+            $('#pack_shipment_available_packs_search_form').hide()
+            #alert 'More than one contract item. Please select item.'
+            contract_items = data.contract_items
+            console.log contract_items
+            $.each contract_items, (index, value) ->
+              #alert index + ': ' + value['Description']
+              link = $('<a/>').attr(
+                href: '#'
+                id: value['Id']
+                class: 'add_pack_to_contract_item btn btn-default'
+                'data-pack-id': pack_id
+                'data-pack-tag-number': pack_tag_number
+                'data-pack-net-weight': pack_net_weight
+                'data-pack-list-id': pack_list_id
+                'data-pack-shipment-id': pack_shipment_id
+                'data-contract-item-description': value['Description'])
+              plus_sign = "<i class='fa fa-plus'></i> "
+              link.html plus_sign + value['Description']
+              $('#add_contract_items').append link
+              $('#add_contract_items').append '</br></br>'
+              return
+          else
+            add_pack_to_pack_list_html_ajax()
+            console.log 'Pack added to pack list'
+            $('.v2_shipment_pack_select').select2('open')
+          return
+        error: (xhr) ->
+          error = $.parseJSON(xhr.responseText).error
+          adding_pack_spinner_icon.hide()
+          alert error
+          $('.v2_shipment_pack_select').select2('open')
+          console.log error
+          return
+    add_pack_to_pack_list_html_ajax = ->
+      pack_description = pack_select.closest('#pack_details').find('#pack_description:first').val()
+      pack_tag_number = pack_select.closest('#pack_details').find('#tag_number:first').val()
+      pack_net_weight = pack_select.closest('#pack_details').find('#pack_net_weight:first').val()
+      pack_list_unit_of_measure = $('#pack_list_unit_of_measure').text()
+      console.log 'pack description', pack_description
+      console.log 'pack list unit of measure', pack_list_unit_of_measure
+      $.ajax
+        url: "/v2/packs/" + pack_id
+        dataType: 'script'
+        data:
+          pack_list_id: pack_list_id
+          pack_description: pack_description
+          pack_shipment_id: pack_shipment_id
+          pack_tag_number: pack_tag_number
+          pack_net_weight: pack_net_weight
+          pack_list_unit_of_measure: pack_list_unit_of_measure
+        success: (data) ->
+          adding_pack_spinner_icon.hide()
+          calculate_net_total()
+
+    if pack_id != ''
+      # Only get pack info if there is a pack
+      get_pack_info_ajax()
+      #add_pack_to_pack_list_ajax()
+      
+    return
+  ### End V2 pack selected ###
 
   ### pack contract_item selected ###
   $('#pack_details').on 'click', '.add_pack_to_contract_item', (e) ->

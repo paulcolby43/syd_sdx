@@ -8,7 +8,7 @@ class V2::CommoditiesController < ApplicationController
     authorize! :index, :commodities
     @commodity_types = UserDefinedList.v2_commodity_types
     unless params[:q].blank?
-      filter = ' {"printDescription": {"eq": "' + params[:q] + '"}} '
+      filter = ' {"printDescription": {"contains": "' + params[:q] + '"}} '
       results = Commodity.v2_all_by_filter(filter)
     else
       results = Commodity.v2_all_by_filter(nil)
@@ -30,7 +30,7 @@ class V2::CommoditiesController < ApplicationController
       }
       format.json {
         unless results.blank?
-          @commodities = results.collect{ |commodity| {id: commodity['Id'], text: "#{commodity['PrintDescription']} (#{commodity['Code']})"} }
+          @commodities = results.collect{ |commodity| {id: commodity.id, text: "#{commodity.print_description} (#{commodity.code})"} }
         else
           @commodities = nil
         end
@@ -150,19 +150,19 @@ class V2::CommoditiesController < ApplicationController
   # GET v2/commodities/1/price.json
   def price
     authorize! :show, :commodities
-    @commodity = Commodity.find_by_id(current_user.token, current_yard_id, params[:id])
-    price = Commodity.price_by_customer(current_user.token, params[:id], params[:customer_id]) unless params[:customer_id].blank?
-    taxes_by_customer = Commodity.taxes_by_customer(current_user.token, params[:id], params[:customer_id]) unless params[:customer_id].blank?
-#    tax_percent = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
-    tax_percent_1 = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
-    tax_percent_2 = taxes_by_customer.second['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 1
-    tax_percent_3 = taxes_by_customer.third['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 2
-    Rails.logger.debug "Commodity price and taxes response: #{taxes_by_customer}"
+    @commodity = Commodity.v2_find_by_id(params[:id])
+    price = Commodity.v2_price_by_customer(params[:customer_id], params[:id], nil) unless params[:customer_id].blank?
+#    taxes_by_customer = Commodity.taxes_by_customer(current_user.token, params[:id], params[:customer_id]) unless params[:customer_id].blank?
+#    tax_percent_1 = taxes_by_customer.first['TaxPercent'] unless taxes_by_customer.blank?
+#    tax_percent_2 = taxes_by_customer.second['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 1
+#    tax_percent_3 = taxes_by_customer.third['TaxPercent'] if not taxes_by_customer.blank? and taxes_by_customer.count > 2
+#    Rails.logger.debug "Commodity price and taxes response: #{taxes_by_customer}"
     respond_to do |format|
       format.html {}
-      format.json {render json: {"name" => @commodity['PrintDescription'], "price" => "#{price.blank? ? @commodity['ScalePrice'] : price}", 
-          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100, 
-          "tax_percent_3" =>  tax_percent_3.blank? ? 0 : tax_percent_3.to_f/100, "unit_of_measure" => @commodity['UnitOfMeasure']}} 
+#      format.json {render json: {"name" => @commodity.print_description, "price" => "#{price.blank? ? @commodity.scale_price : price}", 
+#          "tax_percent_1" =>  tax_percent_1.blank? ? 0 : tax_percent_1.to_f/100, "tax_percent_2" =>  tax_percent_2.blank? ? 0 : tax_percent_2.to_f/100, 
+#          "tax_percent_3" =>  tax_percent_3.blank? ? 0 : tax_percent_3.to_f/100, "unit_of_measure" => @commodity.scale_uom.code}} 
+      format.json {render json: {"name" => @commodity.print_description, "price" => "#{price.blank? ? @commodity.scale_price : price}", "tax_percent_1" =>  0, "tax_percent_2" =>  0, "tax_percent_3" =>  0, "unit_of_measure" => @commodity.scale_uom.code}} 
     end
   end
   

@@ -1,0 +1,111 @@
+= render partial: "v2/shared/navbars/edit_pack_shipment_navbar", locals: {title: @pack_shipment.shipment_number, total: 0}
+- @title="Shipment: #{@pack_shipment.shipment_number}"
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    %h3
+      = "#{@customer.first_name} #{@customer.last_name}" unless @customer.blank?
+      %p  
+        %a.btn.btn-default{"data-content" => "#{render partial: 'pack_shipment_info', locals: {pack_shipment: @pack_shipment, pack_list: @pack_list}}", "data-placement" => 'bottom', "data-html" => "true", "data-toggle" => "popover", :role => "button", :tabindex => "0", title: "Info"}
+          %i.fa.fa-info-circle
+          Info
+        %a{href: show_pictures_v2_pack_shipment_path(@pack_shipment.id), :class => "btn btn-default pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Pictures"}}
+          %i.fa.fa-photo
+          Pictures
+  
+    %ul.nav.nav-tabs
+      %li.active
+        %a{:href => "#pack_details", :data => {:toggle => "tab"}}
+          %i.fa.fa-dropbox.fa-lg
+          - unless mobile_device?
+            = "Pack Details"
+          - else
+            %small Details
+      %li
+        %a{:href => "#contract_items", :data => {:toggle => "tab"}}
+          %i.fa.fa-list-alt.fa-lg
+          - unless mobile_device?
+            = "Contract Items" 
+          - else
+            %small Items
+    .tab-content
+      .tab-pane.active{:id => "pack_details"}
+        %br
+        %a.btn.btn-primary{id: 'open_pack_qrcode_scanner_button', href: "#qrcode_scanner_modal", "data-target" => "#qrcode_scanner_modal", "data-toggle" => "modal"}
+          %i.fa.fa-qrcode
+          Scan QR Code
+        %a.btn.btn-primary{id: 'open_pack_barcode_scanner_button', href: "#barcode_scanner_modal", "data-target" => "#barcode_scanner_modal", "data-toggle" => "modal"}
+          %i.fa.fa-barcode
+          Scan Barcode
+        .modal.fade{id: "qrcode_scanner_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+          .modal-dialog.modal-sm{:role => "document"}
+            .modal-content
+              .modal-header
+                = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+                %br
+              .modal-body
+                %video#video{:style => "border: 1px solid green; width: 100%; height: auto;"}
+                
+              .modal-footer
+                %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+        .modal.fade{id: "barcode_scanner_modal", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+          .modal-dialog.modal-sm{:role => "document"}
+            .modal-content
+              .modal-header
+                = link_to "×", '#', :class => "close", "data-dismiss" => "modal"
+                %br
+              .modal-body
+                #pack-barcode-scanner
+              .modal-footer
+                %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+        %div#add_contract_items
+        %div.row
+          .col-xs-12.col-sm-6.col-md-4
+            %p
+              = form_tag v2_pack_shipment_path(@pack_shipment.id), id: 'pack_shipment_available_packs_search_form', method: 'get', :class => "form-horizontal", role: 'search' do |f|
+                = select_tag :pack_id, nil, "data-pack-list-id" => @pack_list.blank? ? nil : @pack_list.id, "data-pack-shipment-id" => @pack_shipment.id, class: "form_control input-lg v2_shipment_pack_select", style: "width: 100%;", autofocus: true
+                = hidden_field_tag :internal_pack_number
+                = hidden_field_tag :tag_number
+                = hidden_field_tag :pack_description
+                = hidden_field_tag :pack_net_weight
+        %p
+          %i.fa.fa-lg.fa-spinner.fa-spin.text-primary.adding_pack_spinner{style: 'display: none'}
+        - unless @available_packs.blank?
+          - @available_packs.each do |available_pack|
+            %div.row
+              .col-xs-12.col-sm-12.col-md-12
+                %div.panel.panel-warning
+                  %a{href: add_pack_pack_list_path(@pack_list.id, pack_shipment_id: @pack_shipment.id, internal_pack_number: available_pack['InternalPackNumber'], tag_number: available_pack['TagNumber']), class: "list-group-item pack_shipment_button", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{available_pack['PrintDescription']}"}}
+                    %i.fa.fa-plus-circle.text-warning
+                    = available_pack['PrintDescription']
+        - else
+          - unless params[:pack_tag_number].blank?
+            %p.lead No packs founds
+        
+        %div#current_packs
+          - unless @pack_list_items.blank?
+            - @pack_list_items.each do |pack_list_item|
+              %div.row
+                .col-xs-12.col-sm-12.col-md-12
+                  %div.panel.panel-primary.pack
+                    %div.list-group-item
+                      .pull-right
+                        %a{href: remove_pack_v2_pack_list_path(@pack_list.id, pack_id: pack_list_item.pack_id, pack_shipment_id: @pack_shipment.id), "data-pack-list-id" => @pack_list.id, "data-pack-id" => pack_list_item.pack_id, class: "remove_pack pack_shipment_button"}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                      = "#{pack_list_item.pack.tag_number} #{pack_list_item.pack.print_description}" unless pack_list_item.pack.blank?
+                      %small
+                        .text-muted
+                          .net_weight{style: "display: inline;"}= pack_list_item.pack.net_weight unless pack_list_item.pack.blank?
+                          %span{style: "display: inline;"}= @pack_shipment.unit_of_measure
+      
+      .tab-pane{:id => "contract_items"}
+        %br
+        %p.lead
+          = @contract.contract_description
+          Materials
+        - unless @contract_items.blank?
+          - @contract_items.each do |contract_item|
+            = contract_item.description
+            %br
+        - else
+          %p.lead None

@@ -1,8 +1,127 @@
 class PackShipment
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($shipment_head_filter_input: ShipmentHeadFilterInput) {
+        shipmentHeads(where: $shipment_head_filter_input)
+          {
+          nodes{
+            id
+            shipmentStatus
+            shipmentType
+            dateCreated
+            dateShipped
+            shipmentNumber
+            bookingNumber
+            containerNumber
+            unitOfMeasure
+            yardId
+            netWeight
+            packListHead{
+              id
+              packListNumber
+              packListItems{
+                id
+                packId
+                pack{
+                  tagNumber
+                  printDescription
+                  netWeight
+                }
+              }
+            }
+            relatedWorkOrder{
+              customer{
+                firstName
+                lastName
+                }
+              }
+            contractHead{
+              contractDescription
+              contractItems{
+                id
+                description
+                }
+              }
+            deliveryVehicleIdNumber
+            }
+          }
+        }
+    GRAPHQL
+  
+  def self.v2_all_by_filter(filter)
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {shipment_head_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.shipment_heads.blank? or response.data.shipment_heads.nodes.blank?
+      return response.data.shipment_heads.nodes
+    else
+      return []
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($id : Uuid!) {
+        shipmentHeadById(id : $id){
+          ...ShipmentModel
+        }
+      }
+
+      fragment ShipmentModel on ShipmentHead {
+        id
+        shipmentStatus
+        shipmentType
+        dateCreated
+        dateShipped
+        shipmentNumber
+        bookingNumber
+        containerNumber
+        unitOfMeasure
+        yardId
+        netWeight
+        packListHead{
+          id
+          packListNumber
+          packListItems{
+            id
+            packId
+            pack{
+              tagNumber
+              printDescription
+              netWeight
+            }
+          }
+        }
+        relatedWorkOrder{
+          customer{
+            firstName
+            lastName
+            }
+          }
+        contractHead{
+          contractDescription
+          contractItems{
+            id
+            description
+            }
+          }
+        deliveryVehicleIdNumber
+        }
+    GRAPHQL
+    
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.shipment_head_by_id.blank?
+      return response.data.shipment_head_by_id
+    else
+      return nil
+    end
+  end
   
   #############################
   #     Class Methods         #

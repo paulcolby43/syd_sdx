@@ -1,0 +1,30 @@
+- @pack_shipments.each do |pack_shipment|
+  = render partial: "v2/shipment_files/upload_modal", locals: {pack_shipment: pack_shipment}
+  - work_order = pack_shipment.related_work_order
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %p
+        %div.panel.panel-primary
+          %div.list_group{style: 'fonrelated_work_ordert-size: large;'}
+            %a{href: "#{pack_shipment.shipment_type == 'PACKED' ? edit_v2_pack_shipment_path(pack_shipment.id) : nil}", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{pack_shipment.shipment_number}"}, class: "list-group-item pack_shipment_button"}
+              - if pack_shipment.shipment_type == 'PACKED'
+                .pull-right
+                  &nbsp;
+                  %i.fa.fa-chevron-right.fa-lg
+              = pack_shipment.shipment_number
+              = "- #{work_order.customer.first_name} #{work_order.customer.last_name}" unless work_order.blank? or work_order.customer.blank?
+              = "- #{pack_shipment.contract_head.contract_description}" unless pack_shipment.contract_head.blank?
+              - unless pack_shipment.container_number.blank? and pack_shipment.delivery_vehicle_id_number.blank?
+                %br
+                = "Vehicle: #{pack_shipment.delivery_vehicle_id_number}" unless pack_shipment.delivery_vehicle_id_number.blank?
+                = "Container: #{pack_shipment.container_number}" unless pack_shipment.container_number.blank?
+              %small.text-muted= pack_shipment.shipment_type
+            %div.list-group-item
+              .pull-right
+                %a.btn.btn-primary{href: fetches_v2_pack_shipment_path(pack_shipment.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Fetch"}, class: "pack_shipment_button"}
+                  %i.fa.fa-camera
+                  Fetch
+              = "Date Created: #{pack_shipment.date_created.to_date.in_time_zone(session[:time_zone]).strftime('%m/%d/%y')}"
+              %br
+              = "Time Created: #{pack_shipment.date_created.to_datetime.in_time_zone(session[:time_zone]).strftime('%I:%M %p')}"
+              %br
