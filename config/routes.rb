@@ -274,6 +274,16 @@ Rails.application.routes.draw do
         post 'quick_add'
       end
     end
+    resources :trips do
+      member do 
+        get 'log_location'
+        get 'locations'
+      end
+      collection do
+        get :search
+        get :drivers
+      end
+    end
   end
   
   # The priority is based upon order of creation: first created -> highest priority.

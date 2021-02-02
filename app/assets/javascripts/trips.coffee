@@ -196,7 +196,8 @@ jQuery ->
     $(this).closest("form").find('.task_status').change()
 
   $('.hide_trip_icon').on 'click', ->
-    $(this).closest('.panel').remove()
+    # $(this).closest('.panel').remove()
+    $(this).closest('.panel').hide('slow')
 
   ### Get User Geolocation ###
   $('.find_my_location').on 'click', (e) ->

@@ -1,8 +1,83 @@
 class Trip
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($dispatch_trip_filter_input: DispatchTripFilterInput) {
+        dispatchTrips(where: $dispatch_trip_filter_input, order: { beginDate: DESC })
+          {
+          nodes{
+              id
+              dateCreated
+              beginDate
+              endDate
+              tripStatus
+              tripNumber
+              driverId
+              driver{
+                id
+                firstName
+                lastName
+              }
+              dispatchWorkOrders{
+                id
+                notes
+                workOrderNumber
+                commodity{
+                  printDescription
+                }
+                containerType{
+                  description
+                }
+                dispatchTasks( order: { sequence: ASC }, where: {taskStatus: {eq: IN_QUEUE}} ){
+                  id
+                  taskStatus
+                  sequence
+                  internalTaskType
+                }
+                taskTypeFunction{
+                  name
+                }
+                nameOfPersonCalling
+                customerId
+                customer{
+                  firstName
+                  lastName
+                  address1
+                  address2
+                  city
+                  state
+                  zip
+                }
+              }
+              truck{
+                id
+                description
+              }
+              dispatchTripLocationLogs{
+                id
+                latitude
+                longitude
+              }
+            }
+          }
+        }
+    GRAPHQL
+  
+  def self.v2_all_by_filter(filter)
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {dispatch_trip_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.dispatch_trips.blank? or response.data.dispatch_trips.nodes.blank?
+      return response.data.dispatch_trips.nodes
+    else
+      return []
+    end
+  end
   
   #############################
   #     Class Methods         #
