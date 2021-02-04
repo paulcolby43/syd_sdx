@@ -84,6 +84,37 @@ jQuery ->
       #create_new_container_ajax(task_id, container_number)
     return
 
+  $('.v2_container_select').select2(
+    theme: 'bootstrap'
+    minimumInputLength: 1
+    ajax:
+      url: '/v2/containers'
+      dataType: 'json'
+      delay: 250
+    cache: true
+    #tags: true
+    allowClear: true
+    selectOnClose: true
+    placeholder: '-- Choose container --'
+    #insertTag: (data, tag) ->
+    #  tag.text = 'Create: ' + tag.text
+    #  data.push tag
+    #  return
+  ).on 'select2:select', ->
+    task_id = $(this).data("task-id")
+    task_form = $("#task_" + task_id + "_form")
+    container_number_name = $(this).find('option:selected').text()
+    task_form.find('#task_container_number').val(container_number_name)
+    if $(this).find('option:selected').data('select2-tag') == true # New tag/container being created
+      container_number = $(this).find('option:selected').val()
+      new_container_div = $("#task_" + task_id + "_create_new_container")
+      #task_form = $("#task_" + task_id + "_form")
+      new_container_div.find('#container_container_number').val(container_number)
+      new_container_div.show()
+      task_form.hide()
+      #create_new_container_ajax(task_id, container_number)
+    return
+
   create_new_container_ajax = (task_id, tag_number) ->
     $.ajax
       url: "/tasks/" + task_id + "/create_new_container"

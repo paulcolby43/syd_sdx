@@ -19,7 +19,7 @@
             %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip.id}", :role => "button"}
               .panel-title{style: "font-size: 24px;"}
                 - unless work_orders.blank? or work_orders.count > 1 or customer.blank?
-                  %strong= "#{customer.first_name} #{customer.last_name}"
+                  %strong= "#{customer.first_name} #{customer.last_name}".titleize
                 - else
                   %strong Multiple Customers
                 = work_orders.first.task_type_function.name unless work_orders.blank?
@@ -40,12 +40,17 @@
                     %br
                     = trip.truck.description 
                     %br
-              .pull-right= "Trip #{trip.trip_number}"
+                  .pull-right= "Trip #{trip.trip_number}"
               - if current_user.location_logging?
                 - if location_points.blank?
                   %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip.id}&tripDesc=#{trip.trip_number}", :onclick => "$(this).fadeOut();"}
                     %i.fa.fa-location-arrow
                     Start Trip
+                - else
+                  %a.btn.btn-default.disabled.btn-sm{href: nil}
+                    %i.fa.fa-location-arrow
+                    Start Trip
+                
           .panel-collapse.collapse{id: "collapse_#{trip.id}", "aria-labelledby" => "trip_#{trip.id}", :role => "tabpanel"}
             %ul.list-group
               - work_orders.each do |work_order|
@@ -56,7 +61,7 @@
                   - container_type = work_order.container_type
                   .list-group-item.active
                     - unless customer.blank? or (customer.first_name and customer.last_name.blank?)
-                      %strong= "#{customer.first_name} #{customer.last_name}"
+                      %strong= "#{customer.first_name} #{customer.last_name}".titleize
                       %br
                     - unless container_type.blank?
                       Container:
@@ -84,7 +89,7 @@
                     %a{href: "#task_#{task.id}_modal", "data-target" => "#task_#{task.id}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task.task_status)}", id: "task_#{task.id}_link"}
                       %strong
                         = task.sequence
-                        = task_type_string(task.internal_task_type)
+                        = task.internal_task_type.titleize
                       %br
                       %small
                         = customer.address1
@@ -93,125 +98,121 @@
                           = customer.address2
                           %br
                         = "#{customer.city}, #{customer.state} #{customer.zip}"
-                        -#
-                          = task['CustomerAddressName']
-                          %br
-                          = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
-                    -#
-                      / Modal
-                      .modal{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
-                        .modal-dialog{:role => "document"}
-                          .modal-content
-                            .modal-body
-                              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-                                %span{"aria-hidden" => "true"} ×
-                              %br
-                              = render partial: "tasks/edit", locals: {task: task, workorder: workorder, task_containers: Task.containers(task)}
-                            .modal-footer
-                              %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
-    - else
-      %p.text-center No trips found
-
-    - unless @trips.blank?
-      #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
-        - @trips.sort_by{ |t| t['BeginDate'] }.group_by{ |t| t['BeginDate'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
-          - trips.each do |trip|
-            %p
-              
-              - service_requests = Trip.service_requests(trip)
-              - location_points = Trip.get_locations(current_user.token, trip['Id'])
-              = begin_date
-              .panel.panel-default{style: "font-size: 20px;"}
-                .panel-heading{id: "trip_#{trip['Id']}", :role => "tab"}
-                  .pull-right
-                    &nbsp;
-                    %a{href: nil, class: 'hide_trip_icon'}
-                      %i.fa.fa-times-circle
-                  %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip['Id']}", :role => "button"}
-                    .panel-title{style: "font-size: 24px;"}
-                      - unless service_requests.blank? or service_requests.count > 1 or service_requests.first['Customer'].blank?
-                        %strong= service_requests.first['Customer']
-                      - else
-                        %strong Multiple Customers
-                      = service_requests.first['TaskType'] unless service_requests.blank?
-                      %br
-                      %small
-                        - unless trip['BeginDate'].blank? or trip['BeginDate'].is_a? Hash
-                          - unless session[:time_zone].blank?
-                            = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
-                          - else
-                            = "#{trip['BeginDate'].to_datetime.strftime('%l:%M%P')}"
-                        - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
-                          = " - "
-                          - unless session[:time_zone].blank?
-                            = "#{trip['EndDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
-                          - else
-                            = "#{trip['EndDate'].to_datetime.strftime('%l:%M%P')}"
-                        %br
-                        = trip['Truck']
-                        %br
-                    .pull-right= "Trip #{trip['TripNumber']}"
-                    - if current_user.location_logging?
-                      - if location_points.blank?
-                        %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip['Id']}&tripDesc=#{trip['TripNumber']}", :onclick => "$(this).fadeOut();"}
-                          %i.fa.fa-location-arrow
-                          Start Trip
-                .panel-collapse.collapse{id: "collapse_#{trip['Id']}", "aria-labelledby" => "trip_#{trip['Id']}", :role => "tabpanel"}
-                  %ul.list-group
-                    - Trip.service_request_tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
-                      - workorder = service_requests.find{|sr| sr["WorkOrderNumber"] == service_request_number}
-                      - workorder_id = workorder["Id"] unless workorder.blank?
-                      - customer_id = workorder["CustomerId"] unless workorder.blank?
-                      .list-group-item.active
-                        - unless service_requests.blank? or service_requests.count == 1
-                          %strong
-                            =# tasks.first['Company']
-                            = workorder['Customer']
-                          %br
-                        - unless workorder.blank? or workorder['ContainerType'] == {"i:nil"=>"true"} or workorder['ContainerType'].blank?
-                          Container
-                          = "#{workorder['ContainerType']}"
-                          %br
-                        - unless workorder.blank? or workorder['Commodity'] == {"i:nil"=>"true"} or workorder['Commodity'].blank?
-                          Commodity
-                          = workorder['Commodity']
-                          %br
-                        - unless workorder.blank? or workorder['WorkOrderNotes'].blank?
-                          %div.word-wrap= workorder['WorkOrderNotes']
-                          %br
-                        - unless customer_id.blank? or workorder_id.blank? or not current_user.mobile_buy?
-                          %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
-                            %i.fa.fa-ticket
-                            Ticket
-                        - else
-                          %a{href: nil, class: "btn btn-default btn-sm disabled customer_button"}
-                            %i.fa.fa-ticket
-                            Ticket
-                        .pull-right
-                          Service Request
-                          = service_request_number
-                      - tasks.each do |task|
-                        %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
-                          %strong
-                            = task['Sequence']
-                            =# task_type_string(task['TaskType'])
-                            = task_type_string(task['InternalTaskType'])
-                          %br
-                          %small
-                            = task['CustomerAddressName']
+                    / Modal
+                    .modal{id: "task_#{task.id}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                      .modal-dialog{:role => "document"}
+                        .modal-content
+                          .modal-body
+                            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                              %span{"aria-hidden" => "true"} ×
                             %br
-                            = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
-                        / Modal
-                        .modal{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
-                          .modal-dialog{:role => "document"}
-                            .modal-content
-                              .modal-body
-                                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
-                                  %span{"aria-hidden" => "true"} ×
-                                %br
-                                = render partial: "tasks/edit", locals: {task: task, workorder: workorder, task_containers: Task.containers(task)}
-                              .modal-footer
-                                %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
-
+                            = render partial: "v2/tasks/edit", locals: {trip: trip, task: task, work_order: work_order, task_containers: task.dispatch_task_container_xlinks}
+                          .modal-footer
+                            %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
     - else
       %p.text-center No trips found
+
+    -#
+      - unless @trips.blank?
+        #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+          - @trips.sort_by{ |t| t['BeginDate'] }.group_by{ |t| t['BeginDate'].to_datetime.strftime('%m/%d/%Y') }.each do |begin_date, trips|
+            - trips.each do |trip|
+              %p
+
+                - service_requests = Trip.service_requests(trip)
+                - location_points = Trip.get_locations(current_user.token, trip['Id'])
+                = begin_date
+                .panel.panel-default{style: "font-size: 20px;"}
+                  .panel-heading{id: "trip_#{trip['Id']}", :role => "tab"}
+                    .pull-right
+                      &nbsp;
+                      %a{href: nil, class: 'hide_trip_icon'}
+                        %i.fa.fa-times-circle
+                    %a{"aria-controls" => "collapseOne", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse_#{trip['Id']}", :role => "button"}
+                      .panel-title{style: "font-size: 24px;"}
+                        - unless service_requests.blank? or service_requests.count > 1 or service_requests.first['Customer'].blank?
+                          %strong= service_requests.first['Customer']
+                        - else
+                          %strong Multiple Customers
+                        = service_requests.first['TaskType'] unless service_requests.blank?
+                        %br
+                        %small
+                          - unless trip['BeginDate'].blank? or trip['BeginDate'].is_a? Hash
+                            - unless session[:time_zone].blank?
+                              = "#{trip['BeginDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
+                            - else
+                              = "#{trip['BeginDate'].to_datetime.strftime('%l:%M%P')}"
+                          - unless trip['EndDate'].blank? or trip['EndDate'].is_a? Hash
+                            = " - "
+                            - unless session[:time_zone].blank?
+                              = "#{trip['EndDate'].to_datetime.in_time_zone(session[:time_zone]).strftime('%l:%M%P')}"
+                            - else
+                              = "#{trip['EndDate'].to_datetime.strftime('%l:%M%P')}"
+                          %br
+                          = trip['Truck']
+                          %br
+                      .pull-right= "Trip #{trip['TripNumber']}"
+                      - if current_user.location_logging?
+                        - if location_points.blank?
+                          %a.btn.btn-success.btn-sm{href: "sdxtriplocationlogger://logLocation?apiAddress=#{current_user.company.dragon_api}&tripId=#{trip['Id']}&tripDesc=#{trip['TripNumber']}", :onclick => "$(this).fadeOut();"}
+                            %i.fa.fa-location-arrow
+                            Start Trip
+                  .panel-collapse.collapse{id: "collapse_#{trip['Id']}", "aria-labelledby" => "trip_#{trip['Id']}", :role => "tabpanel"}
+                    %ul.list-group
+                      - Trip.service_request_tasks(trip).group_by { |t| t['WorkOrderNumber'] }.each do |service_request_number, tasks|
+                        - workorder = service_requests.find{|sr| sr["WorkOrderNumber"] == service_request_number}
+                        - workorder_id = workorder["Id"] unless workorder.blank?
+                        - customer_id = workorder["CustomerId"] unless workorder.blank?
+                        .list-group-item.active
+                          - unless service_requests.blank? or service_requests.count == 1
+                            %strong
+                              =# tasks.first['Company']
+                              = workorder['Customer']
+                            %br
+                          - unless workorder.blank? or workorder['ContainerType'] == {"i:nil"=>"true"} or workorder['ContainerType'].blank?
+                            Container
+                            = "#{workorder['ContainerType']}"
+                            %br
+                          - unless workorder.blank? or workorder['Commodity'] == {"i:nil"=>"true"} or workorder['Commodity'].blank?
+                            Commodity
+                            = workorder['Commodity']
+                            %br
+                          - unless workorder.blank? or workorder['WorkOrderNotes'].blank?
+                            %div.word-wrap= workorder['WorkOrderNotes']
+                            %br
+                          - unless customer_id.blank? or workorder_id.blank? or not current_user.mobile_buy?
+                            %a{href: create_ticket_customer_path(customer_id, related_workorder_id: workorder_id), class: "btn btn-default btn-sm customer_button", data: {:confirm => 'Are you sure you want to create a new ticket?', disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Ticket"} }
+                              %i.fa.fa-ticket
+                              Ticket
+                          - else
+                            %a{href: nil, class: "btn btn-default btn-sm disabled customer_button"}
+                              %i.fa.fa-ticket
+                              Ticket
+                          .pull-right
+                            Service Request
+                            = service_request_number
+                        - tasks.each do |task|
+                          %a{href: "#task_#{task['Id']}_modal", "data-target" => "#task_#{task['Id']}_modal", "data-toggle" => "modal", class: "list-group-item #{task_status_color(task['TaskStatus'])}", id: "task_#{task['Id']}_link"}
+                            %strong
+                              = task['Sequence']
+                              =# task_type_string(task['TaskType'])
+                              = task_type_string(task['InternalTaskType'])
+                            %br
+                            %small
+                              = task['CustomerAddressName']
+                              %br
+                              = simple_format(Task.full_address(task), {}, wrapper_tag: "div")
+                          / Modal
+                          .modal{id: "task_#{task['Id']}_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                            .modal-dialog{:role => "document"}
+                              .modal-content
+                                .modal-body
+                                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                                    %span{"aria-hidden" => "true"} ×
+                                  %br
+                                  = render partial: "tasks/edit", locals: {task: task, workorder: workorder, task_containers: Task.containers(task)}
+                                .modal-footer
+                                  %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+
+      - else
+        %p.text-center No trips found

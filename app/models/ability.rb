@@ -232,6 +232,7 @@ class Ability
       
       # Containers
       ############
+      can :index, :containers
       can :show, :containers
       can :edit, :containers
       

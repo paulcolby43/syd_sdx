@@ -23,6 +23,14 @@ module TasksHelper
     [["InQueue", "0"], ["Started", "1"], ["Void", "3"], ["Delayed", "4"]]
   end
   
+  def v2_task_status_array
+    [["InQueue", "INQUEUE"], ["Started", "STARTED"], ["Completed", "COMPLETED"], ["Void", "VOID"], ["Delayed", "DELAYED"]]
+  end
+  
+  def v2_task_status_array_without_completed
+    [["InQueue", "INQUEUE"], ["Started", "STARTED"], ["Void", "VOID"], ["Delayed", "DELAYED"]]
+  end
+  
   def task_status_color(status)
 #    White: InQueue (0)
 #    Yellow: Started (1)

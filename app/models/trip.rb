@@ -25,6 +25,8 @@ class Trip
                 id
                 notes
                 workOrderNumber
+                company
+                contact
                 commodity{
                   printDescription
                 }
@@ -36,6 +38,20 @@ class Trip
                   taskStatus
                   sequence
                   internalTaskType
+                  startingMileage
+                  endingMileage
+                  notes
+                  fromLocationId
+                  toLocationId
+                  dispatchTaskContainerXlinks{
+                    id
+                    container{
+                      id
+                      dispatchContainerNumber
+                      latitude
+                      longitude
+                    }
+                  }
                 }
                 taskTypeFunction{
                   name
@@ -45,6 +61,7 @@ class Trip
                 customer{
                   firstName
                   lastName
+                  phone
                   address1
                   address2
                   city

@@ -14,7 +14,6 @@ class V2::TripsController < ApplicationController
     end
     @v2_trips = Trip.v2_all_by_filter(filter)
     @dispatch_information = Trip.dispatch_info_by_user_guid(current_user.token)
-#    @trips = Trip.all_by_user(@dispatch_information)
     unless current_user.mobile_admin?
       @trips_list_by_driver = Trip.all_by_user(@dispatch_information)
       @driver_id = @trips_list_by_driver.first['DriverId'] unless @trips_list_by_driver.blank?
@@ -26,13 +25,12 @@ class V2::TripsController < ApplicationController
     else
       @trips = Trip.search(current_user.token, nil, nil, nil)
     end
-#    @trucks = Trip.all_trucks(@dispatch_information)
-    @containers = Container.all_by_dispatch_information(@dispatch_information)
-    @task_functions = Trip.task_functions(@dispatch_information)
-    @container_types = Trip.container_types(@dispatch_information)
-#    @drivers = Trip.drivers(current_user.token)
-#    @get_trips = Trip.search(current_user.token, nil, nil, nil)
-    @task_type_functions = Trip.task_type_functions(current_user.token)
+    @container_types = ContainerType.v2_all_by_filter(nil)
+    
+#    @containers = Container.all_by_dispatch_information(@dispatch_information)
+#    @task_functions = Trip.task_functions(@dispatch_information)
+#    @container_types = Trip.container_types(@dispatch_information)
+#    @task_type_functions = Trip.task_type_functions(current_user.token)
   end
   
   # GET v2/trips/1

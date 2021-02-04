@@ -1,10 +1,10 @@
-class TasksController < ApplicationController
+class V2::TasksController < ApplicationController
   before_filter :login_required  
   include ApplicationHelper
   include TasksHelper
 
-  # GET /tasks/1
-  # GET /tasks/1.json
+  # GET v2/tasks/1
+  # GET v2/tasks/1.json
   def show
     authorize! :show, :tasks
     @task = params[:task]
@@ -21,7 +21,7 @@ class TasksController < ApplicationController
     
   end
   
-  # GET /tasks/1/edit
+  # GET v2/tasks/1/edit
   def edit
     authorize! :edit, :tasks
     @task = params[:task]
@@ -32,8 +32,8 @@ class TasksController < ApplicationController
     @images = nil
   end
   
-  # PATCH/PUT /tasks/1
-  # PATCH/PUT /tasks/1.json
+  # PATCH/PUT v2/tasks/1
+  # PATCH/PUT v2/tasks/1.json
   def update
     @task = task_params
     if task_params[:container_id].blank?

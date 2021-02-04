@@ -1,8 +1,39 @@
 class Container
   
-  ############################
-  #     Instance Methods     #
-  ############################
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+    query($dispatch_container_filter_input: DispatchContainerFilterInput) {
+      dispatchContainers(where: $dispatch_container_filter_input)
+        {
+        nodes{
+            id
+            description
+            dispatchContainerNumber
+            tagNumber
+            dispatchContainerType{
+              description
+            }
+          }
+        }
+      }
+    GRAPHQL
+    
+  def self.v2_all_by_filter(filter)
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery, variables: {dispatch_container_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindAllByFilterQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.dispatch_containers.blank? or response.data.dispatch_containers.nodes.blank?
+      return response.data.dispatch_containers.nodes
+    else
+      return []
+    end
+  end
+  
   
   #############################
   #     Class Methods         #

@@ -1,0 +1,206 @@
+.text-center
+  %strong= work_order.company
+  %br
+  = task.internal_task_type.titleize
+  %br
+  =# task['CustomerAddressName']
+  %br
+  - task_address = "#{work_order.customer.address1}, #{work_order.customer.city}, #{work_order.customer.state}, #{work_order.customer.zip}"
+  %a{href: "http://maps.google.com/?saddr=Current%20Location&daddr=#{URI.encode(task_address)}", target: '_blank'}
+    = work_order.customer.address1
+    %br
+    - unless work_order.customer.address2.blank?
+      = work_order.customer.address2
+      %br
+    = "#{work_order.customer.city}, #{work_order.customer.state} #{work_order.customer.zip}"
+  = work_order.contact
+  - unless work_order.customer.phone.blank?
+    %br
+    %a{href: "tel:#{work_order.customer.phone}"}
+      = work_order.customer.phone
+
+%ul.nav.nav-tabs
+
+  - if task.internal_task_type == 'PICKUP_CONTAINER' or task.internal_task_type == 'DROPOFF_CONTAINER'
+    %li.active
+      %a{:href => "#trip_#{trip.id}_task_#{task.id}_containers", :data => {:toggle => "tab"}}
+        Container
+  %li{class: "#{task.internal_task_type == 'PICKUP_CONTAINER' or task.internal_task_type == 'DROPOFF_CONTAINER' ? '' : 'active'}"}
+    %a{:href => "#trip_#{trip.id}_task_#{task.id}_details", :data => {:toggle => "tab"}}
+      Details
+  - if task.internal_task_type == 'DROPOFF_CONTAINER'
+    %li
+      %a{:href => "#trip_#{trip.id}_task_#{task.id}_signature", :data => {:toggle => "tab"}}
+        Signature
+-#
+.tab-content
+  .tab-pane{:id => "trip_#{trip.id}_task_#{task.id}_details", class: "#{task.internal_task_type == 'PICKUP_CONTAINER' or task.internal_task_type == 'DROPOFF_CONTAINER' ? '' : 'active'}"}
+    %br
+    %div
+      = form_tag v2_task_path(task.id), method: 'put', remote: true, :class => "form-horizontal", id: 'task_form' do
+        = hidden_field_tag "task[id]", task.id
+        %div
+          %a{href: nil, onclick: "$('#mileage_task_#{task.id}').toggle(); $('#plus_mileage_task_#{task.id}').toggle(); $('#minus_mileage_task_#{task.id}').toggle();"} 
+            %i.fa.fa-plus{id: "plus_mileage_task_#{task.id}"}
+            %i.fa.fa-minus{id: "minus_mileage_task_#{task.id}", style: 'display:none;'}
+            Mileage
+        .row.form-group{id: "mileage_task_#{task.id}", style: 'display:none;'}
+          %div{:class => "col-xs-6"}
+            = label_tag "Start Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[starting_mileage]", task.starting_mileage, :placeholder => "Start Mileage", class: "form-control input-lg"
+          %div{:class => "col-xs-6"}
+            = label_tag "End Mileage", nil, :class => 'control-label'
+            = text_field_tag "task[ending_mileage]", task.ending_mileage, :placeholder => "End Mileage", class: "form-control input-lg"
+        %br
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Notes", nil, :class => 'control-label'
+            = text_area_tag "task[notes]", task.notes, :placeholder => "Notes", class: "form-control input-lg"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = label_tag "Status", nil, :class => 'control-label'
+            / Don't show Completed option if Pickup/Drop Container and no containers yet
+            - if (task.internal_task_type == 'PICKUP_CONTAINER' or task.internal_task_type == 'DROPOFF_CONTAINER') and task_containers.blank? 
+              = select_tag "task[status]", options_for_select(v2_task_status_array_without_completed, task.task_status), "data-sequence-number" => task.sequence, "data-current-value" => task.task_status, :class => "form-control input-lg task_status"
+            - else
+              = select_tag "task[status]", options_for_select(v2_task_status_array, task.task_status), "data-sequence-number" => task.sequence, "data-current-value" => task.task_status, :class => "form-control input-lg task_status"
+        .row.form-group
+          %div{:class => "col-sm-12 col-md-12"}
+            = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block task_save_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save"}) do
+              Save
+  -#
+  - if task.internal_task_type == 'PICKUP_CONTAINER' or task.internal_task_type == 'DROPOFF_CONTAINER'
+    .tab-pane.active.containers_tab{:id => "trip_#{trip.id}_task_#{task.id}_containers"}
+      %br
+      .location_data
+      %a{href: location_path(task.from_location_id, address: task_address, work_order_number: work_order.work_order_number), target: '_blank'}
+        %i.fa.fa-external-link
+        Existing Container Lookup
+      %div{id: "task_#{task.id}_containers", class: 'task_containers'}
+        - unless task_containers.blank?
+          - task_containers.each do |dispatch_task_container_xlink|
+            - container_record = dispatch_task_container_xlink.container
+            - container_number = container_record.dispatch_container_number
+            - unless (container_record.latitude.blank? or container_record.latitude == '0') and (container_record.longitude.blank? or container_record.longitude == '0')
+              .embed-responsive.embed-responsive-16by9{id: "task_#{task.id}_container_map"}
+                %iframe{:allowfullscreen => "", :frameborder => "0", :src => Image.google_map("#{container_record.latitude}, #{container_record.longitude}"), :style => "border:0"}
+            %div.row
+              %p
+                .col-xs-12.col-sm-12.col-md-12
+                  %div.panel.panel-primary
+                    .panel-body
+                      .pull-right 
+                        %a{href: '#', id: "container_#{container_record.id}_picture_button", class: 'container_picture_button', 'data-event-code' => task.internal_task_type,  'data-event-code-id' => current_user.company.container_event_code_id, "data-container-number" => container_number, "data-customer" => "#{work_order.customer.first_name} #{work_order.customer.last_name}", "data-work-order-number" => work_order.work_order_number, "data-container-id" => container_record.id, style: "text-decoration: none;"}
+                          %i.fa.fa-camera.fa-lg
+                        &nbsp;
+                        &nbsp;
+                        - if (container_record.latitude.blank? or container_record.latitude == '0') and (container_record.longitude.blank? or container_record.longitude == '0')
+                          %a{href: '#', id: "container_#{container_record.id}_locate_button", class: 'locate_container', "data-task-id" => task.id, "data-container-id" => container_record.id, title: "Save location", style: "text-decoration: none;", "data-google-maps-api-key" => ENV['GOOGLE_MAPS_API_KEY'], "data-user-id" => current_user.id}
+                            %i.fa.fa-map-marker.fa-lg
+                            %i.fa.fa-spinner.fa-spin.fa-lg{style: 'display:none;'}
+                          &nbsp;
+                          &nbsp;
+                        %a{href: '#', class: 'remove_container', "data-task-id" => task.id, "data-container-id" => container_record.id, title: "Remove"}
+                          %i.fa.fa-trash.fa-lg.text-danger
+                          %i.fa.fa-spinner.fa-spin.fa-lg.text-danger{style: 'display:none;'}
+                      = link_to "<i class='fa fa-cube'/></i> #{container_number}".html_safe, container_path(container_record.id, work_order_number: work_order.work_order_number), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> #{container_number}"}, class: 'trip_button'
+  
+                      = form_for ImageFile.new, html: {class: 'new_task_image_file'} do |f|
+                        = f.hidden_field :user_id, value: current_user.id
+                        = f.hidden_field :yard_id, value: current_yard_id
+                        = f.hidden_field :customer_name
+                        = f.hidden_field :service_request_number
+                        = f.hidden_field :container_number
+                        = f.hidden_field :event_code
+                        = f.hidden_field :event_code_id
+                        %div{:id => 'uploads', :style => 'display:none;'}
+                          %p{id: "upload_button", style: "display:block;"}
+                            = f.file_field :file, name: "image_file[file]", id: "container_#{container_record.id}_file_upload_button", "data-container-id" => container_record.id, :type => 'file', :class => 'btn-primary btn-block btn-lg', title: "<i class='fa fa-upload'/> Picture".html_safe
+                      .picture_loading_spinner{:style => "display:none;", :id => "image_file_spinner"}
+                        = image_tag("ajax-loader.gif", :id => "loading_spinner", :alt => "Loading")
+                        Uploading ...
+                      .row.task_pictures{style: 'margin-top: 5px;'}
+                        - Image.api_find_all_by_container_number_and_service_request_number(container_number, work_order.work_order_number, current_user.company, current_yard_id).last(3).each do |image|
+                          .col-xs-4.col-sm-4.col-md-4.col-lg-4
+                            = link_to image_tag(show_preview_image_image_path(image['CAPTURE_SEQ_NBR']), alt: image['EVENT_CODE'], class: 'thumbnail img-responsive', style: "margin-bottom: 0px;"), image_path(image['CAPTURE_SEQ_NBR'])
+
+                      .clear
+                      %script{:id => "template-upload", :type => "text/x-tmpl"}
+                        .upload
+                          {%=o.name%}
+                          .progress.progress-striped
+                            .progress-bar{:style => "width: 0%"}
+                      %script{:id => "template-download", :type => "text/x-tmpl"}
+                        .download
+                          {%=o.name%}
+                    .panel-footer
+                      - unless (container_record.latitude.blank? or container_record.latitude == '0') and (container_record.longitude.blank? or container_record.longitude == '0')
+                        %a{href: "http://www.google.com/maps/place/#{container_record.latitude},#{container_record.longitude}", target: '_blank'}
+                          = "#{container_record.latitude}, #{container_record.longitude}"
+                      - else
+                        %a.btn.btn-primary.btn-xs.pin_image{"data-placement" => 'right', "data-html" => "false", "data-toggle" => "tooltip", :role => "button", :tabindex => "0", title: "Click to upload saved picture and store it's location data to this container."}
+                          %i.fa.fa-map-pin
+                          %i.fa.fa-image
+
+      %p
+        = form_tag v2_task_path(task.id), method: 'put', remote: true, :class => "form-horizontal update_task_form", id: "task_#{task.id}_form", style: task_containers.blank? ? 'display:block' : 'display:none' do
+          = hidden_field_tag "task[id]", task.id
+          .row.form-group
+            %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+              -# container_options = (@containers.collect {|container| [ container['UserDispatchContainerNumber'], container['Id'] ] } + @containers.collect {|container| [ container['TagNumber'], container['Id'] ] }).reject{ |container| container.first.blank? }.sort_by { |container| container.first.to_s.downcase }
+              -#%p= select_tag "task[container_id]", options_for_select(container_options), prompt: 'Choose container', id: "task_#{task.id}_container_select", "data-task-id" => "#{task.id}", class: "form-control input-lg container_select", style: "width: 100%;", required: true
+              %p= select_tag "task[container_id]", nil, prompt: '-- Choose container --', id: "task_#{task.id}_container_select", "data-task-id" => "#{task.id}", class: "form-control input-lg v2_container_select", style: "width: 100%;", required: true
+              = hidden_field_tag "task[container_number]"
+              = hidden_field_tag "task[customer]", "#{work_order.customer.first_name} #{work_order.customer.last_name}"
+              = hidden_field_tag "task[work_order_number]", work_order.work_order_number
+              = hidden_field_tag "task[InternalTaskType]", task.internal_task_type
+          .row.form-group
+            %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+              = button_tag(:type => 'submit', style: 'display:none;', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save Container to Task"}) do
+                Save Container to Task
+      - if current_user.can_create_container?
+        %div{id: "task_#{task.id}_create_new_container", style: 'display:none;'}
+          = form_tag create_new_container_v2_task_path(task.id), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task.id}_create_new_container_form" do
+            .row.form-group
+              %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+                = hidden_field_tag "container[customer]", "#{work_order.customer.first_name} #{work_order.customer.last_name}"
+                = hidden_field_tag "container[work_order_number]", work_order.work_order_number
+                = hidden_field_tag "container[type]", task.internal_task_type
+                .row.form-group
+                  %div{:class => "col-xs-12"}
+                    = label_tag "Container Type", nil, :class => 'control-label'
+                    = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct.type, ct.id ] }), prompt: '-- Select type --', class: "form-control input-lg", required: true
+                  %div{:class => "col-xs-12"}
+                    = label_tag "Container Number", nil, :class => 'control-label'
+                    = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
+                  %div{:class => "col-xs-12"}
+                    = label_tag "Tag Number", nil, :class => 'control-label'
+                    = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+                  %div{:class => "col-xs-12"}
+                    = label_tag "Description", nil, :class => 'control-label'
+                    = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
+            .row.form-group
+              %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+                = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create New Container"}) do
+                  Create New Container
+                %br
+                = link_to 'Cancel', '#', onclick: "$('#task_#{task.id}_create_new_container').hide(); $('#task_#{task.id}_form').show(); $('#task_#{task.id}_container_select').select2('val', '');"
+
+      - else
+        %div{id: "task_#{task.id}_create_new_container", style: 'display:none;'}
+          %p You are not allowed to create containers
+          = link_to 'Search Again', '#', onclick: "$('#task_#{task.id}_create_new_container').hide(); $('#task_#{task.id}_form').show(); $('#task_#{task.id}_container_select').select2('val', '');"
+
+  - if task.internal_task_type == 'DROPOFF_CONTAINER'
+    .tab-pane.signature_tab{:id => "trip_#{trip.id}_task_#{task.id}_signature"}
+      = render partial: "v2/tasks/signature", locals: {work_order: work_order, task: task, task_containers: task_containers, containers: @containers}
+
+:javascript
+  $(".container_select").on("change", function() {
+    if($(this).val() == null || $(this).val() == ''){
+      $(this).closest('form').find('button[type="submit"]').hide();
+    }
+    else{
+      $(this).closest('form').find('button[type="submit"]').show();
+    }
+  });
