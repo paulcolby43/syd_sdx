@@ -25,7 +25,7 @@ class V2::TripsController < ApplicationController
     else
       @trips = Trip.search(current_user.token, nil, nil, nil)
     end
-    @container_types = ContainerType.v2_all_by_filter(nil)
+#    @container_types = ContainerType.v2_all_by_filter(nil)
     
 #    @containers = Container.all_by_dispatch_information(@dispatch_information)
 #    @task_functions = Trip.task_functions(@dispatch_information)
@@ -37,13 +37,17 @@ class V2::TripsController < ApplicationController
   # GET v2/trips/1.json
   def show
     authorize! :show, :trips
-#    @trip = Trip.find_by_user_guid(current_user.token, params[:id])
-#    @tasks = Trip.tasks(@trip)
-    @trip = Trip.find(current_user.token, params[:id])
-    @drivers = Trip.drivers(current_user.token)
-    @driver = @drivers.find {|driver| driver['Id'] == @trip['DriverId']}
-    @service_requests = Trip.service_requests(@trip)
-    @tasks = Trip.service_request_tasks(@trip)
+    @trip = Trip.v2_find_by_id(params[:id])
+#    @drivers = Driver.v2_all_by_filter(nil)
+    @driver = @trip.driver
+    @service_requests = @trip.dispatch_work_orders
+    @tasks = @trip.dispatch_tasks
+    
+#    @trip = Trip.find(current_user.token, params[:id])
+#    @drivers = Trip.drivers(current_user.token)
+#    @driver = @drivers.find {|driver| driver['Id'] == @trip['DriverId']}
+#    @service_requests = Trip.service_requests(@trip)
+#    @tasks = Trip.service_request_tasks(@trip)
   end
   
   def new
@@ -105,8 +109,24 @@ class V2::TripsController < ApplicationController
     @status = trip_params[:status] == 'All' ? nil : trip_params[:status] # Default status to All
     @driver_id = trip_params[:driver_id] == 'All' ? nil : trip_params[:driver_id] # Default drivers to All
     @start_date = trip_params[:start_date].blank? ? Date.today.to_s : trip_params[:start_date]# Default to today
-    @trips = Trip.search(current_user.token, @status, @driver_id, @start_date)
-    @drivers = Trip.drivers(current_user.token)
+    if @driver_id.blank?
+      if @status.blank?
+        filter = '{ "beginDate": {"gte": "' +  @start_date + '" } }'
+      else
+        filter = '{ "tripStatus": {"eq": "' +  @status + '" }, "beginDate": {"gte": "' +  @start_date + '" } }'
+      end
+    else
+      if @status.blank?
+        filter = '{ "driverId": {"eq": "' +  @driver_id + '" }, "beginDate": {"gte": "' +  @start_date + '" } }'
+      else
+        filter = '{ "driverId": {"eq": "' +  @driver_id + '" }, "tripStatus": {"eq": "' +  @status + '" },  {"beginDate": {"gte": "' +  @start_date + '" } }'
+      end
+    end
+    @trips = Trip.v2_all_by_filter(filter)
+    @drivers = Driver.v2_all_by_filter(nil)
+    
+#    @trips = Trip.search(current_user.token, @status, @driver_id, @start_date)
+#    @drivers = Trip.drivers(current_user.token)
   end
   
   # DELETE v2/trips/1

@@ -18,7 +18,7 @@ class V2::ContainersController < ApplicationController
         unless results.blank?
           @containers = results.collect{ |container| {id: container.id, text: "#{container.tag_number} (#{container.dispatch_container_number})"} }
         else
-          @containers = nil
+          @containers = []
         end
         Rails.logger.info "results: {#{@containers}}"
         render json: {results: @containers}

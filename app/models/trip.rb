@@ -15,6 +15,15 @@ class Trip
               endDate
               tripStatus
               tripNumber
+              isCompleted
+              dispatchTasks{
+                id
+                taskStatus
+                sequence
+                internalTaskType
+                fromLocationId
+                toLocationId
+              }
               driverId
               driver{
                 id
@@ -93,6 +102,104 @@ class Trip
       return response.data.dispatch_trips.nodes
     else
       return []
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($id : Uuid!) {
+        dispatchTripById(id : $id){
+          ...DispatchTripModel
+        }
+      }
+
+      fragment DispatchTripModel on DispatchTrip {
+        id
+        dateCreated
+        beginDate
+        endDate
+        tripStatus
+        tripNumber
+        isCompleted
+        dispatchTasks{
+          id
+          taskStatus
+          sequence
+          internalTaskType
+          fromLocationId
+          toLocationId
+        }
+        driverId
+        driver{
+          id
+          firstName
+          lastName
+        }
+        dispatchWorkOrders{
+          id
+          notes
+          workOrderNumber
+          company
+          contact
+          commodity{
+            printDescription
+          }
+          containerType{
+            description
+          }
+          dispatchTasks( order: { sequence: ASC }, where: {taskStatus: {eq: IN_QUEUE}} ){
+            id
+            taskStatus
+            sequence
+            internalTaskType
+            startingMileage
+            endingMileage
+            notes
+            fromLocationId
+            toLocationId
+            dispatchTaskContainerXlinks{
+              id
+              container{
+                id
+                dispatchContainerNumber
+                latitude
+                longitude
+              }
+            }
+          }
+          taskTypeFunction{
+            name
+          }
+          nameOfPersonCalling
+          customerId
+          customer{
+            firstName
+            lastName
+            phone
+            address1
+            address2
+            city
+            state
+            zip
+          }
+        }
+        truck{
+          id
+          description
+        }
+        dispatchTripLocationLogs{
+          id
+          latitude
+          longitude
+        }
+      }
+    GRAPHQL
+    
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.dispatch_trip_by_id.blank?
+      return response.data.dispatch_trip_by_id 
+    else
+      return nil
     end
   end
   

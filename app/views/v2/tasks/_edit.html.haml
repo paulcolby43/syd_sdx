@@ -158,38 +158,39 @@
             %div{:class => "col-xs-12 col-sm-12 col-md-12"}
               = button_tag(:type => 'submit', style: 'display:none;', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Save Container to Task"}) do
                 Save Container to Task
-      - if current_user.can_create_container?
-        %div{id: "task_#{task.id}_create_new_container", style: 'display:none;'}
-          = form_tag create_new_container_v2_task_path(task.id), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task.id}_create_new_container_form" do
-            .row.form-group
-              %div{:class => "col-xs-12 col-sm-12 col-md-12"}
-                = hidden_field_tag "container[customer]", "#{work_order.customer.first_name} #{work_order.customer.last_name}"
-                = hidden_field_tag "container[work_order_number]", work_order.work_order_number
-                = hidden_field_tag "container[type]", task.internal_task_type
-                .row.form-group
-                  %div{:class => "col-xs-12"}
-                    = label_tag "Container Type", nil, :class => 'control-label'
-                    = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct.type, ct.id ] }), prompt: '-- Select type --', class: "form-control input-lg", required: true
-                  %div{:class => "col-xs-12"}
-                    = label_tag "Container Number", nil, :class => 'control-label'
-                    = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
-                  %div{:class => "col-xs-12"}
-                    = label_tag "Tag Number", nil, :class => 'control-label'
-                    = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
-                  %div{:class => "col-xs-12"}
-                    = label_tag "Description", nil, :class => 'control-label'
-                    = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
-            .row.form-group
-              %div{:class => "col-xs-12 col-sm-12 col-md-12"}
-                = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create New Container"}) do
-                  Create New Container
-                %br
-                = link_to 'Cancel', '#', onclick: "$('#task_#{task.id}_create_new_container').hide(); $('#task_#{task.id}_form').show(); $('#task_#{task.id}_container_select').select2('val', '');"
+      -#
+        - if current_user.can_create_container?
+          %div{id: "task_#{task.id}_create_new_container", style: 'display:none;'}
+            = form_tag create_new_container_v2_task_path(task.id), method: 'get', remote: true, :class => "form-horizontal new_container_form", id: "task_#{task.id}_create_new_container_form" do
+              .row.form-group
+                %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+                  = hidden_field_tag "container[customer]", "#{work_order.customer.first_name} #{work_order.customer.last_name}"
+                  = hidden_field_tag "container[work_order_number]", work_order.work_order_number
+                  = hidden_field_tag "container[type]", task.internal_task_type
+                  .row.form-group
+                    %div{:class => "col-xs-12"}
+                      = label_tag "Container Type", nil, :class => 'control-label'
+                      = select_tag "container[container_type_id]", options_for_select(@container_types.collect {|ct| [ ct.type, ct.id ] }), prompt: '-- Select type --', class: "form-control input-lg", required: true
+                    %div{:class => "col-xs-12"}
+                      = label_tag "Container Number", nil, :class => 'control-label'
+                      = text_field_tag "container[container_number]", nil, :placeholder => "Container Number", class: "form-control input-lg", required: true
+                    %div{:class => "col-xs-12"}
+                      = label_tag "Tag Number", nil, :class => 'control-label'
+                      = text_field_tag "container[tag_number]", nil, :placeholder => "Tag Number", class: "form-control input-lg", required: true
+                    %div{:class => "col-xs-12"}
+                      = label_tag "Description", nil, :class => 'control-label'
+                      = text_field_tag "container[description]", nil, :placeholder => "Description", class: "form-control input-lg", required: true
+              .row.form-group
+                %div{:class => "col-xs-12 col-sm-12 col-md-12"}
+                  = button_tag(:type => 'submit', :class => 'btn btn-primary btn-lg btn-block', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Create New Container"}) do
+                    Create New Container
+                  %br
+                  = link_to 'Cancel', '#', onclick: "$('#task_#{task.id}_create_new_container').hide(); $('#task_#{task.id}_form').show(); $('#task_#{task.id}_container_select').select2('val', '');"
 
-      - else
-        %div{id: "task_#{task.id}_create_new_container", style: 'display:none;'}
-          %p You are not allowed to create containers
-          = link_to 'Search Again', '#', onclick: "$('#task_#{task.id}_create_new_container').hide(); $('#task_#{task.id}_form').show(); $('#task_#{task.id}_container_select').select2('val', '');"
+        - else
+          %div{id: "task_#{task.id}_create_new_container", style: 'display:none;'}
+            %p You are not allowed to create containers
+            = link_to 'Search Again', '#', onclick: "$('#task_#{task.id}_create_new_container').hide(); $('#task_#{task.id}_form').show(); $('#task_#{task.id}_container_select').select2('val', '');"
 
   - if task.internal_task_type == 'DROPOFF_CONTAINER'
     .tab-pane.signature_tab{:id => "trip_#{trip.id}_task_#{task.id}_signature"}

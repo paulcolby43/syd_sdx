@@ -1,0 +1,132 @@
+= render partial: "v2/shared/navbars/trips_search_navbar", locals: {title: "Trip Search"}
+- @title="Trip Search"
+  
+.container
+  %br
+  %br
+  = form_tag search_v2_trips_path, :method => 'get', :class => "form-inline" do
+    .form-group
+      = label_tag "Status", nil, :class => 'control-label'
+      = select_tag 'trip[status]', options_for_select([['All'], ['Planned', 'PLANNED'], ['Started', 'STARTED'], ['Completed', 'COMPLETED'], ['Canceled', 'CANCELED'], ['Rescheduled', 'RESCHEDULED'], ['Deployed', 'DEPLOYED'], ['Merged', 'MERGED']], @status), class: "form-control"
+    .form-group
+      = label_tag "Driver", nil, :class => 'control-label'
+      = select_tag 'trip[driver_id]', options_for_select(@drivers.collect {|driver| [ "#{driver.first_name} #{driver.last_name}", driver.id ] }.insert(0,'All'), @driver_id), class: "form-control"
+    .form-group
+      = label_tag "Start", nil, :class => 'control-label'
+      = text_field_tag 'trip[start_date]', nil, :placeholder => "Start Date", value: @start_date, class: "form-control", 'data-provide' => 'datepicker', 'data-date-format' => "yyyy-mm-dd", 'data-date-autoclose' => true, readonly: true
+    .form-group
+      = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Search"}) do
+        %i.fa.fa-search
+        Search
+  %hr
+  
+  - unless @trips.blank?
+    .table-responsive
+      %table.table.table-striped
+        %thead
+          %tr
+            %th 
+              %strong #
+            %th
+              Customer
+            %th 
+              %strong Status
+            %th 
+              %strong Date
+            %th 
+              %strong Driver
+            %th
+        %tbody
+          - @trips.sort_by{|trip| trip.begin_date}.each do |trip|
+            - driver = trip.driver
+            - tasks = trip.dispatch_tasks
+            - service_requests = trip.dispatch_work_orders
+            %tr
+              %td= "#{trip.trip_number}"
+              %td
+                %a{href: "#trip_#{trip.id}_tasks_modal", "data-target" => "#trip_#{trip.id}_tasks_modal", "data-toggle" => "modal", id: "#trip_#{trip.id}_tasks_link"}
+                  - unless service_requests.blank?
+                    = truncate("#{service_requests.first.customer.first_name} #{service_requests.first.customer.last_name}", length: 15)
+                    - unless service_requests.first.task_type_function.blank?
+                      %span
+                        %small
+                          .text-muted 
+                            = service_requests.first.task_type_function.name
+                  - else
+                    None
+              %td= trip.trip_status.titleize
+              %td= "#{trip.begin_date.to_datetime.strftime('%-m/%-d/%y')}"
+              - driver_name = "#{driver.first_name} #{driver.last_name}" unless driver.blank?
+              %td= link_to "#{driver.blank? ? 'Unassigned' : driver_name}", "#trip_#{trip.id}_assign_driver_modal", "data-target" => "#trip_#{trip.id}_assign_driver_modal", "data-toggle" => "modal", id: "#trip_#{trip.id}_assign_driver_link", class: 'btn btn-default'
+
+              .modal.fade{id: "trip_#{trip.id}_assign_driver_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                .modal-dialog.modal-sm{:role => "document"}
+                  .modal-content
+                    .modal-header
+                      %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                        %span{"aria-hidden" => "true"} ×
+                      %strong= "Assign Driver"
+                    .modal-body
+                      = form_tag trip_path(id: trip.id), method: 'put', :class => "form-horizontal" do
+                        .row.form-group
+                          %div{:class => "col-sm-12 col-md-12"}
+                            = select_tag "trip[driver_id]", options_for_select(@drivers.collect {|driver| [ "#{driver.first_name} #{driver.last_name}", driver.id ] }, trip.driver_id), prompt: 'Unassigned', class: "form-control input-lg"  
+                        .modal-footer
+                          %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Cancel
+                          = button_tag(:type => 'submit', :class => 'btn btn-primary', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Update"}) do
+                            Update
+
+              .modal.fade{id: "trip_#{trip.id}_tasks_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                .modal-dialog.modal-sm{:role => "document"}
+                  .modal-content
+                    .modal-header
+                      %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                        %span{"aria-hidden" => "true"} ×
+                      %strong= "Trip #{trip.trip_number}"
+                    .modal-body
+                      - service_requests.each do |service_request|
+                        %li.list-group-item.list-group-item-info
+                          = "#{service_request.customer.first_name} #{service_request.customer.last_name}"
+                          %small
+                            .text-muted 
+                              %div= service_request.task_type_function.name unless service_requests.first.task_type_function.blank?
+                      - tasks.sort_by {|task| task.sequence}.each do |task|
+                        %li{class: "list-group-item #{v2_task_status_color(task.task_status)}"}
+                          = task.sequence
+                          = task.internal_task_type.titleize
+                          %small
+                            .text-muted 
+                              - unless task.to_location_id.blank?
+                                = task.to_location_id
+                              - else
+                                Unknown location
+                              %br
+                              %div{id: "task_#{task.id}_status_string"}= task.task_status.titleize
+                    .modal-footer
+                      %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+              
+              .modal.fade{id: "trip_#{trip.id}_service_requests_modal", "aria-labelledby" => "myModalLabel", :role => "dialog"}
+                .modal-dialog.modal-sm{:role => "document"}
+                  .modal-content
+                    .modal-header
+                      %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                        %span{"aria-hidden" => "true"} ×
+                      %strong= "Trip #{trip.trip_number} Service Requests"
+                    .modal-body
+                      - unless service_requests.blank?
+                        - service_requests.each do |service_request|
+                          %li.list-group-item
+                            = service_request.work_order_number
+                            = "#{service_request.customer.first_name} #{service_request.customer.last_name}"
+                            %small
+                              .text-muted 
+                                %div= service_request.task_type_function.name unless service_request.task_type_function.blank?
+                      - else
+                        %p None
+                    .modal-footer
+                      %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+              %td
+                = link_to "<i class='fa fa-search-plus'></i> Show".html_safe, v2_trip_path(trip.id), data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Show"}, class: 'btn btn-default trip_button'
+                = link_to "<i class='fa fa-warning'></i> Void".html_safe, trip.id, :method => :delete, :data => { :confirm => 'Are you sure you want to void this Trip?' }, class: 'btn btn-danger'
+  - else
+    %p.lead None

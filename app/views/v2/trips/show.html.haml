@@ -1,0 +1,48 @@
+= render partial: "v2/shared/navbars/show_trip_navbar", locals: {title: "Trip #{@trip.trip_number}"}
+-@title= "Trip #{@trip.trip_number}"
+
+.container
+  %br
+  %br
+  .well.col-sm-6.col-md-4.col-md-offset-4
+    %p.lead
+      %strong Trip
+      = "#{@trip.trip_number}"
+    %p.lead
+      %strong Service Requests
+      - unless @service_requests.blank?
+        - @service_requests.each do |service_request|
+          %li.list-group-item
+            = service_request.work_order_number
+            = "#{service_request.customer.first_name} #{service_request.customer.last_name}"
+            %small
+              .text-muted 
+                %div= service_request.task_type_function.name.titleize unless service_request.task_type_function.blank?
+      - else
+        None
+    %p.lead
+      %strong Tasks
+      - unless @tasks.blank?
+        - @tasks.sort_by {|task| task.sequence}.each do |task|
+          %li{class: "list-group-item #{v2_task_status_color(task.task_status)}"}
+            = task.sequence
+            = task.internal_task_type.titleize
+            %small
+              .text-muted 
+                - unless task.to_location_id.blank?
+                  = task.to_location_id
+                - else
+                  Unknown location
+                %br
+                %div{id: "task_#{task.id}_status_string"}= task.task_status.titleize
+      - else
+        None
+    %p.lead
+      %strong Status
+      = @trip.trip_status.titleize
+    %p.lead
+      %strong Start
+      = "#{@trip.begin_date.to_datetime.strftime('%-m/%-d/%y')}"
+    %p.lead
+      %strong Driver
+      = "#{@driver.blank? ? 'Unassigned' : @driver.first_name + ' ' + @driver.last_name}"
