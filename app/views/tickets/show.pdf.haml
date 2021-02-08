@@ -139,7 +139,6 @@
           - line_item = @ticket["TicketItemCollection"]["ApiTicketItem"]
           %td
             - unless line_item["DeductionCollection"].blank?
-              -# if line_item["DeductionCollection"].is_a? Hash # Only one line item deduction
               - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
                 = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
                 = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
