@@ -15,6 +15,7 @@ class Ticket
             ticketStatus,
             description,
             dateCreated,
+            customerId
             customer{
               ...CustomerModel
             },
