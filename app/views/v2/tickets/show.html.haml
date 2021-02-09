@@ -1,14 +1,18 @@
-= render partial: "shared/navbars/show_ticket_navbar", locals: {title: @ticket.ticket_number, total: nil, paid_amount: nil}
+= render partial: "v2/shared/navbars/show_ticket_navbar", locals: {title: @ticket.ticket_number, total: nil, paid_amount: nil}
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
     - unless @ticket.description.blank?
       %p.text-center= @ticket.description
-    - unless @accounts_payable_items.blank? or @ticket.status != 'PAID'
+    -# unless @accounts_payable_items.blank? or @ticket.status != 'PAID'
+    - unless @ticket.account_payable_line_items.blank? or @ticket.ticket_status != 'PAID'
+      - accounts_payable_line_item = @ticket.account_payable_line_items.first
+      - cashier = accounts_payable_line_item.cashier
       %p
-        = "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}"
-        - if @apcashier and @apcashier['PaymentMethod'] == '1'
-          = "##{@apcashier['CheckNumber']}"
+        =# "#{payment_method_string(@accounts_payable_items.first['PaymentMethod'])}"
+        = accounts_payable_line_item.payment_method
+        - if cashier and cashier.payment_method == 'CHECK'
+          = "##{cashier.accounts_payable_checks.first.check_number}"
     .panel.panel-default
       %div.panel-heading{:role => "tab", id: "vendor_heading"}
         %h4.panel-title

@@ -17,7 +17,6 @@
         = hidden_field_tag :customer_id, params[:customer_id] unless params[:customer_id].blank?
         .row.form-group
           %div{:class => "col-xs-12"}
-            =# select_tag 'report[type]', options_for_select([['Commodity Summary', 'commodity_summary'], ['Customer Summary', 'customer_summary']], @type), class: "form-control"
             .btn-group{"data-toggle" => "buttons"}
               %label.btn.btn-default{class: "#{@type == 'commodity_summary' ? 'active' : ''}"}
                 %input{:name => "report[type]", :type => "radio", :value => "commodity_summary", checked: @type == 'commodity_summary' ? true : false}>/

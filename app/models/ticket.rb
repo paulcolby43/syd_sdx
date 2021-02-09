@@ -98,6 +98,12 @@ class Ticket
           amountDueInAssignedCurrency
           paidAmount
           paymentMethod
+          cashier{
+            paymentMethod
+            accountsPayableChecks{
+              checkNumber
+            }
+          }
         }
       }
       fragment CustomerModel on Customer {
