@@ -2,8 +2,6 @@
 
 .jumbotron{style: 'background-color: #FFFFFF;'}
   .container
-    - @ticket_results.each do |ticket|
-      %p= ticket.ticket_number
     - if current_user.customer? 
       .col-sm-6.col-md-4.col-md-offset-4
         - unless current_user.company.logo.file.nil?
@@ -60,9 +58,9 @@
         .col-xs-12
           %div.col-xs-6
             - if @type == 'commodity_summary' and not @line_items.blank?
-              = select_tag 'report[commodity]', options_for_select(@line_items.map{ |item| [item["PrintDescription"]] }.uniq, @commodity), prompt: "All", class: "form-control", onchange: "this.form.submit();"
+              = select_tag 'report[commodity]', options_for_select(@line_items.map{ |item| [item.print_description] }.uniq, @commodity), prompt: "All", class: "form-control", onchange: "this.form.submit();"
             - if @type == 'customer_summary' and not @tickets.blank?
-              = select_tag 'report[customer]', options_for_select(@tickets.map{ |ticket| ["#{ticket['FirstName']} #{ticket['LastName']}"] }.uniq, @customer), prompt: "All", class: "form-control", onchange: "this.form.submit();"
+              = select_tag 'report[customer]', options_for_select(@tickets.map{ |ticket| ["#{ticket.customer.first_name} #{ticket.customer.last_name}"] }.uniq, @customer), prompt: "All", class: "form-control", onchange: "this.form.submit();"
           - unless @line_items.blank?
             %div.col-xs-6
               %span.inline.pull-right
@@ -75,9 +73,9 @@
                 
     - unless @tickets.blank?
       - unless @type == 'commodity_summary'
-        = render 'reports/tickets_customer_summary'
+        = render 'v2/reports/tickets_customer_summary'
       - else
-        = render 'reports/tickets_commodity_summary'
+        = render 'v2/reports/tickets_commodity_summary'
     - else
       %br
       .row

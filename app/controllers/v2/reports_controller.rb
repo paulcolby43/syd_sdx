@@ -191,6 +191,7 @@ class V2::ReportsController < ApplicationController
       filter = ' {"ticketStatus": {"in": ' + "#{@status.split(',').map(&:to_s)}" + '}, "and": [{"dateCreated": {"gte": "' +  @start_date + '" }}, {"dateCreated": {"lte": "' + @end_date + '" }} ]} '
     end
     @ticket_results = Ticket.v2_all_by_filter(filter)
+    @tickets = @ticket_results
     Rails.logger.debug "**************filter: #{filter}"
     
 #    if current_user.customer? or @customer_user.present?
@@ -207,14 +208,17 @@ class V2::ReportsController < ApplicationController
     @line_items = []
     unless @tickets.blank?
       @tickets.each do |ticket|
-        unless ticket['TicketItemCollection'].blank? or ticket['TicketItemCollection']['ApiTicketItem'].blank?
-          @line_items = @line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
+#        unless ticket['TicketItemCollection'].blank? or ticket['TicketItemCollection']['ApiTicketItem'].blank?
+        unless ticket.ticket_items.blank?
+#          @line_items = @line_items + Ticket.line_items(ticket['TicketItemCollection']['ApiTicketItem'])
+          @line_items = @line_items + ticket.ticket_items
         end
       end
     end
     @line_items_total = 0
     @line_items.each do |line_item|
-      @line_items_total = @line_items_total + line_item["ExtendedAmount"].to_d
+#      @line_items_total = @line_items_total + line_item["ExtendedAmount"].to_d
+      @line_items_total = @line_items_total + line_item.extended_amount.to_d
     end
     # Collect cash, check, and ezcash tickets
     @cash_payment_tickets = []
@@ -222,14 +226,16 @@ class V2::ReportsController < ApplicationController
     @ezcash_payment_tickets = []
     unless @tickets.blank? or @status == '1' # Don't look for accounts payable for each ticket if there aren't any, or if showing closed tickets
       @tickets.each do |ticket|
-        if ticket['Status']  == '3' # Do this only for paid tickets
+#        if ticket['Status']  == '3' # Do this only for paid tickets
+        if ticket.ticket_status  == 'PAID' # Do this only for paid tickets
           # Find accounts payable for this ticket and payment status of 1, then determine payment method
-          accounts_payable = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}
-          if accounts_payable and accounts_payable['PaymentMethod'] == "0"
+#          accounts_payable = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}
+          accounts_payable = ticket.accounts_payable_line_items.first unless ticket.accounts_payable_line_items.blank?
+          if accounts_payable and accounts_payable.payment_method == 'CASH'
             @cash_payment_tickets << ticket
-          elsif accounts_payable and accounts_payable['PaymentMethod'] == "1"
+          elsif accounts_payable and accounts_payable.payment_method == 'CHECK'
             @check_payment_tickets << ticket
-          elsif accounts_payable and accounts_payable['PaymentMethod'] == "3"
+          elsif accounts_payable and accounts_payable.payment_method == 'EZ_CASH'
             @ezcash_payment_tickets << ticket
           else
             @cash_payment_tickets << ticket
@@ -304,6 +310,6 @@ class V2::ReportsController < ApplicationController
     end
     
     def ticket_sort_column
-      ["DateCreated", "TicketNumber", "GrossWeight", "TareWeight", "NetWeight", "ExtendedAmount", "Status"].include?(params[:ticket_sort]) ? params[:ticket_sort] : "DateCreated"
+      ["date_created", "TicketNumber", "GrossWeight", "TareWeight", "NetWeight", "ExtendedAmount", "Status"].include?(params[:ticket_sort]) ? params[:ticket_sort] : "date_created"
     end
 end

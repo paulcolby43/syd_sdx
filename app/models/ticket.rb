@@ -11,19 +11,41 @@ class Ticket
           {
           nodes {
             id,
-            ticketNumber,
-            ticketStatus,
-            description,
-            dateCreated,
+            ticketNumber
+            ticketStatus
+            description
+            dateCreated
             customerId
+            yardId
             customer{
               ...CustomerModel
             },
             ticketItems {
-              extendedAmount,
-              ticketItemStatus,
+              id
+              dateCreated
+              printDescription
+              price
+              unitOfMeasure
+              extendedAmount
+              ticketHeadId
+              ticketItemStatus
+              grossWeight
+              tareWeight
+              netWeight
               ticketItemTaxes{
                 taxAmount
+              }
+            }
+            accountPayableLineItems  {
+              amountDue
+              amountDueInAssignedCurrency
+              paidAmount
+              paymentMethod
+              cashier{
+                paymentMethod
+                accountsPayableChecks{
+                  checkNumber
+                }
               }
             }
           }
@@ -57,39 +79,40 @@ class Ticket
           }
         }
       fragment TicketHeadModel on TicketHead{
-        id,
-        ticketNumber,
-        ticketStatus,
-        description,
-        dateCreated,
+        id
+        ticketNumber
+        ticketStatus
+        description
+        dateCreated
         customerId
         yardId
         customer{
           ...CustomerModel
         }
         ticketItems {
-          id,
-          commodityId,
-          printDescription,
-          quantity,
-          grossWeight,
-          tareWeight,
-          netWeight,
-          price,
-          unitOfMeasure,
-          extendedAmount,
-          ticketItemStatus,
-          serialNumber,
-          notes,
+          id
+          dateCreated
+          commodityId
+          printDescription
+          quantity
+          grossWeight
+          tareWeight
+          netWeight
+          price
+          unitOfMeasure
+          extendedAmount
+          ticketItemStatus
+          serialNumber
+          notes
           ticketItemTaxes{
             taxAmount
             taxPercent
           }
           ticketItemDeductions {
-            id,
-            deductWeight,
-            deductWeightDescription,
-            deductDollarAmount,
+            id
+            deductWeight
+            deductWeightDescription
+            deductDollarAmount
             deductDollarAmountDescription
           }
         }
