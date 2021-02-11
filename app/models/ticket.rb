@@ -7,10 +7,11 @@ class Ticket
   FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
       query($ticket_head_filter_input: TicketHeadFilterInput) {
         ticketHeads(order: {dateCreated: DESC}
-        where: $ticket_head_filter_input)
+        where: $ticket_head_filter_input first: 500)
           {
+          totalCount
           nodes {
-            id,
+            id
             ticketNumber
             ticketStatus
             description
@@ -22,6 +23,13 @@ class Ticket
             },
             ticketItems {
               id
+              ticketHead {
+                ticketNumber
+                ticketStatus
+                customer{
+                  ...CustomerModel
+                }
+              }
               dateCreated
               printDescription
               price
@@ -35,11 +43,19 @@ class Ticket
               ticketItemTaxes{
                 taxAmount
               }
+              ticketItemDeductions {
+                id
+                deductWeight
+                deductWeightDescription
+                deductDollarAmount
+                deductDollarAmountDescription
+              }
             }
             accountPayableLineItems  {
               amountDue
               amountDueInAssignedCurrency
               paidAmount
+              paymentStatus
               paymentMethod
               cashier{
                 paymentMethod
@@ -1591,6 +1607,26 @@ class Ticket
     end
   end
   
+  def self.v2_customer_summary_to_csv(tickets_array)
+    require 'csv'
+    headers = ['DateCreated', 'TicketNumber', 'Customer', 'Status', 'Amount']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      tickets_array.each do |ticket|
+        date_created = ticket.date_created
+        ticket_number = ticket.ticket_number
+        customer_name = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
+        company_name = ticket.customer.company
+        name = company_name.blank? ? customer_name : company_name
+        status = ticket.ticket_status
+        amount = "#{ticket.ticket_items.blank? ? 'N/A' : Ticket.v2_line_items_total(ticket.ticket_items)}"
+        csv << [date_created, ticket_number, name, status, amount]
+      end
+    end
+  end
+  
   def self.commodity_summary_to_csv(line_items_array, tickets_array)
     require 'csv'
 #    headers = ['DateCreated', 'Description', 'Ticket', 'Job', 'BOL', 'PO', 'Customer', 'Customer Ref #', 'Customer Ship', 'PrintDescription', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
@@ -1616,7 +1652,6 @@ class Ticket
         status = ApplicationController.helpers.ticket_status_string(tickets_array.find {|ticket| ticket['Id'] == line_item["TicketHeadId"]}["Status"]) rescue ''
         gross_weight = line_item['GrossWeight']
         tare_weight = line_item['TareWeight']
-        gross_weight = line_item['GrossWeight']
         net_weight = line_item['NetWeight']
         price = "#{line_item['Price']} #{line_item['UnitOfMeasure']}"
         extended_amount = line_item['ExtendedAmount']
@@ -1634,6 +1669,30 @@ class Ticket
          csv << [date_created, print_description, ticket_number, name, status, gross_weight, tare_weight, net_weight, price, extended_amount]
       end
 #      csv << ['', '', '', '', '', '', '', '', '', '', '', '', net_total, '', extended_amount_total]
+    end
+  end
+  
+  def self.v2_commodity_summary_to_csv(line_items_array)
+    require 'csv'
+    headers = ['DateCreated', 'Commodity', 'Ticket', 'Customer', 'Status', 'GrossWeight', 'TareWeight', 'NetWeight', 'Price', 'ExtendedAmount']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+      line_items_array.each do |line_item|
+        date_created = line_item.date_created
+        ticket_number = line_item.ticket_head.ticket_number
+        customer_name = "#{line_item.ticket_head.customer.first_name} #{line_item.ticket_head.customer.last_name}"
+        company_name = line_item.ticket_head.customer.company
+        name = company_name.blank? ? customer_name : company_name
+        print_description = line_item.print_description
+        status = line_item.ticket_head.ticket_status
+        gross_weight = line_item.gross_weight
+        tare_weight = line_item.tare_weight
+        net_weight = line_item.net_weight
+        price = "#{line_item.price} #{line_item.unit_of_measure}"
+        extended_amount = line_item.extended_amount
+        csv << [date_created, print_description, ticket_number, name, status, gross_weight, tare_weight, net_weight, price, extended_amount]
+      end
     end
   end
   

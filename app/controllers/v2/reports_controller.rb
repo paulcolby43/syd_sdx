@@ -230,7 +230,7 @@ class V2::ReportsController < ApplicationController
         if ticket.ticket_status  == 'PAID' # Do this only for paid tickets
           # Find accounts payable for this ticket and payment status of 1, then determine payment method
 #          accounts_payable = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id']).find{|accounts_payable| accounts_payable['PaymentStatus'] == '1'}
-          accounts_payable = ticket.accounts_payable_line_items.first unless ticket.accounts_payable_line_items.blank?
+          accounts_payable = ticket.account_payable_line_items.first unless ticket.account_payable_line_items.blank?
           if accounts_payable and accounts_payable.payment_method == 'CASH'
             @cash_payment_tickets << ticket
           elsif accounts_payable and accounts_payable.payment_method == 'CHECK'
@@ -245,20 +245,20 @@ class V2::ReportsController < ApplicationController
     end
     @cash_total = 0
     @cash_payment_tickets.each do |cash_payment_ticket|
-      unless cash_payment_ticket['TicketItemCollection'].blank? or cash_payment_ticket['TicketItemCollection']['ApiTicketItem'].blank?
-        @cash_total = @cash_total + Ticket.line_items_total(cash_payment_ticket['TicketItemCollection']['ApiTicketItem']).to_d
+      unless cash_payment_ticket.ticket_items.blank?
+        @cash_total = @cash_total + Ticket.v2_line_items_total(cash_payment_ticket.ticket_items).to_d
       end
     end
     @check_total = 0
     @check_payment_tickets.each do |check_payment_ticket|
-      unless check_payment_ticket['TicketItemCollection'].blank? or check_payment_ticket['TicketItemCollection']['ApiTicketItem'].blank?
-        @check_total = @check_total + Ticket.line_items_total(check_payment_ticket['TicketItemCollection']['ApiTicketItem']).to_d
+      unless check_payment_ticket.ticket_items.blank?
+        @check_total = @check_total + Ticket.v2_line_items_total(check_payment_ticket.ticket_items).to_d
       end
     end
     @ezcash_total = 0
     @ezcash_payment_tickets.each do |ezcash_payment_ticket|
-      unless ezcash_payment_ticket['TicketItemCollection'].blank? or ezcash_payment_ticket['TicketItemCollection']['ApiTicketItem'].blank?
-        @ezcash_total = @ezcash_total + Ticket.line_items_total(ezcash_payment_ticket['TicketItemCollection']['ApiTicketItem']).to_d
+      unless ezcash_payment_ticket.ticket_items.blank?
+        @ezcash_total = @ezcash_total + Ticket.v2_line_items_total(ezcash_payment_ticket.ticket_items).to_d
       end
     end
     
@@ -266,9 +266,9 @@ class V2::ReportsController < ApplicationController
       format.html {}
       format.csv { 
         if @type == "customer_summary"
-          send_data Ticket.customer_summary_to_csv(@tickets), filename: "customer-summary-report-#{@start_date}-#{@end_date}.csv" 
+          send_data Ticket.v2_customer_summary_to_csv(@tickets), filename: "customer-summary-report-#{@start_date}-#{@end_date}.csv" 
         else
-          send_data Ticket.commodity_summary_to_csv(@line_items, @tickets), filename: "commodity-summary-report-#{@start_date}-#{@end_date}.csv"
+          send_data Ticket.v2_commodity_summary_to_csv(@line_items), filename: "commodity-summary-report-#{@start_date}-#{@end_date}.csv"
         end
       }
       format.zip {

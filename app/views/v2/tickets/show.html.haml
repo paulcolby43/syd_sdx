@@ -16,7 +16,7 @@
     .panel.panel-default
       %div.panel-heading{:role => "tab", id: "vendor_heading"}
         %h4.panel-title
-          %div.text-primary= "#{@ticket.customer.company.blank? ? 'No company name' : @ticket.customer.company}"
+          %div.text-primary= "#{@ticket.customer.company.blank? ? "#{@ticket.customer.first_name} #{@ticket.customer.last_name}" : @ticket.customer.company}"
     - if @ticket.ticket_items.blank?
       .panel.panel-default.line-item
         %div.panel-heading

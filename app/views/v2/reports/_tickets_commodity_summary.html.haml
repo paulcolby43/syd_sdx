@@ -45,33 +45,26 @@
                 %tr
                   %td
                     = ticket.date_created.to_date.strftime("%m/%d/%y")
-                  %td= link_to ticket.ticket_number, ticket_path(ticket.id, status: params['status'], yard_id: ticket.yard_id)
+                  %td= link_to ticket.ticket_number, v2_ticket_path(ticket.id, status: params['status'], yard_id: ticket.yard_id)
                   %td
                     - unless ticket.customer.company.blank?
                       = ticket.customer.company
                     - else
                       = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
                   %td
-                    = ticket.ticket_status
+                    = ticket.ticket_status.titleize
                   %td= "#{number_with_precision(line_item.gross_weight, precision: 2, strip_insignificant_zeros: true)} "
                   %td= "#{number_with_precision(line_item.tare_weight, precision: 2, strip_insignificant_zeros: true)} "
                   %td= "#{number_with_precision(line_item.net_weight, precision: 2, strip_insignificant_zeros: true)} "
                   %td
-                    -#
-                      - unless line_item["DeductionCollection"].blank?
-                        - if line_item["DeductionCollection"]["ApiTicketItemDeduction"].is_a? Hash # Only one line item deduction
-                          = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmountDescription"].blank?
-                          = number_to_currency(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"]) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductDollarAmount"].to_i.zero?
-                          = line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"] unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeightDescription"].blank?
-                          = number_with_precision(line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item["DeductionCollection"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"].blank? or line_item["DeductionCollection"]["ApiTicketItemDeduction"]["DeductWeight"].blank?
-                        - else
-                          - line_item["DeductionCollection"]["ApiTicketItemDeduction"].each do |line_item_deduction|
-                            = line_item_deduction["DeductDollarAmountDescription"] unless line_item_deduction["DeductDollarAmountDescription"].blank?
-                            = number_to_currency(line_item_deduction["DeductDollarAmount"]) unless line_item_deduction["DeductDollarAmount"].blank? or line_item_deduction["DeductDollarAmount"].to_i.zero?
-                            = line_item_deduction["DeductWeightDescription"] unless line_item_deduction["DeductWeightDescription"].blank?
-                            = number_with_precision(line_item_deduction["DeductWeight"], precision: 2, strip_insignificant_zeros: true) unless line_item_deduction["DeductWeight"].blank?
-                      - else
-                        None
+                    - unless line_item.ticket_item_deductions.blank?
+                      - line_item.ticket_item_deductions.each do |line_item_deduction|
+                        = line_item_deduction.deduct_dollar_amount_description unless line_item_deduction.deduct_dollar_amount_description.blank?
+                        = number_to_currency(line_item_deduction.deduct_dollar_amount) unless line_item_deduction.deduct_dollar_amount.blank? or line_item_deduction.deduct_dollar_amount.to_i.zero?
+                        = line_item_deduction.deduct_weight_description unless line_item_deduction.deduct_weight_description.blank?
+                        = number_with_precision(line_item_deduction.deduct_weight, precision: 2, strip_insignificant_zeros: true) unless line_item_deduction.deduct_weight.blank? or line_item_deduction.deduct_weight.to_i.zero?
+                    - else
+                      None
                   %td= "#{number_to_currency(line_item.price)} / #{line_item.unit_of_measure}"
                   %td= "#{number_to_currency(line_item.extended_amount)}"
               %tr

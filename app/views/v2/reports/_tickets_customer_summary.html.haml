@@ -1,0 +1,94 @@
+.row
+  %br
+  - unless @tickets.blank?
+    .col-sm-6.col-md-offset-3.text-center
+      %div{id: 'charts'}
+        .col-xs-12.col-sm-6
+          = "Customer Tickets" unless mobile_device?
+          = content_tag :div, "", id: "ticket-customer-number-summary-donut", data: {tickets: v2_ticket_customer_number_donut_data(@tickets)}
+        .col-xs-12.col-sm-6
+          = "Customer by Amount ($)" unless mobile_device?
+          = content_tag :div, "", id: "ticket-customer-amount-summary-donut", data: {tickets: v2_ticket_customer_amount_donut_data(@tickets)}
+
+- unless @tickets.blank?
+  - @tickets.group_by{ |t| "#{t.customer.first_name} #{t.customer.first_name}"}.each_with_index do |(ticket_group, tickets), index|
+    - if @customer.blank? or @customer == ticket_group
+      .row
+        .table-responsive{style: "border: none;"}
+          %table.table.table-hover{"data-provides" => "rowlink"}
+            %caption
+              %h4
+                = ticket_group
+                = "No name" if ticket_group.blank?
+            %thead
+              %tr
+                %th= tickets_sortable 'DateCreated', 'Date'
+                %th= tickets_sortable 'TicketNumber', 'Ticket'
+                %th= tickets_sortable 'Status', 'Status'
+                - unless @status == 'CLOSED' # Don't need to show for closed tickets
+                  %th
+                    Method
+                %th
+                  Amount
+
+            %tbody
+              - tickets = tickets.sort_by(&@sort_column.to_sym).reverse if @sort_direction == "desc"
+              - tickets = tickets.sort_by(&@sort_column.to_sym) if @sort_direction == "asc"
+              -#
+                - if ['Status'].include?(@sort_column)
+                  - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '0' : li[@sort_column].to_d}.reverse if @sort_direction == "desc"
+                  - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '0' : li[@sort_column].to_d} if @sort_direction == "asc"
+                - else
+                  - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '1' : t[@sort_column]}.reverse if @sort_direction == "desc"
+                  - tickets = tickets.sort_by{|t| t[@sort_column].blank? ? '1' : t[@sort_column]} if @sort_direction == "asc"
+              - tickets.each do |ticket|
+                %tr
+                  %td
+                    = ticket.date_created.to_date.strftime("%m/%d/%y")
+                  %td
+                    = link_to ticket.ticket_number, v2_ticket_path(ticket.id, status: ticket.ticket_status, yard_id: ticket.yard_id)
+                  %td= ticket.ticket_status.titleize
+                  %td
+                    - unless ticket.ticket_status == 'CLOSED' or ticket.ticket_status == 'HOLD'  # Don't show for closed and held tickets
+                      - account_payable_items = ticket.account_payable_line_items
+                      -# accounts_payable_items = AccountsPayable.all(current_user.token, current_yard_id, ticket['Id'])
+                      = account_payable_items.find{|account_payable| account_payable.payment_status == 'PAID'}.cashier.payment_method rescue '4'
+                      -# apcashiers = Apcashier.find_all_by_id(current_user.token, current_yard_id, account_payable_items.first['CashierId']) if ticket['Status'] == '3'
+                      - cashier = account_payable_items.first.cashier unless account_payable_items.blank?
+                      -# apcashier = apcashiers.first unless apcashiers.blank?
+                      - if not cashier.blank? and cashier.payment_method == 'CHECK'
+                        = "##{cashier.accounts_payable_checks.first.check_number}" unless cashier.accounts_payable_checks.blank?
+                    - else
+                      N/A
+                  %td
+                    - unless ticket.ticket_items.blank?
+                      = number_to_currency(Ticket.v2_line_items_total(ticket.ticket_items)) 
+                    - else
+                      N/A
+              %tr
+                %td
+                %td
+                %td
+                %td
+                %td
+                  %strong= number_to_currency(tickets.map { |t| (t.ticket_items.blank?) ? 0 : Ticket.v2_line_items_total(t.ticket_items).to_d }.sum)
+- else
+  %br
+  .row
+    .col-xs-12
+      %p.text-center.lead None found
+
+- if @customer.blank?
+  .pull-right
+    %p.lead
+      Cash
+      = number_to_currency(@cash_total)
+      %br
+      Check
+      = number_to_currency(@check_total)
+      %br
+      EZcash
+      = number_to_currency(@ezcash_total)
+      %br
+      %strong Total
+      = number_to_currency(@line_items_total)
