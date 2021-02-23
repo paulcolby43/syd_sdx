@@ -298,6 +298,7 @@ Rails.application.routes.draw do
         get :tickets
       end
     end
+    get 'scoreboard' => 'welcome#kpi_dashboard'
   end
   
   # The priority is based upon order of creation: first created -> highest priority.

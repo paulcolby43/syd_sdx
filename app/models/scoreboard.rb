@@ -1,5 +1,179 @@
 class Scoreboard
   
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindTicketCountByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($ticket_head_filter_input: TicketHeadFilterInput) {
+        ticketHeads(where: $ticket_head_filter_input)
+          {
+          totalCount
+        }
+      }
+    GRAPHQL
+    
+  def self.v2_tickets_created_today_count
+    filter = ' {"and": [{"dateCreated": {"gte": "' +  Date.today.to_s + '" }}, {"dateCreated": {"lte": "' + Date.tomorrow.to_s + '" }} ]} '
+    response = DRAGONQLAPI::Client.query(FindTicketCountByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank?
+      return response.data.ticket_heads.total_count
+    else
+      return 0
+    end
+  end
+  
+  def self.v2_tickets_created_last_30_days_count
+    filter = ' {"and": [{"dateCreated": {"gte": "' +  30.days.ago.to_date.to_s + '" }}, {"dateCreated": {"lte": "' + Date.tomorrow.to_s + '" }} ]} '
+    response = DRAGONQLAPI::Client.query(FindTicketCountByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank?
+      return response.data.ticket_heads.total_count
+    else
+      return 0
+    end
+  end
+  
+  def self.v2_tickets_on_hold_count
+    filter = ' {"ticketStatus" : {"in": ["HOLD"]}} '
+    response = DRAGONQLAPI::Client.query(FindTicketCountByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank?
+      return response.data.ticket_heads.total_count
+    else
+      return 0
+    end
+  end
+  
+  def self.v2_paid_tickets_today_count
+    filter = ' {"ticketStatus" : {"in": ["PAID"]}, "and": [{"dateCreated": {"gte": "' +  Date.today.to_s + '" }}, {"dateCreated": {"lte": "' + Date.tomorrow.to_s + '" }} ]} '
+    response = DRAGONQLAPI::Client.query(FindTicketCountByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank?
+      return response.data.ticket_heads.total_count
+    else
+      return 0
+    end
+  end
+  
+  FindLast10TicketsByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($ticket_head_filter_input: TicketHeadFilterInput) {
+        ticketHeads(order: {dateCreated: DESC}
+        where: $ticket_head_filter_input first: 10)
+          {
+          totalCount
+          nodes {
+            id
+            ticketNumber
+            ticketStatus
+            description
+            dateCreated
+            customer{
+              ...CustomerModel
+            },
+            ticketItems {
+              id
+              extendedAmount
+              ticketItemTaxes{
+                taxAmount
+              }
+              ticketItemDeductions {
+                id
+                deductWeight
+                deductWeightDescription
+                deductDollarAmount
+                deductDollarAmountDescription
+              }
+            }
+          }
+        }
+      }
+      fragment CustomerModel on Customer {
+        id
+        firstName
+        lastName
+        company
+      }
+    GRAPHQL
+    
+  def self.v2_last_10_by_filter
+    filter = ' {"ticketStatus" : {"in": ["HOLD", "CLOSED", "PAID"]}} '
+    response = DRAGONQLAPI::Client.query(FindLast10TicketsByFilterQuery, variables: {ticket_head_filter_input: JSON[filter]})
+    unless response.blank? or response.data.blank? or response.data.ticket_heads.blank? or response.data.ticket_heads.nodes.blank?
+      return response.data.ticket_heads.nodes
+    else
+      return 0
+    end
+  end
+  
+  FindLast10ShipmentsByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($shipment_head_filter_input: ShipmentHeadFilterInput) {
+        shipmentHeads(order: {dateShipped: DESC} 
+          where: $shipment_head_filter_input first: 10)
+          {
+          nodes{
+            id
+            shipmentStatus
+            shipmentType
+            dateCreated
+            dateShipped
+            shipmentNumber
+            bookingNumber
+            containerNumber
+            orderNumber
+            sealNumber
+            unitOfMeasure
+            yardId
+            grossWeight
+            tareWeight
+            netWeight
+            packListHead{
+              id
+              packListNumber
+              packListItems{
+                id
+                packId
+                pack{
+                  tagNumber
+                  printDescription
+                  netWeight
+                }
+              }
+            }
+            relatedWorkOrder{
+              customer{
+                firstName
+                lastName
+                }
+              }
+            contractHead{
+              contractDescription
+              contractItems{
+                id
+                description
+                }
+              }
+            deliveryVehicleIdNumber
+            }
+          }
+        }
+    GRAPHQL
+  
+  def self.v2_last_10_shipments_by_filter
+    filter = nil
+    unless filter.blank?
+      response = DRAGONQLAPI::Client.query(FindLast10ShipmentsByFilterQuery, variables: {shipment_head_filter_input: JSON[filter]})
+    else
+      response = DRAGONQLAPI::Client.query(FindLast10ShipmentsByFilterQuery)
+    end
+    unless response.blank? or response.data.blank? or response.data.shipment_heads.blank? or response.data.shipment_heads.nodes.blank?
+      return response.data.shipment_heads.nodes
+    else
+      return []
+    end
+  end
+  
+  #############################
+  #     Class Methods         #
+  #############################
+  
 #  Returns the number of tickets created today and the number of tickets created in the last 30 days at the specified yard
   def self.tickets_created(auth_token, yard_id)
     access_token = AccessToken.where(token_string: auth_token).last # Find access token record

@@ -1,0 +1,192 @@
+= render 'v2/shared/navbars/kpi_dashboard_navbar'
+
+.jumbotron{id: 'kpi_dashboard', style: 'background-color: black;'}
+  .container-fluid
+    .row
+      .col-xs-12
+        .col-xs-12.col-sm-3{style: 'color: white;'}
+          %h3.text-center
+            - unless current_user.company.logo.url.blank?
+              = image_tag(current_user.company.logo.url(:thumb), class: 'img-responsive center-block', size: '150x150')
+            POWERED BY 
+            %br
+            %span.text-info SCRAP DRAGON
+            
+        .col-xs-12.col-sm-4
+          %h3.text-center{style: 'color: white;'}
+            %i
+              %strong
+                %i.fa.fa-spinner.fa-spin{id: 'yard_spinner', style: 'display:none;'}
+                = @yard.name
+          %iframe{:frameborder => "0", :seamless => "", :src => "https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=#{url_encode(session[:time_zone])}", :width => "100%"}
+          .text-center{style: 'color: white;'}
+            = form_tag scoreboard_path, method: 'get', :class => "form-inline", role: 'search' do
+              .btn-group{"data-toggle" => "buttons"}
+                %label.btn.btn-default{class: (params[:cycle_yards] == 'false' or params[:cycle_yards].blank?) ? 'active' : '', onchange: "$('#yard_spinner').show(); this.form.submit();", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Single Yard"}}
+                  = radio_button_tag :cycle_yards, false, params[:cycle_yards] == 'false'
+                  - if params[:cycle_yards] == 'false' or params[:cycle_yards].blank?
+                    %i.fa.fa-check
+                  Single Yard
+                %label.btn.btn-default{class: params[:cycle_yards] == 'true' ? 'active' : '', onchange: "$('#yard_spinner').show(); this.form.submit();", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Cycle Yards"}}
+                  = radio_button_tag :cycle_yards, true, params[:cycle_yards] == 'true'
+                  - if params[:cycle_yards] == 'true'
+                    %i.fa.fa-check
+                  Cycle Yards
+              = select_tag :yard_id, options_for_select(@yards.collect {|yard| [ yard.name, yard.id ] }, @yard.id), class: "form-control", onchange: "$('#yard_spinner').show(); this.form.submit();"
+            %br
+        .col-xs-12.col-sm-5
+          .panel
+            .panel-heading
+              %iframe#forecast_embed{:frameborder => "0", :height => "140", :src => "//forecast.io/embed/#lat=#{current_user.company.latitude}&lon=#{current_user.company.longitude}&color=#00aaff&name=#{current_user.company.city.blank? ? 'St. Pete' : current_user.company.city}", :width => "100%"}
+    .row
+      .col-xs-12
+        .col-xs-6
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Created
+                %h3.text-center
+                  Today:
+                  %i
+                    %strong= @tickets_today
+                  %br
+                  30-Day:
+                  %i
+                    -#
+                      %strong= "#{@tickets_30_day_average.blank? ? 0 : @tickets_30_day_average.to_f.round}"
+                    %strong= @tickets_30_day_total
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Held
+                %h3.text-center
+                  Total:
+                  %i
+                    %strong= "#{@tickets_on_hold_total.blank? ? 0 : @tickets_on_hold_total}"
+                  %br
+                  Avg (min):
+                  %i
+                    %strong= "#{@average_hold_time.blank? ? 0 : @average_hold_time}"
+          .col-xs-12.col-sm-4
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Paid
+                %h3.text-center
+                  Today:
+                  %i
+                    %strong= "#{@paid_tickets_today_count.blank? ? 0 : @paid_tickets_today_count}"
+                  %br
+                  Total:
+                  %i
+                    %strong= number_to_currency(@paid_tickets_today_amount.blank? ? 0 : @paid_tickets_today_amount)
+          - unless @commodity_totals_by_type.blank?
+            - @commodity_totals_by_type.select {|ct| ct['ReportDescription'] == 'Ferrous' or ct['ReportDescription'] == 'Nonferrous'} .each do |commodity_total|
+              .col-xs-12.col-sm-6
+                .panel{style: 'background-color: #303030; color: white;'}
+                  .panel-heading
+                    %h2.text-center= commodity_total['ReportDescription']
+                  %h4.table-responsive
+                    %table.table.table-condensed
+                      %thead
+                        %tr
+                          %th
+                          %th.text-right wt
+                          %th.text-right amt
+                      %tbody
+                        %tr
+                          %td Today
+                          %td.text-right= "#{number_with_delimiter(commodity_total['Weight'].to_i.round)}"
+                          %td.text-right= "#{number_to_currency(commodity_total['Cost'].to_i.round, precision: 0)}"
+                        %tr
+                          %td 30-Day
+                          %td.text-right= "#{number_with_delimiter(commodity_total['MultiDayWeightAverage'].to_i.round)}"
+                          %td.text-right= "#{number_to_currency(commodity_total['MultiDayCostAverage'].to_i.round, precision: 0)}"
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Held Shipments
+                %h3.text-center
+                  Today:
+                  %i
+                    %strong= "#{@held_shipments_count}"
+                  - unless @held_shipments_count.blank? or @held_shipments_count == '0' or @held_shipment.blank?
+                    %br
+                    %i
+                      %strong= @held_shipment['CustomerName'] 
+                    %br
+                    %i
+                      %strong= @held_shipment['DateCreated'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @held_shipment['DateCreated'].blank? or @held_shipment['DateCreated'] == '{"i:nil"=>"true"}'
+          .col-xs-12.col-sm-6
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2.text-center Sent Shipments
+                %h3.text-center
+                  Today:
+                  %i
+                    %strong= "#{@sent_shipments_count}"
+                  - unless @sent_shipments_count.blank? or @sent_shipments_count == '0' or @closed_shipment.blank?
+                    %br
+                    %i
+                      %strong= @closed_shipment['CustomerName'] 
+                    %br
+                    %i
+                      %strong= @closed_shipment['DateShipped'].to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p") unless @closed_shipment['DateShipped'].blank? or @closed_shipment['DateShipped'] == '{"i:nil"=>"true"}'
+                    
+        .col-xs-6
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2 Last 10 Tickets
+              -# unless @closed_and_held_and_paid_tickets_today.blank?
+              - unless @closed_and_held_and_paid_tickets.blank?
+                %h4.table-responsive
+                  %table.table.table-condensed
+                    - @closed_and_held_and_paid_tickets.sort_by{|t| t.date_created}.reverse.first(10).each do |ticket|
+                      %tr
+                        %td= ticket.date_created.to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
+                        %td= ticket.ticket_number
+                        %td
+                          - unless ticket.customer.first_name.blank? and ticket.customer.last_name.blank?
+                            = "#{ticket.customer.first_name} #{ticket.customer.last_name}"
+                          = ticket.customer.company
+                        %td= ticket.ticket_status.titleize
+                        %td.text-right= number_to_currency(ticket.ticket_items.blank? ? 0 : Ticket.v2_line_items_total(ticket.ticket_items))
+              - else
+                .panel-body None
+          .col-xs-12
+            .panel{style: 'background-color: #303030; color: white;'}
+              .panel-heading
+                %h2 Last 10 Shipments
+              - unless @last_10_shipments.blank?
+                %h4.table-responsive
+                  %table.table.table-condensed
+                    -# @closed_and_held_shipments_today.first(10).each do |shipment|
+                    - @last_10_shipments.sort_by{|s| s.date_created}.reverse.each do |shipment|
+                      - work_order = shipment.related_work_order
+                      %tr
+                        %td= shipment.date_created.to_datetime.in_time_zone(session[:time_zone]).strftime("%l:%M %p")
+                        %td= shipment.shipment_number
+                        %td= "#{work_order.customer.first_name} #{work_order.customer.last_name}" unless work_order.blank? or work_order.customer.blank?
+                        %td= shipment.shipment_status.titleize
+                        %td.text-right= "#{number_with_delimiter(shipment.net_weight.to_i.round)} #{shipment.unit_of_measure}"
+              - else
+                .panel-body None
+
+  - unless params[:cycle_yards] == 'true'
+    :javascript
+      // Refresh page every 5 minutes
+      setInterval(function(){
+        $('#yard_spinner').show(); 
+        window.location.reload(1);
+      }, 300000);
+  - else
+    :javascript
+      setInterval(function(){
+        $('#yard_spinner').show(); 
+        if($('#yard_id option:selected').next().length>0)
+          $('#yard_id option:selected').next().attr('selected', 'selected').trigger('change');
+        else 
+          $('#yard_id option').first().attr('selected', 'selected').trigger('change');
+      }, 30000);
+
+= render 'shared/ticker_navbar'

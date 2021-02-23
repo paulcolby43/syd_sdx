@@ -6,7 +6,8 @@ class PackShipment
   
   FindAllByFilterQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
       query($shipment_head_filter_input: ShipmentHeadFilterInput) {
-        shipmentHeads(where: $shipment_head_filter_input)
+        shipmentHeads(order: {dateShipped: DESC} 
+          where: $shipment_head_filter_input first: 500)
           {
           nodes{
             id
@@ -17,8 +18,12 @@ class PackShipment
             shipmentNumber
             bookingNumber
             containerNumber
+            orderNumber
+            sealNumber
             unitOfMeasure
             yardId
+            grossWeight
+            tareWeight
             netWeight
             packListHead{
               id
@@ -447,6 +452,30 @@ class PackShipment
 
       pack_shipments_array.each do |pack_shipment|
         csv << headers.map{ |attr| pack_shipment[attr] }
+      end
+    end
+  end
+  
+  def self.v2_customer_summary_to_csv(pack_shipments_array)
+    require 'csv'
+    headers = ['DateShipped', 'ShipmentNumber', 'ContractDescription', 'Type', 'ContainerNumber', 'OrderNumber', 'BookingNumber', 'SealNumber', 'GrossWeight', 'TareWeight', 'NetWeight']
+    
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      pack_shipments_array.each do |pack_shipment|
+        date_shipped = pack_shipment.date_shipped
+        shipment_number = pack_shipment.shipment_number
+        contract_description = "#{pack_shipment.contract_head.blank? ? 'N/A' : pack_shipment.contract_head.contract_description}"
+        shipment_type = pack_shipment.shipment_type
+        container_number = pack_shipment.container_number
+        order_number = pack_shipment.order_number
+        booking_number = pack_shipment.booking_number
+        seal_number = pack_shipment.seal_number
+        gross_weight = pack_shipment.gross_weight
+        tare_weight = pack_shipment.tare_weight
+        net_weight = pack_shipment.net_weight
+        csv << [date_shipped, shipment_number, contract_description, shipment_type, container_number, order_number, booking_number, seal_number, gross_weight, tare_weight, net_weight]
       end
     end
   end

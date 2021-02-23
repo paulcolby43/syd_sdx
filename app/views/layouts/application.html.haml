@@ -26,7 +26,7 @@
     - else
       - unless current_yard_id.blank?
         - if current_user.admin?
-          - unless current_page?(scoreboard_path) or current_page?(telerik_reports_path)
+          - unless current_page?(scoreboard_path) or current_page?(v2_scoreboard_path) or current_page?(telerik_reports_path)
             = render partial: "shared/navbars/base_navbar", locals: {title: "Home"}
         - elsif current_user.basic?
           - if current_user.mobile_admin?

@@ -6,7 +6,7 @@ class V2::TicketsController < ApplicationController
   def index
     @status = "#{(params[:status].blank? or current_user.mobile_inspector?) ? 'HOLD' : params[:status]}"
     @start_date = params[:start_date].blank? ? Date.today.last_week.to_s : params[:start_date]
-    @end_date = params[:end_date].blank? ? Date.today.to_s : params[:end_date]
+    @end_date = params[:end_date].blank? ? Date.tomorrow.to_s : params[:end_date]
     @ticket_number_query = params[:q]
     if @ticket_number_query.blank?
       filter = ' {"ticketStatus": {"eq": "' + @status + '"}, "and": [{"dateCreated": {"gte": "' +  @start_date + '" }}, {"dateCreated": {"lte": "' + @end_date + '" }} ]} '

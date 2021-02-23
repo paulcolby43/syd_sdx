@@ -1,5 +1,52 @@
 class Yard
   
+  #############################
+  # V2 - GraphQL Class Methods#
+  #############################
+  
+  FindAll = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query {
+        yards
+          {
+          nodes{
+            id
+            name
+          }
+        }
+      }
+    GRAPHQL
+    
+  def self.v2_all
+    response = DRAGONQLAPI::Client.query(FindAll)
+    unless response.blank? or response.data.blank? or response.data.yards.blank? or response.data.yards.nodes.blank?
+      return response.data.yards.nodes
+    else
+      return []
+    end
+  end
+  
+  FindByIdQuery = DRAGONQLAPI::Client.parse <<-'GRAPHQL'
+      query($id : Uuid!) {
+        yardById(id : $id){
+          ...YardModel
+        }
+      }
+
+      fragment YardModel on Yard {
+        id
+        name
+      }
+    GRAPHQL
+  
+  def self.v2_find_by_id(id)
+    response = DRAGONQLAPI::Client.query(FindByIdQuery, variables: {id: id})
+    unless response.blank? or response.data.blank? or response.data.yard_by_id.blank?
+      return response.data.yard_by_id 
+    else
+      return nil
+    end
+  end
+  
   ############################
   #     Instance Methods     #
   ############################
