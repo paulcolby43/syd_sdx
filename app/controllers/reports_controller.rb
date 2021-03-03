@@ -158,7 +158,8 @@ class ReportsController < ApplicationController
           end
         end
         require 'open-uri'
-        files = @images_array.map{ |image| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}/booking_#{image['BOOKING_NBR']}_container_#{image['CONTAINER_NBR']}_#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+#        files = @images_array.map{ |image| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}/booking_#{image['BOOKING_NBR']}_container_#{image['CONTAINER_NBR']}_#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+        files = @images_array.map{ |image| [Shipment.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "shipment_#{image['TICKET_NBR']}/booking_#{image['BOOKING_NBR']}_container_#{image['CONTAINER_NBR']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
         name = "shipments-images-report-#{@start_date}-#{@end_date}"
         file_mappings = files
         .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
@@ -266,7 +267,8 @@ class ReportsController < ApplicationController
           end
         end
         require 'open-uri'
-        files = @images_array.map{ |image| [Image.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "ticket_#{image['TICKET_NBR']}/#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+#        files = @images_array.map{ |image| [Image.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "ticket_#{image['TICKET_NBR']}/#{image['EVENT_CODE']}_#{image['CAPTURE_SEQ_NBR']}.jpg"]}
+        files = @images_array.map{ |image| [Image.jpeg_image_url(current_user.company, image['CAPTURE_SEQ_NBR'], current_yard_id), "ticket_#{image['TICKET_NBR']}/#{image['CAPTURE_SEQ_NBR']}.jpg"]}
         name = "ticket-images-report-#{@start_date}-#{@end_date}"
         file_mappings = files
         .lazy  # Lazy allows us to begin sending the download immediately instead of waiting to download everything
