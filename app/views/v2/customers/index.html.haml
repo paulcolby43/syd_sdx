@@ -4,7 +4,7 @@
   .container
     - if params[:q].blank? or not @search.blank?
       .pull-right
-        %a.btn.btn-sm.btn-primary{href: new_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
+        %a.btn.btn-sm.btn-primary{href: new_v2_customer_path, class: 'customer_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Customer"}}
           %i.fa.fa-user-plus.fa-lg
           Customer
       %br

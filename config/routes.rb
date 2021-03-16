@@ -298,6 +298,7 @@ Rails.application.routes.draw do
         get :tickets
       end
     end
+    resources :contracts
     get 'scoreboard' => 'welcome#kpi_dashboard'
   end
   

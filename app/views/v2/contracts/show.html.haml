@@ -1,0 +1,19 @@
+= render partial: "v2/shared/navbars/show_contract_navbar", locals: {title: "#{@contract.contract_number}"}
+
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    .col-xs-12.col-sm-6
+      %div.panel.panel-primary
+        %div.list_group
+          %div.list-group-item
+            %strong= "Contract Number:"
+            .pull-right
+              = "#{@contract.contract_number}"
+          %div.list-group-item
+            %strong= "Contract Description:"
+            .pull-right
+              = "#{@contract.contract_description}"
+          %div.list-group-item
+            %strong= "Contract Status:"
+            .pull-right
+              = "#{@contract.contract_status}"

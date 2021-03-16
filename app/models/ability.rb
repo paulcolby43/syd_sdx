@@ -140,6 +140,7 @@ class Ability
 #
 #      # Contracts
 #      ############
+      can :index, :contracts
       can :manage, Contract do |contract|
         contract.contract_id == yard_id
       end

@@ -1,0 +1,14 @@
+- @contracts.each do |contract|
+  %div.row
+    .col-xs-12.col-sm-12.col-md-12
+      %h4.text-muted
+        %div.panel.panel-primary
+          %div.list_group
+            %a{href: v2_contract_path(contract.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{contract.contract_number}"}, class: "list-group-item contract_button"}
+              = contract.contract_number
+            %div.list-group-item
+              = contract.contract_description
+              %br
+              = contract.contract_status
+              .pull-right
+                %i.fa.fa-chevron-right.fa-lg

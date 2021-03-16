@@ -1,0 +1,56 @@
+.jumbotron{style: 'background-color: #FFFFFF;'}
+  .container
+    - if params[:q].blank? or not @search.blank?
+      .pull-right
+        %a.btn.btn-sm.btn-primary{href: new_v2_contract_path, class: 'contract_button', data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Contract"}}
+          %i.fa.fa-plus.fa-lg
+          Contract
+      %br
+    %p
+      = form_tag v2_contracts_path, id: 'contract_search_form', method: 'get', :class => "form-inline", role: 'search' do |f|
+        - unless current_user.mobile_greeter?
+          = select_tag :yard_filter, options_for_select([['All Yards', 'all_yards'], ['My Yard', '1\my_yard']], @yard_filter), class: "form-control input-lg"
+        - else
+          = hidden_field_tag :yard_filter, '1\my_yard'
+        - if mobile_device?
+          %br
+        .input-group
+          = search_field_tag :q, params[:q], :placeholder => "Search contracts", class: "form-control input-lg"
+          %span.input-group-btn
+            %button.btn.btn-default.btn-lg{id: 'contract_search_button', :type => "submit", data: {disable_with: "<i class='fa fa-spinner fa-spin'></i>"}} 
+              %i.fa.fa-search
+    - unless @search.blank?    
+      %p
+        %small.text-muted= "#{pluralize(@search.count, 'contract')} found"
+    - unless @contracts.blank?
+      %div{id: "contracts"}
+        - @contracts.each do |contract|
+          %div.row
+            .col-xs-12.col-sm-12.col-md-12
+              %h4.text-muted
+                %div.panel.panel-primary
+                  %div.list_group
+                    %a{href: v2_contract_path(contract.id), data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> #{contract.contract_number}"}, class: "list-group-item contract_button"}
+                      = contract.contract_number
+                      .pull-right
+                        %i.fa.fa-chevron-right.fa-lg
+                    %div.list-group-item
+                      = contract.contract_description
+                      %br
+                      = contract.contract_status
+                      
+      .row
+        .text-center
+          %div{id: 'endless_page'}
+            %i.fa.fa-refresh.fa-spin.fa-2x{:id => "more_contracts_spinner", style: "display:none;"}
+            %p= link_to 'Load more ...', v2_contracts_path(:page => @contracts.next_page, :q => params[:q]), :class => 'load-more-contracts btn btn-default', :remote => true, :onclick => "$(this).hide(); $('#more_contracts_spinner').show();" if @contracts.next_page
+    - else
+      - unless params[:q].blank?
+        .row
+          .col-xs-12
+            %p.text-center No contracts found  
+          .col-xs-12
+            %p.text-center
+              %a.btn.btn-primary.btn-lg{href: new_v2_contract_path, class: "#{mobile_device? ? 'btn-block' : ''} contract_button", data: {disable_with: "<i class='fa fa-spinner fa-spin fa-lg'></i> Contract"}}
+                %i.fa.fa-plus.fa-lg
+                Create New Contract

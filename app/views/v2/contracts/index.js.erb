@@ -1,0 +1,11 @@
+$('#contracts').append('<%= j render "contract" %>');
+$('#more_contracts_spinner').hide();
+
+<% if @contracts.next_page %>
+  $('a.load-more-contracts').show();
+  $('a.load-more-contracts').attr('href', '<%= v2_contracts_path page: @contracts.next_page, q: params[:q] %>');
+<% else %>
+  $(window).off('scroll');
+  $('a.load-more-contracts').attr('href', '#');
+  $('a.reload-contracts').show();
+<% end %>
