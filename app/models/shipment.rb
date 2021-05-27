@@ -119,13 +119,14 @@ class Shipment < ActiveRecord::Base
     ssl_client.sync_close = true
     ssl_client.puts command
 #    response = ssl_client.sysread(200000) # Read up to 200,000 bytes
+    results = ssl_client.sysread(1000000) # Read up to 1 MB
     
-    results = ""
-    while response = ssl_client.sysread(10000) # Read 10000 bytes at a time
-      results = results + response
-#      puts response
-      break if (response.include?("</RESULT>"))
-    end
+#    results = ""
+#    while response = ssl_client.sysread(10000) # Read 10000 bytes at a time
+#      results = results + response
+##      puts response
+#      break if (response.include?("</RESULT>"))
+#    end
     
     ssl_client.close
     
