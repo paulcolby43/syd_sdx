@@ -230,6 +230,9 @@ Rails.application.routes.draw do
     end
   end
   
+  # Add route for OmniAuth callback
+  match '/auth/:provider/callback', :to => 'auth#callback', :via => [:get, :post]
+  
   namespace :v2 do
     resources :tickets
     resources :customers do

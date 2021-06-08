@@ -142,6 +142,15 @@ gem 'acts_as_list'
 # GraphQL Client
 gem 'graphql-client'
 
+# OAuth
+gem 'omniauth-oauth2'#, '~> 1.7'
+# OmniAuth CSRF protection
+#gem 'omniauth-rails_csrf_protection', '~> 0.1.2'
+## REST calls to Microsoft Graph
+#gem 'httparty', '~> 0.18.1'
+## Session storage in database
+gem 'activerecord-session_store', '~> 1.1.3'
+
 
 # https://github.com/cyu/rack-cors
 #gem 'rack-cors'

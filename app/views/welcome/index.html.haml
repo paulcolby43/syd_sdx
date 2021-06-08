@@ -8,7 +8,8 @@
           Welcome to the Scrap Dragon Portal
         %p
           %a{href: login_path, class: 'btn btn-lg btn-info welcome_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> SIGN IN"}}
-            SIGN IN
+            SCRAP DRAGON SIGN IN
+          = link_to "ACTIVE DIRECTORY SIGN IN", "/auth/microsoft_auth", method: :post, class: "btn btn-primary btn-lg"
       -#
         %p
           %a{href: signup_path, class: 'btn btn-lg btn-primary welcome_button', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Sign Up"}}

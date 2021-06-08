@@ -33,7 +33,8 @@ class Ticket
               dateCreated
               printDescription
               price
-              unitOfMeasure
+              priceUnitOfMeasure
+              scaleUnitOfMeasure
               extendedAmount
               ticketHeadId
               ticketItemStatus
@@ -115,7 +116,8 @@ class Ticket
           tareWeight
           netWeight
           price
-          unitOfMeasure
+          priceUnitOfMeasure
+          scaleUnitOfMeasure
           extendedAmount
           ticketItemStatus
           serialNumber

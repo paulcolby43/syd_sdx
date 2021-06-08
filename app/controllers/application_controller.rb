@@ -43,4 +43,20 @@ class ApplicationController < ActionController::Base
   def current_ability
     @current_ability ||= Ability.new(current_user, current_yard_id)
   end
+  
+  ### Active Directory Token ###
+  def save_in_session(auth_hash)
+    # Save the token info
+    session[:graph_token_hash] = auth_hash[:credentials]
+    # Save the user's display name
+    session[:user_name] = auth_hash.dig(:extra, :raw_info, :displayName)
+    # Save the user's email address
+    # Use the mail field first. If that's empty, fall back on
+    # userPrincipalName
+    session[:user_email] = auth_hash.dig(:extra, :raw_info, :mail) ||
+                           auth_hash.dig(:extra, :raw_info, :userPrincipalName)
+    # Save the user's time zone
+    session[:user_timezone] = auth_hash.dig(:extra, :raw_info, :mailboxSettings, :timeZone)
+  end
+  
 end
