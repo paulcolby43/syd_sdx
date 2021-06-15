@@ -48,7 +48,7 @@ GEM
       multi_json (~> 1.11, >= 1.11.2)
       rack (>= 1.5.2, < 3)
       railties (>= 4.0)
-    activerecord-sqlserver-adapter (4.1.2)
+    activerecord-sqlserver-adapter (4.1.8)
       activerecord (~> 4.1.0)
       arel
     activesupport (4.1.8)
@@ -175,7 +175,6 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.99.1)
-    mini_portile (0.6.2)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     morrisjs-rails (0.5.1.2)
@@ -297,8 +296,6 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.2)
-    tiny_tds (0.7.0)
-      mini_portile (= 0.6.2)
     turbolinks (2.5.3)
       coffee-rails
     twbs_sass_rails (4.0.0)
@@ -384,7 +381,6 @@ DEPENDENCIES
   sinatra
   sqlite3
   therubyracer
-  tiny_tds
   turbolinks
   twbs_sass_rails
   uglifier (>= 1.3.0)

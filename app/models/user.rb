@@ -308,35 +308,43 @@ class User < ActiveRecord::Base
   
   ### Devices ###
   def devices
-    user_setting.devices
+#    user_setting.devices
+    []
   end
   
   def scale_devices
-    user_setting.scale_devices
+#    user_setting.scale_devices
+    []
   end
   
   def camera_devices
-    user_setting.camera_devices
+#    user_setting.camera_devices
+    []
   end
   
   def license_reader_devices
-    user_setting.license_reader_devices
+#    user_setting.license_reader_devices
+    []
   end
   
   def license_imager_devices
-    user_setting.license_imager_devices
+#    user_setting.license_imager_devices
+    []
   end
   
   def finger_print_reader_devices
-    user_setting.finger_print_reader_devices
+#    user_setting.finger_print_reader_devices
+    []
   end
   
   def signature_pad_devices
-    user_setting.signature_pad_devices
+#    user_setting.signature_pad_devices
+    []
   end
   
   def printer_devices
-    user_setting.printer_devices
+#    user_setting.printer_devices
+    []
   end
   
   def qbo_access_credential

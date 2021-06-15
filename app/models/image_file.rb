@@ -19,6 +19,8 @@ class ImageFile < ActiveRecord::Base
   attr_accessor :container_id
   attr_accessor :task_id
   
+  attr_accessor :time_zone
+  
   
   #############################
   #     Instance Methods      #

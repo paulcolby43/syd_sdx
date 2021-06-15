@@ -75,7 +75,7 @@ gem 'carrierwave'
 gem "figaro"
 
 # Connect to MS SQL Database
-gem 'tiny_tds' 
+#gem 'tiny_tds'
 gem 'activerecord-sqlserver-adapter'
 
 # Needed for sidekiq  web interface 
