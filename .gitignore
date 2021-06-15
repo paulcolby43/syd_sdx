@@ -33,3 +33,6 @@ public/bwi/*
 public/assets/
 
 dump.rdb
+
+.DS_Store
+public/.DS_Store
