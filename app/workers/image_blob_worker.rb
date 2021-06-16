@@ -63,6 +63,7 @@ class ImageBlobWorker
                 <VIN>#{image_file.vin_number}</VIN>
                 <TAGNBR>#{image_file.tag_number}</TAGNBR>
                 <SERVICE_REQ_NBR>#{image_file.service_request_number}</SERVICE_REQ_NBR>
+                <SYS_DATE_TIME>#{image_file.created_at.in_time_zone(image_file.time_zone).strftime('%Y-%m-%d %H:%M:%S')}</SYS_DATE_TIME>
               </APPEND>"
     
     tcp_client = TCPSocket.new host, port
