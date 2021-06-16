@@ -65,8 +65,7 @@ class ImageFileUploader < CarrierWave::Uploader::Base
       txt.fill = "#F3F315"
       txt.font_weight = Magick::BoldWeight
 #      caption = "#{model.customer_name} #{Time.now.in_time_zone("Eastern Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{event_code_name}"
-#      caption = "#{model.customer_name} #{model.created_at.in_time_zone(model.time_zone).strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{event_code_name}"
-      caption = "#{model.time_zone} #{Time.now.in_time_zone(model.time_zone).strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{event_code_name}"
+      caption = "#{model.customer_name} #{Time.now.in_time_zone(model.time_zone).strftime("%Y-%m-%d %H:%M:%S")} \\n Ticket: #{model.ticket_number} Event: #{event_code_name}"
       source.annotate(txt, 0, 0, 0, 20, caption)
     end
 
