@@ -104,10 +104,11 @@ class Yard
   end
   
   def self.device_groups_table_exists?
-    DeviceGroup.connection
-    rescue TinyTds::Error
-      false
-    else
-      true
+    false
+#    DeviceGroup.connection
+#    rescue TinyTds::Error
+#      false
+#    else
+#      true
   end
 end
