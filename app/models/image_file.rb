@@ -32,6 +32,7 @@ class ImageFile < ActiveRecord::Base
   
   # Create the image record and the blob in the background
   def sidekiq_blob_and_image_creation
+    Rails.logger.debug "**************time zone: #{self.time_zone}"
     ImageBlobWorker.perform_async(self.id) 
   end
   
