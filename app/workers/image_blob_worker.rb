@@ -1,11 +1,10 @@
 class ImageBlobWorker
   include Sidekiq::Worker
   
-  def perform(image_file_id, time_zone)
+  def perform(image_file_id)
 #    require "rmagick"
     image_file = ImageFile.find(image_file_id)
     image_file.update_attribute(:process, true)
-    image_file.update_attribute(:time_zone, time_zone)
     image_file.file.recreate_versions!
     unless image_file.event_code_id.blank? 
       event_code = EventCode.find(image_file.event_code_id)
