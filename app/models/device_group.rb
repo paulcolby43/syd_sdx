@@ -74,11 +74,12 @@ class DeviceGroup < ActiveRecord::Base
   #############################
   
   def self.table_exists?
-    DeviceGroup.connection
-    rescue TinyTds::Error
-      false
-    else
-      true
+    false
+#    DeviceGroup.connection
+#    rescue TinyTds::Error
+#      false
+#    else
+#      true
   end
   
   

@@ -532,11 +532,12 @@ class Device < ActiveRecord::Base
   end
   
   def self.table_exists?
-    Device.connection
-    rescue TinyTds::Error
-      false
-    else
-      true
+    false
+#    Device.connection
+#    rescue TinyTds::Error
+#      false
+#    else
+#      true
   end
   
 end
