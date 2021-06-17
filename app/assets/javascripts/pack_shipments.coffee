@@ -457,7 +457,8 @@ jQuery ->
 
   ### Start QR Code Scanner ###
   load_pack_shipment_qrcode_scanner = ->
-    codeReader = new (ZXing.BrowserQRCodeReader)
+    # codeReader = new (ZXing.BrowserQRCodeReader)
+    codeReader = new ZXing.BrowserMultiFormatReader()
     console.log 'ZXing code reader initialized'
     codeReader.getVideoInputDevices().then (videoInputDevices) ->
       sourceSelect = document.getElementById('sourceSelect')
