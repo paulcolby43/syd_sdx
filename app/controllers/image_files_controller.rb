@@ -103,6 +103,6 @@ class ImageFilesController < ApplicationController
       # order matters here in that to have access to model attributes in uploader methods, they need to show up before the file param in this permitted_params list 
       params.require(:image_file).permit(:ticket_number, :name, :file, :user_id, :customer_number, :customer_name, :branch_code, :location, :event_code, :event_code_id, 
         :image_id, :container_number, :booking_number, :contract_number, :hidden, :blob_id, :tare_seq_nbr, :commodity_name, :weight, :vin_number, :tag_number, 
-        :yard_id, :contract_verbiage, :service_request_number, :container_id, :task_id, :pin_image_location_to_container)
+        :yard_id, :contract_verbiage, :service_request_number, :container_id, :task_id, :pin_image_location_to_container, :time_zone)
     end
 end
