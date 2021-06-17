@@ -19,6 +19,8 @@ class ImageFile < ActiveRecord::Base
   attr_accessor :container_id
   attr_accessor :task_id
   
+  attr_accessor :time_zone
+  
   
   #############################
   #     Instance Methods      #
@@ -30,7 +32,7 @@ class ImageFile < ActiveRecord::Base
   
   # Create the image record and the blob in the background
   def sidekiq_blob_and_image_creation
-    ImageBlobWorker.perform_async(self.id) 
+    ImageBlobWorker.perform_async(self.id, self.time_zone) 
   end
   
   def latitude_and_longitude
