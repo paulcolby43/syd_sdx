@@ -56,7 +56,6 @@ class ImageFileUploader < CarrierWave::Uploader::Base
     else
       event_code_name = model.event_code
     end
-    Rails.logger.debug "**************time zone: #{model.time_zone}"
     manipulate! do |source|
       txt = Magick::Draw.new
       txt.pointsize = 20
