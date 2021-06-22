@@ -455,7 +455,7 @@ jQuery ->
     load_pack_shipment_barcode_scanner()
   ### End Barcode Scanner ###
 
-  ### Start QR Code Scanner ###
+  ### Start Barcode and QR Code Scanner ###
   load_pack_shipment_qrcode_scanner = ->
     # codeReader = new (ZXing.BrowserQRCodeReader)
     codeReader = new ZXing.BrowserMultiFormatReader()
@@ -492,9 +492,9 @@ jQuery ->
 
       ).catch (err) ->
         console.error err
-      console.log 'Started continous decode from camera with id ' + firstDeviceId
+      console.log 'Started continuous decode from camera with id ' + firstDeviceId
       return
   
   $('#pack_details').on 'click', '#open_pack_qrcode_scanner_button', (e) ->
     load_pack_shipment_qrcode_scanner()
-  ### End QR Code Scanner ###
+  ### End Barcode and QR Code Scanner ###

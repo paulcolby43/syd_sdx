@@ -411,3 +411,80 @@ jQuery ->
       x.innerHTML = 'Lat: ' + position.coords.latitude + '<br>Long: ' + position.coords.longitude
       console.log 'position changed'
       return
+
+  ### Start Barcode and QR Code Scanner ###
+  load_container_qrcode_scanner = ->
+    codeReader = new ZXing.BrowserMultiFormatReader()
+    console.log 'ZXing code reader initialized'
+    codeReader.getVideoInputDevices().then (videoInputDevices) ->
+      sourceSelect = document.getElementById('sourceSelect')
+      firstDeviceId = videoInputDevices[0].deviceId
+      ###
+      if videoInputDevices.length > 1
+        videoInputDevices.forEach (element) ->
+          sourceOption = document.createElement('option')
+          sourceOption.text = element.label
+          sourceOption.value = element.deviceId
+          sourceSelect.appendChild sourceOption
+          return
+        sourceSelectPanel = document.getElementById('sourceSelectPanel')
+        sourceSelectPanel.style.display = 'block'
+      ###
+      # By passing 'undefined' for the device id parameter, the library will automatically choose the camera, preferring the main (environment facing) camera if more are available
+      codeReader.decodeFromInputVideoDevice(undefined, 'video').then((result) ->
+        console.log result.text
+        $(this).closest('form').hide()
+        #$(this).closest('form').find(".modal").modal('hide')
+        #$('#qrcode_scanner_modal').modal('hide')
+        #$('.shipment_pack_select').select2('open')
+        #$('.shipment_pack_select').click()
+        #$('.select2-search__field:first').val(result.text).trigger 'keyup'
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
+
+      $('#qrcode_scanner_modal').on 'hidden.bs.modal', (e) ->
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
+        return
+
+      ).catch (err) ->
+        console.error err
+      console.log 'Started continuous decode from camera with id ' + firstDeviceId
+      return
+  
+  $('.update_task_form').on 'click', '.open_task_container_qrcode_scanner_button', (e) ->
+    codeReader = new ZXing.BrowserMultiFormatReader()
+    console.log 'ZXing code multi-format reader initialized'
+    scanner_button = $(this)
+    codeReader.getVideoInputDevices().then (videoInputDevices) ->
+      firstDeviceId = videoInputDevices[0].deviceId
+      # By passing 'undefined' for the device id parameter, the library will automatically choose the camera, preferring the main (environment facing) camera if more are available
+      #codeReader.decodeFromInputVideoDevice(undefined, 'video').then((result) ->
+      codeReader.decodeOnceFromVideoDevice(undefined, 'video_' + scanner_button.attr('id')).then((result) ->
+        console.log result.text
+        scanner_button.closest('form').find(".modal").modal('hide')
+        scanner_button.closest('form').find(".container_select").select2('open')
+        scanner_button.closest('form').find(".container_select").click()
+        $('.select2-search__field:first').val(result.text).trigger('keyup')
+        #$('.select2-search__field:first').trigger('change')
+        #scanner_button.closest('form').find(".container_select").val(result.text);
+        #scanner_button.closest('form').find(".container_select").trigger('change');
+        scanner_button.closest('form').find(".container_select").select2 'close'
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
+        #scanner_button.closest('form').find(".container_select").on 'select2:select', (e) ->
+        #  alert 'here'
+        #  return
+
+      scanner_button.closest('form').find(".modal").on 'hidden.bs.modal', (e) ->
+        codeReader.reset()
+        console.log 'ZXing code reader reset'
+        return
+
+      ).catch (err) ->
+        console.error err
+      console.log 'Started one time decode from camera with id ' + firstDeviceId
+      return
+  ### End Barcode and QR Code Scanner ###
+
+  
