@@ -469,7 +469,7 @@ jQuery ->
         #$('.select2-search__field:first').trigger('change')
         #scanner_button.closest('form').find(".container_select").val(result.text);
         #scanner_button.closest('form').find(".container_select").trigger('change');
-        scanner_button.closest('form').find(".container_select").select2 'close'
+        #scanner_button.closest('form').find(".container_select").select2 'close'
         codeReader.reset()
         console.log 'ZXing code reader reset'
         #scanner_button.closest('form').find(".container_select").on 'select2:select', (e) ->
