@@ -14,6 +14,8 @@ class ShipmentFile < ActiveRecord::Base
   
   attr_accessor :process # Virtual attribute to determine if ready to process versions
   
+  attr_accessor :time_zone
+  
   
   #############################
   #     Instance Methods      #

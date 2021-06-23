@@ -12,6 +12,7 @@
           = f.hidden_field :yard_id, value: current_yard_id
           = f.hidden_field :ticket_number, value: pack_shipment['ShipmentNumber']
           = f.hidden_field :customer_name, value: pack_shipment['CustomerName']
+          = f.hidden_field :time_zone, value: session[:time_zone].blank? ? 'Eastern Time (US & Canada)' : session[:time_zone]
           .form-group{:id => "event_code"}
             =# f.label "Event Code", :class => 'control-label'
             .btn-group-vertical{"data-toggle" => "buttons", style: 'width: 100%'}
